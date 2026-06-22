@@ -256,30 +256,6 @@
         "notes": "Network stack perpetual license, embedded with hardware, included at no separate selection. Tier locked to the switch's -E suffix. Pairs with the term-based subscription above; the regime tag groups it with the DNA program."
       },
       {
-        "id": "C9300LM-DNA-A-48-3Y",
-        "regime": "dna-term",
-        "tier": "advantage",
-        "shape": "term-based",
-        "term_years": 3,
-        "port_class": 48
-      },
-      {
-        "id": "C9300LM-DNA-A-48-5Y",
-        "regime": "dna-term",
-        "tier": "advantage",
-        "shape": "term-based",
-        "term_years": 5,
-        "port_class": 48
-      },
-      {
-        "id": "C9300LM-DNA-A-48-7Y",
-        "regime": "dna-term",
-        "tier": "advantage",
-        "shape": "term-based",
-        "term_years": 7,
-        "port_class": 48
-      },
-      {
         "id": "NETWORK-ADVANTAGE-PERPETUAL",
         "regime": "dna-term",
         "tier": "advantage",
@@ -365,6 +341,258 @@
         "term_years": 7,
         "port_class": null,
         "notes": "C9300X 25G fiber (12Y/24Y) DNA Advantage. SKU carries no port-count; scoped to the 25G fiber X-class models only."
+      },
+      {
+        "id": "C9300-DNA-E-24-3Y",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 3,
+        "port_class": 24
+      },
+      {
+        "id": "C9300-DNA-E-24-5Y",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 5,
+        "port_class": 24
+      },
+      {
+        "id": "C9300-DNA-E-24-7Y",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 7,
+        "port_class": 24
+      },
+      {
+        "id": "C9300-DNA-A-24-3Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 3,
+        "port_class": 24
+      },
+      {
+        "id": "C9300-DNA-A-24-5Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 5,
+        "port_class": 24
+      },
+      {
+        "id": "C9300-DNA-A-24-7Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 7,
+        "port_class": 24
+      },
+      {
+        "id": "C9300-DNA-E-24S-3Y",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 3,
+        "port_class": 24,
+        "notes": "C9300 1G fiber (SFP) 24-port DNA Essentials. -S suffix denotes 1G fiber access models (e.g. C9300-24S)."
+      },
+      {
+        "id": "C9300-DNA-E-24S-5Y",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 5,
+        "port_class": 24,
+        "notes": "C9300 1G fiber (SFP) 24-port DNA Essentials. -S suffix denotes 1G fiber access models (e.g. C9300-24S)."
+      },
+      {
+        "id": "C9300-DNA-E-24S-7Y",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 7,
+        "port_class": 24,
+        "notes": "C9300 1G fiber (SFP) 24-port DNA Essentials. -S suffix denotes 1G fiber access models (e.g. C9300-24S)."
+      },
+      {
+        "id": "C9300-DNA-A-24S-3Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 3,
+        "port_class": 24,
+        "notes": "C9300 1G fiber (SFP) 24-port DNA Advantage. -S suffix denotes 1G fiber access models (e.g. C9300-24S)."
+      },
+      {
+        "id": "C9300-DNA-A-24S-5Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 5,
+        "port_class": 24,
+        "notes": "C9300 1G fiber (SFP) 24-port DNA Advantage. -S suffix denotes 1G fiber access models (e.g. C9300-24S)."
+      },
+      {
+        "id": "C9300-DNA-A-24S-7Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 7,
+        "port_class": 24,
+        "notes": "C9300 1G fiber (SFP) 24-port DNA Advantage. -S suffix denotes 1G fiber access models (e.g. C9300-24S)."
+      },
+      {
+        "id": "C9300-DNA-A-48-3Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 3,
+        "port_class": 48
+      },
+      {
+        "id": "C9300-DNA-A-48-5Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 5,
+        "port_class": 48
+      },
+      {
+        "id": "C9300-DNA-A-48-7Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 7,
+        "port_class": 48
+      },
+      {
+        "id": "C9300-DNA-E-48S-3Y",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 3,
+        "port_class": 48,
+        "notes": "C9300 1G fiber (SFP) 48-port DNA Essentials. -S suffix denotes 1G fiber access models (e.g. C9300-48S)."
+      },
+      {
+        "id": "C9300-DNA-E-48S-5Y",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 5,
+        "port_class": 48,
+        "notes": "C9300 1G fiber (SFP) 48-port DNA Essentials. -S suffix denotes 1G fiber access models (e.g. C9300-48S)."
+      },
+      {
+        "id": "C9300-DNA-E-48S-7Y",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 7,
+        "port_class": 48,
+        "notes": "C9300 1G fiber (SFP) 48-port DNA Essentials. -S suffix denotes 1G fiber access models (e.g. C9300-48S)."
+      },
+      {
+        "id": "C9300-DNA-A-48S-3Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 3,
+        "port_class": 48,
+        "notes": "C9300 1G fiber (SFP) 48-port DNA Advantage. -S suffix denotes 1G fiber access models (e.g. C9300-48S)."
+      },
+      {
+        "id": "C9300-DNA-A-48S-5Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 5,
+        "port_class": 48,
+        "notes": "C9300 1G fiber (SFP) 48-port DNA Advantage. -S suffix denotes 1G fiber access models (e.g. C9300-48S)."
+      },
+      {
+        "id": "C9300-DNA-A-48S-7Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 7,
+        "port_class": 48,
+        "notes": "C9300 1G fiber (SFP) 48-port DNA Advantage. -S suffix denotes 1G fiber access models (e.g. C9300-48S)."
+      },
+      {
+        "id": "C9300L-DNA-A-24-3Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 3,
+        "port_class": 24
+      },
+      {
+        "id": "C9300L-DNA-A-24-5Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 5,
+        "port_class": 24
+      },
+      {
+        "id": "C9300L-DNA-A-24-7Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 7,
+        "port_class": 24
+      },
+      {
+        "id": "C9300L-DNA-E-48-3Y",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 3,
+        "port_class": 48
+      },
+      {
+        "id": "C9300L-DNA-E-48-5Y",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 5,
+        "port_class": 48
+      },
+      {
+        "id": "C9300L-DNA-E-48-7Y",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 7,
+        "port_class": 48
+      },
+      {
+        "id": "C9300L-DNA-A-48-3Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 3,
+        "port_class": 48
+      },
+      {
+        "id": "C9300L-DNA-A-48-5Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 5,
+        "port_class": 48
+      },
+      {
+        "id": "C9300L-DNA-A-48-7Y",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 7,
+        "port_class": 48
       }
     ]
   },
@@ -559,27 +787,6 @@
         }
       },
       {
-        "id": "c9300lm-dna-advantage-48",
-        "regime": "dna-term",
-        "tier": "advantage",
-        "port_class": 48,
-        "perpetual_member": "NETWORK-ADVANTAGE-PERPETUAL",
-        "subscription_members": [
-          "C9300LM-DNA-A-48-3Y",
-          "C9300LM-DNA-A-48-5Y",
-          "C9300LM-DNA-A-48-7Y"
-        ],
-        "term_variable": {
-          "axis": "n/a",
-          "choices_years": [
-            3,
-            5,
-            7
-          ],
-          "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -A."
-        }
-      },
-      {
         "id": "c9300l-dna-essentials-24",
         "regime": "dna-term",
         "tier": "essentials",
@@ -645,6 +852,183 @@
           "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -A."
         },
         "notes": "C9300X 25G fiber (-L-) DNA Advantage set. SKUs carry no port-count and serve both 12-port and 24-port X-class fiber models; port_class is null rather than a number. Other C9300X models use the C9300 license sets, not this one."
+      },
+      {
+        "id": "c9300-dna-essentials-24",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "port_class": 24,
+        "perpetual_member": "NETWORK-ESSENTIALS-PERPETUAL",
+        "subscription_members": [
+          "C9300-DNA-E-24-3Y",
+          "C9300-DNA-E-24-5Y",
+          "C9300-DNA-E-24-7Y"
+        ],
+        "term_variable": {
+          "axis": "n/a",
+          "choices_years": [3, 5, 7],
+          "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -E."
+        }
+      },
+      {
+        "id": "c9300-dna-advantage-24",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "port_class": 24,
+        "perpetual_member": "NETWORK-ADVANTAGE-PERPETUAL",
+        "subscription_members": [
+          "C9300-DNA-A-24-3Y",
+          "C9300-DNA-A-24-5Y",
+          "C9300-DNA-A-24-7Y"
+        ],
+        "term_variable": {
+          "axis": "n/a",
+          "choices_years": [3, 5, 7],
+          "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -A."
+        }
+      },
+      {
+        "id": "c9300-dna-essentials-24s",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "port_class": 24,
+        "perpetual_member": "NETWORK-ESSENTIALS-PERPETUAL",
+        "subscription_members": [
+          "C9300-DNA-E-24S-3Y",
+          "C9300-DNA-E-24S-5Y",
+          "C9300-DNA-E-24S-7Y"
+        ],
+        "term_variable": {
+          "axis": "n/a",
+          "choices_years": [3, 5, 7],
+          "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -E."
+        },
+        "notes": "C9300 1G fiber (SFP) 24-port Essentials group. -S suffix licenses are distinct from copper -24 licenses in the ordering guide; kept as a separate group so fiber models reference the correct SKU family."
+      },
+      {
+        "id": "c9300-dna-advantage-24s",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "port_class": 24,
+        "perpetual_member": "NETWORK-ADVANTAGE-PERPETUAL",
+        "subscription_members": [
+          "C9300-DNA-A-24S-3Y",
+          "C9300-DNA-A-24S-5Y",
+          "C9300-DNA-A-24S-7Y"
+        ],
+        "term_variable": {
+          "axis": "n/a",
+          "choices_years": [3, 5, 7],
+          "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -A."
+        },
+        "notes": "C9300 1G fiber (SFP) 24-port Advantage group. -S suffix licenses are distinct from copper -24 licenses in the ordering guide; kept as a separate group so fiber models reference the correct SKU family."
+      },
+      {
+        "id": "c9300-dna-advantage-48",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "port_class": 48,
+        "perpetual_member": "NETWORK-ADVANTAGE-PERPETUAL",
+        "subscription_members": [
+          "C9300-DNA-A-48-3Y",
+          "C9300-DNA-A-48-5Y",
+          "C9300-DNA-A-48-7Y"
+        ],
+        "term_variable": {
+          "axis": "n/a",
+          "choices_years": [3, 5, 7],
+          "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -A."
+        }
+      },
+      {
+        "id": "c9300-dna-essentials-48s",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "port_class": 48,
+        "perpetual_member": "NETWORK-ESSENTIALS-PERPETUAL",
+        "subscription_members": [
+          "C9300-DNA-E-48S-3Y",
+          "C9300-DNA-E-48S-5Y",
+          "C9300-DNA-E-48S-7Y"
+        ],
+        "term_variable": {
+          "axis": "n/a",
+          "choices_years": [3, 5, 7],
+          "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -E."
+        },
+        "notes": "C9300 1G fiber (SFP) 48-port Essentials group. -S suffix licenses are distinct from copper -48 licenses in the ordering guide; kept as a separate group so fiber models reference the correct SKU family."
+      },
+      {
+        "id": "c9300-dna-advantage-48s",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "port_class": 48,
+        "perpetual_member": "NETWORK-ADVANTAGE-PERPETUAL",
+        "subscription_members": [
+          "C9300-DNA-A-48S-3Y",
+          "C9300-DNA-A-48S-5Y",
+          "C9300-DNA-A-48S-7Y"
+        ],
+        "term_variable": {
+          "axis": "n/a",
+          "choices_years": [3, 5, 7],
+          "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -A."
+        },
+        "notes": "C9300 1G fiber (SFP) 48-port Advantage group. -S suffix licenses are distinct from copper -48 licenses in the ordering guide; kept as a separate group so fiber models reference the correct SKU family."
+      },
+      {
+        "id": "c9300l-dna-advantage-24",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "port_class": 24,
+        "perpetual_member": "NETWORK-ADVANTAGE-PERPETUAL",
+        "subscription_members": [
+          "C9300L-DNA-A-24-3Y",
+          "C9300L-DNA-A-24-5Y",
+          "C9300L-DNA-A-24-7Y"
+        ],
+        "term_variable": {
+          "axis": "n/a",
+          "choices_years": [3, 5, 7],
+          "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -A."
+        },
+        "notes": "C9300L fixed-uplink 24-port Advantage group. C9300LM models (both 24- and 48-port) also use C9300L license SKUs per Cisco CCW configuration tool; the ordering guide's C9300LM-specific SKUs do not exist in practice."
+      },
+      {
+        "id": "c9300l-dna-essentials-48",
+        "regime": "dna-term",
+        "tier": "essentials",
+        "port_class": 48,
+        "perpetual_member": "NETWORK-ESSENTIALS-PERPETUAL",
+        "subscription_members": [
+          "C9300L-DNA-E-48-3Y",
+          "C9300L-DNA-E-48-5Y",
+          "C9300L-DNA-E-48-7Y"
+        ],
+        "term_variable": {
+          "axis": "n/a",
+          "choices_years": [3, 5, 7],
+          "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -E."
+        },
+        "notes": "C9300L fixed-uplink 48-port Essentials group. C9300LM models (both 24- and 48-port) also use C9300L license SKUs per Cisco CCW configuration tool; the ordering guide's C9300LM-specific SKUs do not exist in practice."
+      },
+      {
+        "id": "c9300l-dna-advantage-48",
+        "regime": "dna-term",
+        "tier": "advantage",
+        "port_class": 48,
+        "perpetual_member": "NETWORK-ADVANTAGE-PERPETUAL",
+        "subscription_members": [
+          "C9300L-DNA-A-48-3Y",
+          "C9300L-DNA-A-48-5Y",
+          "C9300L-DNA-A-48-7Y"
+        ],
+        "term_variable": {
+          "axis": "n/a",
+          "choices_years": [3, 5, 7],
+          "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -A."
+        },
+        "notes": "C9300L fixed-uplink 48-port Advantage group. C9300LM models (both 24- and 48-port) also use C9300L license SKUs per Cisco CCW configuration tool; the ordering guide's C9300LM-specific SKUs do not exist in practice."
       }
     ]
   },
@@ -872,12 +1256,12 @@
           "matrix_provenance": "Datasheet C9300LM PoE supply table, C9300LM-48UX-4Y row (PWR-C6-1KWAC default primary; secondary columns 600W AC / 715W DC / 1000W AC)."
         },
         "license": {
-          "group": "c9300lm-dna-advantage-48",
+          "group": "c9300l-dna-advantage-48",
           "regime_offered": [
             "dna-term"
           ],
           "tier_locked": "advantage",
-          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription (subscription tier must match network stack tier)."
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription (subscription tier must match network stack tier). C9300LM uses standard C9300L license SKUs (C9300L-DNA-A-48-*) per Cisco CCW; no C9300LM-specific license SKUs exist in practice."
         },
         "ssd_accessory": {
           "option": "9300LM-SSD-ACCKIT=",
