@@ -866,7 +866,11 @@
         ],
         "term_variable": {
           "axis": "n/a",
-          "choices_years": [3, 5, 7],
+          "choices_years": [
+            3,
+            5,
+            7
+          ],
           "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -E."
         }
       },
@@ -883,7 +887,11 @@
         ],
         "term_variable": {
           "axis": "n/a",
-          "choices_years": [3, 5, 7],
+          "choices_years": [
+            3,
+            5,
+            7
+          ],
           "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -A."
         }
       },
@@ -900,7 +908,11 @@
         ],
         "term_variable": {
           "axis": "n/a",
-          "choices_years": [3, 5, 7],
+          "choices_years": [
+            3,
+            5,
+            7
+          ],
           "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -E."
         },
         "notes": "C9300 1G fiber (SFP) 24-port Essentials group. -S suffix licenses are distinct from copper -24 licenses in the ordering guide; kept as a separate group so fiber models reference the correct SKU family."
@@ -918,7 +930,11 @@
         ],
         "term_variable": {
           "axis": "n/a",
-          "choices_years": [3, 5, 7],
+          "choices_years": [
+            3,
+            5,
+            7
+          ],
           "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -A."
         },
         "notes": "C9300 1G fiber (SFP) 24-port Advantage group. -S suffix licenses are distinct from copper -24 licenses in the ordering guide; kept as a separate group so fiber models reference the correct SKU family."
@@ -936,7 +952,11 @@
         ],
         "term_variable": {
           "axis": "n/a",
-          "choices_years": [3, 5, 7],
+          "choices_years": [
+            3,
+            5,
+            7
+          ],
           "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -A."
         }
       },
@@ -953,7 +973,11 @@
         ],
         "term_variable": {
           "axis": "n/a",
-          "choices_years": [3, 5, 7],
+          "choices_years": [
+            3,
+            5,
+            7
+          ],
           "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -E."
         },
         "notes": "C9300 1G fiber (SFP) 48-port Essentials group. -S suffix licenses are distinct from copper -48 licenses in the ordering guide; kept as a separate group so fiber models reference the correct SKU family."
@@ -971,7 +995,11 @@
         ],
         "term_variable": {
           "axis": "n/a",
-          "choices_years": [3, 5, 7],
+          "choices_years": [
+            3,
+            5,
+            7
+          ],
           "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -A."
         },
         "notes": "C9300 1G fiber (SFP) 48-port Advantage group. -S suffix licenses are distinct from copper -48 licenses in the ordering guide; kept as a separate group so fiber models reference the correct SKU family."
@@ -989,7 +1017,11 @@
         ],
         "term_variable": {
           "axis": "n/a",
-          "choices_years": [3, 5, 7],
+          "choices_years": [
+            3,
+            5,
+            7
+          ],
           "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -A."
         },
         "notes": "C9300L fixed-uplink 24-port Advantage group. C9300LM models (both 24- and 48-port) also use C9300L license SKUs per Cisco CCW configuration tool; the ordering guide's C9300LM-specific SKUs do not exist in practice."
@@ -1007,7 +1039,11 @@
         ],
         "term_variable": {
           "axis": "n/a",
-          "choices_years": [3, 5, 7],
+          "choices_years": [
+            3,
+            5,
+            7
+          ],
           "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -E."
         },
         "notes": "C9300L fixed-uplink 48-port Essentials group. C9300LM models (both 24- and 48-port) also use C9300L license SKUs per Cisco CCW configuration tool; the ordering guide's C9300LM-specific SKUs do not exist in practice."
@@ -1025,7 +1061,11 @@
         ],
         "term_variable": {
           "axis": "n/a",
-          "choices_years": [3, 5, 7],
+          "choices_years": [
+            3,
+            5,
+            7
+          ],
           "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -A."
         },
         "notes": "C9300L fixed-uplink 48-port Advantage group. C9300LM models (both 24- and 48-port) also use C9300L license SKUs per Cisco CCW configuration tool; the ordering guide's C9300LM-specific SKUs do not exist in practice."
@@ -1044,7 +1084,6 @@
         "poe_budget_watts": 2880,
         "total_port_count": 48,
         "poe_port_count": 48,
-        "multigig_port_count": 12,
         "uplink_modular": true,
         "stacking_capable": true,
         "stacking_technology": "stackwise-480",
@@ -1052,7 +1091,8 @@
         "redundant_psu_capable": true,
         "license_regime": [
           "dna-term"
-        ]
+        ],
+        "multigig_10g_port_count": 12
       },
       "axis_value_provenance": {
         "_comment": "How look-through axis values were derived, so they can be re-validated.",
@@ -1171,7 +1211,6 @@
         "poe_budget_watts": 1790,
         "total_port_count": 48,
         "poe_port_count": 48,
-        "multigig_port_count": 8,
         "uplink_modular": false,
         "stacking_capable": true,
         "stacking_technology": "stackwise-320",
@@ -1179,7 +1218,8 @@
         "redundant_psu_capable": true,
         "license_regime": [
           "dna-term"
-        ]
+        ],
+        "multigig_10g_port_count": 8
       },
       "axis_value_provenance": {
         "_comment": "How look-through / resolved axis values were derived, so they can be re-validated.",
@@ -1287,7 +1327,6 @@
         "poe_capable": false,
         "poe_type": "none",
         "total_port_count": 24,
-        "multigig_port_count": 0,
         "uplink_modular": false,
         "stacking_capable": true,
         "stacking_technology": "stackwise-320",
@@ -1373,7 +1412,6 @@
         "poe_capable": false,
         "poe_type": "none",
         "total_port_count": 12,
-        "multigig_port_count": 0,
         "access_1g_fiber": 12,
         "access_10g_fiber": 12,
         "access_25g_fiber": 12,
@@ -1389,7 +1427,6 @@
       "axis_value_provenance": {
         "_comment": "How resolved axis values were derived, so they can be re-validated.",
         "poe_*": "poe_capable=false: datasheet Table 4 C9300X-12Y row shows 'No PoE' across all secondary-PSU columns (PWR-C1-715WAC-P default). poe_type='none'; poe_budget_watts/poe_port_count omitted (optional axes, absent when not poe_capable).",
-        "multigig_port_count": "0: the 12 access ports are 25G/10G/1G SFP28 fiber (Table 2), not copper Multigigabit (mGig = copper >1G over RJ-45). Fiber SFP28 speed is not counted as mGig.",
         "stacking_technology": "stackwise-1t: datasheet Table 1/Table 5, C9300X SKUs (1 Tbps; 480G when stacked with a C9300).",
         "stackpower_capable": "true: datasheet states StackPower supported on C9300 and C9300X SKUs; Table 1 shows StackPower checked for C9300X (larger budget / StackPower+).",
         "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-12y-uplink-modules.uplink_capacity.per_speed_max (the 12Y cannot take C9300X-NM-4C).",
@@ -1466,7 +1503,6 @@
         "poe_capable": false,
         "poe_type": "none",
         "total_port_count": 12,
-        "multigig_port_count": 0,
         "access_1g_fiber": 12,
         "access_10g_fiber": 12,
         "access_25g_fiber": 12,
@@ -1482,7 +1518,6 @@
       "axis_value_provenance": {
         "_comment": "How resolved axis values were derived, so they can be re-validated.",
         "poe_*": "poe_capable=false: datasheet Table 4 C9300X-12Y row shows 'No PoE' across all secondary-PSU columns (PWR-C1-715WAC-P default). poe_type='none'; poe_budget_watts/poe_port_count omitted (optional axes, absent when not poe_capable).",
-        "multigig_port_count": "0: the 12 access ports are 25G/10G/1G SFP28 fiber (Table 2), not copper Multigigabit (mGig = copper >1G over RJ-45). Fiber SFP28 speed is not counted as mGig.",
         "stacking_technology": "stackwise-1t: datasheet Table 1/Table 5, C9300X SKUs (1 Tbps; 480G when stacked with a C9300).",
         "stackpower_capable": "true: datasheet states StackPower supported on C9300 and C9300X SKUs; Table 1 shows StackPower checked for C9300X (larger budget / StackPower+).",
         "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-12y-uplink-modules.uplink_capacity.per_speed_max (the 12Y cannot take C9300X-NM-4C).",
@@ -1561,22 +1596,24 @@
         "poe_budget_watts": 3290,
         "total_port_count": 48,
         "poe_port_count": 48,
-        "multigig_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
         "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "redundant_psu_capable": true,
-        "license_regime": ["dna-term"]
+        "license_regime": [
+          "dna-term"
+        ],
+        "multigig_10g_port_count": 48
       },
       "axis_value_provenance": {
         "_comment": "How resolved axis values were derived, so they can be re-validated.",
         "poe_budget_watts": "max of poe_budget_matrix (3290W: PWR-C1-1900WAC-P primary + PWR-C1-1900WAC-P secondary). Datasheet Table 4, C9300X-48HX row.",
         "poe_type": "upoe+: datasheet Table 2 C9300X-48HX row: '48 ports Cisco UPOE+ ... with 90W UPOE+'.",
-        "multigig_port_count": "48: all 48 copper access ports are 10G Multigigabit (10G/5G/2.5G/1G/100M) per datasheet Table 2 C9300X-48HX row.",
         "stacking_technology": "stackwise-1t: datasheet Table 5, C9300X SKUs (1 Tbps).",
         "stackpower_capable": "true: datasheet Table 1 shows StackPower for Catalyst 9300X (StackPower+, larger power budget than C9300).",
-        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-modular-uplink-modules.uplink_capacity.per_speed_max."
+        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-modular-uplink-modules.uplink_capacity.per_speed_max.",
+        "multigig_10g_port_count": "48: all 48 copper access ports are 10G Multigigabit (10G/5G/2.5G/1G/100M) per datasheet Table 2 C9300X-48HX row."
       },
       "attributes": {
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
@@ -1594,7 +1631,11 @@
         "hardware_ipsec_max_gbps": 100,
         "port_layout": "48x 10G Multigigabit (10G/5G/2.5G/1G/100M) copper UPOE+",
         "default_ac_power_supply": "PWR-C1-1100WAC-P",
-        "dimensions_cm_hxwxd_chassis_only": [4.4, 44.5, 48.3],
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          48.3
+        ],
         "weight_kg_with_default_psu": 6.62,
         "mtbf_hours": 185420
       },
@@ -1611,24 +1652,69 @@
         },
         "power_supplies": {
           "group": "c9300x-psus",
-          "valid_primary": ["PWR-C1-1100WAC-P", "PWR-C1-1900WAC-P"],
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
           "poe_budget_matrix": [
-            {"primary": "PWR-C1-1900WAC-P", "secondary": null,               "poe_budget_watts": 1390},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-350WAC-P", "poe_budget_watts": 1740},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-715WAC-P", "poe_budget_watts": 2105},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-1100WAC-P","poe_budget_watts": 2490},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-1900WAC-P","poe_budget_watts": 3290},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": null,               "poe_budget_watts": 590},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-350WAC-P", "poe_budget_watts": 940},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-715WAC-P", "poe_budget_watts": 1305},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-1100WAC-P","poe_budget_watts": 1690},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-1900WAC-P","poe_budget_watts": 2490}
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1390
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1740
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 2105
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 2490
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 3290
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 590
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 940
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1305
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1690
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2490
+            }
           ],
           "matrix_provenance": "Datasheet Table 4, C9300X-48HX rows (1100W default / 1900W upgrade; columns: no secondary, 350W, 715W, 1100W, 1900W secondary)."
         },
         "license": {
           "group": "c9300-dna-essentials-48",
-          "regime_offered": ["dna-term"],
+          "regime_offered": [
+            "dna-term"
+          ],
           "tier_locked": "essentials",
           "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
         }
@@ -1654,22 +1740,24 @@
         "poe_budget_watts": 3290,
         "total_port_count": 48,
         "poe_port_count": 48,
-        "multigig_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
         "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "redundant_psu_capable": true,
-        "license_regime": ["dna-term"]
+        "license_regime": [
+          "dna-term"
+        ],
+        "multigig_10g_port_count": 48
       },
       "axis_value_provenance": {
         "_comment": "Identical hardware to C9300X-48HX-E; see that entry for provenance.",
         "poe_budget_watts": "max of poe_budget_matrix (3290W). Datasheet Table 4, C9300X-48HX row.",
         "poe_type": "upoe+: datasheet Table 2 C9300X-48HX row.",
-        "multigig_port_count": "48: all 48 copper ports are 10G Multigigabit per datasheet Table 2.",
         "stacking_technology": "stackwise-1t: datasheet Table 5, C9300X SKUs.",
         "stackpower_capable": "true: datasheet Table 1, Catalyst 9300X row.",
-        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-modular-uplink-modules.uplink_capacity.per_speed_max."
+        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-modular-uplink-modules.uplink_capacity.per_speed_max.",
+        "multigig_10g_port_count": "48: all 48 copper ports are 10G Multigigabit per datasheet Table 2."
       },
       "attributes": {
         "_comment": "Displayed, never filtered. Identical hardware to C9300X-48HX-E.",
@@ -1687,7 +1775,11 @@
         "hardware_ipsec_max_gbps": 100,
         "port_layout": "48x 10G Multigigabit (10G/5G/2.5G/1G/100M) copper UPOE+",
         "default_ac_power_supply": "PWR-C1-1100WAC-P",
-        "dimensions_cm_hxwxd_chassis_only": [4.4, 44.5, 48.3],
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          48.3
+        ],
         "weight_kg_with_default_psu": 6.62,
         "mtbf_hours": 185420
       },
@@ -1704,24 +1796,69 @@
         },
         "power_supplies": {
           "group": "c9300x-psus",
-          "valid_primary": ["PWR-C1-1100WAC-P", "PWR-C1-1900WAC-P"],
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
           "poe_budget_matrix": [
-            {"primary": "PWR-C1-1900WAC-P", "secondary": null,               "poe_budget_watts": 1390},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-350WAC-P", "poe_budget_watts": 1740},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-715WAC-P", "poe_budget_watts": 2105},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-1100WAC-P","poe_budget_watts": 2490},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-1900WAC-P","poe_budget_watts": 3290},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": null,               "poe_budget_watts": 590},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-350WAC-P", "poe_budget_watts": 940},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-715WAC-P", "poe_budget_watts": 1305},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-1100WAC-P","poe_budget_watts": 1690},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-1900WAC-P","poe_budget_watts": 2490}
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1390
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1740
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 2105
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 2490
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 3290
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 590
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 940
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1305
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1690
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2490
+            }
           ],
           "matrix_provenance": "Datasheet Table 4, C9300X-48HX rows (1100W default / 1900W upgrade; columns: no secondary, 350W, 715W, 1100W, 1900W secondary)."
         },
         "license": {
           "group": "c9300-dna-advantage-48",
-          "regime_offered": ["dna-term"],
+          "regime_offered": [
+            "dna-term"
+          ],
           "tier_locked": "advantage",
           "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription (subscription tier must match network stack tier)."
         }
@@ -1745,21 +1882,23 @@
         "poe_capable": false,
         "poe_type": "none",
         "total_port_count": 48,
-        "multigig_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
         "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "redundant_psu_capable": true,
-        "license_regime": ["dna-term"]
+        "license_regime": [
+          "dna-term"
+        ],
+        "multigig_10g_port_count": 48
       },
       "axis_value_provenance": {
         "_comment": "How resolved axis values were derived, so they can be re-validated.",
         "poe_*": "poe_capable=false: datasheet Table 2 C9300X-48TX row: '48 ports data'; Table 4 shows 'No PoE' across all secondary columns (PWR-C1-715WAC-P default). poe_type='none'; poe_budget_watts/poe_port_count omitted.",
-        "multigig_port_count": "48: all 48 copper access ports are 10G Multigigabit (10G/5G/2.5G/1G/100M) per datasheet Table 2 C9300X-48TX row.",
         "stacking_technology": "stackwise-1t: datasheet Table 5, C9300X SKUs (1 Tbps).",
         "stackpower_capable": "true: datasheet Table 1, Catalyst 9300X row (StackPower+ applies regardless of PoE capability).",
-        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-modular-uplink-modules.uplink_capacity.per_speed_max."
+        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-modular-uplink-modules.uplink_capacity.per_speed_max.",
+        "multigig_10g_port_count": "48: all 48 copper access ports are 10G Multigigabit (10G/5G/2.5G/1G/100M) per datasheet Table 2 C9300X-48TX row."
       },
       "attributes": {
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
@@ -1777,7 +1916,11 @@
         "hardware_ipsec_max_gbps": 100,
         "port_layout": "48x 10G Multigigabit (10G/5G/2.5G/1G/100M) copper, data only",
         "default_ac_power_supply": "PWR-C1-715WAC-P",
-        "dimensions_cm_hxwxd_chassis_only": [4.4, 44.5, 48.3],
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          48.3
+        ],
         "weight_kg_with_default_psu": 6.62,
         "mtbf_hours": 206480
       },
@@ -1794,13 +1937,17 @@
         },
         "power_supplies": {
           "group": "c9300x-psus",
-          "valid_primary": ["PWR-C1-715WAC-P"],
+          "valid_primary": [
+            "PWR-C1-715WAC-P"
+          ],
           "poe_budget_matrix": [],
           "matrix_provenance": "Datasheet Table 4: C9300X-48TX default PWR-C1-715WAC-P, 'No PoE' across all secondary columns. Empty matrix => no PoE budget (poe_capable=false). Secondary PSU still orderable for power redundancy; redundant_psu_capable=true."
         },
         "license": {
           "group": "c9300-dna-essentials-48",
-          "regime_offered": ["dna-term"],
+          "regime_offered": [
+            "dna-term"
+          ],
           "tier_locked": "essentials",
           "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
         }
@@ -1824,21 +1971,23 @@
         "poe_capable": false,
         "poe_type": "none",
         "total_port_count": 48,
-        "multigig_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
         "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "redundant_psu_capable": true,
-        "license_regime": ["dna-term"]
+        "license_regime": [
+          "dna-term"
+        ],
+        "multigig_10g_port_count": 48
       },
       "axis_value_provenance": {
         "_comment": "Identical hardware to C9300X-48TX-E; see that entry for provenance.",
         "poe_*": "poe_capable=false: datasheet Table 4 C9300X-48TX 'No PoE' across all columns.",
-        "multigig_port_count": "48: all 48 copper ports are 10G Multigigabit per datasheet Table 2.",
         "stacking_technology": "stackwise-1t: datasheet Table 5, C9300X SKUs.",
         "stackpower_capable": "true: datasheet Table 1, Catalyst 9300X row.",
-        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-modular-uplink-modules.uplink_capacity.per_speed_max."
+        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-modular-uplink-modules.uplink_capacity.per_speed_max.",
+        "multigig_10g_port_count": "48: all 48 copper ports are 10G Multigigabit per datasheet Table 2."
       },
       "attributes": {
         "_comment": "Displayed, never filtered. Identical hardware to C9300X-48TX-E.",
@@ -1856,7 +2005,11 @@
         "hardware_ipsec_max_gbps": 100,
         "port_layout": "48x 10G Multigigabit (10G/5G/2.5G/1G/100M) copper, data only",
         "default_ac_power_supply": "PWR-C1-715WAC-P",
-        "dimensions_cm_hxwxd_chassis_only": [4.4, 44.5, 48.3],
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          48.3
+        ],
         "weight_kg_with_default_psu": 6.62,
         "mtbf_hours": 206480
       },
@@ -1873,13 +2026,17 @@
         },
         "power_supplies": {
           "group": "c9300x-psus",
-          "valid_primary": ["PWR-C1-715WAC-P"],
+          "valid_primary": [
+            "PWR-C1-715WAC-P"
+          ],
           "poe_budget_matrix": [],
           "matrix_provenance": "Datasheet Table 4: C9300X-48TX default PWR-C1-715WAC-P, 'No PoE' across all secondary columns. Empty matrix => no PoE budget (poe_capable=false). Secondary PSU still orderable for power redundancy; redundant_psu_capable=true."
         },
         "license": {
           "group": "c9300-dna-advantage-48",
-          "regime_offered": ["dna-term"],
+          "regime_offered": [
+            "dna-term"
+          ],
           "tier_locked": "advantage",
           "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription (subscription tier must match network stack tier)."
         }
@@ -1905,22 +2062,26 @@
         "poe_budget_watts": 3390,
         "total_port_count": 48,
         "poe_port_count": 48,
-        "multigig_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
         "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "redundant_psu_capable": true,
-        "license_regime": ["dna-term"]
+        "license_regime": [
+          "dna-term"
+        ],
+        "multigig_10g_port_count": 8,
+        "multigig_5g_port_count": 40
       },
       "axis_value_provenance": {
         "_comment": "How resolved axis values were derived, so they can be re-validated.",
         "poe_budget_watts": "max of poe_budget_matrix (3390W: PWR-C1-1900WAC-P primary + PWR-C1-1900WAC-P secondary). Datasheet Table 4, C9300X-48HXN row.",
         "poe_type": "upoe+: datasheet Table 2 C9300X-48HXN row: '48 ports Cisco UPOE+'.",
-        "multigig_port_count": "48: all 48 copper access ports are Multigigabit (8x 10G/5G/2.5G/1G/100M + 40x 5G/2.5G/1G/100M) per datasheet Table 2. Both speed tiers are copper Multigigabit (>1G over RJ-45), so all 48 count.",
         "stacking_technology": "stackwise-1t: datasheet Table 5, C9300X SKUs (1 Tbps).",
         "stackpower_capable": "true: datasheet Table 1, Catalyst 9300X row.",
-        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-12y-uplink-modules.uplink_capacity.per_speed_max (4C excluded; NM port counts are limited per datasheet Table 3 footnote **)."
+        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-12y-uplink-modules.uplink_capacity.per_speed_max (4C excluded; NM port counts are limited per datasheet Table 3 footnote **).",
+        "multigig_10g_port_count": "48: all 48 copper access ports are Multigigabit (8x 10G/5G/2.5G/1G/100M + 40x 5G/2.5G/1G/100M) per datasheet Table 2. Both speed tiers are copper Multigigabit (>1G over RJ-45), so all 48 count.",
+        "multigig_5g_port_count": "Datasheet Table 2 / Table 8 port breakdown."
       },
       "attributes": {
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
@@ -1938,7 +2099,11 @@
         "hardware_ipsec_max_gbps": 100,
         "port_layout": "8x 10G Multigigabit (10G/5G/2.5G/1G/100M) + 40x 5G Multigigabit (5G/2.5G/1G/100M) copper UPOE+",
         "default_ac_power_supply": "PWR-C1-1100WAC-P",
-        "dimensions_cm_hxwxd_chassis_only": [4.4, 44.5, 44.6],
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          44.6
+        ],
         "weight_kg_with_default_psu": 6.44,
         "mtbf_hours": 188200
       },
@@ -1956,24 +2121,69 @@
         },
         "power_supplies": {
           "group": "c9300x-psus",
-          "valid_primary": ["PWR-C1-1100WAC-P", "PWR-C1-1900WAC-P"],
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
           "poe_budget_matrix": [
-            {"primary": "PWR-C1-1900WAC-P", "secondary": null,               "poe_budget_watts": 1490},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-350WAC-P", "poe_budget_watts": 1840},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-715WAC-P", "poe_budget_watts": 2205},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-1100WAC-P","poe_budget_watts": 2590},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-1900WAC-P","poe_budget_watts": 3390},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": null,               "poe_budget_watts": 690},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-350WAC-P", "poe_budget_watts": 1040},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-715WAC-P", "poe_budget_watts": 1405},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-1100WAC-P","poe_budget_watts": 1790},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-1900WAC-P","poe_budget_watts": 2590}
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1490
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1840
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 2205
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 2590
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 3390
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 690
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1040
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1405
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1790
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2590
+            }
           ],
           "matrix_provenance": "Datasheet Table 4, C9300X-48HXN rows (1100W default / 1900W upgrade; columns: no secondary, 350W, 715W, 1100W, 1900W secondary)."
         },
         "license": {
           "group": "c9300-dna-essentials-48",
-          "regime_offered": ["dna-term"],
+          "regime_offered": [
+            "dna-term"
+          ],
           "tier_locked": "essentials",
           "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
         }
@@ -1999,22 +2209,26 @@
         "poe_budget_watts": 3390,
         "total_port_count": 48,
         "poe_port_count": 48,
-        "multigig_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
         "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "redundant_psu_capable": true,
-        "license_regime": ["dna-term"]
+        "license_regime": [
+          "dna-term"
+        ],
+        "multigig_10g_port_count": 8,
+        "multigig_5g_port_count": 40
       },
       "axis_value_provenance": {
         "_comment": "Identical hardware to C9300X-48HXN-E; see that entry for provenance.",
         "poe_budget_watts": "max of poe_budget_matrix (3390W). Datasheet Table 4, C9300X-48HXN row.",
         "poe_type": "upoe+: datasheet Table 2 C9300X-48HXN row.",
-        "multigig_port_count": "48: all 48 copper ports are Multigigabit (8x 10G + 40x 5G) per datasheet Table 2.",
         "stacking_technology": "stackwise-1t: datasheet Table 5, C9300X SKUs.",
         "stackpower_capable": "true: datasheet Table 1, Catalyst 9300X row.",
-        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-12y-uplink-modules.uplink_capacity.per_speed_max."
+        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-12y-uplink-modules.uplink_capacity.per_speed_max.",
+        "multigig_10g_port_count": "48: all 48 copper ports are Multigigabit (8x 10G + 40x 5G) per datasheet Table 2.",
+        "multigig_5g_port_count": "Datasheet Table 2 / Table 8 port breakdown."
       },
       "attributes": {
         "_comment": "Displayed, never filtered. Identical hardware to C9300X-48HXN-E.",
@@ -2032,7 +2246,11 @@
         "hardware_ipsec_max_gbps": 100,
         "port_layout": "8x 10G Multigigabit (10G/5G/2.5G/1G/100M) + 40x 5G Multigigabit (5G/2.5G/1G/100M) copper UPOE+",
         "default_ac_power_supply": "PWR-C1-1100WAC-P",
-        "dimensions_cm_hxwxd_chassis_only": [4.4, 44.5, 44.6],
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          44.6
+        ],
         "weight_kg_with_default_psu": 6.44,
         "mtbf_hours": 188200
       },
@@ -2050,24 +2268,69 @@
         },
         "power_supplies": {
           "group": "c9300x-psus",
-          "valid_primary": ["PWR-C1-1100WAC-P", "PWR-C1-1900WAC-P"],
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
           "poe_budget_matrix": [
-            {"primary": "PWR-C1-1900WAC-P", "secondary": null,               "poe_budget_watts": 1490},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-350WAC-P", "poe_budget_watts": 1840},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-715WAC-P", "poe_budget_watts": 2205},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-1100WAC-P","poe_budget_watts": 2590},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-1900WAC-P","poe_budget_watts": 3390},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": null,               "poe_budget_watts": 690},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-350WAC-P", "poe_budget_watts": 1040},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-715WAC-P", "poe_budget_watts": 1405},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-1100WAC-P","poe_budget_watts": 1790},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-1900WAC-P","poe_budget_watts": 2590}
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1490
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1840
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 2205
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 2590
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 3390
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 690
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1040
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1405
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1790
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2590
+            }
           ],
           "matrix_provenance": "Datasheet Table 4, C9300X-48HXN rows (1100W default / 1900W upgrade; columns: no secondary, 350W, 715W, 1100W, 1900W secondary)."
         },
         "license": {
           "group": "c9300-dna-advantage-48",
-          "regime_offered": ["dna-term"],
+          "regime_offered": [
+            "dna-term"
+          ],
           "tier_locked": "advantage",
           "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription (subscription tier must match network stack tier)."
         }
@@ -2093,22 +2356,24 @@
         "poe_budget_watts": 2160,
         "total_port_count": 24,
         "poe_port_count": 24,
-        "multigig_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
         "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "redundant_psu_capable": true,
-        "license_regime": ["dna-term"]
+        "license_regime": [
+          "dna-term"
+        ],
+        "multigig_10g_port_count": 24
       },
       "axis_value_provenance": {
         "_comment": "How resolved axis values were derived, so they can be re-validated.",
-        "poe_budget_watts": "max of poe_budget_matrix (2160W, capped: 24 ports × 90W UPOE+ = 2160W). Datasheet Table 4, C9300X-24HX row; asterisked values indicate cap.",
+        "poe_budget_watts": "max of poe_budget_matrix (2160W, capped: 24 ports \u00d7 90W UPOE+ = 2160W). Datasheet Table 4, C9300X-24HX row; asterisked values indicate cap.",
         "poe_type": "upoe+: datasheet Table 2 C9300X-24HX row: '24 ports Cisco UPOE+, 24x 10G Multigigabit'.",
-        "multigig_port_count": "24: all 24 copper access ports are 10G Multigigabit (10G/5G/2.5G/1G/100M) per datasheet Table 2 C9300X-24HX row.",
         "stacking_technology": "stackwise-1t: datasheet Table 5, C9300X SKUs (1 Tbps).",
         "stackpower_capable": "true: datasheet Table 1, Catalyst 9300X row.",
-        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-12y-uplink-modules.uplink_capacity.per_speed_max (4C not compatible per datasheet Table 3 footnote *)."
+        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-12y-uplink-modules.uplink_capacity.per_speed_max (4C not compatible per datasheet Table 3 footnote *).",
+        "multigig_10g_port_count": "24: all 24 copper access ports are 10G Multigigabit (10G/5G/2.5G/1G/100M) per datasheet Table 2 C9300X-24HX row."
       },
       "attributes": {
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
@@ -2126,7 +2391,11 @@
         "hardware_ipsec_max_gbps": 100,
         "port_layout": "24x 10G Multigigabit (10G/5G/2.5G/1G/100M) copper UPOE+",
         "default_ac_power_supply": "PWR-C1-1100WAC-P",
-        "dimensions_cm_hxwxd_chassis_only": [4.4, 44.5, 44.6],
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          44.6
+        ],
         "weight_kg_with_default_psu": 6.25,
         "mtbf_hours": 220250
       },
@@ -2143,24 +2412,69 @@
         },
         "power_supplies": {
           "group": "c9300x-psus",
-          "valid_primary": ["PWR-C1-1100WAC-P", "PWR-C1-1900WAC-P"],
-          "poe_budget_matrix": [
-            {"primary": "PWR-C1-1900WAC-P", "secondary": null,               "poe_budget_watts": 1535},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-350WAC-P", "poe_budget_watts": 1885},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-715WAC-P", "poe_budget_watts": 2160},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-1100WAC-P","poe_budget_watts": 2160},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-1900WAC-P","poe_budget_watts": 2160},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": null,               "poe_budget_watts": 735},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-350WAC-P", "poe_budget_watts": 1085},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-715WAC-P", "poe_budget_watts": 1450},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-1100WAC-P","poe_budget_watts": 1835},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-1900WAC-P","poe_budget_watts": 2160}
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
           ],
-          "matrix_provenance": "Datasheet Table 4, C9300X-24HX rows (1100W default / 1900W upgrade; columns: no secondary, 350W, 715W, 1100W, 1900W secondary). Asterisked values (*) capped at 2160W = 24 ports × 90W UPOE+."
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1535
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1885
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 2160
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 2160
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2160
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 735
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1085
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1450
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1835
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2160
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300X-24HX rows (1100W default / 1900W upgrade; columns: no secondary, 350W, 715W, 1100W, 1900W secondary). Asterisked values (*) capped at 2160W = 24 ports \u00d7 90W UPOE+."
         },
         "license": {
           "group": "c9300-dna-essentials-24",
-          "regime_offered": ["dna-term"],
+          "regime_offered": [
+            "dna-term"
+          ],
           "tier_locked": "essentials",
           "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
         }
@@ -2186,22 +2500,24 @@
         "poe_budget_watts": 2160,
         "total_port_count": 24,
         "poe_port_count": 24,
-        "multigig_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
         "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "redundant_psu_capable": true,
-        "license_regime": ["dna-term"]
+        "license_regime": [
+          "dna-term"
+        ],
+        "multigig_10g_port_count": 24
       },
       "axis_value_provenance": {
         "_comment": "Identical hardware to C9300X-24HX-E; see that entry for provenance.",
         "poe_budget_watts": "max of poe_budget_matrix (2160W, capped). Datasheet Table 4, C9300X-24HX row.",
         "poe_type": "upoe+: datasheet Table 2 C9300X-24HX row.",
-        "multigig_port_count": "24: all 24 copper ports are 10G Multigigabit per datasheet Table 2.",
         "stacking_technology": "stackwise-1t: datasheet Table 5, C9300X SKUs.",
         "stackpower_capable": "true: datasheet Table 1, Catalyst 9300X row.",
-        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-12y-uplink-modules.uplink_capacity.per_speed_max."
+        "uplink_*": "Not stored on the model (uplink_modular=true). Resolved against c9300x-12y-uplink-modules.uplink_capacity.per_speed_max.",
+        "multigig_10g_port_count": "24: all 24 copper ports are 10G Multigigabit per datasheet Table 2."
       },
       "attributes": {
         "_comment": "Displayed, never filtered. Identical hardware to C9300X-24HX-E.",
@@ -2219,7 +2535,11 @@
         "hardware_ipsec_max_gbps": 100,
         "port_layout": "24x 10G Multigigabit (10G/5G/2.5G/1G/100M) copper UPOE+",
         "default_ac_power_supply": "PWR-C1-1100WAC-P",
-        "dimensions_cm_hxwxd_chassis_only": [4.4, 44.5, 44.6],
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          44.6
+        ],
         "weight_kg_with_default_psu": 6.25,
         "mtbf_hours": 220250
       },
@@ -2236,24 +2556,69 @@
         },
         "power_supplies": {
           "group": "c9300x-psus",
-          "valid_primary": ["PWR-C1-1100WAC-P", "PWR-C1-1900WAC-P"],
-          "poe_budget_matrix": [
-            {"primary": "PWR-C1-1900WAC-P", "secondary": null,               "poe_budget_watts": 1535},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-350WAC-P", "poe_budget_watts": 1885},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-715WAC-P", "poe_budget_watts": 2160},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-1100WAC-P","poe_budget_watts": 2160},
-            {"primary": "PWR-C1-1900WAC-P", "secondary": "PWR-C1-1900WAC-P","poe_budget_watts": 2160},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": null,               "poe_budget_watts": 735},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-350WAC-P", "poe_budget_watts": 1085},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-715WAC-P", "poe_budget_watts": 1450},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-1100WAC-P","poe_budget_watts": 1835},
-            {"primary": "PWR-C1-1100WAC-P", "secondary": "PWR-C1-1900WAC-P","poe_budget_watts": 2160}
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
           ],
-          "matrix_provenance": "Datasheet Table 4, C9300X-24HX rows (1100W default / 1900W upgrade; columns: no secondary, 350W, 715W, 1100W, 1900W secondary). Asterisked values (*) capped at 2160W = 24 ports × 90W UPOE+."
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1535
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1885
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 2160
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 2160
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2160
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 735
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1085
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1450
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1835
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2160
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300X-24HX rows (1100W default / 1900W upgrade; columns: no secondary, 350W, 715W, 1100W, 1900W secondary). Asterisked values (*) capped at 2160W = 24 ports \u00d7 90W UPOE+."
         },
         "license": {
           "group": "c9300-dna-advantage-24",
-          "regime_offered": ["dna-term"],
+          "regime_offered": [
+            "dna-term"
+          ],
           "tier_locked": "advantage",
           "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription (subscription tier must match network stack tier)."
         }
@@ -2277,7 +2642,6 @@
         "poe_capable": false,
         "poe_type": "none",
         "total_port_count": 24,
-        "multigig_port_count": 0,
         "access_1g_fiber": 24,
         "access_10g_fiber": 24,
         "access_25g_fiber": 24,
@@ -2286,12 +2650,13 @@
         "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "redundant_psu_capable": true,
-        "license_regime": ["dna-term"]
+        "license_regime": [
+          "dna-term"
+        ]
       },
       "axis_value_provenance": {
         "_comment": "How resolved axis values were derived, so they can be re-validated.",
         "poe_*": "poe_capable=false: datasheet Table 4 C9300X-24Y row shows 'No PoE' across all secondary columns (PWR-C1-715WAC-P default). poe_type='none'; poe_budget_watts/poe_port_count omitted.",
-        "multigig_port_count": "0: the 24 access ports are 25G/10G/1G SFP28 fiber (datasheet Table 2), not copper Multigigabit (mGig = copper >1G over RJ-45). Fiber SFP28 speed is not counted as mGig.",
         "access_*_fiber": "24x SFP28 access ports, each 1/10/25G capable (datasheet Table 2, C9300X-24Y row: '24 ports 25G/10G/1G SFP28'). All 24 ports support all three speeds, so each fiber access axis = 24.",
         "stacking_technology": "stackwise-1t: datasheet Table 5, C9300X SKUs (1 Tbps).",
         "stackpower_capable": "true: datasheet Table 1, Catalyst 9300X row.",
@@ -2313,7 +2678,11 @@
         "hardware_ipsec_max_gbps": 100,
         "port_layout": "24x 25G/10G/1G SFP28 fiber",
         "default_ac_power_supply": "PWR-C1-715WAC-P",
-        "dimensions_cm_hxwxd_chassis_only": [4.4, 44.5, 44.7],
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          44.7
+        ],
         "weight_kg_with_default_psu": 7.35,
         "mtbf_hours": 249350
       },
@@ -2330,13 +2699,17 @@
         },
         "power_supplies": {
           "group": "c9300x-psus",
-          "valid_primary": ["PWR-C1-715WAC-P"],
+          "valid_primary": [
+            "PWR-C1-715WAC-P"
+          ],
           "poe_budget_matrix": [],
           "matrix_provenance": "Datasheet Table 4: C9300X-24Y default PWR-C1-715WAC-P, 'No PoE' across all secondary columns. Empty matrix => no PoE budget (poe_capable=false). Secondary PSU still orderable for power redundancy; redundant_psu_capable=true."
         },
         "license": {
           "group": "c9300x-dna-essentials-l",
-          "regime_offered": ["dna-term"],
+          "regime_offered": [
+            "dna-term"
+          ],
           "tier_locked": "essentials",
           "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
         }
@@ -2360,7 +2733,6 @@
         "poe_capable": false,
         "poe_type": "none",
         "total_port_count": 24,
-        "multigig_port_count": 0,
         "access_1g_fiber": 24,
         "access_10g_fiber": 24,
         "access_25g_fiber": 24,
@@ -2369,12 +2741,13 @@
         "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "redundant_psu_capable": true,
-        "license_regime": ["dna-term"]
+        "license_regime": [
+          "dna-term"
+        ]
       },
       "axis_value_provenance": {
         "_comment": "Identical hardware to C9300X-24Y-E; see that entry for provenance.",
         "poe_*": "poe_capable=false: datasheet Table 4 C9300X-24Y 'No PoE' across all columns.",
-        "multigig_port_count": "0: fiber SFP28 ports, not copper Multigigabit.",
         "access_*_fiber": "24x SFP28 ports each 1/10/25G capable per datasheet Table 2.",
         "stacking_technology": "stackwise-1t: datasheet Table 5, C9300X SKUs.",
         "stackpower_capable": "true: datasheet Table 1, Catalyst 9300X row.",
@@ -2396,7 +2769,11 @@
         "hardware_ipsec_max_gbps": 100,
         "port_layout": "24x 25G/10G/1G SFP28 fiber",
         "default_ac_power_supply": "PWR-C1-715WAC-P",
-        "dimensions_cm_hxwxd_chassis_only": [4.4, 44.5, 44.7],
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          44.7
+        ],
         "weight_kg_with_default_psu": 7.35,
         "mtbf_hours": 249350
       },
@@ -2413,13 +2790,17 @@
         },
         "power_supplies": {
           "group": "c9300x-psus",
-          "valid_primary": ["PWR-C1-715WAC-P"],
+          "valid_primary": [
+            "PWR-C1-715WAC-P"
+          ],
           "poe_budget_matrix": [],
           "matrix_provenance": "Datasheet Table 4: C9300X-24Y default PWR-C1-715WAC-P, 'No PoE' across all secondary columns. Empty matrix => no PoE budget (poe_capable=false). Secondary PSU still orderable for power redundancy; redundant_psu_capable=true."
         },
         "license": {
           "group": "c9300x-dna-advantage-l",
-          "regime_offered": ["dna-term"],
+          "regime_offered": [
+            "dna-term"
+          ],
           "tier_locked": "advantage",
           "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription (subscription tier must match network stack tier)."
         }
@@ -2430,6 +2811,3669 @@
         "mounting_brackets": true,
         "power_cables": {
           "count": 2,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-48UXM-A",
+      "description": "Cisco Catalyst 9300, 48-port (36x 100M/1G/2.5G + 12x Multigigabit 10G/5G/2.5G/1G/100M) copper, Cisco UPOE, modular uplinks, Network Advantage ENERGY STAR certified.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe",
+        "poe_budget_watts": 2880,
+        "total_port_count": 48,
+        "poe_port_count": 48,
+        "multigig_10g_port_count": 12,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (2880).",
+        "multigig_*g_port_count": "Datasheet Table 2 port layout description."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "energy_star_certified": true,
+        "switching_capacity_gbps": 580,
+        "switching_capacity_stacked_gbps": 1060,
+        "forwarding_rate_mpps": 431.54,
+        "forwarding_rate_stacked_mpps": 788.69,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 32,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "36x 100M/1G/2.5G + 12x Multigigabit (10G/5G/2.5G/1G/100M) Cisco UPOE",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          48.5
+        ],
+        "weight_kg": 9.34
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 490
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 840
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1205
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1590
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2390
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1290
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1640
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 2005
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 2880
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2880
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-48UXM rows."
+        },
+        "license": {
+          "group": "c9300-dna-advantage-48",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24T-E",
+      "description": "Cisco Catalyst 9300, 24-port data, modular uplinks, Network Essentials.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": false,
+        "poe_type": "none",
+        "total_port_count": 24,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 208,
+        "switching_capacity_stacked_gbps": 688,
+        "forwarding_rate_mpps": 154.76,
+        "forwarding_rate_stacked_mpps": 511.9,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24 ports data",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.27
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-350WAC-P",
+            "PWR-C1-715WAC-P",
+            "PWR-C1-1100WAC-P"
+          ],
+          "poe_budget_matrix": [],
+          "matrix_provenance": "No PoE. Table 4 footnote ***: 715W and 1100W upgrade primaries available."
+        },
+        "license": {
+          "group": "c9300-dna-essentials-24",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "essentials",
+          "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24T-A",
+      "description": "Cisco Catalyst 9300, 24-port data, modular uplinks, Network Advantage.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": false,
+        "poe_type": "none",
+        "total_port_count": 24,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 208,
+        "switching_capacity_stacked_gbps": 688,
+        "forwarding_rate_mpps": 154.76,
+        "forwarding_rate_stacked_mpps": 511.9,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24 ports data",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.27
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-350WAC-P",
+            "PWR-C1-715WAC-P",
+            "PWR-C1-1100WAC-P"
+          ],
+          "poe_budget_matrix": [],
+          "matrix_provenance": "No PoE. Table 4 footnote ***: 715W and 1100W upgrade primaries available."
+        },
+        "license": {
+          "group": "c9300-dna-advantage-24",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-48T-E",
+      "description": "Cisco Catalyst 9300, 48-port data, modular uplinks, Network Essentials.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": false,
+        "poe_type": "none",
+        "total_port_count": 48,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 256,
+        "switching_capacity_stacked_gbps": 736,
+        "forwarding_rate_mpps": 190.47,
+        "forwarding_rate_stacked_mpps": 547.62,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "48 ports data",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.45
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-350WAC-P",
+            "PWR-C1-715WAC-P",
+            "PWR-C1-1100WAC-P"
+          ],
+          "poe_budget_matrix": [],
+          "matrix_provenance": "No PoE. Table 4 footnote ***: 715W and 1100W upgrade primaries available."
+        },
+        "license": {
+          "group": "c9300-dna-essentials-48",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "essentials",
+          "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-48T-A",
+      "description": "Cisco Catalyst 9300, 48-port data, modular uplinks, Network Advantage.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": false,
+        "poe_type": "none",
+        "total_port_count": 48,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 256,
+        "switching_capacity_stacked_gbps": 736,
+        "forwarding_rate_mpps": 190.47,
+        "forwarding_rate_stacked_mpps": 547.62,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "48 ports data",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.45
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-350WAC-P",
+            "PWR-C1-715WAC-P",
+            "PWR-C1-1100WAC-P"
+          ],
+          "poe_budget_matrix": [],
+          "matrix_provenance": "No PoE. Table 4 footnote ***: 715W and 1100W upgrade primaries available."
+        },
+        "license": {
+          "group": "c9300-dna-advantage-48",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24P-E",
+      "description": "Cisco Catalyst 9300, 24-port PoE+, modular uplinks, Network Essentials.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "poe+",
+        "poe_budget_watts": 720,
+        "total_port_count": 24,
+        "poe_port_count": 24,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (720)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 208,
+        "switching_capacity_stacked_gbps": 688,
+        "forwarding_rate_mpps": 154.76,
+        "forwarding_rate_stacked_mpps": 511.9,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24 ports PoE+",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.4
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-715WAC-P",
+            "PWR-C1-1100WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 445
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 720
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-24P rows."
+        },
+        "license": {
+          "group": "c9300-dna-essentials-24",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "essentials",
+          "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24P-A",
+      "description": "Cisco Catalyst 9300, 24-port PoE+, modular uplinks, Network Advantage.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "poe+",
+        "poe_budget_watts": 720,
+        "total_port_count": 24,
+        "poe_port_count": 24,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (720)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 208,
+        "switching_capacity_stacked_gbps": 688,
+        "forwarding_rate_mpps": 154.76,
+        "forwarding_rate_stacked_mpps": 511.9,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24 ports PoE+",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.4
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-715WAC-P",
+            "PWR-C1-1100WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 445
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 720
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 720
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-24P rows."
+        },
+        "license": {
+          "group": "c9300-dna-advantage-24",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-48P-E",
+      "description": "Cisco Catalyst 9300, 48-port PoE+, modular uplinks, Network Essentials ENERGY STAR certified.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "poe+",
+        "poe_budget_watts": 1440,
+        "total_port_count": 48,
+        "poe_port_count": 48,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (1440)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "energy_star_certified": true,
+        "switching_capacity_gbps": 256,
+        "switching_capacity_stacked_gbps": 736,
+        "forwarding_rate_mpps": 190.47,
+        "forwarding_rate_stacked_mpps": 547.62,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "48 ports PoE+",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.59
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-715WAC-P",
+            "PWR-C1-1100WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 437
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 787
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1152
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 822
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1172
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-48P rows. (Listed as C9300-48P2 in Table 2 \u2014 ENERGY STAR hardware revision; orderable SKU is C9300-48P.)"
+        },
+        "license": {
+          "group": "c9300-dna-essentials-48",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "essentials",
+          "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-48P-A",
+      "description": "Cisco Catalyst 9300, 48-port PoE+, modular uplinks, Network Advantage ENERGY STAR certified.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "poe+",
+        "poe_budget_watts": 1440,
+        "total_port_count": 48,
+        "poe_port_count": 48,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (1440)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "energy_star_certified": true,
+        "switching_capacity_gbps": 256,
+        "switching_capacity_stacked_gbps": 736,
+        "forwarding_rate_mpps": 190.47,
+        "forwarding_rate_stacked_mpps": 547.62,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "48 ports PoE+",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.59
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-715WAC-P",
+            "PWR-C1-1100WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 437
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 787
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1152
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-715WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 822
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1172
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-48P rows. (Listed as C9300-48P2 in Table 2 \u2014 ENERGY STAR hardware revision; orderable SKU is C9300-48P.)"
+        },
+        "license": {
+          "group": "c9300-dna-advantage-48",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24U-E",
+      "description": "Cisco Catalyst 9300, 24-port Cisco UPOE, modular uplinks, Network Essentials.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe",
+        "poe_budget_watts": 1440,
+        "total_port_count": 24,
+        "poe_port_count": 24,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (1440)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 208,
+        "switching_capacity_stacked_gbps": 688,
+        "forwarding_rate_mpps": 154.76,
+        "forwarding_rate_stacked_mpps": 511.9,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24 ports Cisco UPOE",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.54
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 830
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1180
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1152
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-24U rows. Note: 1100W+715W secondary=1152W < 1100W+350W=1180W \u2014 datasheet anomaly; entered faithfully."
+        },
+        "license": {
+          "group": "c9300-dna-essentials-24",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "essentials",
+          "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24U-A",
+      "description": "Cisco Catalyst 9300, 24-port Cisco UPOE, modular uplinks, Network Advantage.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe",
+        "poe_budget_watts": 1440,
+        "total_port_count": 24,
+        "poe_port_count": 24,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (1440)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 208,
+        "switching_capacity_stacked_gbps": 688,
+        "forwarding_rate_mpps": 154.76,
+        "forwarding_rate_stacked_mpps": 511.9,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24 ports Cisco UPOE",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.54
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 830
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1180
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1152
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-24U rows. Note: 1100W+715W secondary=1152W < 1100W+350W=1180W \u2014 datasheet anomaly; entered faithfully."
+        },
+        "license": {
+          "group": "c9300-dna-advantage-24",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-48U-E",
+      "description": "Cisco Catalyst 9300, 48-port Cisco UPOE, modular uplinks, Network Essentials.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe",
+        "poe_budget_watts": 1800,
+        "total_port_count": 48,
+        "poe_port_count": 48,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (1800)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 256,
+        "switching_capacity_stacked_gbps": 736,
+        "forwarding_rate_mpps": 190.48,
+        "forwarding_rate_stacked_mpps": 547.62,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "48 ports Cisco UPOE",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.72
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 822
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1172
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1537
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1800
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1800
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1622
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1800
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1800
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1800
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1800
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-48U rows. Budget capped at 1800W (footnote **)."
+        },
+        "license": {
+          "group": "c9300-dna-essentials-48",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "essentials",
+          "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-48U-A",
+      "description": "Cisco Catalyst 9300, 48-port Cisco UPOE, modular uplinks, Network Advantage.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe",
+        "poe_budget_watts": 1800,
+        "total_port_count": 48,
+        "poe_port_count": 48,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (1800)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 256,
+        "switching_capacity_stacked_gbps": 736,
+        "forwarding_rate_mpps": 190.48,
+        "forwarding_rate_stacked_mpps": 547.62,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "48 ports Cisco UPOE",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.72
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 822
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1172
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1537
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1800
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1800
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1622
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1800
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1800
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1800
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1800
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-48U rows. Budget capped at 1800W (footnote **)."
+        },
+        "license": {
+          "group": "c9300-dna-advantage-48",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24UX-E",
+      "description": "Cisco Catalyst 9300, 24-port Multigigabit (10G/5G/2.5G/1G/100M) Cisco UPOE, modular uplinks, Network Essentials.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe",
+        "poe_budget_watts": 1440,
+        "total_port_count": 24,
+        "poe_port_count": 24,
+        "multigig_10g_port_count": 24,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (1440).",
+        "multigig_*g_port_count": "Datasheet Table 2 port layout description."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 640,
+        "switching_capacity_stacked_gbps": 1120,
+        "forwarding_rate_mpps": 476.19,
+        "forwarding_rate_stacked_mpps": 833.33,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 32,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24x Multigigabit (10G/5G/2.5G/1G/100M) Cisco UPOE",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          43.4
+        ],
+        "weight_kg": 8.25
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 560
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 910
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1275
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1360
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-24UX rows."
+        },
+        "license": {
+          "group": "c9300-dna-essentials-24",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "essentials",
+          "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24UX-A",
+      "description": "Cisco Catalyst 9300, 24-port Multigigabit (10G/5G/2.5G/1G/100M) Cisco UPOE, modular uplinks, Network Advantage.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe",
+        "poe_budget_watts": 1440,
+        "total_port_count": 24,
+        "poe_port_count": 24,
+        "multigig_10g_port_count": 24,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (1440).",
+        "multigig_*g_port_count": "Datasheet Table 2 port layout description."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 640,
+        "switching_capacity_stacked_gbps": 1120,
+        "forwarding_rate_mpps": 476.19,
+        "forwarding_rate_stacked_mpps": 833.33,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 32,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24x Multigigabit (10G/5G/2.5G/1G/100M) Cisco UPOE",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          43.4
+        ],
+        "weight_kg": 8.25
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 560
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 910
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1275
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1360
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-24UX rows."
+        },
+        "license": {
+          "group": "c9300-dna-advantage-24",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-48UN-E",
+      "description": "Cisco Catalyst 9300, 48-port 5Gbps Multigigabit (5G/2.5G/1G/100M) Cisco UPOE, modular uplinks, Network Essentials.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe",
+        "poe_budget_watts": 2880,
+        "total_port_count": 48,
+        "poe_port_count": 48,
+        "multigig_5g_port_count": 48,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (2880).",
+        "multigig_*g_port_count": "Datasheet Table 2 port layout description."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 640,
+        "switching_capacity_stacked_gbps": 1120,
+        "forwarding_rate_mpps": 476.19,
+        "forwarding_rate_stacked_mpps": 833.33,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 32,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "48x 5Gbps Multigigabit (5G/2.5G/1G/100M) Cisco UPOE",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          48.5
+        ],
+        "weight_kg": 9.09
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 645
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 995
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1360
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1745
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2545
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1445
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1795
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 2160
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 2545
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2880
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-48UN rows."
+        },
+        "license": {
+          "group": "c9300-dna-essentials-48",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "essentials",
+          "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-48UN-A",
+      "description": "Cisco Catalyst 9300, 48-port 5Gbps Multigigabit (5G/2.5G/1G/100M) Cisco UPOE, modular uplinks, Network Advantage.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe",
+        "poe_budget_watts": 2880,
+        "total_port_count": 48,
+        "poe_port_count": 48,
+        "multigig_5g_port_count": 48,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (2880).",
+        "multigig_*g_port_count": "Datasheet Table 2 port layout description."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 640,
+        "switching_capacity_stacked_gbps": 1120,
+        "forwarding_rate_mpps": 476.19,
+        "forwarding_rate_stacked_mpps": 833.33,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 32,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "48x 5Gbps Multigigabit (5G/2.5G/1G/100M) Cisco UPOE",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          48.5
+        ],
+        "weight_kg": 9.09
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 645
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 995
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1360
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1745
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2545
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1445
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1795
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 2160
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 2545
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2880
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-48UN rows."
+        },
+        "license": {
+          "group": "c9300-dna-advantage-48",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24UB-E",
+      "description": "Cisco Catalyst 9300, 24-port Cisco UPOE, modular uplinks, higher-scale, Network Essentials.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe",
+        "poe_budget_watts": 1440,
+        "total_port_count": 24,
+        "poe_port_count": 24,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (1440)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 208,
+        "switching_capacity_stacked_gbps": 688,
+        "forwarding_rate_mpps": 154.76,
+        "forwarding_rate_stacked_mpps": 511.9,
+        "mac_address_scale": 64000,
+        "ipv4_route_scale": 112000,
+        "ipv6_route_scale": 56000,
+        "buffer_mb": 32,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24 ports Cisco UPOE",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.54,
+        "stacking_restriction": "higher-scale-only: stacks only with other C9300 higher-scale models (C9300-24UB, C9300-24UXB, C9300-48UB). Cannot mix with standard C9300 or C9300X."
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 830
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1180
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-24UB rows (1100W primary only)."
+        },
+        "license": {
+          "group": "c9300-dna-essentials-24",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "essentials",
+          "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24UB-A",
+      "description": "Cisco Catalyst 9300, 24-port Cisco UPOE, modular uplinks, higher-scale, Network Advantage.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe",
+        "poe_budget_watts": 1440,
+        "total_port_count": 24,
+        "poe_port_count": 24,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (1440)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 208,
+        "switching_capacity_stacked_gbps": 688,
+        "forwarding_rate_mpps": 154.76,
+        "forwarding_rate_stacked_mpps": 511.9,
+        "mac_address_scale": 64000,
+        "ipv4_route_scale": 112000,
+        "ipv6_route_scale": 56000,
+        "buffer_mb": 32,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24 ports Cisco UPOE",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.54,
+        "stacking_restriction": "higher-scale-only: stacks only with other C9300 higher-scale models (C9300-24UB, C9300-24UXB, C9300-48UB). Cannot mix with standard C9300 or C9300X."
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 830
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1180
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-24UB rows (1100W primary only)."
+        },
+        "license": {
+          "group": "c9300-dna-advantage-24",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24UXB-E",
+      "description": "Cisco Catalyst 9300, 24-port Multigigabit (10G/5G/2.5G/1G/100M) Cisco UPOE, modular uplinks, higher-scale, Network Essentials.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe",
+        "poe_budget_watts": 1440,
+        "total_port_count": 24,
+        "poe_port_count": 24,
+        "multigig_10g_port_count": 24,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (1440).",
+        "multigig_*g_port_count": "Datasheet Table 2 port layout description."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 640,
+        "switching_capacity_stacked_gbps": 1120,
+        "forwarding_rate_mpps": 476.19,
+        "forwarding_rate_stacked_mpps": 833.33,
+        "mac_address_scale": 64000,
+        "ipv4_route_scale": 112000,
+        "ipv6_route_scale": 56000,
+        "buffer_mb": 64,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24x Multigigabit (10G/5G/2.5G/1G/100M) Cisco UPOE",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          43.4
+        ],
+        "weight_kg": 8.25,
+        "stacking_restriction": "higher-scale-only: stacks only with other C9300 higher-scale models (C9300-24UB, C9300-24UXB, C9300-48UB). Cannot mix with standard C9300 or C9300X."
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 560
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 910
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1275
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-24UXB rows (1100W primary only)."
+        },
+        "license": {
+          "group": "c9300-dna-essentials-24",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "essentials",
+          "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24UXB-A",
+      "description": "Cisco Catalyst 9300, 24-port Multigigabit (10G/5G/2.5G/1G/100M) Cisco UPOE, modular uplinks, higher-scale, Network Advantage.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe",
+        "poe_budget_watts": 1440,
+        "total_port_count": 24,
+        "poe_port_count": 24,
+        "multigig_10g_port_count": 24,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (1440).",
+        "multigig_*g_port_count": "Datasheet Table 2 port layout description."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 640,
+        "switching_capacity_stacked_gbps": 1120,
+        "forwarding_rate_mpps": 476.19,
+        "forwarding_rate_stacked_mpps": 833.33,
+        "mac_address_scale": 64000,
+        "ipv4_route_scale": 112000,
+        "ipv6_route_scale": 56000,
+        "buffer_mb": 64,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24x Multigigabit (10G/5G/2.5G/1G/100M) Cisco UPOE",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          43.4
+        ],
+        "weight_kg": 8.25,
+        "stacking_restriction": "higher-scale-only: stacks only with other C9300 higher-scale models (C9300-24UB, C9300-24UXB, C9300-48UB). Cannot mix with standard C9300 or C9300X."
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 560
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 910
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1275
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1440
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1440
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-24UXB rows (1100W primary only)."
+        },
+        "license": {
+          "group": "c9300-dna-advantage-24",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-48UB-E",
+      "description": "Cisco Catalyst 9300, 48-port Cisco UPOE, modular uplinks, higher-scale, Network Essentials.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe",
+        "poe_budget_watts": 1800,
+        "total_port_count": 48,
+        "poe_port_count": 48,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (1800)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 256,
+        "switching_capacity_stacked_gbps": 736,
+        "forwarding_rate_mpps": 190.48,
+        "forwarding_rate_stacked_mpps": 547.62,
+        "mac_address_scale": 64000,
+        "ipv4_route_scale": 112000,
+        "ipv6_route_scale": 56000,
+        "buffer_mb": 32,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "48 ports Cisco UPOE",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.72,
+        "stacking_restriction": "higher-scale-only: stacks only with other C9300 higher-scale models (C9300-24UB, C9300-24UXB, C9300-48UB). Cannot mix with standard C9300 or C9300X."
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 822
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1172
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1537
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1800
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1800
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-48UB rows (1100W primary only). Budget capped at 1800W (footnote **)."
+        },
+        "license": {
+          "group": "c9300-dna-essentials-48",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "essentials",
+          "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-48UB-A",
+      "description": "Cisco Catalyst 9300, 48-port Cisco UPOE, modular uplinks, higher-scale, Network Advantage.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe",
+        "poe_budget_watts": 1800,
+        "total_port_count": 48,
+        "poe_port_count": 48,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (1800)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 256,
+        "switching_capacity_stacked_gbps": 736,
+        "forwarding_rate_mpps": 190.48,
+        "forwarding_rate_stacked_mpps": 547.62,
+        "mac_address_scale": 64000,
+        "ipv4_route_scale": 112000,
+        "ipv6_route_scale": 56000,
+        "buffer_mb": 32,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "48 ports Cisco UPOE",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.72,
+        "stacking_restriction": "higher-scale-only: stacks only with other C9300 higher-scale models (C9300-24UB, C9300-24UXB, C9300-48UB). Cannot mix with standard C9300 or C9300X."
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 822
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1172
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1537
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1800
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 1800
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-48UB rows (1100W primary only). Budget capped at 1800W (footnote **)."
+        },
+        "license": {
+          "group": "c9300-dna-advantage-48",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24H-E",
+      "description": "Cisco Catalyst 9300, 24-port Cisco UPOE+, modular uplinks, Network Essentials.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe+",
+        "poe_budget_watts": 2160,
+        "total_port_count": 24,
+        "poe_port_count": 24,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (2160)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 208,
+        "switching_capacity_stacked_gbps": 688,
+        "forwarding_rate_mpps": 154.76,
+        "forwarding_rate_stacked_mpps": 511.9,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24 ports Cisco UPOE+",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.54
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 830
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1180
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1545
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1930
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2160
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1630
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1980
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 2160
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 2160
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2160
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-24H rows."
+        },
+        "license": {
+          "group": "c9300-dna-essentials-24",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "essentials",
+          "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24H-A",
+      "description": "Cisco Catalyst 9300, 24-port Cisco UPOE+, modular uplinks, Network Advantage.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe+",
+        "poe_budget_watts": 2160,
+        "total_port_count": 24,
+        "poe_port_count": 24,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (2160)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 208,
+        "switching_capacity_stacked_gbps": 688,
+        "forwarding_rate_mpps": 154.76,
+        "forwarding_rate_stacked_mpps": 511.9,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24 ports Cisco UPOE+",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.54
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 830
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1180
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1545
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1930
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2160
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1630
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1980
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 2160
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 2160
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2160
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-24H rows."
+        },
+        "license": {
+          "group": "c9300-dna-advantage-24",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-48H-E",
+      "description": "Cisco Catalyst 9300, 48-port Cisco UPOE+, modular uplinks, Network Essentials.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe+",
+        "poe_budget_watts": 2880,
+        "total_port_count": 48,
+        "poe_port_count": 48,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (2880)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 256,
+        "switching_capacity_stacked_gbps": 736,
+        "forwarding_rate_mpps": 190.48,
+        "forwarding_rate_stacked_mpps": 547.62,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "48 ports Cisco UPOE+",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.72
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 822
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1172
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1537
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1922
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2722
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1622
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1972
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 2337
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 2722
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2880
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-48H rows."
+        },
+        "license": {
+          "group": "c9300-dna-essentials-48",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "essentials",
+          "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-48H-A",
+      "description": "Cisco Catalyst 9300, 48-port Cisco UPOE+, modular uplinks, Network Advantage.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": true,
+        "poe_type": "upoe+",
+        "poe_budget_watts": 2880,
+        "total_port_count": 48,
+        "poe_port_count": 48,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true).",
+        "poe_budget_watts": "max of poe_budget_matrix below (2880)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 256,
+        "switching_capacity_stacked_gbps": 736,
+        "forwarding_rate_mpps": 190.48,
+        "forwarding_rate_stacked_mpps": 547.62,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "48 ports Cisco UPOE+",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.4,
+          44.5,
+          40.9
+        ],
+        "weight_kg": 7.72
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-1100WAC-P",
+            "PWR-C1-1900WAC-P"
+          ],
+          "poe_budget_matrix": [
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 822
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1172
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 1537
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 1922
+            },
+            {
+              "primary": "PWR-C1-1100WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2722
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": null,
+              "poe_budget_watts": 1622
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-350WAC-P",
+              "poe_budget_watts": 1972
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-715WAC-P",
+              "poe_budget_watts": 2337
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1100WAC-P",
+              "poe_budget_watts": 2722
+            },
+            {
+              "primary": "PWR-C1-1900WAC-P",
+              "secondary": "PWR-C1-1900WAC-P",
+              "poe_budget_watts": 2880
+            }
+          ],
+          "matrix_provenance": "Datasheet Table 4, C9300-48H rows."
+        },
+        "license": {
+          "group": "c9300-dna-advantage-48",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24S-E",
+      "description": "Cisco Catalyst 9300, 24-port 1G SFP fiber, modular uplinks, Network Essentials.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": false,
+        "poe_type": "none",
+        "total_port_count": 24,
+        "access_1g_fiber": 24,
+        "access_10g_fiber": 0,
+        "access_25g_fiber": 0,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 208,
+        "switching_capacity_stacked_gbps": 688,
+        "forwarding_rate_mpps": 154.76,
+        "forwarding_rate_stacked_mpps": 511.9,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24 ports 1G SFP",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.3,
+          44.4,
+          44.9
+        ],
+        "weight_kg": 7.64
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-715WAC-P"
+          ],
+          "poe_budget_matrix": [],
+          "matrix_provenance": "No PoE. Only 715W primary listed in Table 4 for C9300-24S."
+        },
+        "license": {
+          "group": "c9300-dna-essentials-24s",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "essentials",
+          "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-24S-A",
+      "description": "Cisco Catalyst 9300, 24-port 1G SFP fiber, modular uplinks, Network Advantage.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": false,
+        "poe_type": "none",
+        "total_port_count": 24,
+        "access_1g_fiber": 24,
+        "access_10g_fiber": 0,
+        "access_25g_fiber": 0,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 208,
+        "switching_capacity_stacked_gbps": 688,
+        "forwarding_rate_mpps": 154.76,
+        "forwarding_rate_stacked_mpps": 511.9,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "24 ports 1G SFP",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.3,
+          44.4,
+          44.9
+        ],
+        "weight_kg": 7.64
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-715WAC-P"
+          ],
+          "poe_budget_matrix": [],
+          "matrix_provenance": "No PoE. Only 715W primary listed in Table 4 for C9300-24S."
+        },
+        "license": {
+          "group": "c9300-dna-advantage-24s",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-48S-E",
+      "description": "Cisco Catalyst 9300, 48-port 1G SFP fiber, modular uplinks, Network Essentials.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": false,
+        "poe_type": "none",
+        "total_port_count": 48,
+        "access_1g_fiber": 48,
+        "access_10g_fiber": 0,
+        "access_25g_fiber": 0,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 256,
+        "switching_capacity_stacked_gbps": 736,
+        "forwarding_rate_mpps": 190.47,
+        "forwarding_rate_stacked_mpps": 547.62,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "48 ports 1G SFP",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.3,
+          44.4,
+          44.9
+        ],
+        "weight_kg": 7.86
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-715WAC-P"
+          ],
+          "poe_budget_matrix": [],
+          "matrix_provenance": "No PoE. Only 715W primary listed in Table 4 for C9300-48S."
+        },
+        "license": {
+          "group": "c9300-dna-essentials-48s",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "essentials",
+          "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier subscription (subscription tier must match network stack tier)."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
+          "note": "Region-specific cable must be chosen at order time; not a selection axis."
+        }
+      }
+    },
+    {
+      "id": "C9300-48S-A",
+      "description": "Cisco Catalyst 9300, 48-port 1G SFP fiber, modular uplinks, Network Advantage.",
+      "axis_values": {
+        "_comment": "Values this switch supplies on the registry axes. These are what the solver filters/ranks on.",
+        "series": "C9300",
+        "poe_capable": false,
+        "poe_type": "none",
+        "total_port_count": 48,
+        "access_1g_fiber": 48,
+        "access_10g_fiber": 0,
+        "access_25g_fiber": 0,
+        "uplink_modular": true,
+        "stacking_capable": true,
+        "stacking_technology": "stackwise-480",
+        "stackpower_capable": true,
+        "redundant_psu_capable": true,
+        "license_regime": [
+          "dna-term"
+        ]
+      },
+      "axis_value_provenance": {
+        "_comment": "How look-through axis values were derived, so they can be re-validated.",
+        "uplink_*": "Not stored on the model. Resolved against c9300-modular-uplink-modules.uplink_capacity.per_speed_max (uplink_modular=true)."
+      },
+      "attributes": {
+        "_comment": "Displayed, never filtered. Kept for reference; not axes.",
+        "switching_capacity_gbps": 256,
+        "switching_capacity_stacked_gbps": 736,
+        "forwarding_rate_mpps": 190.47,
+        "forwarding_rate_stacked_mpps": 547.62,
+        "mac_address_scale": 32000,
+        "ipv4_route_scale": 32000,
+        "ipv6_route_scale": 16000,
+        "buffer_mb": 16,
+        "uadp_asic": "UADP 2.0",
+        "dram_gb": 8,
+        "flash_gb": 16,
+        "port_layout": "48 ports 1G SFP",
+        "dimensions_cm_hxwxd_chassis_only": [
+          4.3,
+          44.4,
+          44.9
+        ],
+        "weight_kg": 7.86
+      },
+      "configurables": {
+        "_comment": "Thin references to shared groups + the switch-specific overlay only where facts vary per model.",
+        "network_modules": {
+          "group": "c9300-modular-uplink-modules"
+        },
+        "stack_cables": {
+          "group": "c9300-modular-stack-cables"
+        },
+        "stackpower_cables": {
+          "group": "c9300-stackpower-cables"
+        },
+        "power_supplies": {
+          "group": "c9300-psus",
+          "valid_primary": [
+            "PWR-C1-715WAC-P"
+          ],
+          "poe_budget_matrix": [],
+          "matrix_provenance": "No PoE. Only 715W primary listed in Table 4 for C9300-48S."
+        },
+        "license": {
+          "group": "c9300-dna-advantage-48s",
+          "regime_offered": [
+            "dna-term"
+          ],
+          "tier_locked": "advantage",
+          "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier subscription."
+        }
+      },
+      "included_by_default_non_selectable": {
+        "_comment": "Ships with the switch; not user-configurable, not filterable.",
+        "fan_module": "FAN-T2",
+        "mounting_brackets": true,
+        "power_cables": {
+          "count": 1,
           "note": "Region-specific cable must be chosen at order time; not a selection axis."
         }
       }
