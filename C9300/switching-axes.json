@@ -1,0 +1,236 @@
+{
+  "$id": "switching-axes.json",
+  "title": "Switching Axis Registry",
+  "registry_version": "0.2.0",
+  "role": "Authoritative vocabulary of filterable axes for the Networking Equipment Selector. The registry enforces MEANING (what can be constrained, how, and which values are legal). It is the SOURCE; the KB schema is a projection of it (every axis implies a typed, validated field on a model entry). Nothing is filterable unless declared here. This file is the single source of truth for axis enum legal_values; validate2.py checks model values against it.",
+  "consumers": [
+    "Web UI builds form controls from this registry.",
+    "MCP server (Stage 2) builds tool parameters from this registry.",
+    "Reasoning agent (Stage 3) reasons over this registry (via the MCP server).",
+    "The KB JSON schema projects typed fields from these axes."
+  ],
+  "change_policy": "Adding a switch model is CHEAP (more data the solver already handles). Adding or changing an AXIS is EXPENSIVE and STRUCTURAL: it touches the UI, the MCP parameters, possibly a new solver condition type. An agent populating models must NEVER add, rename, or re-type an axis on its own \u2014 surface it for human ruling. Bump registry_version when the axis set changes.",
+  "axes": [
+    {
+      "name": "series",
+      "type": "enum",
+      "legal_values": [
+        "C9300",
+        "C9300L",
+        "C9300X",
+        "C9300LM"
+      ],
+      "accepted_conditions": [
+        "==",
+        "in"
+      ],
+      "required_on_model": true,
+      "notes": "Series is an ordinary axis, not a privileged root. Sub-families are distinct series values (e.g. C9300LM does not stack with C9300 modular SKUs, uses different PSUs/stacking). Legal_values will grow as families are added."
+    },
+    {
+      "name": "poe_capable",
+      "type": "boolean",
+      "accepted_conditions": [
+        "=="
+      ],
+      "required_on_model": true
+    },
+    {
+      "name": "poe_type",
+      "type": "enum",
+      "legal_values": [
+        "none",
+        "poe",
+        "poe+",
+        "upoe",
+        "upoe+"
+      ],
+      "accepted_conditions": [
+        "==",
+        "in"
+      ],
+      "required_on_model": true,
+      "notes": "Per-type wattage (poe 15.4W / poe+ 30W / upoe 60W / upoe+ 90W) is a fixed standard, handled as a frontend display lookup, not a model field or axis."
+    },
+    {
+      "name": "poe_budget_watts",
+      "type": "integer",
+      "accepted_conditions": [
+        ">="
+      ],
+      "required_on_model": false,
+      "notes": "Optional: present only when poe_capable is true. Value = max achievable across the switch's poe_budget_matrix (the PSU-pair that delivers a requested wattage is resolved later from that matrix)."
+    },
+    {
+      "name": "total_port_count",
+      "type": "integer",
+      "accepted_conditions": [
+        ">="
+      ],
+      "required_on_model": true
+    },
+    {
+      "name": "poe_port_count",
+      "type": "integer",
+      "accepted_conditions": [
+        ">="
+      ],
+      "required_on_model": false,
+      "notes": "Optional: present when poe_capable is true."
+    },
+    {
+      "name": "multigig_port_count",
+      "type": "integer",
+      "accepted_conditions": [
+        ">="
+      ],
+      "required_on_model": true,
+      "notes": "Count of access ports capable of >1G (Multigigabit). 0 for non-mGig models."
+    },
+    {
+      "name": "access_1g_fiber",
+      "type": "integer",
+      "accepted_conditions": [
+        ">="
+      ],
+      "required_on_model": false,
+      "notes": "Count of FIBER/SFP access ports that handle 1G. Optional: present only on models with fiber access ports. A single physical port that handles multiple speeds is counted under EACH speed it supports, so access_1g_fiber / access_10g_fiber / access_25g_fiber may overlap on the same ports (e.g. 12x SFP28 ports each doing 1/10/25G count 12 on all three). Distinct from multigig_port_count, which is COPPER (RJ-45) Multigigabit. The JSON declares the real per-speed capability per the design decision that the solver holds no 25G-implies-10G rule; the solver only flat-matches a requested speed against the declared counts."
+    },
+    {
+      "name": "access_10g_fiber",
+      "type": "integer",
+      "accepted_conditions": [
+        ">="
+      ],
+      "required_on_model": false,
+      "notes": "Count of FIBER/SFP access ports that handle 10G. Optional; present only on models with fiber access ports. Same overlap rule as access_1g_fiber. Copper Multigigabit 10G is counted under multigig_port_count, not here."
+    },
+    {
+      "name": "access_25g_fiber",
+      "type": "integer",
+      "accepted_conditions": [
+        ">="
+      ],
+      "required_on_model": false,
+      "notes": "Count of FIBER/SFP access ports that handle 25G. Optional; present only on models with fiber access ports. Same overlap rule as access_1g_fiber."
+    },
+    {
+      "name": "uplink_modular",
+      "type": "boolean",
+      "accepted_conditions": [
+        "=="
+      ],
+      "required_on_model": true,
+      "notes": "true: uplinks come from a network module (the switch references a module group whose uplink_capacity block supplies the per-speed values). false: uplinks fixed in SKU (the switch carries an inline uplink_capacity block of the same shape)."
+    },
+    {
+      "name": "uplink_1g",
+      "type": "integer",
+      "accepted_conditions": [
+        ">="
+      ],
+      "required_on_model": false,
+      "notes": "Per-speed uplink axis. NOT a precomputed model value: resolves against uplink_capacity.per_speed_max (from the referenced module group on modular models, or the inline block on fixed models). per_speed_max = max provided by a single module/bay; with bay_count 1 the speeds are mutually exclusive (you fit one module)."
+    },
+    {
+      "name": "uplink_mgig",
+      "type": "integer",
+      "accepted_conditions": [
+        ">="
+      ],
+      "required_on_model": false,
+      "notes": "Multigigabit uplink count. Resolves against uplink_capacity.per_speed_max."
+    },
+    {
+      "name": "uplink_10g",
+      "type": "integer",
+      "accepted_conditions": [
+        ">="
+      ],
+      "required_on_model": false,
+      "notes": "Resolves against uplink_capacity.per_speed_max."
+    },
+    {
+      "name": "uplink_25g",
+      "type": "integer",
+      "accepted_conditions": [
+        ">="
+      ],
+      "required_on_model": false,
+      "notes": "Resolves against uplink_capacity.per_speed_max."
+    },
+    {
+      "name": "uplink_40g",
+      "type": "integer",
+      "accepted_conditions": [
+        ">="
+      ],
+      "required_on_model": false,
+      "notes": "Resolves against uplink_capacity.per_speed_max."
+    },
+    {
+      "name": "uplink_100g",
+      "type": "integer",
+      "accepted_conditions": [
+        ">="
+      ],
+      "required_on_model": false,
+      "notes": "Resolves against uplink_capacity.per_speed_max. Absent from C9300-NM modules (no member provides 100G); axis retained for C9300X-class / fixed models that do."
+    },
+    {
+      "name": "stacking_capable",
+      "type": "boolean",
+      "accepted_conditions": [
+        "=="
+      ],
+      "required_on_model": true
+    },
+    {
+      "name": "stacking_technology",
+      "type": "enum",
+      "legal_values": [
+        "stackwise-480",
+        "stackwise-1t",
+        "stackwise-320"
+      ],
+      "accepted_conditions": [
+        "==",
+        "in"
+      ],
+      "required_on_model": "when_stacking_capable",
+      "notes": "Required and non-blank on a model when stacking_capable is true. May be left unconstrained (blank) in a QUERY (user filters stacking_capable without pinning technology)."
+    },
+    {
+      "name": "stackpower_capable",
+      "type": "boolean",
+      "accepted_conditions": [
+        "=="
+      ],
+      "required_on_model": true
+    },
+    {
+      "name": "redundant_psu_capable",
+      "type": "boolean",
+      "accepted_conditions": [
+        "=="
+      ],
+      "required_on_model": true
+    },
+    {
+      "name": "license_regime",
+      "type": "enum",
+      "legal_values": [
+        "dna-term",
+        "meraki-classic",
+        "meraki-subscription",
+        "unified"
+      ],
+      "accepted_conditions": [
+        "==",
+        "in"
+      ],
+      "required_on_model": true,
+      "notes": "Set of regimes a model OFFERS. First-class user-selectable input. Couples to switch selection as an ordinary hard constraint (e.g. meraki-subscription -> -M models only). Cisco Catalyst (DNX) program is intentionally NOT a regime. Each regime maps to a shape (term-based / subscription-based) on the license entries."
+    }
+  ]
+}
