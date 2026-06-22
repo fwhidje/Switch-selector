@@ -1,7 +1,7 @@
 {
   "$id": "switching-axes.json",
   "title": "Switching Axis Registry",
-  "registry_version": "0.2.0",
+  "registry_version": "0.3.0",
   "role": "Authoritative vocabulary of filterable axes for the Networking Equipment Selector. The registry enforces MEANING (what can be constrained, how, and which values are legal). It is the SOURCE; the KB schema is a projection of it (every axis implies a typed, validated field on a model entry). Nothing is filterable unless declared here. This file is the single source of truth for axis enum legal_values; validate2.py checks model values against it.",
   "consumers": [
     "Web UI builds form controls from this registry.",
@@ -79,13 +79,22 @@
       "notes": "Optional: present when poe_capable is true."
     },
     {
-      "name": "multigig_port_count",
+      "name": "multigig_10g_port_count",
       "type": "integer",
       "accepted_conditions": [
         ">="
       ],
-      "required_on_model": true,
-      "notes": "Count of access ports capable of >1G (Multigigabit). 0 for non-mGig models."
+      "required_on_model": false,
+      "notes": "Count of copper (RJ-45) Multigigabit access ports whose top speed is 10G (i.e. 10G/5G/2.5G/1G/100M). Optional: omit entirely when the model has no 10G-capable copper mGig ports. Distinct from multigig_5g_port_count (5G-max ports) and from the access_*_fiber axes (which count SFP/fiber ports only)."
+    },
+    {
+      "name": "multigig_5g_port_count",
+      "type": "integer",
+      "accepted_conditions": [
+        ">="
+      ],
+      "required_on_model": false,
+      "notes": "Count of copper (RJ-45) Multigigabit access ports whose top speed is 5G (i.e. 5G/2.5G/1G/100M, NOT 10G-capable). Optional: omit entirely when the model has no 5G-max copper mGig ports. Replaces the old multigig_port_count together with multigig_10g_port_count."
     },
     {
       "name": "access_1g_fiber",
@@ -94,7 +103,7 @@
         ">="
       ],
       "required_on_model": false,
-      "notes": "Count of FIBER/SFP access ports that handle 1G. Optional: present only on models with fiber access ports. A single physical port that handles multiple speeds is counted under EACH speed it supports, so access_1g_fiber / access_10g_fiber / access_25g_fiber may overlap on the same ports (e.g. 12x SFP28 ports each doing 1/10/25G count 12 on all three). Distinct from multigig_port_count, which is COPPER (RJ-45) Multigigabit. The JSON declares the real per-speed capability per the design decision that the solver holds no 25G-implies-10G rule; the solver only flat-matches a requested speed against the declared counts."
+      "notes": "Count of FIBER/SFP access ports that handle 1G. Optional: present only on models with fiber access ports. A single physical port that handles multiple speeds is counted under EACH speed it supports, so access_1g_fiber / access_10g_fiber / access_25g_fiber may overlap on the same ports (e.g. 12x SFP28 ports each doing 1/10/25G count 12 on all three). Distinct from multigig_10g_port_count and multigig_5g_port_count, which are COPPER (RJ-45) Multigigabit. The JSON declares the real per-speed capability per the design decision that the solver holds no 25G-implies-10G rule; the solver only flat-matches a requested speed against the declared counts."
     },
     {
       "name": "access_10g_fiber",
@@ -103,7 +112,7 @@
         ">="
       ],
       "required_on_model": false,
-      "notes": "Count of FIBER/SFP access ports that handle 10G. Optional; present only on models with fiber access ports. Same overlap rule as access_1g_fiber. Copper Multigigabit 10G is counted under multigig_port_count, not here."
+      "notes": "Count of FIBER/SFP access ports that handle 10G. Optional; present only on models with fiber access ports. Same overlap rule as access_1g_fiber. Copper Multigigabit 10G is counted under multigig_10g_port_count, not here."
     },
     {
       "name": "access_25g_fiber",
