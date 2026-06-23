@@ -39,11 +39,16 @@ export function acceptedConditions(axis) {
 }
 
 /**
- * The uplink_* axes are special: they are NOT stored on a model's axis_values.
- * They resolve by look-through into an uplink_capacity block (see resolve.js).
- * Everything in the registry under an `uplink_` prefix EXCEPT uplink_modular is
- * one of these resolved axes.
+ * Parametrised port axis: kind "count-at-level". It is NOT stored as a scalar
+ * field in axis_values — it resolves against a variant's port pool (model.ports
+ * access groups + the fitted module's uplink groups). See the port_model block
+ * in switching-axes.json. `port_count` is the only such axis today.
  */
-export function isResolvedUplinkAxis(name) {
-  return name.startsWith("uplink_") && name !== "uplink_modular";
+export function isCountAtLevelAxis(axis) {
+  return axis?.kind === "count-at-level";
+}
+
+/** Legal values declared by the registry's port_model selector enums. */
+export function portModel(registry) {
+  return registry.port_model ?? null;
 }

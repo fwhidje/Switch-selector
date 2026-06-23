@@ -1,0 +1,22 @@
+name: validate-kb
+
+# Mechanical guard for the registry -> schema -> KB consistency rule.
+# Runs the validator on every push/PR so the three knowledge files cannot drift.
+on:
+  push:
+    paths:
+      - "C9300/**"
+      - "selector/**"
+      - ".github/workflows/validate-kb.yml"
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Consistency validator (registry/schema/KB + reference integrity)
+        run: node selector/tools/validate-kb.mjs
