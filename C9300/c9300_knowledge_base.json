@@ -1,7 +1,7 @@
 {
  "header": {
-  "schema_version": "0.3.0",
-  "registry_version": "0.4.0",
+  "schema_version": "0.4.0",
+  "registry_version": "0.5.0",
   "axes_file": "switching-axes.json",
   "schema_file": "switch-kb.schema.json",
   "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9300 family, spanning the C9300 (modular uplink), C9300LM, and C9300L (fixed uplink) sub-families. Structure: axis_registry (filterable vocabulary) + catalog (atomic SKU facts) + groups (named shared compatibility sets) + models (switch entries that supply axis values, reference groups, and on fixed-uplink models carry an inline uplink_capacity block in place of a module-group reference).",
@@ -38,7 +38,8 @@
    "License regimes follow the project vocabulary: dna-term, meraki-classic, meraki-subscription, unified (each mapping to a term-based or subscription-based shape). Cisco Catalyst (DNX) is intentionally NOT a regime. All models currently in the file offer dna-term only (tier locked by the -E/-A hardware suffix); the two Meraki regimes belong to the separate -M SKUs; unified does not apply to these entries.",
    "Order-time 'default' selections (CCW cart pre-picks) are intentionally NOT stored: the tool proposes a valid config from requirements rather than mirroring the ordering cart.",
    "Solver is out of scope for this artifact; this file is data shape + axis registry only.",
-   "v0.4.0: unified port model. The former multigig_*/access_*_fiber/uplink_* axes are replaced by model.ports[] port groups {count,role,medium,speeds[]} + the parametrised port_count axis. Access ports on the model; uplink ports on the fitted network module (or inline on fixed-uplink models). Subsumption is the per-port speed set; no breakout."
+   "v0.4.0: unified port model. The former multigig_*/access_*_fiber/uplink_* axes are replaced by model.ports[] port groups {count,role,medium,speeds[]} + the parametrised port_count axis. Access ports on the model; uplink ports on the fitted network module (or inline on fixed-uplink models). Subsumption is the per-port speed set; no breakout.",
+   "v0.5.0: redundant_psu_capable dissolved (was constant-true; redundancy is now a (primary,secondary) PSU pair surfaced in the kitlist). License tier/term declared as config_variables (resolved into the BOM, not filter axes)."
   ]
  },
  "catalog": {
@@ -1735,7 +1736,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -1882,7 +1882,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-320",
     "stackpower_capable": false,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -2019,7 +2018,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-320",
     "stackpower_capable": false,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -2113,7 +2111,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-1t",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -2213,7 +2210,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-1t",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -2315,7 +2311,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-1t",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -2471,7 +2466,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-1t",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -2625,7 +2619,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-1t",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -2726,7 +2719,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-1t",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -2829,7 +2821,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-1t",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -2997,7 +2988,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-1t",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -3165,7 +3155,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-1t",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -3321,7 +3310,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-1t",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -3475,7 +3463,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-1t",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -3575,7 +3562,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-1t",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -3677,7 +3663,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -3834,7 +3819,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -3927,7 +3911,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -4020,7 +4003,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -4113,7 +4095,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -4208,7 +4189,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -4354,7 +4334,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -4500,7 +4479,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -4647,7 +4625,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -4794,7 +4771,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -4940,7 +4916,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -5086,7 +5061,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -5232,7 +5206,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -5378,7 +5351,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -5528,7 +5500,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -5678,7 +5649,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -5827,7 +5797,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -5976,7 +5945,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -6097,7 +6065,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -6218,7 +6185,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -6343,7 +6309,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -6468,7 +6433,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -6589,7 +6553,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -6710,7 +6673,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -6856,7 +6818,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -7002,7 +6963,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -7148,7 +7108,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -7292,7 +7251,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -7383,7 +7341,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -7474,7 +7431,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -7565,7 +7521,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "dna-term"
     ]
@@ -7656,7 +7611,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
@@ -7741,7 +7695,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
@@ -7828,7 +7781,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
@@ -7936,7 +7888,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
@@ -8044,7 +7995,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
@@ -8154,7 +8104,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
@@ -8239,7 +8188,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
@@ -8326,7 +8274,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
@@ -8434,7 +8381,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
@@ -8542,7 +8488,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
@@ -8665,7 +8610,6 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-480",
     "stackpower_capable": true,
-    "redundant_psu_capable": true,
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"

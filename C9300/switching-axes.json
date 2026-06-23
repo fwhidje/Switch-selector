@@ -1,8 +1,8 @@
 {
   "$id": "switching-axes.json",
   "title": "Switching Axis Registry",
-  "registry_version": "0.4.0",
-  "role": "Authoritative vocabulary of filterable axes for the Networking Equipment Selector. The registry enforces MEANING (what can be constrained, how, and which values are legal). It is the SOURCE; the KB schema is a projection of it. Nothing is filterable unless declared here. Each axis declares KIND (ordered | count-at-level | monotonic-capability | discriminating | numeric | boolean) and ROLE (requirement | config-variable). validate-kb.mjs checks model values against this file.",
+  "registry_version": "0.5.0",
+  "role": "Authoritative vocabulary for the Networking Equipment Selector. The registry enforces MEANING (what can be constrained, how, and which values are legal). It is the SOURCE; the KB schema is a projection of it. Nothing is filterable unless declared here. Each axis declares KIND (ordered | count-at-level | monotonic-capability | discriminating | numeric | boolean) and ROLE (requirement). CONFIG-VARIABLES (config_variables block) are not filter axes: they do not eliminate models, they refine the resolved kitlist (BOM) and are surfaced at the configuration stage. validate-kb.mjs checks model values against this file.",
   "consumers": [
     "Web UI builds form controls from this registry (KIND drives the control; ROLE drives WHEN it surfaces).",
     "MCP server (Stage 2) builds tool parameters from this registry.",
@@ -21,6 +21,22 @@
         "order": ["1g", "2.5g", "5g", "10g", "25g", "40g", "100g"],
         "notes": "Ordered low->high. Sub-1G (100M) is intentionally NOT a filter speed (display-only). 'mgig' is no longer a speed: a Multigigabit copper port lists its real speed set, e.g. [1g,2.5g,5g,10g]."
       }
+    }
+  },
+
+  "config_variables": {
+    "_comment": "Dimensions a user PICKS to finalise an orderable kitlist, AFTER the requirement axes have narrowed the model set. They do NOT filter/eliminate models; they resolve which concrete SKUs the BOM shows. Source values live in the KB (license groups). The UI surfaces these at the configuration stage; an MCP server would expose them as kitlist parameters, not filters.",
+    "license_tier": {
+      "type": "enum",
+      "legal_values": ["essentials", "advantage"],
+      "source": "license_group.tier",
+      "notes": "On tier-LOCKED models (DNA -E/-A) the tier is fixed by the hardware suffix and is shown, not chosen. On tier-SELECTABLE models (Meraki -M) the user picks; the pick selects which license group's SKUs the BOM resolves. Never eliminates a model."
+    },
+    "license_term": {
+      "type": "integer",
+      "legal_values": [1, 3, 5, 7, 10],
+      "source": "license_group.term_variable.choices_years",
+      "notes": "Subscription term length in years. Available choices vary per license group (some groups carry no term_variable). The pick resolves the concrete subscription SKU (matched on the '-<n>Y' suffix). Never eliminates a model."
     }
   },
 
@@ -131,15 +147,6 @@
       "role": "requirement",
       "accepted_conditions": ["=="],
       "required_on_model": true
-    },
-    {
-      "name": "redundant_psu_capable",
-      "type": "boolean",
-      "kind": "monotonic-capability",
-      "role": "requirement",
-      "accepted_conditions": ["=="],
-      "required_on_model": true,
-      "notes": "Stage-2 NOTE: slated to DISSOLVE into the PSU-pair variable (redundancy = a (primary,secondary) pair with secondary != none). Retained as an axis for now so the KB stays valid until the variant solver lands."
     },
     {
       "name": "license_regime",

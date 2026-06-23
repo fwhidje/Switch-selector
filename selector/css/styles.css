@@ -36,13 +36,23 @@ section {
 }
 h2 { margin: 0 0 10px; font-size: 15px; }
 
-#controls { display: flex; flex-direction: column; gap: 8px; }
-.control { display: grid; grid-template-columns: 1fr 110px; align-items: center; gap: 8px; }
-.axis-name { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; cursor: help; }
-.control input, .control select {
-  width: 100%; padding: 4px 6px;
-  border: 1px solid #c4cedd; border-radius: 5px; font-size: 13px;
+#controls { display: flex; flex-direction: column; gap: 7px; }
+.control { display: grid; grid-template-columns: 1fr 160px; align-items: center; gap: 8px; }
+.axis-name { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; cursor: help; word-break: break-word; }
+.control-inputs { display: flex; gap: 4px; }
+.control-inputs input, .control-inputs select {
+  width: 100%; min-width: 0; padding: 4px 6px;
+  border: 1px solid #c4cedd; border-radius: 5px; font-size: 12.5px;
 }
+.control-inputs select.cond { flex: 0 0 64px; color: #4a5a72; }
+.control-inputs select.collapsed { background: #eef3f9; color: #7686a0; }
+
+.ports-section { margin-top: 6px; border-top: 1px solid #e3e9f1; padding-top: 8px; }
+.section-head { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #7686a0; margin-bottom: 6px; }
+.ports-section .control { grid-template-columns: 1fr 70px; }
+
+.kit { margin: 6px 0 4px; padding-left: 16px; font-size: 12.5px; }
+.kit li { margin: 2px 0; }
 
 .results-head { display: flex; align-items: baseline; justify-content: space-between; }
 .summary { font-size: 13px; color: #4a5a72; }
