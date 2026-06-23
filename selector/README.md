@@ -52,11 +52,15 @@ js/ui/
   `config-variable`). The UI builds controls from this: ordered `poe_type` gets an *at-least / exactly*
   toggle; numerics get min/max; monotonic capabilities get *required / any*; enums get value pickers
   with **dead options disabled** (and single-value axes collapsed) via `availableValues()`.
-- **No per-switch logic.** A new switch is new JSON. License **tier/term** are shown but never picked
-  (upper-layer concern); the kitlist surfaces the matching license group(s) for the chosen regime.
+- **Config-variables.** License **tier** and **term** are not filter axes — they're declared in the
+  registry's `config_variables` block and refine the kitlist without eliminating models. Tier is
+  locked on DNA `-E/-A` models and selectable on Meraki `-M` models; term resolves the concrete
+  subscription SKU. **PSU redundancy** is likewise not an axis: it's a `(primary, secondary)` pair, so
+  the kitlist shows single vs redundant PSU options.
+- **No per-switch logic.** A new switch is new JSON.
 
 ## Out of scope (deferred)
 
 QSFP/SFP breakout (a future configurable with its own cable SKU); pricing and price-based ranking
-(the default order is a deterministic stub); collapsing `redundant_psu_capable` into the PSU pair;
-the MCP server; the natural-language guided agent; non-C9300 families.
+(the default order is a deterministic stub); the MCP server; the natural-language guided agent;
+non-C9300 families.

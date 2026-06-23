@@ -52,3 +52,12 @@ export function isCountAtLevelAxis(axis) {
 export function portModel(registry) {
   return registry.port_model ?? null;
 }
+
+/**
+ * Config-variables: dimensions a user PICKS to finalise a kitlist (license tier,
+ * term), surfaced at the configuration stage. They never filter/eliminate models
+ * — the solver forwards them to BOM resolution. Returns the declared map.
+ */
+export function configVariables(registry) {
+  return registry.config_variables ?? {};
+}

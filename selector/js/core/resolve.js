@@ -123,41 +123,88 @@ function resolveUplinkBOM(model, validOptions) {
   };
 }
 
+// PSU redundancy is NOT a stored axis: it is a (primary, secondary) pair with a
+// secondary fitted. For PoE models the pairs come straight from the PoE matrix;
+// for non-PoE models redundancy is pairing two PSUs from the valid-primary set.
 function resolvePower(model, query, kb) {
   const ps = model.configurables?.power_supplies;
   if (!ps) return null;
   const group = getPowerSupplyGroup(kb, ps.group);
-  const matrix = ps.poe_budget_matrix ?? [];
   const need = numericMin(query, "poe_budget_watts");
+  const matrix = ps.poe_budget_matrix ?? [];
   const rows = need == null ? matrix : matrix.filter((r) => r.poe_budget_watts >= need);
+  const poe = matrix.length > 0;
+
+  let single, redundant;
+  if (poe) {
+    single = rows.filter((r) => r.secondary == null).map((r) => ({ primary: r.primary, watts: r.poe_budget_watts }));
+    redundant = rows.filter((r) => r.secondary != null).map((r) => ({ primary: r.primary, secondary: r.secondary, watts: r.poe_budget_watts }));
+  } else {
+    single = (ps.valid_primary ?? []).map((p) => ({ primary: p }));
+    redundant = (ps.valid_primary ?? []).map((p) => ({ primary: p, secondary: p }));
+  }
   return {
     group: ps.group,
-    members: group?.members ?? [],
     valid_primary: ps.valid_primary ?? [],
     secondary_none_option: group?.secondary_none_option,
+    redundant_capable: redundant.length > 0,
+    single_options: single,
+    redundant_options: redundant,
     poe_budget_matrix: rows,
     meets_requested_budget: need == null ? null : rows.length > 0,
   };
 }
 
+// License tier + term are CONFIG-VARIABLES: tier is locked on DNA -E/-A models and
+// selectable on Meraki -M models; term resolves the concrete subscription SKU.
 function resolveLicense(model, query, kb) {
   const lic = model.configurables?.license;
   if (!lic) return null;
   const wantRegime = enumEq(query, "license_regime");
+  const wantTier = configValue(query, "license_tier");
+  const wantTerm = configValue(query, "license_term");
+
   const groups = [lic.group, ...(lic.additional_groups ?? [])]
     .map((id) => getLicenseGroup(kb, id))
     .filter(Boolean)
-    .filter((g) => wantRegime == null || g.regime === wantRegime)
-    .map((g) => ({
+    .filter((g) => wantRegime == null || g.regime === wantRegime);
+
+  const offeredTiers = [...new Set(groups.map((g) => g.tier))];
+  // apply a tier pick only where the model actually offers it (never eliminates)
+  const shown = wantTier != null && offeredTiers.includes(wantTier)
+    ? groups.filter((g) => g.tier === wantTier)
+    : groups;
+
+  const out = shown.map((g) => {
+    const terms = g.term_variable?.choices_years ?? [];
+    let chosen_term = null;
+    if (wantTerm != null) {
+      if (terms.length === 0) {
+        // term not applicable (e.g. Meraki subscription-L: one device-tied SKU)
+        chosen_term = { term_years: null, not_applicable: true, subscription_sku: (g.subscription_members ?? [])[0] ?? null };
+      } else {
+        const sku = (g.subscription_members ?? []).find((s) => new RegExp(`-${wantTerm}Y$`).test(s));
+        chosen_term = { term_years: wantTerm, subscription_sku: sku ?? null, available: !!sku };
+      }
+    }
+    return {
       id: g.id,
       regime: g.regime,
-      tier: g.tier, // shown, never picked by the solver
+      tier: g.tier,
       port_class: g.port_class,
       perpetual_member: g.perpetual_member,
       subscription_members: g.subscription_members ?? [],
-      term_choices_years: g.term_variable?.choices_years ?? [],
-    }));
-  return { regime_offered: lic.regime_offered ?? [], tier_locked: lic.tier_locked ?? null, groups };
+      term_choices_years: terms,
+      chosen_term,
+    };
+  });
+  return {
+    regime_offered: lic.regime_offered ?? [],
+    tier_locked: lic.tier_locked ?? (offeredTiers.length === 1 ? offeredTiers[0] : null),
+    tier_selectable: !lic.tier_locked && offeredTiers.length > 1,
+    offered_tiers: offeredTiers,
+    groups: out,
+  };
 }
 
 function resolveAccessories(model, kb) {
@@ -183,5 +230,10 @@ function numericMin(query, axis) {
 }
 function enumEq(query, axis) {
   const c = (query ?? []).find((c) => c.axis === axis && c.condition === "==");
+  return c ? c.value : null;
+}
+/** Value of a config-variable entry (severity:"config"), or null. */
+function configValue(query, name) {
+  const c = (query ?? []).find((c) => c.axis === name && c.severity === "config");
   return c ? c.value : null;
 }

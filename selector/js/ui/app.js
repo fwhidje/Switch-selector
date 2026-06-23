@@ -6,7 +6,7 @@
 // axis becomes a "Ports" grid of min inputs over the (role,medium,speed) combos
 // present in the data. Every change re-solves; dead facet values are disabled.
 
-import { loadRegistry, getAxes, legalValues, portModel } from "../core/registry.js";
+import { loadRegistry, getAxes, legalValues, portModel, configVariables } from "../core/registry.js";
 import { loadKB, getModels } from "../core/kb.js";
 import { solve, availableValues } from "../core/solver.js";
 
@@ -54,6 +54,7 @@ function buildControls() {
     form.appendChild(controlFor(axis));
   }
   form.appendChild(portsSection());
+  form.appendChild(configSection());
   form.addEventListener("input", run);
   form.addEventListener("change", run);
 }
@@ -113,6 +114,24 @@ function portsSection() {
   return wrap;
 }
 
+// config-variables (license tier/term): refine the kitlist, never filter
+function configSection() {
+  const wrap = document.createElement("div");
+  wrap.className = "ports-section";
+  const h = document.createElement("div");
+  h.className = "section-head";
+  h.textContent = "configuration — refines kitlist, does not filter";
+  wrap.appendChild(h);
+  const cvs = configVariables(registry);
+  for (const [name, def] of Object.entries(cvs)) {
+    if (name === "_comment") continue;
+    const opts = [["", "any"], ...(def.legal_values ?? []).map((v) => [String(v), String(v)])];
+    const sel = select(name, def.type === "integer" ? "config-int" : "config-enum", opts);
+    wrap.appendChild(row(name, def.notes, sel));
+  }
+  return wrap;
+}
+
 function numInput(axis, bound, placeholder) {
   const el = document.createElement("input");
   el.type = "number"; el.min = "0"; el.placeholder = placeholder;
@@ -143,6 +162,10 @@ function readQuery() {
     } else if (el.dataset.kind === "ordered") {
       const cond = document.querySelector(`#controls [data-cond-for="${axis}"]`)?.value ?? ">=";
       q.push({ axis, condition: cond, value: raw, severity: "hard" });
+    } else if (el.dataset.kind === "config-int") {
+      q.push({ axis, condition: "==", value: Number(raw), severity: "config" }); // never filters
+    } else if (el.dataset.kind === "config-enum") {
+      q.push({ axis, condition: "==", value: raw, severity: "config" }); // never filters
     } else {
       q.push({ axis, condition: "==", value: raw, severity: "hard" });
     }
@@ -238,15 +261,25 @@ function renderCandidate(cand, isDefault) {
     ? `uplink modules: ${r.uplinks.options.filter((o) => o.moduleId).map((o) => o.id).join(", ") || "(none valid)"}`
     : `fixed uplinks: ${summarisePorts(r.uplinks.options[0]?.ports)}`;
   kit.appendChild(li(up));
-  // power
+  // power — single vs redundant PSU options (redundancy is a config choice now)
   if (r.power) {
-    const budget = r.power.meets_requested_budget === null ? "" : r.power.meets_requested_budget ? " (meets budget)" : " (cannot meet budget)";
-    kit.appendChild(li(`PSU: primary ∈ {${r.power.valid_primary.join(", ")}} · ${r.power.poe_budget_matrix.length} PoE pair(s)${budget}`));
+    const budget = r.power.meets_requested_budget === null ? "" : r.power.meets_requested_budget ? " · meets budget" : " · CANNOT meet budget";
+    const single = r.power.single_options.length;
+    const red = r.power.redundant_options.length;
+    kit.appendChild(li(`PSU: ${single} single + ${red} redundant pair(s)${r.power.redundant_capable ? "" : " (no redundancy)"}${budget}`));
   }
-  // license
+  // license — resolved per chosen tier/term where applicable
   if (r.license) {
-    const groups = r.license.groups.map((g) => `${g.id} [${g.tier}, ${g.regime}, ${g.term_choices_years.join("/")}yr]`).join("; ");
-    kit.appendChild(li(`license: ${groups || "(none for chosen regime)"}`));
+    const tierNote = r.license.tier_selectable ? "tier selectable" : `tier ${r.license.tier_locked ?? "?"}`;
+    const groups = r.license.groups.map((g) => {
+      const term = g.chosen_term
+        ? (g.chosen_term.subscription_sku
+            ? ` → ${g.chosen_term.subscription_sku}${g.chosen_term.not_applicable ? " (term n/a)" : ""}`
+            : ` (no ${g.chosen_term.term_years}yr SKU)`)
+        : ` [${g.term_choices_years.join("/") || "—"}yr]`;
+      return `${g.tier}/${g.regime}${term}`;
+    }).join("; ");
+    kit.appendChild(li(`license (${tierNote}): ${groups || "(none for chosen regime)"}`));
   }
   // accessories
   const acc = [];
