@@ -17,6 +17,16 @@
         "url": "https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9300-series-switches/nb-06-cat9300-swit-ser-cte-en.html",
         "cisco_updated": "2026-06-10",
         "last_verified": "2026-06-17"
+      },
+      {
+        "name": "Cisco Catalyst 9300-M Datasheet",
+        "url": "file:///home/user/KB-Cisco/C9300/Catalyst%209300-M%20Datasheet.pdf",
+        "last_verified": "2026-06-23"
+      },
+      {
+        "name": "Cisco Meraki MS Subscription Licensing",
+        "url": "file:///home/user/KB-Cisco/C9300/Subscription%20-%20MS%20Licensing.pdf",
+        "last_verified": "2026-06-23"
       }
     ],
     "design_notes": [
@@ -593,6 +603,202 @@
         "shape": "term-based",
         "term_years": 7,
         "port_class": 48
+      },
+      {
+        "id": "LIC-C9300-24E-1Y",
+        "regime": "meraki-classic",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 1,
+        "port_class": 24
+      },
+      {
+        "id": "LIC-C9300-24E-3Y",
+        "regime": "meraki-classic",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 3,
+        "port_class": 24
+      },
+      {
+        "id": "LIC-C9300-24E-5Y",
+        "regime": "meraki-classic",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 5,
+        "port_class": 24
+      },
+      {
+        "id": "LIC-C9300-24E-7Y",
+        "regime": "meraki-classic",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 7,
+        "port_class": 24
+      },
+      {
+        "id": "LIC-C9300-24E-10Y",
+        "regime": "meraki-classic",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 10,
+        "port_class": 24
+      },
+      {
+        "id": "LIC-C9300-24A-1Y",
+        "regime": "meraki-classic",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 1,
+        "port_class": 24
+      },
+      {
+        "id": "LIC-C9300-24A-3Y",
+        "regime": "meraki-classic",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 3,
+        "port_class": 24
+      },
+      {
+        "id": "LIC-C9300-24A-5Y",
+        "regime": "meraki-classic",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 5,
+        "port_class": 24
+      },
+      {
+        "id": "LIC-C9300-24A-7Y",
+        "regime": "meraki-classic",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 7,
+        "port_class": 24
+      },
+      {
+        "id": "LIC-C9300-24A-10Y",
+        "regime": "meraki-classic",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 10,
+        "port_class": 24
+      },
+      {
+        "id": "LIC-C9300-48E-1Y",
+        "regime": "meraki-classic",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 1,
+        "port_class": 48
+      },
+      {
+        "id": "LIC-C9300-48E-3Y",
+        "regime": "meraki-classic",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 3,
+        "port_class": 48
+      },
+      {
+        "id": "LIC-C9300-48E-5Y",
+        "regime": "meraki-classic",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 5,
+        "port_class": 48
+      },
+      {
+        "id": "LIC-C9300-48E-7Y",
+        "regime": "meraki-classic",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 7,
+        "port_class": 48
+      },
+      {
+        "id": "LIC-C9300-48E-10Y",
+        "regime": "meraki-classic",
+        "tier": "essentials",
+        "shape": "term-based",
+        "term_years": 10,
+        "port_class": 48
+      },
+      {
+        "id": "LIC-C9300-48A-1Y",
+        "regime": "meraki-classic",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 1,
+        "port_class": 48
+      },
+      {
+        "id": "LIC-C9300-48A-3Y",
+        "regime": "meraki-classic",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 3,
+        "port_class": 48
+      },
+      {
+        "id": "LIC-C9300-48A-5Y",
+        "regime": "meraki-classic",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 5,
+        "port_class": 48
+      },
+      {
+        "id": "LIC-C9300-48A-7Y",
+        "regime": "meraki-classic",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 7,
+        "port_class": 48
+      },
+      {
+        "id": "LIC-C9300-48A-10Y",
+        "regime": "meraki-classic",
+        "tier": "advantage",
+        "shape": "term-based",
+        "term_years": 10,
+        "port_class": 48
+      },
+      {
+        "id": "LIC-MS-300-M-E",
+        "regime": "meraki-subscription",
+        "tier": "essentials",
+        "shape": "subscription-based",
+        "term_years": null,
+        "port_class": 24,
+        "notes": "MS300 Medium subscription, Essential tier. Covers all 24-port C9300/L/X-M switches (Subscription - MS Licensing datasheet p. 4)."
+      },
+      {
+        "id": "LIC-MS-300-M-A",
+        "regime": "meraki-subscription",
+        "tier": "advantage",
+        "shape": "subscription-based",
+        "term_years": null,
+        "port_class": 24,
+        "notes": "MS300 Medium subscription, Advantage tier. Covers all 24-port C9300/L/X-M switches (Subscription - MS Licensing datasheet p. 4)."
+      },
+      {
+        "id": "LIC-MS-300-L-E",
+        "regime": "meraki-subscription",
+        "tier": "essentials",
+        "shape": "subscription-based",
+        "term_years": null,
+        "port_class": 48,
+        "notes": "MS300 Large subscription, Essential tier. Covers all 48-port C9300/L/X-M switches (Subscription - MS Licensing datasheet p. 5)."
+      },
+      {
+        "id": "LIC-MS-300-L-A",
+        "regime": "meraki-subscription",
+        "tier": "advantage",
+        "shape": "subscription-based",
+        "term_years": null,
+        "port_class": 48,
+        "notes": "MS300 Large subscription, Advantage tier. Covers all 48-port C9300/L/X-M switches (Subscription - MS Licensing datasheet p. 5)."
       }
     ]
   },
@@ -1069,6 +1275,130 @@
           "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. Subscription is mandatory; tier locked to -A."
         },
         "notes": "C9300L fixed-uplink 48-port Advantage group. C9300LM models (both 24- and 48-port) also use C9300L license SKUs per Cisco CCW configuration tool; the ordering guide's C9300LM-specific SKUs do not exist in practice."
+      },
+      {
+        "id": "cat9300-meraki-classic-essentials-24",
+        "regime": "meraki-classic",
+        "tier": "essentials",
+        "port_class": 24,
+        "applies_to": "All 24-port C9300/L/X-M platforms (excluding MS390). License applies across the full Meraki Catalyst 9300 family (C9300-M Datasheet p. 2).",
+        "perpetual_member": null,
+        "subscription_members": [
+          "LIC-C9300-24E-1Y",
+          "LIC-C9300-24E-3Y",
+          "LIC-C9300-24E-5Y",
+          "LIC-C9300-24E-7Y",
+          "LIC-C9300-24E-10Y"
+        ],
+        "term_variable": {
+          "axis": "n/a",
+          "choices_years": [1, 3, 5, 7, 10],
+          "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. No perpetual option; no tier lock by hardware suffix — tier is a customer choice at order time."
+        }
+      },
+      {
+        "id": "cat9300-meraki-classic-advantage-24",
+        "regime": "meraki-classic",
+        "tier": "advantage",
+        "port_class": 24,
+        "applies_to": "All 24-port C9300/L/X-M platforms (excluding MS390). License applies across the full Meraki Catalyst 9300 family (C9300-M Datasheet p. 2).",
+        "perpetual_member": null,
+        "subscription_members": [
+          "LIC-C9300-24A-1Y",
+          "LIC-C9300-24A-3Y",
+          "LIC-C9300-24A-5Y",
+          "LIC-C9300-24A-7Y",
+          "LIC-C9300-24A-10Y"
+        ],
+        "term_variable": {
+          "axis": "n/a",
+          "choices_years": [1, 3, 5, 7, 10],
+          "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. No perpetual option; no tier lock by hardware suffix — tier is a customer choice at order time."
+        }
+      },
+      {
+        "id": "cat9300-meraki-classic-essentials-48",
+        "regime": "meraki-classic",
+        "tier": "essentials",
+        "port_class": 48,
+        "applies_to": "All 48-port C9300/L/X-M platforms (excluding MS390). License applies across the full Meraki Catalyst 9300 family (C9300-M Datasheet p. 2).",
+        "perpetual_member": null,
+        "subscription_members": [
+          "LIC-C9300-48E-1Y",
+          "LIC-C9300-48E-3Y",
+          "LIC-C9300-48E-5Y",
+          "LIC-C9300-48E-7Y",
+          "LIC-C9300-48E-10Y"
+        ],
+        "term_variable": {
+          "axis": "n/a",
+          "choices_years": [1, 3, 5, 7, 10],
+          "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. No perpetual option; no tier lock by hardware suffix — tier is a customer choice at order time."
+        }
+      },
+      {
+        "id": "cat9300-meraki-classic-advantage-48",
+        "regime": "meraki-classic",
+        "tier": "advantage",
+        "port_class": 48,
+        "applies_to": "All 48-port C9300/L/X-M platforms (excluding MS390). License applies across the full Meraki Catalyst 9300 family (C9300-M Datasheet p. 2).",
+        "perpetual_member": null,
+        "subscription_members": [
+          "LIC-C9300-48A-1Y",
+          "LIC-C9300-48A-3Y",
+          "LIC-C9300-48A-5Y",
+          "LIC-C9300-48A-7Y",
+          "LIC-C9300-48A-10Y"
+        ],
+        "term_variable": {
+          "axis": "n/a",
+          "choices_years": [1, 3, 5, 7, 10],
+          "notes": "Term length is a downstream config VARIABLE (not a registry axis): chosen after switch+regime resolve. No perpetual option; no tier lock by hardware suffix — tier is a customer choice at order time."
+        }
+      },
+      {
+        "id": "cat9300-meraki-sub-m-essentials",
+        "regime": "meraki-subscription",
+        "tier": "essentials",
+        "port_class": 24,
+        "applies_to": "MS300 Medium class — all 24-port C9300/L/X-M switches (Subscription - MS Licensing datasheet pp. 4-5).",
+        "perpetual_member": null,
+        "subscription_members": [
+          "LIC-MS-300-M-E"
+        ]
+      },
+      {
+        "id": "cat9300-meraki-sub-m-advantage",
+        "regime": "meraki-subscription",
+        "tier": "advantage",
+        "port_class": 24,
+        "applies_to": "MS300 Medium class — all 24-port C9300/L/X-M switches (Subscription - MS Licensing datasheet pp. 4-5).",
+        "perpetual_member": null,
+        "subscription_members": [
+          "LIC-MS-300-M-A"
+        ]
+      },
+      {
+        "id": "cat9300-meraki-sub-l-essentials",
+        "regime": "meraki-subscription",
+        "tier": "essentials",
+        "port_class": 48,
+        "applies_to": "MS300 Large class — all 48-port C9300/L/X-M switches (Subscription - MS Licensing datasheet p. 5).",
+        "perpetual_member": null,
+        "subscription_members": [
+          "LIC-MS-300-L-E"
+        ]
+      },
+      {
+        "id": "cat9300-meraki-sub-l-advantage",
+        "regime": "meraki-subscription",
+        "tier": "advantage",
+        "port_class": 48,
+        "applies_to": "MS300 Large class — all 48-port C9300/L/X-M switches (Subscription - MS Licensing datasheet p. 5).",
+        "perpetual_member": null,
+        "subscription_members": [
+          "LIC-MS-300-L-A"
+        ]
       }
     ]
   },

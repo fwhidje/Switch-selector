@@ -287,14 +287,14 @@
     "license_group": {
       "type": "object",
       "description": "A license SET keyed on regime + tier + port_class. A model links to the set, not a single license. Subscription is mandatory; tier is locked by the hardware suffix. Term length is a downstream variable.",
-      "required": ["id", "regime", "tier", "port_class", "perpetual_member", "subscription_members", "term_variable"],
+      "required": ["id", "regime", "tier", "port_class", "perpetual_member", "subscription_members"],
       "properties": {
         "id": { "type": "string" },
         "regime": { "type": "string", "$comment": "license_regime axis value." },
         "tier": { "type": "string", "enum": ["essentials", "advantage"] },
         "port_class": { "type": ["integer", "null"] },
         "applies_to": { "type": "string", "$comment": "Optional human-readable scoping note (e.g. which models a port_class:null set serves)." },
-        "perpetual_member": { "type": "string", "$comment": "catalog license id of the embedded network-stack perpetual license." },
+        "perpetual_member": { "type": ["string", "null"], "$comment": "catalog license id of the embedded network-stack perpetual license. null for Meraki regimes (no perpetual SKU exists)." },
         "subscription_members": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
         "term_variable": {
           "type": "object",
