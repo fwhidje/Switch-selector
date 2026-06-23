@@ -116,6 +116,46 @@
         },
         "compatible_family": "C9300X",
         "notes": "Datasheet Table 3 footnote: compatible only with C9300X-48HX, C9300X-48TX, and C9300X-24Y. NOT compatible with C9300X-12Y (or other C9300X models)."
+      },
+      {
+        "id": "C9300-NM-8X-M",
+        "description": "Catalyst 9300-M 8x 1G/10G SFP+ uplink module",
+        "provides_uplinks": {
+          "uplink_10g": 8
+        },
+        "compatible_family": "C9300"
+      },
+      {
+        "id": "C9300-NM-2Q-M",
+        "description": "Catalyst 9300-M 2x 40G QSFP uplink module",
+        "provides_uplinks": {
+          "uplink_40g": 2
+        },
+        "compatible_family": "C9300"
+      },
+      {
+        "id": "C9300-NM-2Y-M",
+        "description": "Catalyst 9300-M 2x 25G/10G/1G SFP28 uplink module",
+        "provides_uplinks": {
+          "uplink_25g": 2
+        },
+        "compatible_family": "C9300"
+      },
+      {
+        "id": "C9300X-NM-8Y-M",
+        "description": "Catalyst 9300X-M 8x 25G SFP28 uplink module",
+        "provides_uplinks": {
+          "uplink_25g": 8
+        },
+        "compatible_family": "C9300X"
+      },
+      {
+        "id": "C9300X-NM-2C-M",
+        "description": "Catalyst 9300X-M 2x 40/100G QSFP28 uplink module",
+        "provides_uplinks": {
+          "uplink_100g": 2
+        },
+        "compatible_family": "C9300X"
       }
     ],
     "power_supplies": [
@@ -185,6 +225,31 @@
         "type": "DC",
         "rating": null,
         "notes": "1900W HVDC. Listed for C9300 series in HIG Table 1; never observed for sale but present in the install guide. Retained for completeness/filtering."
+      },
+      {
+        "id": "PWR-C1-350WAC-P-M",
+        "watts": 350,
+        "type": "AC",
+        "rating": "Platinum"
+      },
+      {
+        "id": "PWR-C1-715WAC-P-M",
+        "watts": 715,
+        "type": "AC",
+        "rating": "Platinum"
+      },
+      {
+        "id": "PWR-C1-1100WAC-P-M",
+        "watts": 1100,
+        "type": "AC",
+        "rating": "Platinum"
+      },
+      {
+        "id": "PWR-C1-1900WAC-P-M",
+        "watts": 1900,
+        "type": "AC",
+        "rating": "Platinum",
+        "notes": "230V nominal input → 1900W output; 115V input limited to 1500W. Compatible with C9300/C9300X only per accessories table (not C9300L)."
       }
     ],
     "stack_cables": [
@@ -217,6 +282,21 @@
         "id": "STACK-T3A-3M",
         "length_cm": 300,
         "type": "type-3a"
+      },
+      {
+        "id": "STACK-T1-50CM-M",
+        "length_cm": 50,
+        "type": "type-1"
+      },
+      {
+        "id": "STACK-T1-1M-M",
+        "length_cm": 100,
+        "type": "type-1"
+      },
+      {
+        "id": "STACK-T1-3M-M",
+        "length_cm": 300,
+        "type": "type-1"
       }
     ],
     "stackpower_cables": [
@@ -229,6 +309,14 @@
         "id": "CAB-SPWR-150CM",
         "length_cm": 150,
         "notes": "StackPower cable 150cm."
+      },
+      {
+        "id": "CAB-SPWR-30CM-M",
+        "length_cm": 30
+      },
+      {
+        "id": "CAB-SPWR-150CM-M",
+        "length_cm": 150
       }
     ],
     "licenses": [
@@ -866,6 +954,64 @@
           "notes": "Same as c9300x-modular-uplink-modules but EXCLUDES C9300X-NM-4C, which the datasheet footnote lists as incompatible with C9300X-12Y. Per-speed maxima drop accordingly (100G from 4 to 2 via the 2C). 2C/4C recorded as 100G only (single declared speed per module, as 8X is 10G-only and 4G is 1G-only); 40G capability of these QSFP28 modules is left to solver subsumption logic, not stored here."
         },
         "notes": "C9300X 'no-4C' module set: full C9300X NM set minus C9300X-NM-4C (datasheet Table 3 footnote *: 4C compatible only with C9300X-48HX, C9300X-48TX, and C9300X-24Y). Used by C9300X-12Y, C9300X-48HXN, and C9300X-24HX. Note for 48HXN: datasheet Table 3 footnote ** states NM port count is limited when any C9300X-NM-xx is installed in a C9300X-48HXN; the exact per-module limit is not specified in the datasheet."
+      },
+      {
+        "id": "c9300m-modular-uplink-modules",
+        "members": [
+          "C9300-NM-4G",
+          "C9300-NM-4M",
+          "C9300-NM-8X-M",
+          "C9300-NM-2Q-M",
+          "C9300-NM-2Y-M"
+        ],
+        "none_option": "C9300-NM-NONE",
+        "uplink_capacity": {
+          "bay_count": 1,
+          "per_speed_max": {
+            "uplink_1g": 4,
+            "uplink_mgig": 4,
+            "uplink_10g": 8,
+            "uplink_25g": 2,
+            "uplink_40g": 2
+          },
+          "notes": "Aggregated from member provides_uplinks: max per speed across the set (one module bay — speeds mutually exclusive). C9300-NM-4G and C9300-NM-4M are listed without -M suffix in the accessories table (same orderable SKU as classic C9300). C9300-NM-8X-M/-2Q-M/-2Y-M are -M-specific SKUs; cross-compatible with their non-M equivalents per datasheet p. 9. Capacity identical to c9300-modular-uplink-modules; kept as distinct group for series separation."
+        },
+        "notes": "C9300-M uplink module set per accessories table (C9300-M Datasheet p. 8). C9300X-NM-* modules are excluded (C9300X only)."
+      },
+      {
+        "id": "c9300xm-modular-uplink-modules",
+        "members": [
+          "C9300X-NM-8Y-M",
+          "C9300X-NM-2C-M",
+          "C9300X-NM-4C"
+        ],
+        "none_option": "C9300X-NM-NONE",
+        "uplink_capacity": {
+          "bay_count": 1,
+          "per_speed_max": {
+            "uplink_25g": 8,
+            "uplink_100g": 4
+          },
+          "notes": "C9300X-NM-8Y-M provides 25G×8; C9300X-NM-4C provides 100G×4 (max per single bay). C9300X-NM-8M is absent from the C9300-M accessories table and excluded per strict sourcing (no uplink_mgig). 4C restricted to C9300X-48HX/48TX/24Y — use c9300xm-12y-uplink-modules for other C9300X-M models."
+        },
+        "notes": "C9300X-M full uplink module set per accessories table (C9300-M Datasheet p. 8). C9300X-NM-4C carries no -M suffix (listed as-is, same pattern as C9300-NM-4G/-4M)."
+      },
+      {
+        "id": "c9300xm-12y-uplink-modules",
+        "members": [
+          "C9300X-NM-8Y-M",
+          "C9300X-NM-2C-M"
+        ],
+        "none_option": "C9300X-NM-NONE",
+        "uplink_capacity": {
+          "bay_count": 1,
+          "per_speed_max": {
+            "uplink_25g": 8,
+            "uplink_100g": 2
+          },
+          "notes": "Excludes C9300X-NM-4C (restricted to C9300X-48HX/48TX/24Y per datasheet footnote — same restriction as classic c9300x-12y-uplink-modules). 100G max drops from 4 to 2 (only 2C-M available). Mirrors the classic c9300x-12y-uplink-modules split pattern."
+        },
+        "notes": "C9300X-M 'no-4C' module set. Used by C9300X-M models where C9300X-NM-4C is incompatible (C9300X-12Y-M, C9300X-48HXN-M, C9300X-24HX-M)."
       }
     ],
     "power_supply_groups": [
@@ -915,6 +1061,38 @@
         ],
         "secondary_none_option": "C9300-SPS-NONE",
         "notes": "Membership from Hardware Installation Guide Table 1 (Power Supply Module Part Numbers), pruned to the Platinum (-P) variant wherever a non-Platinum twin exists at the same wattage (non-Platinum units are not proposed/quotable). Which member is valid as PRIMARY and the PoE budget per (primary,secondary) pair are switch-specific and live on the switch entry. C9300X (modular uplink) series. All members already Platinum/DC per HIG."
+      },
+      {
+        "id": "c9300m-psus",
+        "members": [
+          "PWR-C1-350WAC-P-M",
+          "PWR-C1-715WAC-P-M",
+          "PWR-C1-1100WAC-P-M",
+          "PWR-C1-1900WAC-P-M"
+        ],
+        "secondary_none_option": "C9300-SPS-NONE",
+        "notes": "C9300-M series PSU set (C9300-M Datasheet p. 8 accessories table). -M SKUs are cross-compatible with non-M equivalents per datasheet p. 9. PWR-C1-1900WAC-P-M restricted to C9300/C9300X (not C9300L) per accessories table. Which member is valid as PRIMARY and the PoE budget per (primary,secondary) pair are switch-specific and live on the model entry."
+      },
+      {
+        "id": "c9300l-m-psus",
+        "members": [
+          "PWR-C1-350WAC-P-M",
+          "PWR-C1-715WAC-P-M",
+          "PWR-C1-1100WAC-P-M"
+        ],
+        "secondary_none_option": "C9300L-SPS-NONE",
+        "notes": "C9300L-M series PSU set. Excludes PWR-C1-1900WAC-P-M (not listed for C9300L in accessories table). -M SKUs cross-compatible with non-M equivalents per datasheet p. 9. Which member is valid as PRIMARY and the PoE budget per (primary,secondary) pair are switch-specific and live on the model entry."
+      },
+      {
+        "id": "c9300xm-psus",
+        "members": [
+          "PWR-C1-350WAC-P-M",
+          "PWR-C1-715WAC-P-M",
+          "PWR-C1-1100WAC-P-M",
+          "PWR-C1-1900WAC-P-M"
+        ],
+        "secondary_none_option": "C9300-SPS-NONE",
+        "notes": "C9300X-M series PSU set (C9300-M Datasheet p. 8 accessories table). -M SKUs cross-compatible with non-M equivalents per datasheet p. 9. Which member is valid as PRIMARY and the PoE budget per (primary,secondary) pair are switch-specific and live on the model entry."
       }
     ],
     "stack_cable_groups": [
@@ -958,6 +1136,37 @@
         ],
         "none_option": "C9300X-STACK-NONE",
         "notes": "C9300X StackWise-1T uses the same Type-1 STACK-T1 cables as C9300 (StackWise-480); membership identical to c9300-modular-stack-cables. Kept as its own named group because the ordering guide uses a distinct none-option (C9300X-STACK-NONE) and a different default cable length, and so the set can diverge."
+      },
+      {
+        "id": "c9300m-stack-cables",
+        "members": [
+          "STACK-T1-50CM-M",
+          "STACK-T1-1M-M",
+          "STACK-T1-3M-M"
+        ],
+        "none_option": "C9300-STACK-NONE",
+        "notes": "C9300-M 480G stacking cables (Type-1, -M SKUs). No stack kit required. Cross-compatible with non-M STACK-T1-* per datasheet p. 9."
+      },
+      {
+        "id": "c9300l-m-stack-cables",
+        "stack_kit": "C9300L-STACK-KIT2",
+        "members": [
+          "STACK-T3A-50CM",
+          "STACK-T3A-1M",
+          "STACK-T3A-3M"
+        ],
+        "none_option": "C9300L-STACK-NONE",
+        "notes": "C9300L-M fixed-uplink stacking via C9300L-STACK-KIT2, Type-3A cables. No -M variants of Type-3A cables exist in the accessories table; uses existing non-M STACK-T3A-* SKUs (cross-compatible per datasheet p. 9). Kept as distinct group from c9300l-stack-cables for series separation."
+      },
+      {
+        "id": "c9300xm-stack-cables",
+        "members": [
+          "STACK-T1-50CM-M",
+          "STACK-T1-1M-M",
+          "STACK-T1-3M-M"
+        ],
+        "none_option": "C9300X-STACK-NONE",
+        "notes": "C9300X-M stacking cables (Type-1, -M SKUs). Cross-compatible with non-M STACK-T1-* per datasheet p. 9."
       }
     ],
     "stackpower_cable_groups": [
@@ -966,6 +1175,22 @@
         "members": [
           "CAB-SPWR-30CM",
           "CAB-SPWR-150CM"
+        ],
+        "none_option": "C9300-SPWR-NONE"
+      },
+      {
+        "id": "c9300m-stackpower-cables",
+        "members": [
+          "CAB-SPWR-30CM-M",
+          "CAB-SPWR-150CM-M"
+        ],
+        "none_option": "C9300-SPWR-NONE"
+      },
+      {
+        "id": "c9300xm-stackpower-cables",
+        "members": [
+          "CAB-SPWR-30CM-M",
+          "CAB-SPWR-150CM-M"
         ],
         "none_option": "C9300-SPWR-NONE"
       }
