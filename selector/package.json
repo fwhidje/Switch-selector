@@ -5,6 +5,7 @@
   "type": "module",
   "description": "C9300 switch selector — pure solver core + basic facet UI (Stage 1). Static, no build step.",
   "scripts": {
-    "serve": "python3 -m http.server"
+    "serve": "python3 -m http.server",
+    "validate": "node tools/validate-kb.mjs"
   }
 }
