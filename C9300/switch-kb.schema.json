@@ -482,11 +482,12 @@
 
     "configurable_license": {
       "type": "object",
-      "required": ["group", "regime_offered", "tier_locked", "tier_lock_reason"],
+      "required": ["group", "regime_offered"],
       "properties": {
-        "group": { "type": "string", "$comment": "license_groups id." },
+        "group": { "type": "string", "$comment": "license_groups id. Primary or only group." },
+        "additional_groups": { "type": "array", "items": { "type": "string" }, "minItems": 1, "$comment": "Additional license group ids when a model spans multiple tier/regime combinations (e.g. Meraki tier-selectable models that offer both meraki-classic and meraki-subscription in essentials and advantage tiers)." },
         "regime_offered": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
-        "tier_locked": { "type": "string", "enum": ["essentials", "advantage"] },
+        "tier_locked": { "type": "string", "enum": ["essentials", "advantage"], "$comment": "Present when hardware suffix locks the tier (classic DNA -E/-A models). Omitted for tier-selectable models such as C9300-M (no hardware suffix)." },
         "tier_lock_reason": { "type": "string" }
       },
       "additionalProperties": false
