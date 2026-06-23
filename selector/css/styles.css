@@ -1,0 +1,66 @@
+/* Basic, readable styling for the test surface. Intentionally plain — this UI
+   exists to exercise the solver, not to be a product. */
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: #1c2330;
+  background: #f5f7fa;
+}
+
+header {
+  padding: 16px 20px;
+  background: #11243f;
+  color: #fff;
+}
+header h1 { margin: 0 0 4px; font-size: 20px; }
+.status { margin: 0; font-size: 13px; color: #9fd0ff; }
+.status.error { color: #ff9d9d; }
+.note { margin: 6px 0 0; font-size: 12px; color: #c4d2e6; max-width: 60ch; }
+
+main {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 16px;
+  padding: 16px 20px;
+  align-items: start;
+}
+
+section {
+  background: #fff;
+  border: 1px solid #dbe2ec;
+  border-radius: 8px;
+  padding: 14px;
+}
+h2 { margin: 0 0 10px; font-size: 15px; }
+
+#controls { display: flex; flex-direction: column; gap: 8px; }
+.control { display: grid; grid-template-columns: 1fr 110px; align-items: center; gap: 8px; }
+.axis-name { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; cursor: help; }
+.control input, .control select {
+  width: 100%; padding: 4px 6px;
+  border: 1px solid #c4cedd; border-radius: 5px; font-size: 13px;
+}
+
+.results-head { display: flex; align-items: baseline; justify-content: space-between; }
+.summary { font-size: 13px; color: #4a5a72; }
+.query-line { font-size: 12px; color: #4a5a72; margin: 4px 0 12px; }
+#query { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+.candidate {
+  border: 1px solid #dbe2ec; border-radius: 8px;
+  padding: 10px 12px; margin-bottom: 10px;
+}
+.candidate.default { border-color: #2f7bd6; box-shadow: 0 0 0 1px #2f7bd6 inset; }
+.candidate h3 { margin: 0 0 2px; font-size: 14px; font-family: ui-monospace, Menlo, monospace; }
+.candidate .desc { margin: 0 0 6px; color: #4a5a72; font-size: 12.5px; }
+.bundle {
+  background: #0f1b2d; color: #d7e4f5; padding: 10px; border-radius: 6px;
+  font-size: 11.5px; overflow-x: auto; margin: 6px 0 0;
+}
+details summary { cursor: pointer; font-size: 12.5px; color: #2f7bd6; }
+#eliminated { margin-top: 8px; }
+#eliminated ul { margin: 8px 0 0; padding-left: 18px; font-size: 12px; color: #4a5a72; }
+#eliminated li { font-family: ui-monospace, Menlo, monospace; }
