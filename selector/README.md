@@ -1,53 +1,62 @@
-# C9300 Selector (Stage 1, pass 1)
+# C9300 Selector
 
-A first, basic implementation of the Networking Equipment Selector for the Cisco
-Catalyst 9300 family: a small **pure solver** plus a **basic facet UI** over it.
-All vanilla JavaScript (ES modules), **no build step** — it runs as static files
-and deploys to GitHub Pages as-is.
+A pure, generic **constraint solver** plus a **basic facet UI** for the Cisco Catalyst 9300 family.
+Vanilla JavaScript (ES modules), **no build step** — runs as static files and deploys to GitHub
+Pages as-is. The solver core is DOM-free and IO-free so a future MCP server can reuse it unchanged.
 
 ## Run it
 
-The app fetches the knowledge base over HTTP, so it needs a server (not `file://`):
-
 ```bash
-# from the repository root
+# from the repository root (needs HTTP, not file://)
 python3 -m http.server
 # then open http://localhost:8000/selector/
 ```
 
-On GitHub Pages, enable Pages for the repo and visit `…/selector/`.
+## Validate the data
 
-## How it's organised
+The three knowledge files are a projection chain — **registry → schema → KB**. The validator is the
+mechanical guard that keeps them consistent:
 
-The discipline (per the project guideline): the **solver core is pure** — no DOM,
-no I/O inside the engine — so the *same* core can back a Stage-2 MCP server later
-with only a thin wrapper. The **axis registry is the single source**, projected
-into both the UI controls and the internal query vocabulary.
+```bash
+cd selector && npm run validate          # node tools/validate-kb.mjs
+```
+
+It runs in CI (`.github/workflows/validate-kb.yml`) on every push/PR.
+
+## Layout
 
 ```
 js/core/   pure, importable engine (no DOM)
-  registry.js  accessors over ../C9300/switching-axes.json (the filterable vocabulary)
+  registry.js  accessors over ../C9300/switching-axes.json (the filterable vocabulary + kind/role)
   kb.js        load + id-index ../C9300/c9300_knowledge_base.json (catalog, groups, models)
-  resolve.js   generic capability resolution (uplink look-through, PoE matrix) + kitlist
-  solver.js    solve(query, kb, registry) -> { candidates, default, eliminated }
+  resolve.js   port pools, configured variants, pool-feasibility (max-flow), and the resolved BOM
+  solver.js    solve(query, kb, registry) -> { candidates, default, eliminated }; availableValues()
+tools/
+  validate-kb.mjs   registry/schema/KB consistency validator
 js/ui/
-  app.js       the only DOM module: builds controls from the registry, calls solve()
+  app.js       the only DOM module: builds controls from the registry, calls solve(), renders kits
 ```
 
-## What the solver does (and deliberately does not)
+## The model (registry v0.4.0)
 
-- It **filters** all models on the query's hard constraints, **ranks** survivors,
-  and returns the set with a default — entirely generically, by axis type. No
-  per-switch logic lives in code; a new switch is new JSON.
-- A query is a list of `{ axis, condition, value, severity }`. The facet UI emits
-  all-`hard` constraints; `>=` for integers, `==` for booleans/enums.
-- `uplink_*` axes are never stored on a switch — they resolve by look-through into
-  the referenced network-module group's `uplink_capacity` (or the inline block on
-  fixed-uplink models). That's why they're still filterable.
-- Output per candidate is the **resolved kitlist**: switch + PSU group / PoE matrix
-  + uplink module options + the license group(s) for the chosen regime + accessories.
+- **One narrowing engine over _configured variants_.** A variant = a model with one fitted uplink
+  option. Filtering and configuring are the same narrowing; survivors carry a resolved kitlist.
+- **Unified ports.** Capability is data: `model.ports` (role=access) + the fitted module's `ports`
+  (role=uplink) form a variant's pool. Each port group is `{count, role, medium, speeds[]}`;
+  subsumption is the speed set (a 25G SFP28 port lists `[1g,10g,25g]`). The parametrised
+  **`port_count`** axis counts ports whose `speeds[]` include a requested speed, and simultaneous
+  multi-speed demand is checked for **pool feasibility** against the shared physical ports (so "2×25
+  and 2×10" on an 8-port module passes, but "8×25 and 8×10" — 16 ports — fails).
+- **Axis metadata.** Every axis declares a `kind` (`ordered` | `count-at-level` |
+  `monotonic-capability` | `discriminating` | `numeric` | `boolean`) and a `role` (`requirement` |
+  `config-variable`). The UI builds controls from this: ordered `poe_type` gets an *at-least / exactly*
+  toggle; numerics get min/max; monotonic capabilities get *required / any*; enums get value pickers
+  with **dead options disabled** (and single-value axes collapsed) via `availableValues()`.
+- **No per-switch logic.** A new switch is new JSON. License **tier/term** are shown but never picked
+  (upper-layer concern); the kitlist surfaces the matching license group(s) for the chosen regime.
 
-Out of scope here (upper-layer or later): the guided flow, an MCP server, license
-**tier** selection (essentials/advantage is shown, never picked), price-based
-ranking (no price data yet — the default order is a documented stub), and
-TypeScript.
+## Out of scope (deferred)
+
+QSFP/SFP breakout (a future configurable with its own cable SKU); pricing and price-based ranking
+(the default order is a deterministic stub); collapsing `redundant_psu_capable` into the PSU pair;
+the MCP server; the natural-language guided agent; non-C9300 families.

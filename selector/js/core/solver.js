@@ -1,127 +1,134 @@
-// solver.js — the generic, pure selection engine.
+// solver.js — generic, pure selection engine over configured variants.
 //
 // solve(query, kb, registry) -> { candidates, default, eliminated }
 //
-// This is the "small, dumb solver": it filters every model on the query's HARD
-// constraints, ranks the survivors by SOFT constraints, and returns the set with
-// a default. It contains NO knowledge of any specific switch — every condition is
-// evaluated generically by axis type, and every per-switch fact comes from the
-// data via resolveAxisValue. A new Cisco switch is new JSON, never new code here.
+// A query is a list of constraints:
+//   scalar: { axis, condition, value, severity }
+//   port:   { axis: "port_count", where: {role?, medium?, speed}, condition, value, severity }
 //
-// Pure: no DOM, no fetch, no globals. The exact same function backs the web UI
-// today and a Stage-2 MCP server later.
+// The engine filters models on hard scalar constraints, then checks port demand
+// against each model's uplink VARIANTS via pool-feasibility (a model survives if
+// some fitted uplink option makes the whole port demand feasible). Survivors are
+// ranked by soft constraints and returned with their resolved BOM. No per-switch
+// logic; new switches are new JSON. Pure: no DOM, no fetch, no globals.
 
-import { resolveAxisValue, resolveBundle } from "./resolve.js";
+import { uplinkOptions, variantPool, poolFeasible, resolveBOM } from "./resolve.js";
 import { getModels } from "./kb.js";
+import { getAxis } from "./registry.js";
 
-/**
- * @typedef {Object} Constraint
- * @property {string} axis
- * @property {">="|"=="|"in"} condition
- * @property {number|string|boolean|Array} value
- * @property {"hard"|"soft"} [severity]  // defaults to "hard"
- */
-
-/**
- * @param {Constraint[]} query
- * @param {object} kb        parsed KB (with _index)
- * @param {object} registry  parsed axis registry (reserved for future validation)
- * @returns {{candidates: Array, default: object|null, eliminated: Array}}
- */
 export function solve(query, kb, registry) {
-  const constraints = query ?? [];
-  const hard = constraints.filter((c) => (c.severity ?? "hard") === "hard");
-  const soft = constraints.filter((c) => c.severity === "soft");
+  const cons = query ?? [];
+  const isHard = (c) => (c.severity ?? "hard") === "hard";
+  const hardScalar = cons.filter((c) => c.axis !== "port_count" && isHard(c));
+  const hardPort = cons.filter((c) => c.axis === "port_count" && isHard(c));
+  const soft = cons.filter((c) => c.severity === "soft");
 
   const survivors = [];
   const eliminated = [];
 
   for (const model of getModels(kb)) {
-    const fail = firstFailingConstraint(model, hard, kb);
-    if (fail) {
-      eliminated.push({ id: model.id, failing_axis: fail.axis, failing_condition: describe(fail) });
-    } else {
-      survivors.push(model);
+    const fail = firstFailingScalar(model, hardScalar, registry);
+    if (fail) { eliminated.push({ id: model.id, reason: describe(fail) }); continue; }
+
+    const options = uplinkOptions(model, kb);
+    const demands = hardPort.map((c) => ({ where: c.where, min: c.value }));
+    const validOptions = demands.length
+      ? options.filter((o) => poolFeasible(variantPool(model, o), demands))
+      : options;
+
+    if (demands.length && validOptions.length === 0) {
+      eliminated.push({ id: model.id, reason: portDemandText(hardPort) });
+      continue;
     }
+    survivors.push({ model, validOptions });
   }
 
-  rankSurvivors(survivors, soft);
+  rank(survivors, soft);
 
-  const candidates = survivors.map((model) => ({
-    model: { id: model.id, description: model.description },
-    resolved: resolveBundle(model, constraints, kb),
+  const candidates = survivors.map((s) => ({
+    model: { id: s.model.id, description: s.model.description },
+    resolved: resolveBOM(s.model, cons, kb, s.validOptions),
   }));
 
-  return {
-    candidates,
-    default: candidates[0] ?? null,
-    eliminated,
-  };
+  return { candidates, default: candidates[0] ?? null, eliminated };
 }
 
-/** Return the first hard constraint this model violates, or null if it passes all. */
-function firstFailingConstraint(model, hard, kb) {
-  for (const c of hard) {
-    if (!satisfies(resolveAxisValue(model, c.axis, kb), c)) return c;
+/** First hard scalar constraint this model violates, or null. */
+function firstFailingScalar(model, constraints, registry) {
+  const av = model.axis_values ?? {};
+  for (const c of constraints) {
+    if (!satisfiesScalar(av[c.axis], c, getAxis(registry, c.axis))) return c;
   }
   return null;
 }
 
 /**
- * Generic condition evaluation. The model value may be a scalar or a SET
- * (e.g. license_regime is an array of offered regimes); set membership is
- * handled uniformly. An absent optional axis (undefined) satisfies nothing.
+ * Generic scalar condition evaluation. Ordered enums (e.g. poe_type) compare by
+ * registry order so ">=" means "this level or better". Set-valued model values
+ * (license_regime) are handled by membership. Absent optional axis -> fails.
  */
-export function satisfies(modelValue, constraint) {
-  const { condition, value } = constraint;
-  if (modelValue === undefined || modelValue === null) return false;
+export function satisfiesScalar(value, c, axis) {
+  if (value === undefined || value === null) return false;
+  const ordered = axis?.kind === "ordered";
+  const order = axis?.order ?? axis?.legal_values ?? [];
 
-  switch (condition) {
+  switch (c.condition) {
     case ">=":
-      return typeof modelValue === "number" && modelValue >= value;
-
+      if (ordered) return order.indexOf(value) >= order.indexOf(c.value);
+      return typeof value === "number" && value >= c.value;
+    case "<=":
+      if (ordered) return order.indexOf(value) <= order.indexOf(c.value);
+      return typeof value === "number" && value <= c.value;
     case "==":
-      // Scalar equality, or membership when the model offers a set.
-      return Array.isArray(modelValue) ? modelValue.includes(value) : modelValue === value;
-
+      return Array.isArray(value) ? value.includes(c.value) : value === c.value;
     case "in": {
-      // `value` is a list of acceptable options.
-      const opts = Array.isArray(value) ? value : [value];
-      return Array.isArray(modelValue)
-        ? modelValue.some((v) => opts.includes(v)) // set ∩ opts ≠ ∅
-        : opts.includes(modelValue);
+      const opts = Array.isArray(c.value) ? c.value : [c.value];
+      return Array.isArray(value) ? value.some((v) => opts.includes(v)) : opts.includes(value);
     }
-
     default:
       return false;
   }
 }
 
 /**
- * Rank survivors by soft constraints, then a deterministic default order.
- *
- * NOTE: there is no list_price in the KB yet, so soft "minimize"/"maximize"
- * constraints on a missing axis are no-ops. The fallback ordering — fewest
- * total ports, then id — is a documented STUB to be replaced once price/ranking
- * data exists. Sort is stable so survivors keep KB order on ties.
+ * Which legal values of an enum axis still yield >=1 candidate, given the rest
+ * of the query (the axis's own constraint is removed first). Drives dynamic
+ * facets: the UI disables values not in this set and collapses single-value axes.
  */
-function rankSurvivors(survivors, soft) {
+export function availableValues(query, axisName, kb, registry) {
+  const axis = getAxis(registry, axisName);
+  if (!axis?.legal_values) return null;
+  const base = (query ?? []).filter((c) => c.axis !== axisName);
+  const live = new Set();
+  for (const v of axis.legal_values) {
+    const r = solve([...base, { axis: axisName, condition: "==", value: v, severity: "hard" }], kb, registry);
+    if (r.candidates.length > 0) live.add(v);
+  }
+  return live;
+}
+
+function rank(survivors, soft) {
   survivors.sort((a, b) => {
     for (const c of soft) {
-      const av = a.axis_values?.[c.axis];
-      const bv = b.axis_values?.[c.axis];
-      if (typeof av === "number" && typeof bv === "number" && av !== bv) {
+      const av = a.model.axis_values?.[c.axis];
+      const bv = b.model.axis_values?.[c.axis];
+      if (typeof av === "number" && typeof bv === "number" && av !== bv)
         return c.condition === "maximize" ? bv - av : av - bv;
-      }
     }
-    const ap = a.axis_values?.total_port_count ?? 0;
-    const bp = b.axis_values?.total_port_count ?? 0;
+    // deterministic default order (no price data yet): fewer ports, then id
+    const ap = a.model.axis_values?.total_port_count ?? 0;
+    const bp = b.model.axis_values?.total_port_count ?? 0;
     if (ap !== bp) return ap - bp;
-    return a.id.localeCompare(b.id);
+    return a.model.id.localeCompare(b.model.id);
   });
 }
 
 function describe(c) {
   const v = Array.isArray(c.value) ? `[${c.value.join(", ")}]` : c.value;
   return `${c.axis} ${c.condition} ${v}`;
+}
+function portDemandText(portCons) {
+  return portCons
+    .map((c) => `ports{${[c.where.role, c.where.medium, c.where.speed].filter(Boolean).join("/")}} ${c.condition} ${c.value}`)
+    .join(" & ");
 }

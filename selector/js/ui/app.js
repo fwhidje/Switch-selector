@@ -1,26 +1,29 @@
-// app.js — the basic (non-guided) facet UI. The ONLY module that touches the DOM.
+// app.js — basic facet UI over the variant solver. The only DOM module.
 //
-// It builds one control per registry axis on the left, assembles a query from the
-// non-empty controls, calls the pure solve() on every change, and renders the
-// surviving candidates + kitlists (and a "why others dropped" trace) on the right.
-// All selection logic lives in core/; this file is a thin, replaceable shell.
+// Controls are generated from the registry by axis KIND (ordered enums get an
+// at-least/exactly toggle; numerics get min/max; monotonic capabilities get
+// required/any; discriminating get full choices). The parametrised port_count
+// axis becomes a "Ports" grid of min inputs over the (role,medium,speed) combos
+// present in the data. Every change re-solves; dead facet values are disabled.
 
-import { loadRegistry, getAxes, legalValues } from "../core/registry.js";
-import { loadKB } from "../core/kb.js";
-import { solve } from "../core/solver.js";
+import { loadRegistry, getAxes, legalValues, portModel } from "../core/registry.js";
+import { loadKB, getModels } from "../core/kb.js";
+import { solve, availableValues } from "../core/solver.js";
 
-// Data lives one level up from /selector/, in /C9300/. Relative paths keep this
-// working as static files on GitHub Pages with no build step.
 const REGISTRY_URL = "../C9300/switching-axes.json";
 const KB_URL = "../C9300/c9300_knowledge_base.json";
 
 let registry = null;
 let kb = null;
+let speedOrder = [];
+let portCombos = []; // [{role, medium, speed}]
 
 async function init() {
   const status = document.getElementById("status");
   try {
     [registry, kb] = await Promise.all([loadRegistry(REGISTRY_URL), loadKB(KB_URL)]);
+    speedOrder = portModel(registry)?.selector_enums?.port_speed?.order ?? [];
+    portCombos = enumeratePortCombos(kb);
     status.textContent = `Loaded ${kb.models.length} models · registry v${registry.registry_version}`;
     buildControls();
     run();
@@ -30,120 +33,196 @@ async function init() {
   }
 }
 
-// --- left panel: one control per axis, projected from the registry ------------
+// distinct (role, medium, speed) present across model + module port groups
+function enumeratePortCombos(kb) {
+  const set = new Map();
+  const add = (g) => (g.speeds ?? []).forEach((sp) => set.set(`${g.role}|${g.medium}|${sp}`, { role: g.role, medium: g.medium, speed: sp }));
+  for (const m of getModels(kb)) (m.ports ?? []).forEach(add);
+  for (const nm of kb.catalog?.network_modules ?? []) (nm.ports ?? []).forEach(add);
+  const roleRank = { access: 0, uplink: 1 };
+  return [...set.values()].sort((a, b) =>
+    (roleRank[a.role] - roleRank[b.role]) || a.medium.localeCompare(b.medium) ||
+    (speedOrder.indexOf(a.speed) - speedOrder.indexOf(b.speed)));
+}
 
+// --- build controls ---------------------------------------------------------
 function buildControls() {
   const form = document.getElementById("controls");
   form.innerHTML = "";
   for (const axis of getAxes(registry)) {
+    if (axis.name === "port_count") continue; // handled in the ports grid
     form.appendChild(controlFor(axis));
   }
+  form.appendChild(portsSection());
   form.addEventListener("input", run);
   form.addEventListener("change", run);
 }
 
-function controlFor(axis) {
+function row(labelText, title, ...controls) {
   const wrap = document.createElement("label");
   wrap.className = "control";
   const name = document.createElement("span");
   name.className = "axis-name";
-  name.textContent = axis.name;
-  if (axis.notes) name.title = axis.notes;
+  name.textContent = labelText;
+  if (title) name.title = title;
   wrap.appendChild(name);
-  wrap.appendChild(inputFor(axis));
+  const box = document.createElement("span");
+  box.className = "control-inputs";
+  controls.forEach((c) => box.appendChild(c));
+  wrap.appendChild(box);
   return wrap;
 }
 
-function inputFor(axis) {
+function controlFor(axis) {
+  // ordered enum (poe_type): value select + at-least/exactly toggle
+  if (axis.kind === "ordered") {
+    const sel = select(axis.name, "ordered", [["", "any"], ...legalValues(axis).map((v) => [v, v])]);
+    const cond = document.createElement("select");
+    cond.dataset.condFor = axis.name;
+    cond.className = "cond";
+    for (const [v, t] of [[">=", "at least"], ["==", "exactly"]]) {
+      const o = document.createElement("option"); o.value = v; o.textContent = t; cond.appendChild(o);
+    }
+    return row(axis.name, axis.notes, sel, cond);
+  }
   if (axis.type === "integer") {
-    const el = document.createElement("input");
-    el.type = "number";
-    el.min = "0";
-    el.placeholder = "min…";
-    el.dataset.axis = axis.name;
-    el.dataset.kind = "integer";
-    return el;
+    return row(axis.name, axis.notes, numInput(axis.name, "min", "min"), numInput(axis.name, "max", "max"));
   }
   if (axis.type === "boolean") {
-    return select(axis.name, "boolean", [
-      ["", "any"],
-      ["true", "yes"],
-      ["false", "no"],
-    ]);
+    const opts = axis.kind === "monotonic-capability"
+      ? [["", "any"], ["true", "required"]]
+      : [["", "any"], ["true", "yes"], ["false", "no"]];
+    return row(axis.name, axis.notes, select(axis.name, "boolean", opts));
   }
-  // enum (and enum-set, queried as a single == pick in this basic UI)
-  const opts = [["", "any"], ...legalValues(axis).map((v) => [v, v])];
-  return select(axis.name, "enum", opts);
+  // discriminating enum (series, stacking_technology, license_regime)
+  return row(axis.name, axis.notes, select(axis.name, "enum", [["", "any"], ...legalValues(axis).map((v) => [v, v])]));
 }
 
-function select(axisName, kind, optionPairs) {
+function portsSection() {
+  const wrap = document.createElement("div");
+  wrap.className = "ports-section";
+  const h = document.createElement("div");
+  h.className = "section-head";
+  h.textContent = "ports — minimum count at speed";
+  wrap.appendChild(h);
+  for (const c of portCombos) {
+    const el = numInput("port_count", "min", "0");
+    el.dataset.portRole = c.role; el.dataset.portMedium = c.medium; el.dataset.portSpeed = c.speed;
+    wrap.appendChild(row(`${c.role}/${c.medium}/${c.speed}`, "minimum ports able to run this speed", el));
+  }
+  return wrap;
+}
+
+function numInput(axis, bound, placeholder) {
+  const el = document.createElement("input");
+  el.type = "number"; el.min = "0"; el.placeholder = placeholder;
+  el.dataset.axis = axis; el.dataset.kind = "integer"; el.dataset.bound = bound;
+  return el;
+}
+function select(axis, kind, optionPairs) {
   const el = document.createElement("select");
-  el.dataset.axis = axisName;
-  el.dataset.kind = kind;
+  el.dataset.axis = axis; el.dataset.kind = kind;
   for (const [value, label] of optionPairs) {
-    const o = document.createElement("option");
-    o.value = value;
-    o.textContent = label;
-    el.appendChild(o);
+    const o = document.createElement("option"); o.value = value; o.textContent = label; el.appendChild(o);
   }
   return el;
 }
 
-// --- assemble the query from the controls -------------------------------------
-
+// --- read query -------------------------------------------------------------
 function readQuery() {
-  const query = [];
-  for (const el of document.querySelectorAll("#controls [data-axis]")) {
+  const q = [];
+  // scalar controls
+  for (const el of document.querySelectorAll('#controls [data-axis]:not([data-port-speed])')) {
     const raw = el.value;
-    if (raw === "" || raw == null) continue; // unconstrained
+    if (raw === "" || raw == null) continue;
     const axis = el.dataset.axis;
-    switch (el.dataset.kind) {
-      case "integer":
-        query.push({ axis, condition: ">=", value: Number(raw), severity: "hard" });
-        break;
-      case "boolean":
-        query.push({ axis, condition: "==", value: raw === "true", severity: "hard" });
-        break;
-      default: // enum
-        query.push({ axis, condition: "==", value: raw, severity: "hard" });
+    if (el.dataset.kind === "integer") {
+      q.push({ axis, condition: el.dataset.bound === "max" ? "<=" : ">=", value: Number(raw), severity: "hard" });
+    } else if (el.dataset.kind === "boolean") {
+      q.push({ axis, condition: "==", value: raw === "true", severity: "hard" });
+    } else if (el.dataset.kind === "ordered") {
+      const cond = document.querySelector(`#controls [data-cond-for="${axis}"]`)?.value ?? ">=";
+      q.push({ axis, condition: cond, value: raw, severity: "hard" });
+    } else {
+      q.push({ axis, condition: "==", value: raw, severity: "hard" });
     }
   }
-  return query;
+  // port controls
+  for (const el of document.querySelectorAll("#controls [data-port-speed]")) {
+    const v = Number(el.value);
+    if (!el.value || v <= 0) continue;
+    q.push({
+      axis: "port_count",
+      where: { role: el.dataset.portRole, medium: el.dataset.portMedium, speed: el.dataset.portSpeed },
+      condition: ">=", value: v, severity: "hard",
+    });
+  }
+  return q;
 }
 
-// --- run + render -------------------------------------------------------------
-
+// --- run + render -----------------------------------------------------------
 function run() {
   if (!registry || !kb) return;
   const query = readQuery();
   const result = solve(query, kb, registry);
   renderQuery(query);
   renderResults(result);
+  updateFacets(query);
 }
 
 function renderQuery(query) {
   const el = document.getElementById("query");
   el.textContent = query.length
-    ? query.map((c) => `${c.axis} ${c.condition} ${c.value}`).join("  ·  ")
+    ? query.map((c) => c.axis === "port_count"
+        ? `ports{${[c.where.role, c.where.medium, c.where.speed].filter(Boolean).join("/")}} >= ${c.value}`
+        : `${c.axis} ${c.condition} ${c.value}`).join("  ·  ")
     : "(no constraints — all models)";
 }
 
+// disable enum values that would dead-end given the rest of the query
+function updateFacets(query) {
+  for (const sel of document.querySelectorAll('#controls select[data-kind="enum"], #controls select[data-kind="ordered"]')) {
+    const axis = sel.dataset.axis;
+    const live = availableValues(query, axis, kb, registry);
+    if (!live) continue;
+    let liveCount = 0;
+    for (const opt of sel.options) {
+      if (opt.value === "") { opt.disabled = false; continue; }
+      const ok = live.has(opt.value);
+      opt.disabled = !ok;
+      if (ok) liveCount++;
+    }
+    sel.classList.toggle("collapsed", liveCount <= 1);
+  }
+}
+
 function renderResults(result) {
-  const summary = document.getElementById("summary");
-  summary.textContent = `${result.candidates.length} match · ${result.eliminated.length} eliminated`;
+  document.getElementById("summary").textContent =
+    `${result.candidates.length} match · ${result.eliminated.length} eliminated`;
 
   const list = document.getElementById("candidates");
   list.innerHTML = "";
-  result.candidates.forEach((cand, i) => {
-    list.appendChild(renderCandidate(cand, i === 0));
-  });
+  result.candidates.forEach((cand, i) => list.appendChild(renderCandidate(cand, i === 0)));
 
-  renderEliminated(result.eliminated);
+  const elim = document.getElementById("eliminated");
+  elim.innerHTML = "";
+  const sum = document.createElement("summary");
+  sum.textContent = `eliminated (${result.eliminated.length})`;
+  elim.appendChild(sum);
+  const ul = document.createElement("ul");
+  for (const e of result.eliminated) {
+    const li = document.createElement("li");
+    li.textContent = `${e.id} — ${e.reason}`;
+    ul.appendChild(li);
+  }
+  elim.appendChild(ul);
 }
 
 function renderCandidate(cand, isDefault) {
+  const r = cand.resolved;
   const card = document.createElement("article");
   card.className = "candidate" + (isDefault ? " default" : "");
+
   const h = document.createElement("h3");
   h.textContent = cand.model.id + (isDefault ? "  ★ default" : "");
   card.appendChild(h);
@@ -152,31 +231,44 @@ function renderCandidate(cand, isDefault) {
   desc.textContent = cand.model.description;
   card.appendChild(desc);
 
+  const kit = document.createElement("ul");
+  kit.className = "kit";
+  // uplinks
+  const up = r.uplinks.modular
+    ? `uplink modules: ${r.uplinks.options.filter((o) => o.moduleId).map((o) => o.id).join(", ") || "(none valid)"}`
+    : `fixed uplinks: ${summarisePorts(r.uplinks.options[0]?.ports)}`;
+  kit.appendChild(li(up));
+  // power
+  if (r.power) {
+    const budget = r.power.meets_requested_budget === null ? "" : r.power.meets_requested_budget ? " (meets budget)" : " (cannot meet budget)";
+    kit.appendChild(li(`PSU: primary ∈ {${r.power.valid_primary.join(", ")}} · ${r.power.poe_budget_matrix.length} PoE pair(s)${budget}`));
+  }
+  // license
+  if (r.license) {
+    const groups = r.license.groups.map((g) => `${g.id} [${g.tier}, ${g.regime}, ${g.term_choices_years.join("/")}yr]`).join("; ");
+    kit.appendChild(li(`license: ${groups || "(none for chosen regime)"}`));
+  }
+  // accessories
+  const acc = [];
+  if (r.accessories.stack_cables) acc.push("stack-cables");
+  if (r.accessories.stackpower_cables) acc.push("stackpower-cables");
+  if (r.accessories.ssd_accessory) acc.push("ssd");
+  if (acc.length) kit.appendChild(li(`accessories: ${acc.join(", ")}`));
+  card.appendChild(kit);
+
+  // raw BOM
+  const details = document.createElement("details");
+  const s = document.createElement("summary");
+  s.textContent = "raw kitlist";
   const pre = document.createElement("pre");
   pre.className = "bundle";
-  pre.textContent = JSON.stringify(cand.resolved, null, 2);
-  const details = document.createElement("details");
-  const sum = document.createElement("summary");
-  sum.textContent = "resolved kitlist";
-  details.appendChild(sum);
-  details.appendChild(pre);
+  pre.textContent = JSON.stringify(r, null, 2);
+  details.appendChild(s); details.appendChild(pre);
   card.appendChild(details);
   return card;
 }
 
-function renderEliminated(eliminated) {
-  const details = document.getElementById("eliminated");
-  details.innerHTML = "";
-  const sum = document.createElement("summary");
-  sum.textContent = `eliminated (${eliminated.length})`;
-  details.appendChild(sum);
-  const ul = document.createElement("ul");
-  for (const e of eliminated) {
-    const li = document.createElement("li");
-    li.textContent = `${e.id} — ${e.failing_condition}`;
-    ul.appendChild(li);
-  }
-  details.appendChild(ul);
-}
+const li = (t) => { const e = document.createElement("li"); e.textContent = t; return e; };
+const summarisePorts = (ports) => (ports ?? []).map((p) => `${p.count}x ${p.medium} ${p.speeds.join("/")}`).join(", ") || "—";
 
 init();
