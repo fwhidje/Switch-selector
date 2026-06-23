@@ -1,0 +1,10 @@
+{
+  "name": "c9300-selector",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "C9300 switch selector — pure solver core + basic facet UI (Stage 1). Static, no build step.",
+  "scripts": {
+    "serve": "python3 -m http.server"
+  }
+}

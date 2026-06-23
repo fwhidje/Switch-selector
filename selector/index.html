@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>C9300 Selector — test UI</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>C9300 Selector</h1>
+      <p id="status" class="status">Loading…</p>
+      <p class="note">
+        Basic facet test surface over the pure solver. Controls are generated from the
+        axis registry; results re-solve on every change.
+      </p>
+    </header>
+
+    <main>
+      <section id="panel-left">
+        <h2>Constraints</h2>
+        <form id="controls" autocomplete="off"></form>
+      </section>
+
+      <section id="panel-right">
+        <div class="results-head">
+          <h2>Results</h2>
+          <span id="summary" class="summary"></span>
+        </div>
+        <p class="query-line"><strong>query:</strong> <span id="query"></span></p>
+        <div id="candidates"></div>
+        <details id="eliminated"></details>
+      </section>
+    </main>
+
+    <script type="module" src="js/ui/app.js"></script>
+  </body>
+</html>
