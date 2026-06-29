@@ -1,7 +1,7 @@
 {
   "$id": "switching-axes.json",
   "title": "Switching Axis Registry",
-  "registry_version": "0.7.0",
+  "registry_version": "0.8.0",
   "role": "Authoritative vocabulary for the Networking Equipment Selector. The registry enforces MEANING (what can be constrained, how, and which values are legal). It is the SOURCE; the KB schema is a projection of it. Nothing is filterable unless declared here. Each axis declares KIND (ordered | count-at-level | monotonic-capability | discriminating | numeric | boolean) and ROLE (requirement). CONFIG-VARIABLES (config_variables block) are not filter axes: they do not eliminate models, they refine the resolved kitlist (BOM) and are surfaced at the configuration stage. validate-kb.mjs checks model values against this file.",
   "consumers": [
     "Web UI builds form controls from this registry (KIND drives the control; ROLE drives WHEN it surfaces).",
@@ -89,15 +89,6 @@
       "accepted_conditions": [">=", "<="],
       "required_on_model": true,
       "notes": "Physical ACCESS port count. Equals the sum of model.ports[role=access] group counts (validator-checked). Uplinks are NOT included (they come from the fitted module)."
-    },
-    {
-      "name": "poe_port_count",
-      "type": "integer",
-      "kind": "numeric",
-      "role": "requirement",
-      "accepted_conditions": [">=", "<="],
-      "required_on_model": false,
-      "notes": "Present when poe_capable is true."
     },
     {
       "name": "port_count",

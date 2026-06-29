@@ -87,8 +87,8 @@ function checkKbAxisValues() {
         fail("KB", `${m.id}.axis_values`, `missing required axis '${axis.name}'`);
     if (av.stacking_capable === true && !("stacking_technology" in av))
       fail("KB", `${m.id}.axis_values`, "stacking_capable=true requires stacking_technology");
-    if (av.poe_capable === true && !("poe_budget_watts" in av && "poe_port_count" in av))
-      fail("KB", `${m.id}.axis_values`, "poe_capable=true requires poe_budget_watts + poe_port_count");
+    if (av.poe_capable === true && !("poe_budget_watts" in av))
+      fail("KB", `${m.id}.axis_values`, "poe_capable=true requires poe_budget_watts");
     for (const ea of SCALAR_ENUMS)
       if (ea in av && !(axisByName.get(ea)?.legal_values ?? []).includes(av[ea]))
         fail("KB", `${m.id}.axis_values.${ea}`, `'${av[ea]}' not in registry legal_values`);

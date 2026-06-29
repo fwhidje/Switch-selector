@@ -64,7 +64,7 @@ js/ui/
 - **PoE demand input.** PoE need is entered as a dynamic list of *N ports at level L* rows (a filled
   row spawns a fresh blank one). The UI translates it — using `poe_type.level_watts` from the registry
   (the single source) — into `poe_budget_watts ≥ Σ N×watts`, `poe_type ≥ max level`, and
-  `poe_port_count ≥ Σ N`, so mixed needs like "24 PoE+ + 8 UPoE" size the PSU correctly. Multiple
+  `total_port_count ≥ Σ N`, so mixed needs like "24 PoE+ + 8 UPoE" size the PSU correctly. Multiple
   constraints on one axis intersect (most-restrictive wins).
 - **No per-switch logic.** A new switch is new JSON.
 

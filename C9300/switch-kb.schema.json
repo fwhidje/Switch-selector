@@ -3,8 +3,8 @@
   "$id": "switch-kb.schema.json",
   "title": "Networking Equipment Selector — Switch Knowledge Base Schema",
   "description": "Series-agnostic shape + authoring contract for a switch knowledge base. This schema enforces SHAPE (entries are well-formed); switching-axes.json enforces MEANING (which axes exist, their KIND/ROLE and legal enum values); selector/tools/validate-kb.mjs enforces CROSS-REFERENCE INTEGRITY (group references resolve, valid_primary is a subset of the referenced PSU group, poe_budget_watts equals the matrix max, sum of access-port counts equals total_port_count, enum/speed values are registered). All three must pass. See $authoring for the procedure an agent follows to add a model.",
-  "schema_version": "0.5.0",
-  "registry_version": "0.7.0",
+  "schema_version": "0.6.0",
+  "registry_version": "0.8.0",
 
   "$authoring": {
     "_comment": "NON-VALIDATING. Procedure + rules for an agent populating new switch models. Read this before touching data.",
@@ -358,7 +358,6 @@
         "poe_type": { "type": "string" },
         "poe_budget_watts": { "type": "integer", "minimum": 1 },
         "total_port_count": { "type": "integer", "minimum": 1 },
-        "poe_port_count": { "type": "integer", "minimum": 1 },
         "uplink_modular": { "type": "boolean" },
         "stacking_capable": { "type": "boolean" },
         "stacking_technology": { "type": "string" },
@@ -379,7 +378,7 @@
         {
           "if": { "properties": { "poe_capable": { "const": true } } },
           "then": {
-            "required": ["poe_budget_watts", "poe_port_count"],
+            "required": ["poe_budget_watts"],
             "properties": { "poe_type": { "not": { "const": "none" } } }
           }
         },
@@ -387,7 +386,7 @@
           "if": { "properties": { "poe_capable": { "const": false } } },
           "then": {
             "properties": { "poe_type": { "const": "none" } },
-            "not": { "anyOf": [ { "required": ["poe_budget_watts"] }, { "required": ["poe_port_count"] } ] }
+            "not": { "required": ["poe_budget_watts"] }
           }
         },
         {
