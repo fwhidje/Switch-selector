@@ -182,7 +182,8 @@ function chooseDefaultPsu(ps, kb, need, redundancy) {
   const dpRows = matrix.filter((r) => r.primary === dp);
   const dpSingle = dpRows.find((r) => r.secondary == null);
   if (dpSingle && meets(dpSingle))
-    return { primary: dp, secondary: null, watts: dpSingle.poe_budget_watts, reason: "default single meets load" };
+    return { primary: dp, secondary: null, watts: dpSingle.poe_budget_watts,
+             reason: need == null ? "base default (no PoE budget specified)" : "default single meets load" };
   // keep the default primary, add the smallest secondary that meets the load
   const dpPairs = dpRows.filter((r) => r.secondary != null && meets(r)).sort((a, b) => w(a.secondary) - w(b.secondary));
   if (dpPairs.length) {
@@ -282,9 +283,11 @@ function stripComment(obj) {
   const { _comment, ...rest } = obj;
   return rest;
 }
+// Most-restrictive >= bound across ALL constraints on an axis (an explicit control
+// and a demand-derived constraint intersect — the highest wins).
 function numericMin(query, axis) {
-  const c = (query ?? []).find((c) => c.axis === axis && c.condition === ">=");
-  return c ? c.value : null;
+  const vals = (query ?? []).filter((c) => c.axis === axis && c.condition === ">=").map((c) => c.value);
+  return vals.length ? Math.max(...vals) : null;
 }
 function enumEq(query, axis) {
   const c = (query ?? []).find((c) => c.axis === axis && c.condition === "==");

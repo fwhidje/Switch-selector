@@ -6,7 +6,7 @@
 // axis becomes a "Ports" grid of min inputs over the (role,medium,speed) combos
 // present in the data. Every change re-solves; dead facet values are disabled.
 
-import { loadRegistry, getAxes, legalValues, portModel, configVariables } from "../core/registry.js";
+import { loadRegistry, getAxes, legalValues, portModel, configVariables, poeLevelWatts } from "../core/registry.js";
 import { loadKB, getModels } from "../core/kb.js";
 import { solve, availableValues } from "../core/solver.js";
 
@@ -17,6 +17,8 @@ let registry = null;
 let kb = null;
 let speedOrder = [];
 let portCombos = []; // [{role, medium, speed}]
+let levelWatts = {}; // { poe: 15.4, "poe+": 30, ... }
+let poeLevels = []; // ordered PoE levels excluding 'none'
 
 async function init() {
   const status = document.getElementById("status");
@@ -24,6 +26,8 @@ async function init() {
     [registry, kb] = await Promise.all([loadRegistry(REGISTRY_URL), loadKB(KB_URL)]);
     speedOrder = portModel(registry)?.selector_enums?.port_speed?.order ?? [];
     portCombos = enumeratePortCombos(kb);
+    levelWatts = poeLevelWatts(registry);
+    poeLevels = (getAxes(registry).find((a) => a.name === "poe_type")?.order ?? []).filter((l) => l !== "none");
     status.textContent = `Loaded ${kb.models.length} models · registry v${registry.registry_version}`;
     buildControls();
     run();
@@ -54,6 +58,7 @@ function buildControls() {
     form.appendChild(controlFor(axis));
   }
   form.appendChild(portsSection());
+  form.appendChild(poeDemandSection());
   form.appendChild(configSection());
   form.addEventListener("input", run);
   form.addEventListener("change", run);
@@ -112,6 +117,53 @@ function portsSection() {
     wrap.appendChild(row(`${c.role}/${c.medium}/${c.speed}`, "minimum ports able to run this speed", el));
   }
   return wrap;
+}
+
+// PoE demand: a dynamic list of {count, level} rows. Translates to derived
+// hard constraints (budget = Σ count×watts, poe_type ≥ max level, poe_port_count
+// ≥ Σ count). Filling the last row spawns a fresh blank one.
+function poeDemandSection() {
+  const wrap = document.createElement("div");
+  wrap.className = "ports-section";
+  const h = document.createElement("div");
+  h.className = "section-head";
+  h.textContent = "PoE demand — ports at level (sizes the PSU)";
+  wrap.appendChild(h);
+  const list = document.createElement("div");
+  list.id = "poe-demand";
+  list.appendChild(demandRow());
+  wrap.appendChild(list);
+  return wrap;
+}
+
+function demandRow() {
+  const r = document.createElement("label");
+  r.className = "control demand-row";
+  const name = document.createElement("span");
+  name.className = "axis-name";
+  name.textContent = "ports @";
+  const box = document.createElement("span");
+  box.className = "control-inputs";
+  const cnt = document.createElement("input");
+  cnt.type = "number"; cnt.min = "0"; cnt.placeholder = "count"; cnt.dataset.demandCount = "1";
+  const lvl = document.createElement("select");
+  lvl.dataset.demandLevel = "1";
+  for (const [v, t] of [["", "level…"], ...poeLevels.map((x) => [x, x])]) {
+    const o = document.createElement("option"); o.value = v; o.textContent = t; lvl.appendChild(o);
+  }
+  box.appendChild(cnt); box.appendChild(lvl);
+  r.appendChild(name); r.appendChild(box);
+  return r;
+}
+
+// Append a fresh blank row once the last row is filled.
+function syncDemandRows() {
+  const list = document.getElementById("poe-demand");
+  if (!list || !list.lastElementChild) return;
+  const last = list.lastElementChild;
+  const cnt = Number(last.querySelector("[data-demand-count]").value) || 0;
+  const lvl = last.querySelector("[data-demand-level]").value;
+  if (cnt > 0 && lvl) list.appendChild(demandRow());
 }
 
 // config-variables (license tier/term): refine the kitlist, never filter
@@ -188,12 +240,28 @@ function readQuery() {
       condition: ">=", value: v, severity: "hard",
     });
   }
+  // PoE demand rows -> derived hard constraints (budget, level, port count)
+  const demand = [];
+  for (const r of document.querySelectorAll("#poe-demand .demand-row")) {
+    const c = Number(r.querySelector("[data-demand-count]").value) || 0;
+    const l = r.querySelector("[data-demand-level]").value;
+    if (c > 0 && l) demand.push({ count: c, level: l });
+  }
+  if (demand.length) {
+    const watts = demand.reduce((s, d) => s + d.count * (levelWatts[d.level] ?? 0), 0);
+    const totalPorts = demand.reduce((s, d) => s + d.count, 0);
+    const maxLevel = demand.map((d) => d.level).sort((a, b) => poeLevels.indexOf(b) - poeLevels.indexOf(a))[0];
+    q.push({ axis: "poe_budget_watts", condition: ">=", value: Math.ceil(watts), severity: "hard" });
+    q.push({ axis: "poe_type", condition: ">=", value: maxLevel, severity: "hard" });
+    q.push({ axis: "poe_port_count", condition: ">=", value: totalPorts, severity: "hard" });
+  }
   return q;
 }
 
 // --- run + render -----------------------------------------------------------
 function run() {
   if (!registry || !kb) return;
+  syncDemandRows();
   const query = readQuery();
   const result = solve(query, kb, registry);
   renderQuery(query);
