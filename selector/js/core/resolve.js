@@ -149,32 +149,48 @@ function resolvePower(model, query, kb) {
   };
 }
 
-// Resolve the default PSU config from default_primary, following the locked rule:
-// ship a single PSU; to reach a higher PoE load ADD a secondary; upsize the
-// primary only when no secondary covers the load (minimise primary, then secondary).
+// Resolve the default PSU config from default_primary.
+//   redundancy OFF: ship a single PSU; to reach a higher PoE load ADD a secondary;
+//     upsize the primary only when no secondary covers it (min primary, then secondary).
+//   redundancy ON: a true backup must at least MATCH the primary, so default to a
+//     matched pair (secondary == primary); prefer keeping the default primary and the
+//     smallest matched pair that still meets the load.
 function chooseDefaultPsu(ps, kb, need, redundancy) {
   const dp = ps.default_primary;
   const matrix = ps.poe_budget_matrix ?? [];
   const w = (id) => (id == null ? 0 : getPowerSupply(kb, id)?.watts ?? 0);
-  if (matrix.length === 0) {
-    return redundancy
-      ? { primary: dp, secondary: dp, watts: null, reason: "redundant pair (no PoE data)" }
-      : { primary: dp, secondary: null, watts: null, reason: "default single" };
-  }
   const meets = (r) => need == null || r.poe_budget_watts >= need;
+
+  if (redundancy) {
+    if (matrix.length === 0)
+      return { primary: dp, secondary: dp, watts: null, reason: "redundant matched pair (no PoE data)" };
+    // secondary must be at least as large as the primary (real N+1); prefer an exact
+    // matched pair, then keeping the default primary, then the smallest such pair.
+    const cand = matrix.filter((r) => r.secondary != null && w(r.secondary) >= w(r.primary) && meets(r));
+    if (!cand.length) return null;
+    cand.sort((a, b) =>
+      ((a.secondary === a.primary ? 0 : 1) - (b.secondary === b.primary ? 0 : 1)) ||
+      ((a.primary === dp ? 0 : 1) - (b.primary === dp ? 0 : 1)) ||
+      (w(a.primary) - w(b.primary)) || (w(a.secondary) - w(b.secondary)));
+    const r = cand[0];
+    return { primary: r.primary, secondary: r.secondary, watts: r.poe_budget_watts,
+             reason: r.secondary === r.primary ? "redundant matched pair" : "redundant pair (secondary ≥ primary)" };
+  }
+
+  if (matrix.length === 0)
+    return { primary: dp, secondary: null, watts: null, reason: "default single" };
   const dpRows = matrix.filter((r) => r.primary === dp);
   const dpSingle = dpRows.find((r) => r.secondary == null);
-  if (!redundancy && dpSingle && meets(dpSingle))
+  if (dpSingle && meets(dpSingle))
     return { primary: dp, secondary: null, watts: dpSingle.poe_budget_watts, reason: "default single meets load" };
   // keep the default primary, add the smallest secondary that meets the load
   const dpPairs = dpRows.filter((r) => r.secondary != null && meets(r)).sort((a, b) => w(a.secondary) - w(b.secondary));
   if (dpPairs.length) {
     const r = dpPairs[0];
-    return { primary: dp, secondary: r.secondary, watts: r.poe_budget_watts, reason: redundancy ? "redundant pair (default primary + secondary)" : "added secondary to meet load" };
+    return { primary: dp, secondary: r.secondary, watts: r.poe_budget_watts, reason: "added secondary to meet load" };
   }
   // upsize: smallest primary, then smallest secondary, that meets the load
-  const feasible = matrix.filter((r) => meets(r) && (!redundancy || r.secondary != null))
-    .sort((a, b) => w(a.primary) - w(b.primary) || w(a.secondary) - w(b.secondary));
+  const feasible = matrix.filter(meets).sort((a, b) => w(a.primary) - w(b.primary) || w(a.secondary) - w(b.secondary));
   if (feasible.length) {
     const r = feasible[0];
     return { primary: r.primary, secondary: r.secondary, watts: r.poe_budget_watts, reason: "upsized primary (no secondary covered the load)" };
