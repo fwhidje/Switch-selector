@@ -4,7 +4,7 @@
   "title": "Networking Equipment Selector — Switch Knowledge Base Schema",
   "description": "Series-agnostic shape + authoring contract for a switch knowledge base. This schema enforces SHAPE (entries are well-formed); switching-axes.json enforces MEANING (which axes exist, their KIND/ROLE and legal enum values); selector/tools/validate-kb.mjs enforces CROSS-REFERENCE INTEGRITY (group references resolve, valid_primary is a subset of the referenced PSU group, poe_budget_watts equals the matrix max, sum of access-port counts equals total_port_count, enum/speed values are registered). All three must pass. See $authoring for the procedure an agent follows to add a model.",
   "schema_version": "0.5.0",
-  "registry_version": "0.6.0",
+  "registry_version": "0.7.0",
 
   "$authoring": {
     "_comment": "NON-VALIDATING. Procedure + rules for an agent populating new switch models. Read this before touching data.",

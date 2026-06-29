@@ -63,6 +63,11 @@ function checkRegistrySchema() {
   }
   for (const r of schema?.$defs?.axis_values?.required ?? [])
     if (!axisByName.has(r)) fail("schema", "axis_values.required", `requires '${r}', not a registered axis`);
+  // poe_type.level_watts must cover every non-'none' level (drives the demand translation)
+  const pt = axisByName.get("poe_type");
+  for (const lv of pt?.legal_values ?? [])
+    if (lv !== "none" && !(pt.level_watts && lv in pt.level_watts))
+      fail("registry", "poe_type.level_watts", `missing per-port watts for '${lv}'`);
 }
 
 // --- Check 3: KB axis_values <= registry ------------------------------------

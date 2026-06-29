@@ -1,7 +1,7 @@
 {
   "$id": "switching-axes.json",
   "title": "Switching Axis Registry",
-  "registry_version": "0.6.0",
+  "registry_version": "0.7.0",
   "role": "Authoritative vocabulary for the Networking Equipment Selector. The registry enforces MEANING (what can be constrained, how, and which values are legal). It is the SOURCE; the KB schema is a projection of it. Nothing is filterable unless declared here. Each axis declares KIND (ordered | count-at-level | monotonic-capability | discriminating | numeric | boolean) and ROLE (requirement). CONFIG-VARIABLES (config_variables block) are not filter axes: they do not eliminate models, they refine the resolved kitlist (BOM) and are surfaced at the configuration stage. validate-kb.mjs checks model values against this file.",
   "consumers": [
     "Web UI builds form controls from this registry (KIND drives the control; ROLE drives WHEN it surfaces).",
@@ -67,9 +67,10 @@
       "role": "requirement",
       "legal_values": ["none", "poe", "poe+", "upoe", "upoe+"],
       "order": ["none", "poe", "poe+", "upoe", "upoe+"],
+      "level_watts": { "poe": 15.4, "poe+": 30, "upoe": 60, "upoe+": 90 },
       "accepted_conditions": ["==", ">=", "in"],
       "required_on_model": true,
-      "notes": "ORDERED level (none<poe<poe+<upoe<upoe+). '>=' means 'this level or better' (a UPOE switch satisfies a poe+ request by downshift); '==' means 'exactly this level' (cost-conscious, don't upsell). Per-type wattage (poe 15.4W / poe+ 30W / upoe 60W / upoe+ 90W) is a fixed standard handled as a frontend display lookup, not a model field."
+      "notes": "ORDERED level (none<poe<poe+<upoe<upoe+). '>=' means 'this level or better' (a UPOE switch satisfies a poe+ request by downshift); '==' means 'exactly this level' (cost-conscious, don't upsell). level_watts is the per-port standard (the SINGLE SOURCE for the UI/MCP PoE-demand translation: a 'N ports at level L' demand contributes N x level_watts[L] to poe_budget_watts, and max(level) to a poe_type>= constraint). Not a model field."
     },
     {
       "name": "poe_budget_watts",

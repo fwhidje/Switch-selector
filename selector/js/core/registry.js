@@ -53,6 +53,11 @@ export function portModel(registry) {
   return registry.port_model ?? null;
 }
 
+/** Per-port PoE wattage by level (single source for the ports×level → watts demand translation). */
+export function poeLevelWatts(registry) {
+  return getAxis(registry, "poe_type")?.level_watts ?? {};
+}
+
 /**
  * Config-variables: dimensions a user PICKS to finalise a kitlist (license tier,
  * term), surfaced at the configuration stage. They never filter/eliminate models
