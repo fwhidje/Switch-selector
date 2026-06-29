@@ -120,11 +120,11 @@ function portsSection() {
 }
 
 // PoE demand: a dynamic list of {count, level} rows. Translates to derived
-// hard constraints (budget = Σ count×watts, poe_type ≥ max level, poe_port_count
+// hard constraints (budget = Σ count×watts, poe_type ≥ max level, total_port_count
 // ≥ Σ count). Filling the last row spawns a fresh blank one.
 function poeDemandSection() {
   const wrap = document.createElement("div");
-  wrap.className = "ports-section";
+  wrap.className = "demand-section";
   const h = document.createElement("div");
   h.className = "section-head";
   h.textContent = "PoE demand — ports at level (sizes the PSU)";
@@ -253,7 +253,8 @@ function readQuery() {
     const maxLevel = demand.map((d) => d.level).sort((a, b) => poeLevels.indexOf(b) - poeLevels.indexOf(a))[0];
     q.push({ axis: "poe_budget_watts", condition: ">=", value: Math.ceil(watts), severity: "hard" });
     q.push({ axis: "poe_type", condition: ">=", value: maxLevel, severity: "hard" });
-    q.push({ axis: "poe_port_count", condition: ">=", value: totalPorts, severity: "hard" });
+    // every PoE port is an access port, so PoE-port demand maps to total_port_count
+    q.push({ axis: "total_port_count", condition: ">=", value: totalPorts, severity: "hard" });
   }
   return q;
 }
