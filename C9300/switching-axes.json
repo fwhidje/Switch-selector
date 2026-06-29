@@ -1,7 +1,7 @@
 {
   "$id": "switching-axes.json",
   "title": "Switching Axis Registry",
-  "registry_version": "0.5.0",
+  "registry_version": "0.6.0",
   "role": "Authoritative vocabulary for the Networking Equipment Selector. The registry enforces MEANING (what can be constrained, how, and which values are legal). It is the SOURCE; the KB schema is a projection of it. Nothing is filterable unless declared here. Each axis declares KIND (ordered | count-at-level | monotonic-capability | discriminating | numeric | boolean) and ROLE (requirement). CONFIG-VARIABLES (config_variables block) are not filter axes: they do not eliminate models, they refine the resolved kitlist (BOM) and are surfaced at the configuration stage. validate-kb.mjs checks model values against this file.",
   "consumers": [
     "Web UI builds form controls from this registry (KIND drives the control; ROLE drives WHEN it surfaces).",
@@ -26,11 +26,11 @@
 
   "config_variables": {
     "_comment": "Dimensions a user PICKS to finalise an orderable kitlist, AFTER the requirement axes have narrowed the model set. They do NOT filter/eliminate models; they resolve which concrete SKUs the BOM shows. Source values live in the KB (license groups). The UI surfaces these at the configuration stage; an MCP server would expose them as kitlist parameters, not filters.",
-    "license_tier": {
-      "type": "enum",
-      "legal_values": ["essentials", "advantage"],
-      "source": "license_group.tier",
-      "notes": "On tier-LOCKED models (DNA -E/-A) the tier is fixed by the hardware suffix and is shown, not chosen. On tier-SELECTABLE models (Meraki -M) the user picks; the pick selects which license group's SKUs the BOM resolves. Never eliminates a model."
+    "psu_redundancy": {
+      "type": "boolean",
+      "legal_values": [false, true],
+      "source": "configurator default policy",
+      "notes": "Off by default: the kitlist ships a single PSU (configurables.power_supplies.default_primary), and a secondary is added only when a PoE request exceeds what the default primary alone delivers. When ON, the configurator forces a redundant (primary, secondary) pair. Never eliminates a model."
     },
     "license_term": {
       "type": "integer",
@@ -156,7 +156,17 @@
       "legal_values": ["dna-term", "meraki-classic", "meraki-subscription", "unified"],
       "accepted_conditions": ["==", "in"],
       "required_on_model": true,
-      "notes": "Set of regimes a model OFFERS (enum-set). First-class user-selectable input. Couples to switch selection as an ordinary hard constraint (e.g. meraki-subscription -> -M models only). License TIER (essentials/advantage) and TERM are config-variables resolved at the kitlist stage (Stage 2), NOT lead filter axes."
+      "notes": "Set of regimes a model OFFERS (enum-set). First-class user-selectable input. Couples to switch selection as an ordinary hard constraint (e.g. meraki-subscription -> -M models only). License TERM is a config-variable resolved at the kitlist stage, NOT a filter axis."
+    },
+    {
+      "name": "license_tier",
+      "type": "enum",
+      "kind": "discriminating",
+      "role": "requirement",
+      "legal_values": ["essentials", "advantage"],
+      "accepted_conditions": ["==", "in"],
+      "required_on_model": true,
+      "notes": "Set of tiers a model OFFERS (enum-set), derived from its license groups: DNA -E -> [essentials], -A -> [advantage], Meraki -M -> [essentials, advantage]. A FILTER on offered-tier capability (parallel to license_regime): choosing 'advantage' drops -E hardware, keeps -A and -M. The essentials-vs-advantage PICK on a model that offers both (Meraki -M) is still a config choice the BOM resolves; this axis only removes models that cannot provide the chosen tier. Stored on the model (mirrors license_regime); validator checks it equals the union of the model's license-group tiers."
     }
   ]
 }

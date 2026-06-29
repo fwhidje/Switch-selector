@@ -9,6 +9,7 @@ import {
   getNetworkModuleGroup,
   getNetworkModule,
   getPowerSupplyGroup,
+  getPowerSupply,
   getStackCableGroup,
   getStackpowerCableGroup,
   getLicenseGroup,
@@ -131,28 +132,70 @@ function resolvePower(model, query, kb) {
   if (!ps) return null;
   const group = getPowerSupplyGroup(kb, ps.group);
   const need = numericMin(query, "poe_budget_watts");
+  const redundancy = configValue(query, "psu_redundancy") === true;
   const matrix = ps.poe_budget_matrix ?? [];
   const rows = need == null ? matrix : matrix.filter((r) => r.poe_budget_watts >= need);
   const poe = matrix.length > 0;
 
-  let single, redundant;
-  if (poe) {
-    single = rows.filter((r) => r.secondary == null).map((r) => ({ primary: r.primary, watts: r.poe_budget_watts }));
-    redundant = rows.filter((r) => r.secondary != null).map((r) => ({ primary: r.primary, secondary: r.secondary, watts: r.poe_budget_watts }));
-  } else {
-    single = (ps.valid_primary ?? []).map((p) => ({ primary: p }));
-    redundant = (ps.valid_primary ?? []).map((p) => ({ primary: p, secondary: p }));
-  }
   return {
     group: ps.group,
     valid_primary: ps.valid_primary ?? [],
+    default_primary: ps.default_primary,
     secondary_none_option: group?.secondary_none_option,
-    redundant_capable: redundant.length > 0,
-    single_options: single,
-    redundant_options: redundant,
+    redundant_capable: poe ? matrix.some((r) => r.secondary != null) : true,
+    default_config: chooseDefaultPsu(ps, kb, need, redundancy),
     poe_budget_matrix: rows,
     meets_requested_budget: need == null ? null : rows.length > 0,
   };
+}
+
+// Resolve the default PSU config from default_primary.
+//   redundancy OFF: ship a single PSU; to reach a higher PoE load ADD a secondary;
+//     upsize the primary only when no secondary covers it (min primary, then secondary).
+//   redundancy ON: a true backup must at least MATCH the primary, so default to a
+//     matched pair (secondary == primary); prefer keeping the default primary and the
+//     smallest matched pair that still meets the load.
+function chooseDefaultPsu(ps, kb, need, redundancy) {
+  const dp = ps.default_primary;
+  const matrix = ps.poe_budget_matrix ?? [];
+  const w = (id) => (id == null ? 0 : getPowerSupply(kb, id)?.watts ?? 0);
+  const meets = (r) => need == null || r.poe_budget_watts >= need;
+
+  if (redundancy) {
+    if (matrix.length === 0)
+      return { primary: dp, secondary: dp, watts: null, reason: "redundant matched pair (no PoE data)" };
+    // secondary must be at least as large as the primary (real N+1); prefer an exact
+    // matched pair, then keeping the default primary, then the smallest such pair.
+    const cand = matrix.filter((r) => r.secondary != null && w(r.secondary) >= w(r.primary) && meets(r));
+    if (!cand.length) return null;
+    cand.sort((a, b) =>
+      ((a.secondary === a.primary ? 0 : 1) - (b.secondary === b.primary ? 0 : 1)) ||
+      ((a.primary === dp ? 0 : 1) - (b.primary === dp ? 0 : 1)) ||
+      (w(a.primary) - w(b.primary)) || (w(a.secondary) - w(b.secondary)));
+    const r = cand[0];
+    return { primary: r.primary, secondary: r.secondary, watts: r.poe_budget_watts,
+             reason: r.secondary === r.primary ? "redundant matched pair" : "redundant pair (secondary ≥ primary)" };
+  }
+
+  if (matrix.length === 0)
+    return { primary: dp, secondary: null, watts: null, reason: "default single" };
+  const dpRows = matrix.filter((r) => r.primary === dp);
+  const dpSingle = dpRows.find((r) => r.secondary == null);
+  if (dpSingle && meets(dpSingle))
+    return { primary: dp, secondary: null, watts: dpSingle.poe_budget_watts, reason: "default single meets load" };
+  // keep the default primary, add the smallest secondary that meets the load
+  const dpPairs = dpRows.filter((r) => r.secondary != null && meets(r)).sort((a, b) => w(a.secondary) - w(b.secondary));
+  if (dpPairs.length) {
+    const r = dpPairs[0];
+    return { primary: dp, secondary: r.secondary, watts: r.poe_budget_watts, reason: "added secondary to meet load" };
+  }
+  // upsize: smallest primary, then smallest secondary, that meets the load
+  const feasible = matrix.filter(meets).sort((a, b) => w(a.primary) - w(b.primary) || w(a.secondary) - w(b.secondary));
+  if (feasible.length) {
+    const r = feasible[0];
+    return { primary: r.primary, secondary: r.secondary, watts: r.poe_budget_watts, reason: "upsized primary (no secondary covered the load)" };
+  }
+  return null; // load not satisfiable by this model's PSU options
 }
 
 // License tier + term are CONFIG-VARIABLES: tier is locked on DNA -E/-A models and
@@ -161,7 +204,7 @@ function resolveLicense(model, query, kb) {
   const lic = model.configurables?.license;
   if (!lic) return null;
   const wantRegime = enumEq(query, "license_regime");
-  const wantTier = configValue(query, "license_tier");
+  const wantTier = enumEq(query, "license_tier"); // now a hard filter axis, not a config-variable
   const wantTerm = configValue(query, "license_term");
 
   const groups = [lic.group, ...(lic.additional_groups ?? [])]
@@ -211,11 +254,26 @@ function resolveAccessories(model, kb) {
   const cfg = model.configurables ?? {};
   const out = {};
   const stack = getStackCableGroup(kb, cfg.stack_cables?.group);
-  if (stack) out.stack_cables = { group: stack.id, members: stack.members ?? [], none_option: stack.none_option, stack_kit: stack.stack_kit };
+  if (stack) out.stack_cables = cableInfo(stack, kb._index.stack_cables);
   const sp = getStackpowerCableGroup(kb, cfg.stackpower_cables?.group);
-  if (sp) out.stackpower_cables = { group: sp.id, members: sp.members ?? [], none_option: sp.none_option };
+  if (sp) out.stackpower_cables = cableInfo(sp, kb._index.stackpower_cables);
   if (cfg.ssd_accessory) out.ssd_accessory = cfg.ssd_accessory;
   return out;
+}
+
+// A standalone switch needs no cable: default to the group's none_option. If a
+// cable IS taken, the default length is the shortest available.
+function cableInfo(group, catIndex) {
+  const withLen = (group.members ?? []).map((id) => ({ id, len: catIndex.get(id)?.length_cm ?? Infinity }))
+    .sort((a, b) => a.len - b.len);
+  return {
+    group: group.id,
+    default: group.none_option,
+    none_option: group.none_option,
+    shortest: withLen[0]?.id ?? null,
+    members: group.members ?? [],
+    stack_kit: group.stack_kit,
+  };
 }
 
 // --- helpers ----------------------------------------------------------------

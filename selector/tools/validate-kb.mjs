@@ -90,6 +90,18 @@ function checkKbAxisValues() {
     for (const r of av.license_regime ?? [])
       if (!(axisByName.get("license_regime")?.legal_values ?? []).includes(r))
         fail("KB", `${m.id}.axis_values.license_regime`, `'${r}' not in registry legal_values`);
+    for (const t of av.license_tier ?? [])
+      if (!(axisByName.get("license_tier")?.legal_values ?? []).includes(t))
+        fail("KB", `${m.id}.axis_values.license_tier`, `'${t}' not in registry legal_values`);
+    // license_tier must equal the union of the model's license-group tiers (guards the duplication)
+    const lic = m.configurables?.license;
+    if (lic) {
+      const union = new Set([lic.group, ...(lic.additional_groups ?? [])].filter(Boolean)
+        .map((g) => kb._index.license_groups.get(g)?.tier).filter(Boolean));
+      const declared = new Set(av.license_tier ?? []);
+      if (union.size !== declared.size || [...union].some((t) => !declared.has(t)))
+        fail("KB", `${m.id}.axis_values.license_tier`, `offered [${[...declared]}] != license-group tiers [${[...union]}]`);
+    }
   }
 }
 
@@ -149,6 +161,8 @@ function checkReferences() {
       else for (const p of psu.valid_primary ?? [])
         if (!(g.members ?? []).includes(p))
           fail("KB", `${m.id}.power_supplies.valid_primary`, `'${p}' not in PSU group '${psu.group}'`);
+      if (psu.default_primary && !(psu.valid_primary ?? []).includes(psu.default_primary))
+        fail("KB", `${m.id}.power_supplies.default_primary`, `'${psu.default_primary}' not in valid_primary`);
     }
     const lic = cfg.license;
     for (const gid of [lic?.group, ...(lic?.additional_groups ?? [])].filter(Boolean))
