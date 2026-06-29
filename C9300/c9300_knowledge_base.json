@@ -1,7 +1,7 @@
 {
  "header": {
-  "schema_version": "0.4.0",
-  "registry_version": "0.5.0",
+  "schema_version": "0.5.0",
+  "registry_version": "0.6.0",
   "axes_file": "switching-axes.json",
   "schema_file": "switch-kb.schema.json",
   "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9300 family, spanning the C9300 (modular uplink), C9300LM, and C9300L (fixed uplink) sub-families. Structure: axis_registry (filterable vocabulary) + catalog (atomic SKU facts) + groups (named shared compatibility sets) + models (switch entries that supply axis values, reference groups, and on fixed-uplink models carry an inline uplink_capacity block in place of a module-group reference).",
@@ -39,7 +39,8 @@
    "Order-time 'default' selections (CCW cart pre-picks) are intentionally NOT stored: the tool proposes a valid config from requirements rather than mirroring the ordering cart.",
    "Solver is out of scope for this artifact; this file is data shape + axis registry only.",
    "v0.4.0: unified port model. The former multigig_*/access_*_fiber/uplink_* axes are replaced by model.ports[] port groups {count,role,medium,speeds[]} + the parametrised port_count axis. Access ports on the model; uplink ports on the fitted network module (or inline on fixed-uplink models). Subsumption is the per-port speed set; no breakout.",
-   "v0.5.0: redundant_psu_capable dissolved (was constant-true; redundancy is now a (primary,secondary) PSU pair surfaced in the kitlist). License tier/term declared as config_variables (resolved into the BOM, not filter axes)."
+   "v0.5.0: redundant_psu_capable dissolved (was constant-true; redundancy is now a (primary,secondary) PSU pair surfaced in the kitlist). License tier/term declared as config_variables (resolved into the BOM, not filter axes).",
+   "v0.6.0: license_tier promoted to a stored enum-set filter axis (offered tiers, mirrors license_regime). Added configurables.power_supplies.default_primary (single shipped PSU from Cisco default-PSU table; -M uses sole valid_primary). psu_redundancy is a config-variable (default off)."
   ]
  },
  "catalog": {
@@ -1738,6 +1739,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -1804,6 +1808,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -1884,6 +1889,9 @@
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -1958,6 +1966,7 @@
      "valid_primary": [
       "PWR-C6-1KWAC"
      ],
+     "default_primary": "PWR-C6-1KWAC",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C6-1KWAC",
@@ -2020,6 +2029,9 @@
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -2076,6 +2088,7 @@
      "valid_primary": [
       "PWR-C1-350WAC-P"
      ],
+     "default_primary": "PWR-C1-350WAC-P",
      "poe_budget_matrix": [],
      "matrix_provenance": "Datasheet Table 2 + PSU table: C9300L-24T-4G default PWR-C1-350WAC-P, 'No PoE' across all secondary columns. Empty matrix => no PoE budget (poe_capable=false). Secondary PSU still orderable for power redundancy; redundant_psu_capable=true."
     },
@@ -2113,6 +2126,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -2175,6 +2191,7 @@
      "valid_primary": [
       "PWR-C1-715WAC-P"
      ],
+     "default_primary": "PWR-C1-715WAC-P",
      "poe_budget_matrix": [],
      "matrix_provenance": "Datasheet Table 4: C9300X-12Y default PWR-C1-715WAC-P, 'No PoE' across all secondary columns. Empty matrix => no PoE budget (poe_capable=false). Secondary PSU still orderable for power redundancy; redundant_psu_capable=true."
     },
@@ -2212,6 +2229,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -2274,6 +2294,7 @@
      "valid_primary": [
       "PWR-C1-715WAC-P"
      ],
+     "default_primary": "PWR-C1-715WAC-P",
      "poe_budget_matrix": [],
      "matrix_provenance": "Datasheet Table 4: C9300X-12Y default PWR-C1-715WAC-P, 'No PoE' across all secondary columns. Empty matrix => no PoE budget (poe_capable=false). Secondary PSU still orderable for power redundancy; redundant_psu_capable=true."
     },
@@ -2313,6 +2334,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -2378,6 +2402,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1900WAC-P",
@@ -2468,6 +2493,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -2533,6 +2561,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1900WAC-P",
@@ -2621,6 +2650,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -2684,6 +2716,7 @@
      "valid_primary": [
       "PWR-C1-715WAC-P"
      ],
+     "default_primary": "PWR-C1-715WAC-P",
      "poe_budget_matrix": [],
      "matrix_provenance": "Datasheet Table 4: C9300X-48TX default PWR-C1-715WAC-P, 'No PoE' across all secondary columns. Empty matrix => no PoE budget (poe_capable=false). Secondary PSU still orderable for power redundancy; redundant_psu_capable=true."
     },
@@ -2721,6 +2754,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -2784,6 +2820,7 @@
      "valid_primary": [
       "PWR-C1-715WAC-P"
      ],
+     "default_primary": "PWR-C1-715WAC-P",
      "poe_budget_matrix": [],
      "matrix_provenance": "Datasheet Table 4: C9300X-48TX default PWR-C1-715WAC-P, 'No PoE' across all secondary columns. Empty matrix => no PoE budget (poe_capable=false). Secondary PSU still orderable for power redundancy; redundant_psu_capable=true."
     },
@@ -2823,6 +2860,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -2900,6 +2940,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1900WAC-P",
@@ -2990,6 +3031,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -3067,6 +3111,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1900WAC-P",
@@ -3157,6 +3202,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -3222,6 +3270,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1900WAC-P",
@@ -3312,6 +3361,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -3377,6 +3429,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1900WAC-P",
@@ -3465,6 +3518,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -3527,6 +3583,7 @@
      "valid_primary": [
       "PWR-C1-715WAC-P"
      ],
+     "default_primary": "PWR-C1-715WAC-P",
      "poe_budget_matrix": [],
      "matrix_provenance": "Datasheet Table 4: C9300X-24Y default PWR-C1-715WAC-P, 'No PoE' across all secondary columns. Empty matrix => no PoE budget (poe_capable=false). Secondary PSU still orderable for power redundancy; redundant_psu_capable=true."
     },
@@ -3564,6 +3621,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -3626,6 +3686,7 @@
      "valid_primary": [
       "PWR-C1-715WAC-P"
      ],
+     "default_primary": "PWR-C1-715WAC-P",
      "poe_budget_matrix": [],
      "matrix_provenance": "Datasheet Table 4: C9300X-24Y default PWR-C1-715WAC-P, 'No PoE' across all secondary columns. Empty matrix => no PoE budget (poe_capable=false). Secondary PSU still orderable for power redundancy; redundant_psu_capable=true."
     },
@@ -3665,6 +3726,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -3733,6 +3797,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -3821,6 +3886,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -3876,6 +3944,7 @@
       "PWR-C1-715WAC-P",
       "PWR-C1-1100WAC-P"
      ],
+     "default_primary": "PWR-C1-350WAC-P",
      "poe_budget_matrix": [],
      "matrix_provenance": "No PoE. Table 4 footnote ***: 715W and 1100W upgrade primaries available."
     },
@@ -3913,6 +3982,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -3968,6 +4040,7 @@
       "PWR-C1-715WAC-P",
       "PWR-C1-1100WAC-P"
      ],
+     "default_primary": "PWR-C1-350WAC-P",
      "poe_budget_matrix": [],
      "matrix_provenance": "No PoE. Table 4 footnote ***: 715W and 1100W upgrade primaries available."
     },
@@ -4005,6 +4078,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -4060,6 +4136,7 @@
       "PWR-C1-715WAC-P",
       "PWR-C1-1100WAC-P"
      ],
+     "default_primary": "PWR-C1-350WAC-P",
      "poe_budget_matrix": [],
      "matrix_provenance": "No PoE. Table 4 footnote ***: 715W and 1100W upgrade primaries available."
     },
@@ -4097,6 +4174,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -4152,6 +4232,7 @@
       "PWR-C1-715WAC-P",
       "PWR-C1-1100WAC-P"
      ],
+     "default_primary": "PWR-C1-350WAC-P",
      "poe_budget_matrix": [],
      "matrix_provenance": "No PoE. Table 4 footnote ***: 715W and 1100W upgrade primaries available."
     },
@@ -4191,6 +4272,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -4246,6 +4330,7 @@
       "PWR-C1-715WAC-P",
       "PWR-C1-1100WAC-P"
      ],
+     "default_primary": "PWR-C1-715WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-715WAC-P",
@@ -4336,6 +4421,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -4391,6 +4479,7 @@
       "PWR-C1-715WAC-P",
       "PWR-C1-1100WAC-P"
      ],
+     "default_primary": "PWR-C1-715WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-715WAC-P",
@@ -4481,6 +4570,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -4537,6 +4629,7 @@
       "PWR-C1-715WAC-P",
       "PWR-C1-1100WAC-P"
      ],
+     "default_primary": "PWR-C1-715WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-715WAC-P",
@@ -4627,6 +4720,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -4683,6 +4779,7 @@
       "PWR-C1-715WAC-P",
       "PWR-C1-1100WAC-P"
      ],
+     "default_primary": "PWR-C1-715WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-715WAC-P",
@@ -4773,6 +4870,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -4828,6 +4928,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -4918,6 +5019,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -4973,6 +5077,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -5063,6 +5168,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -5118,6 +5226,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -5208,6 +5317,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -5263,6 +5375,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -5353,6 +5466,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -5412,6 +5528,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -5502,6 +5619,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -5561,6 +5681,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -5651,6 +5772,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -5709,6 +5833,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -5799,6 +5924,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -5857,6 +5985,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -5947,6 +6076,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -6002,6 +6134,7 @@
      "valid_primary": [
       "PWR-C1-1100WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -6067,6 +6200,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -6122,6 +6258,7 @@
      "valid_primary": [
       "PWR-C1-1100WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -6187,6 +6324,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -6246,6 +6386,7 @@
      "valid_primary": [
       "PWR-C1-1100WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -6311,6 +6452,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -6370,6 +6514,7 @@
      "valid_primary": [
       "PWR-C1-1100WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -6435,6 +6580,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -6490,6 +6638,7 @@
      "valid_primary": [
       "PWR-C1-1100WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -6555,6 +6704,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -6610,6 +6762,7 @@
      "valid_primary": [
       "PWR-C1-1100WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -6675,6 +6828,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -6730,6 +6886,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -6820,6 +6977,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -6875,6 +7035,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -6965,6 +7126,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -7020,6 +7184,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -7110,6 +7275,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -7165,6 +7333,7 @@
       "PWR-C1-1100WAC-P",
       "PWR-C1-1900WAC-P"
      ],
+     "default_primary": "PWR-C1-1100WAC-P",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P",
@@ -7253,6 +7422,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -7306,6 +7478,7 @@
      "valid_primary": [
       "PWR-C1-715WAC-P"
      ],
+     "default_primary": "PWR-C1-715WAC-P",
      "poe_budget_matrix": [],
      "matrix_provenance": "No PoE. Only 715W primary listed in Table 4 for C9300-24S."
     },
@@ -7343,6 +7516,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -7396,6 +7572,7 @@
      "valid_primary": [
       "PWR-C1-715WAC-P"
      ],
+     "default_primary": "PWR-C1-715WAC-P",
      "poe_budget_matrix": [],
      "matrix_provenance": "No PoE. Only 715W primary listed in Table 4 for C9300-24S."
     },
@@ -7433,6 +7610,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
     ]
    },
    "ports": [
@@ -7486,6 +7666,7 @@
      "valid_primary": [
       "PWR-C1-715WAC-P"
      ],
+     "default_primary": "PWR-C1-715WAC-P",
      "poe_budget_matrix": [],
      "matrix_provenance": "No PoE. Only 715W primary listed in Table 4 for C9300-48S."
     },
@@ -7523,6 +7704,9 @@
     "stackpower_capable": true,
     "license_regime": [
      "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
     ]
    },
    "ports": [
@@ -7576,6 +7760,7 @@
      "valid_primary": [
       "PWR-C1-715WAC-P"
      ],
+     "default_primary": "PWR-C1-715WAC-P",
      "poe_budget_matrix": [],
      "matrix_provenance": "No PoE. Only 715W primary listed in Table 4 for C9300-48S."
     },
@@ -7614,6 +7799,10 @@
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
     ]
    },
    "ports": [
@@ -7656,6 +7845,7 @@
      "valid_primary": [
       "PWR-C1-715WAC-P-M"
      ],
+     "default_primary": "PWR-C1-715WAC-P-M",
      "poe_budget_matrix": [],
      "matrix_provenance": "No PoE. Default PSU per C9300-M Datasheet Power Supply and Specifications table."
     },
@@ -7698,6 +7888,10 @@
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
     ]
    },
    "ports": [
@@ -7740,6 +7934,7 @@
      "valid_primary": [
       "PWR-C1-350WAC-P-M"
      ],
+     "default_primary": "PWR-C1-350WAC-P-M",
      "poe_budget_matrix": [],
      "matrix_provenance": "No PoE. Default PSU per C9300-M Datasheet Power Supply and Specifications table."
     },
@@ -7784,6 +7979,10 @@
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
     ]
    },
    "ports": [
@@ -7826,6 +8025,7 @@
      "valid_primary": [
       "PWR-C1-715WAC-P-M"
      ],
+     "default_primary": "PWR-C1-715WAC-P-M",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-715WAC-P-M",
@@ -7891,6 +8091,10 @@
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
     ]
    },
    "ports": [
@@ -7933,6 +8137,7 @@
      "valid_primary": [
       "PWR-C1-1100WAC-P-M"
      ],
+     "default_primary": "PWR-C1-1100WAC-P-M",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P-M",
@@ -7998,6 +8203,10 @@
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
     ]
    },
    "ports": [
@@ -8044,6 +8253,7 @@
      "valid_primary": [
       "PWR-C1-1100WAC-P-M"
      ],
+     "default_primary": "PWR-C1-1100WAC-P-M",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P-M",
@@ -8107,6 +8317,10 @@
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
     ]
    },
    "ports": [
@@ -8149,6 +8363,7 @@
      "valid_primary": [
       "PWR-C1-715WAC-P-M"
      ],
+     "default_primary": "PWR-C1-715WAC-P-M",
      "poe_budget_matrix": [],
      "matrix_provenance": "No PoE. Default PSU per C9300-M Datasheet Power Supply and Specifications table."
     },
@@ -8191,6 +8406,10 @@
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
     ]
    },
    "ports": [
@@ -8233,6 +8452,7 @@
      "valid_primary": [
       "PWR-C1-350WAC-P-M"
      ],
+     "default_primary": "PWR-C1-350WAC-P-M",
      "poe_budget_matrix": [],
      "matrix_provenance": "No PoE. Default PSU per C9300-M Datasheet Power Supply and Specifications table."
     },
@@ -8277,6 +8497,10 @@
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
     ]
    },
    "ports": [
@@ -8319,6 +8543,7 @@
      "valid_primary": [
       "PWR-C1-715WAC-P-M"
      ],
+     "default_primary": "PWR-C1-715WAC-P-M",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-715WAC-P-M",
@@ -8384,6 +8609,10 @@
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
     ]
    },
    "ports": [
@@ -8426,6 +8655,7 @@
      "valid_primary": [
       "PWR-C1-1100WAC-P-M"
      ],
+     "default_primary": "PWR-C1-1100WAC-P-M",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P-M",
@@ -8491,6 +8721,10 @@
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
     ]
    },
    "ports": [
@@ -8548,6 +8782,7 @@
      "valid_primary": [
       "PWR-C1-1100WAC-P-M"
      ],
+     "default_primary": "PWR-C1-1100WAC-P-M",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P-M",
@@ -8613,6 +8848,10 @@
     "license_regime": [
      "meraki-classic",
      "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
     ]
    },
    "ports": [
@@ -8658,6 +8897,7 @@
      "valid_primary": [
       "PWR-C1-1100WAC-P-M"
      ],
+     "default_primary": "PWR-C1-1100WAC-P-M",
      "poe_budget_matrix": [
       {
        "primary": "PWR-C1-1100WAC-P-M",

@@ -52,11 +52,15 @@ js/ui/
   `config-variable`). The UI builds controls from this: ordered `poe_type` gets an *at-least / exactly*
   toggle; numerics get min/max; monotonic capabilities get *required / any*; enums get value pickers
   with **dead options disabled** (and single-value axes collapsed) via `availableValues()`.
-- **Config-variables.** License **tier** and **term** are not filter axes — they're declared in the
-  registry's `config_variables` block and refine the kitlist without eliminating models. Tier is
-  locked on DNA `-E/-A` models and selectable on Meraki `-M` models; term resolves the concrete
-  subscription SKU. **PSU redundancy** is likewise not an axis: it's a `(primary, secondary)` pair, so
-  the kitlist shows single vs redundant PSU options.
+- **License tier is a filter; term is a config-variable.** `license_tier` is a stored enum-set of the
+  tiers a model offers (mirrors `license_regime`): choosing *advantage* drops DNA `-E`, keeps `-A` and
+  Meraki `-M`, and the kitlist resolves the advantage SKU. `license_term` and `psu_redundancy` are
+  `config_variables` — they refine the kitlist without eliminating models.
+- **Configurator defaults.** Each model ships a single `default_primary` PSU (from Cisco's default-PSU
+  table; `-M` uses its sole valid primary). To meet a higher PoE load the configurator **adds a
+  secondary** and upsizes the primary only when no secondary covers it; `psu_redundancy` forces a pair.
+  Stack/stackpower cables default to the group `none_option` (shortest cable if one is taken). These
+  default/preference rules live in the configurator (`resolve.js`), not in the KB or the agent.
 - **No per-switch logic.** A new switch is new JSON.
 
 ## Out of scope (deferred)

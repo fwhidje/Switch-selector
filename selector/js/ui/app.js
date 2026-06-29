@@ -125,9 +125,15 @@ function configSection() {
   const cvs = configVariables(registry);
   for (const [name, def] of Object.entries(cvs)) {
     if (name === "_comment") continue;
-    const opts = [["", "any"], ...(def.legal_values ?? []).map((v) => [String(v), String(v)])];
-    const sel = select(name, def.type === "integer" ? "config-int" : "config-enum", opts);
-    wrap.appendChild(row(name, def.notes, sel));
+    let kind, opts;
+    if (def.type === "boolean") {
+      kind = "config-bool"; opts = [["", "any"], ["true", "required"]];
+    } else if (def.type === "integer") {
+      kind = "config-int"; opts = [["", "any"], ...(def.legal_values ?? []).map((v) => [String(v), String(v)])];
+    } else {
+      kind = "config-enum"; opts = [["", "any"], ...(def.legal_values ?? []).map((v) => [String(v), String(v)])];
+    }
+    wrap.appendChild(row(name, def.notes, select(name, kind, opts)));
   }
   return wrap;
 }
@@ -164,6 +170,8 @@ function readQuery() {
       q.push({ axis, condition: cond, value: raw, severity: "hard" });
     } else if (el.dataset.kind === "config-int") {
       q.push({ axis, condition: "==", value: Number(raw), severity: "config" }); // never filters
+    } else if (el.dataset.kind === "config-bool") {
+      q.push({ axis, condition: "==", value: true, severity: "config" }); // never filters
     } else if (el.dataset.kind === "config-enum") {
       q.push({ axis, condition: "==", value: raw, severity: "config" }); // never filters
     } else {
@@ -261,12 +269,16 @@ function renderCandidate(cand, isDefault) {
     ? `uplink modules: ${r.uplinks.options.filter((o) => o.moduleId).map((o) => o.id).join(", ") || "(none valid)"}`
     : `fixed uplinks: ${summarisePorts(r.uplinks.options[0]?.ports)}`;
   kit.appendChild(li(up));
-  // power — single vs redundant PSU options (redundancy is a config choice now)
+  // power — resolved default PSU (single by default; secondary added to meet load)
   if (r.power) {
-    const budget = r.power.meets_requested_budget === null ? "" : r.power.meets_requested_budget ? " · meets budget" : " · CANNOT meet budget";
-    const single = r.power.single_options.length;
-    const red = r.power.redundant_options.length;
-    kit.appendChild(li(`PSU: ${single} single + ${red} redundant pair(s)${r.power.redundant_capable ? "" : " (no redundancy)"}${budget}`));
+    const dc = r.power.default_config;
+    if (!dc) {
+      kit.appendChild(li("PSU: no configuration meets the requested PoE load"));
+    } else {
+      const sec = dc.secondary ? ` + ${dc.secondary}` : " (single)";
+      const watts = dc.watts != null ? ` · ${dc.watts}W` : "";
+      kit.appendChild(li(`PSU default: ${dc.primary}${sec}${watts} — ${dc.reason}`));
+    }
   }
   // license — resolved per chosen tier/term where applicable
   if (r.license) {
@@ -281,12 +293,13 @@ function renderCandidate(cand, isDefault) {
     }).join("; ");
     kit.appendChild(li(`license (${tierNote}): ${groups || "(none for chosen regime)"}`));
   }
-  // accessories
+  // accessories — cables default to 'none' (standalone), shortest if taken
+  const a = r.accessories;
   const acc = [];
-  if (r.accessories.stack_cables) acc.push("stack-cables");
-  if (r.accessories.stackpower_cables) acc.push("stackpower-cables");
-  if (r.accessories.ssd_accessory) acc.push("ssd");
-  if (acc.length) kit.appendChild(li(`accessories: ${acc.join(", ")}`));
+  if (a.stack_cables) acc.push(`stack-cable: ${a.stack_cables.default} default (shortest ${a.stack_cables.shortest})`);
+  if (a.stackpower_cables) acc.push(`stackpower-cable: ${a.stackpower_cables.default} default (shortest ${a.stackpower_cables.shortest})`);
+  if (a.ssd_accessory) acc.push("ssd");
+  if (acc.length) kit.appendChild(li(`accessories: ${acc.join(" · ")}`));
   card.appendChild(kit);
 
   // raw BOM

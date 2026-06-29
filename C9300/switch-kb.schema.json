@@ -3,8 +3,8 @@
   "$id": "switch-kb.schema.json",
   "title": "Networking Equipment Selector — Switch Knowledge Base Schema",
   "description": "Series-agnostic shape + authoring contract for a switch knowledge base. This schema enforces SHAPE (entries are well-formed); switching-axes.json enforces MEANING (which axes exist, their KIND/ROLE and legal enum values); selector/tools/validate-kb.mjs enforces CROSS-REFERENCE INTEGRITY (group references resolve, valid_primary is a subset of the referenced PSU group, poe_budget_watts equals the matrix max, sum of access-port counts equals total_port_count, enum/speed values are registered). All three must pass. See $authoring for the procedure an agent follows to add a model.",
-  "schema_version": "0.4.0",
-  "registry_version": "0.5.0",
+  "schema_version": "0.5.0",
+  "registry_version": "0.6.0",
 
   "$authoring": {
     "_comment": "NON-VALIDATING. Procedure + rules for an agent populating new switch models. Read this before touching data.",
@@ -66,8 +66,8 @@
       "The -M (Meraki) variant is a DISTINCT model entry, not a toggle. It carries meraki-classic / meraki-subscription regimes.",
       "Series-specific groups (PSU, stacking cables) are kept as their own named groups even when membership currently matches another series, so they can diverge later.",
       "Ports: declare the real per-port speed SET; the implicit '1G-copper remainder' is now an explicit role=access, medium=copper, speeds=[1g] group, so no inference is needed.",
-      "PSU redundancy is NOT an axis: it is realised by a (primary, secondary) pair with secondary != none, read from the PoE matrix (PoE models) or valid_primary (non-PoE). The solver surfaces single vs redundant PSU options in the kitlist.",
-      "License tier + term are CONFIG-VARIABLES (see switching-axes.json config_variables), not filter axes. Tier is locked on DNA -E/-A models (configurables.license.tier_locked) and selectable on Meraki -M models (multiple license groups, no tier_locked). Term resolves the concrete subscription SKU from subscription_members via the '-<n>Y' suffix."
+      "PSU redundancy is NOT an axis: it is realised by a (primary, secondary) pair with secondary != none. configurables.power_supplies.default_primary is the single PSU the switch ships with (Cisco default-PSU table; -M models use their sole valid_primary). The configurator starts from default_primary and, only when a PoE request exceeds it, ADDS a secondary (from the PoE matrix) before upsizing the primary; psu_redundancy=true forces a pair.",
+      "License TIER is a FILTER axis (license_tier = the SET of tiers a model offers, derived from its license groups; mirrors license_regime). Choosing a tier drops models that cannot provide it (DNA -E vs -A); Meraki -M offers both and is never dropped. License TERM stays a config-variable that resolves the concrete subscription SKU from subscription_members via the '-<n>Y' suffix (or the single device-tied SKU where no term applies)."
     ]
   },
 
@@ -349,7 +349,7 @@
     "axis_values": {
       "type": "object",
       "description": "Scalar registry-axis values for this switch. additionalProperties is FALSE: only declared scalar axes may appear. Port counts are NOT here (they live in model.ports, addressed by the parametrised port_count axis). Optional axes are omitted when they do not apply.",
-      "required": ["series", "poe_capable", "poe_type", "total_port_count", "uplink_modular", "stacking_capable", "stackpower_capable", "license_regime"],
+      "required": ["series", "poe_capable", "poe_type", "total_port_count", "uplink_modular", "stacking_capable", "stackpower_capable", "license_regime", "license_tier"],
       "additionalProperties": false,
       "properties": {
         "_comment": { "type": "string" },
@@ -365,6 +365,12 @@
         "stackpower_capable": { "type": "boolean" },
         "license_regime": {
           "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "license_tier": {
+          "type": "array",
+          "description": "SET of license tiers the model offers (enum-set), derived from its license groups. Filter axis, parallel to license_regime.",
           "items": { "type": "string" },
           "minItems": 1
         }
@@ -432,10 +438,11 @@
 
     "configurable_power_supplies": {
       "type": "object",
-      "required": ["group", "valid_primary", "poe_budget_matrix", "matrix_provenance"],
+      "required": ["group", "valid_primary", "default_primary", "poe_budget_matrix", "matrix_provenance"],
       "properties": {
         "group": { "type": "string" },
         "valid_primary": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "default_primary": { "type": "string", "$comment": "The single PSU the switch ships with by default (from Cisco's default-PSU table; -M models use their sole valid_primary). Must be a member of valid_primary (validator-checked). The configurator starts here and escalates only when a PoE request exceeds it." },
         "poe_budget_matrix": {
           "type": "array",
           "items": { "$ref": "#/$defs/poe_matrix_row" }
