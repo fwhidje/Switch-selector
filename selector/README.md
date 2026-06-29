@@ -59,8 +59,10 @@ js/ui/
 - **Configurator defaults.** Each model ships a single `default_primary` PSU (from Cisco's default-PSU
   table; `-M` uses its sole valid primary). To meet a higher PoE load the configurator **adds a
   secondary** and upsizes the primary only when no secondary covers it; `psu_redundancy` forces a pair.
-  Stack/stackpower cables default to the group `none_option` (shortest cable if one is taken). These
-  default/preference rules live in the configurator (`resolve.js`), not in the KB or the agent.
+  Stack/stackpower cables default to the group `none_option` (shortest cable if one is taken), and the
+  **uplink module** defaults to the group `none_option` (no module) when there's no uplink requirement,
+  else the first valid module. These default/preference rules live in the configurator (`resolve.js`),
+  not in the KB or the agent.
 - **PoE demand input.** PoE need is entered as a dynamic list of *N ports at level L* rows (a filled
   row spawns a fresh blank one). The UI translates it — using `poe_type.level_watts` from the registry
   (the single source) — into `poe_budget_watts ≥ Σ N×watts`, `poe_type ≥ max level`, and

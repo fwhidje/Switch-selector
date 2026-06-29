@@ -117,10 +117,21 @@ export function resolveBOM(model, query, kb, validOptions) {
 
 function resolveUplinkBOM(model, validOptions) {
   const modular = !!model.axis_values?.uplink_modular;
+  if (!modular) {
+    // fixed-uplink: soldered, single option
+    const o = (validOptions ?? [])[0];
+    return { modular: false, fixed_ports: o?.ports ?? [] };
+  }
+  const opts = validOptions ?? [];
+  const none = opts.find((o) => o.moduleId == null); // the group's none_option, if still valid
+  const modules = opts.filter((o) => o.moduleId != null);
+  // Default to 'none' (no module) when it's still valid — i.e. no uplink requirement —
+  // mirroring the stack/stackpower cable defaults; otherwise the first valid module.
   return {
-    modular,
-    // valid uplink choices given the query (modules that satisfy the uplink demand)
-    options: (validOptions ?? []).map((o) => ({ id: o.id, moduleId: o.moduleId, ports: o.ports })),
+    modular: true,
+    none_option: none ? none.id : null,
+    default: none ? none.id : (modules[0]?.id ?? null),
+    options: modules.map((o) => ({ id: o.id, moduleId: o.moduleId, ports: o.ports })),
   };
 }
 

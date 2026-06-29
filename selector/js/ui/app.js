@@ -334,9 +334,15 @@ function renderCandidate(cand, isDefault) {
   const kit = document.createElement("ul");
   kit.className = "kit";
   // uplinks
-  const up = r.uplinks.modular
-    ? `uplink modules: ${r.uplinks.options.filter((o) => o.moduleId).map((o) => o.id).join(", ") || "(none valid)"}`
-    : `fixed uplinks: ${summarisePorts(r.uplinks.options[0]?.ports)}`;
+  let up;
+  if (r.uplinks.modular) {
+    const dflt = r.uplinks.default;
+    const isNone = dflt != null && dflt === r.uplinks.none_option;
+    const opts = r.uplinks.options.map((o) => o.id).join(", ");
+    up = `uplink module: ${dflt ?? "(none valid)"} default${isNone ? " (no module)" : ""}` + (opts ? ` · options: ${opts}` : "");
+  } else {
+    up = `fixed uplinks: ${summarisePorts(r.uplinks.fixed_ports)}`;
+  }
   kit.appendChild(li(up));
   // power — resolved default PSU (single by default; secondary added to meet load)
   if (r.power) {
