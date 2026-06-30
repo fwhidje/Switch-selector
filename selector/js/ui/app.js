@@ -20,6 +20,23 @@ let portCombos = []; // [{role, medium, speed}]
 let levelWatts = {}; // { poe: 15.4, "poe+": 30, ... }
 let poeLevels = []; // ordered PoE levels excluding 'none'
 
+const GROUPS = [
+  { id: "series",    label: "Series",
+    axes: ["series"] },
+  { id: "interfaces", label: "Interfaces",
+    axes: ["total_port_count", "uplink_modular"],
+    ports: true },
+  { id: "poe",       label: "PoE",
+    axes: ["poe_capable", "poe_type", "poe_budget_watts"],
+    poeDemand: true },
+  { id: "stacking",  label: "Stacking / StackPower / Redundant PSU",
+    axes: ["stacking_capable", "stacking_technology", "stackpower_capable"],
+    configVar: "psu_redundancy" },
+  { id: "licensing", label: "Licensing",
+    axes: ["license_regime", "license_tier"],
+    configVar: "license_term" },
+];
+
 async function init() {
   const status = document.getElementById("status");
   try {
@@ -53,13 +70,51 @@ function enumeratePortCombos(kb) {
 function buildControls() {
   const form = document.getElementById("controls");
   form.innerHTML = "";
-  for (const axis of getAxes(registry)) {
-    if (axis.name === "port_count") continue; // handled in the ports grid
-    form.appendChild(controlFor(axis));
+  const axesByName = new Map(getAxes(registry).map((a) => [a.name, a]));
+  const cvs = configVariables(registry);
+
+  for (const group of GROUPS) {
+    const details = document.createElement("details");
+    details.open = true;
+    details.className = "filter-group";
+
+    const summary = document.createElement("summary");
+    summary.className = "filter-group-head";
+    summary.textContent = group.label;
+    details.appendChild(summary);
+
+    const body = document.createElement("div");
+    body.className = "filter-group-body";
+
+    for (const axisName of group.axes) {
+      const axis = axesByName.get(axisName);
+      if (axis) body.appendChild(controlFor(axis));
+    }
+    if (group.ports) body.appendChild(portsSection());
+    if (group.poeDemand) body.appendChild(poeDemandSection());
+    if (group.configVar) {
+      const def = cvs[group.configVar];
+      if (def) {
+        const subHead = document.createElement("div");
+        subHead.className = "section-head";
+        subHead.textContent = "configuration";
+        body.appendChild(subHead);
+        let kind, opts;
+        if (def.type === "boolean") {
+          kind = "config-bool"; opts = [["", "any"], ["true", "required"]];
+        } else if (def.type === "integer") {
+          kind = "config-int"; opts = [["", "any"], ...(def.legal_values ?? []).map((v) => [String(v), String(v)])];
+        } else {
+          kind = "config-enum"; opts = [["", "any"], ...(def.legal_values ?? []).map((v) => [String(v), String(v)])];
+        }
+        body.appendChild(row(group.configVar, def.notes, select(group.configVar, kind, opts)));
+      }
+    }
+
+    details.appendChild(body);
+    form.appendChild(details);
   }
-  form.appendChild(portsSection());
-  form.appendChild(poeDemandSection());
-  form.appendChild(configSection());
+
   form.addEventListener("input", run);
   form.addEventListener("change", run);
 }
@@ -166,29 +221,6 @@ function syncDemandRows() {
   if (cnt > 0 && lvl) list.appendChild(demandRow());
 }
 
-// config-variables (license tier/term): refine the kitlist, never filter
-function configSection() {
-  const wrap = document.createElement("div");
-  wrap.className = "ports-section";
-  const h = document.createElement("div");
-  h.className = "section-head";
-  h.textContent = "configuration — refines kitlist, does not filter";
-  wrap.appendChild(h);
-  const cvs = configVariables(registry);
-  for (const [name, def] of Object.entries(cvs)) {
-    if (name === "_comment") continue;
-    let kind, opts;
-    if (def.type === "boolean") {
-      kind = "config-bool"; opts = [["", "any"], ["true", "required"]];
-    } else if (def.type === "integer") {
-      kind = "config-int"; opts = [["", "any"], ...(def.legal_values ?? []).map((v) => [String(v), String(v)])];
-    } else {
-      kind = "config-enum"; opts = [["", "any"], ...(def.legal_values ?? []).map((v) => [String(v), String(v)])];
-    }
-    wrap.appendChild(row(name, def.notes, select(name, kind, opts)));
-  }
-  return wrap;
-}
 
 function numInput(axis, bound, placeholder) {
   const el = document.createElement("input");
