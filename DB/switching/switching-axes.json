@@ -1,7 +1,7 @@
 {
   "$id": "switching-axes.json",
   "title": "Switching Axis Registry",
-  "registry_version": "0.8.0",
+  "registry_version": "0.9.0",
   "role": "Authoritative vocabulary for the Networking Equipment Selector. The registry enforces MEANING (what can be constrained, how, and which values are legal). It is the SOURCE; the KB schema is a projection of it. Nothing is filterable unless declared here. Each axis declares KIND (ordered | count-at-level | monotonic-capability | discriminating | numeric | boolean) and ROLE (requirement). CONFIG-VARIABLES (config_variables block) are not filter axes: they do not eliminate models, they refine the resolved kitlist (BOM) and are surfaced at the configuration stage. validate-kb.mjs checks model values against this file.",
   "consumers": [
     "Web UI builds form controls from this registry (KIND drives the control; ROLE drives WHEN it surfaces).",
@@ -18,8 +18,8 @@
       "port_medium": ["copper", "fiber"],
       "port_speed": {
         "kind": "ordered",
-        "order": ["1g", "2.5g", "5g", "10g", "25g", "40g", "100g"],
-        "notes": "Ordered low->high. Sub-1G (100M) is intentionally NOT a filter speed (display-only). 'mgig' is no longer a speed: a Multigigabit copper port lists its real speed set, e.g. [1g,2.5g,5g,10g]."
+        "order": ["1g", "2.5g", "5g", "10g", "25g", "40g", "50g", "100g"],
+        "notes": "Ordered low->high. Sub-1G (100M) is intentionally NOT a filter speed (display-only). 'mgig' is no longer a speed: a Multigigabit copper port lists its real speed set, e.g. [1g,2.5g,5g,10g]. v0.9.0 added '50g' (Cisco SFP56, single-lane 50G) between 40g and 100g for C9350 SFP56 uplinks (C9350-NM-8L native; C9350-NM-8Y 4x50G mode)."
       }
     }
   },

@@ -3,7 +3,7 @@
   "$id": "switch-kb.schema.json",
   "title": "Networking Equipment Selector — Switch Knowledge Base Schema",
   "description": "Series-agnostic shape + authoring contract for a switch knowledge base. This schema enforces SHAPE (entries are well-formed); switching-axes.json enforces MEANING (which axes exist, their KIND/ROLE and legal enum values); selector/tools/validate-kb.mjs enforces CROSS-REFERENCE INTEGRITY (group references resolve, valid_primary is a subset of the referenced PSU group, poe_budget_watts equals the matrix max, sum of access-port counts equals total_port_count, enum/speed values are registered). All three must pass. See $authoring for the procedure an agent follows to add a model.",
-  "schema_version": "0.6.0",
+  "schema_version": "0.7.0",
   "registry_version": "0.9.0",
 
   "$authoring": {
@@ -100,8 +100,8 @@
         "speeds": {
           "type": "array",
           "minItems": 1,
-          "items": { "type": "string", "enum": ["1g", "2.5g", "5g", "10g", "25g", "40g", "100g"] },
-          "$comment": "Ordered low->high per switching-axes.json port_speed. Every speed the port natively supports (subsumption as data). 100M is display-only and not listed."
+          "items": { "type": "string", "enum": ["1g", "2.5g", "5g", "10g", "25g", "40g", "50g", "100g"] },
+          "$comment": "Ordered low->high per switching-axes.json port_speed (registry v0.9.0 added 50g). Every speed the port natively supports (subsumption as data). 100M is display-only and not listed."
         },
         "notes": { "type": "string" }
       }
@@ -154,7 +154,12 @@
 
     "catalog_network_module": {
       "type": "object",
-      "required": ["id", "description", "ports", "compatible_family"],
+      "description": "A network (uplink) module. Carries EITHER a single fixed `ports` config OR a `modes` array of mutually-exclusive alternative port configs (e.g. C9350-NM-8Y: 8x25G OR 4x50G — a re-mode of the same physical ports). A module with `modes` is still ONE orderable SKU: the fitted variant selects exactly one mode, and the kitlist/BOM shows the real module id with a mode label. A mode is NEVER a separate SKU.",
+      "required": ["id", "description", "compatible_family"],
+      "oneOf": [
+        { "required": ["ports"], "not": { "required": ["modes"] } },
+        { "required": ["modes"], "not": { "required": ["ports"] } }
+      ],
       "properties": {
         "id": { "type": "string" },
         "description": { "type": "string" },
@@ -162,7 +167,26 @@
           "type": "array",
           "minItems": 1,
           "items": { "$ref": "#/$defs/port_group" },
-          "$comment": "role=uplink port groups this single module provides. Combined into a variant's port pool when this module is fitted."
+          "$comment": "Single fixed config: role=uplink port groups this module provides, combined into a variant's port pool when fitted. Mutually exclusive with `modes`."
+        },
+        "modes": {
+          "type": "array",
+          "minItems": 2,
+          "$comment": "Mutually-exclusive alternative port configs of ONE module (a re-mode of the same physical ports; the bottom row may go inactive). The fitted variant uses exactly one mode. Mutually exclusive with `ports`. uplinkOptions() expands each mode into a selectable option whose moduleId stays the real SKU.",
+          "items": {
+            "type": "object",
+            "required": ["name", "ports"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string", "$comment": "Short mode label, unique within the module (e.g. '8x25G', '4x50G'). Used as the option-id suffix; not an orderable SKU." },
+              "ports": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "$ref": "#/$defs/port_group" }
+              },
+              "notes": { "type": "string" }
+            }
+          }
         },
         "compatible_family": { "type": "string" },
         "notes": { "type": "string" }
