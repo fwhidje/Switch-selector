@@ -15,15 +15,16 @@ import { buildIndex } from "../js/core/kb.js";
 import { getAxes, isCountAtLevelAxis, portModel } from "../js/core/registry.js";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const C9300 = resolvePath(HERE, "../../C9300");
+const SWITCHING = resolvePath(HERE, "../../DB/switching");
+const C9300_DIR = resolvePath(SWITCHING, "C9300");
 
 const violations = [];
 const fail = (file, path, message) => violations.push({ file, path, message });
-const readJSON = (name) => JSON.parse(readFileSync(resolvePath(C9300, name), "utf8"));
+const readJSON = (fullPath) => JSON.parse(readFileSync(fullPath, "utf8"));
 
-const registry = readJSON("switching-axes.json");
-const schema = readJSON("switch-kb.schema.json");
-const kb = readJSON("c9300_knowledge_base.json");
+const registry = readJSON(resolvePath(SWITCHING, "switching-axes.json"));
+const schema = readJSON(resolvePath(C9300_DIR, "switch-kb.schema.json"));
+const kb = readJSON(resolvePath(C9300_DIR, "c9300_knowledge_base.json"));
 kb._index = buildIndex(kb);
 
 const axes = getAxes(registry);
