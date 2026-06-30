@@ -46,7 +46,7 @@
       "type": "enum",
       "kind": "discriminating",
       "role": "requirement",
-      "legal_values": ["C9300", "C9300L", "C9300X", "C9300LM"],
+      "legal_values": ["C9300", "C9300L", "C9300X", "C9300LM", "C9350"],
       "accepted_conditions": ["==", "in"],
       "required_on_model": true,
       "notes": "Series is an ordinary axis, not a privileged root. Sub-families are distinct series values. Legal_values will grow as families are added."
@@ -127,7 +127,7 @@
       "type": "enum",
       "kind": "discriminating",
       "role": "requirement",
-      "legal_values": ["stackwise-480", "stackwise-1t", "stackwise-320"],
+      "legal_values": ["stackwise-480", "stackwise-1t", "stackwise-320", "stackwise-1.6t"],
       "accepted_conditions": ["==", "in"],
       "required_on_model": "when_stacking_capable",
       "notes": "Required and non-blank on a model when stacking_capable is true. May be left unconstrained in a QUERY."

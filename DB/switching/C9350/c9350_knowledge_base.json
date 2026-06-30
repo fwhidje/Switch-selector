@@ -1,6 +1,6 @@
 {
  "header": {
-  "schema_version": "0.7.0",
+  "schema_version": "0.8.0",
   "registry_version": "0.9.0",
   "axes_file": "../switching-axes.json",
   "schema_file": "switch-kb.schema.json",
@@ -275,5 +275,1890 @@
   ]
  },
 
- "models": []
+ "models": [
+  {
+   "id": "C9350-24HX",
+   "description": "Cisco Catalyst C9350-24HX, 24x mGig (1/2.5/5/10G), upoe+ (2160W budget), modular uplinks. Unified + Meraki-classic licensing, both tiers.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9350",
+    "poe_capable": true,
+    "poe_type": "upoe+",
+    "poe_budget_watts": 2160,
+    "total_port_count": 24,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-1.6t",
+    "stackpower_capable": true,
+    "license_regime": [
+     "unified",
+     "meraki-classic"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet per-model page port speeds + Table 6. 100M/10M are display-only, not filter speeds.",
+    "poe_budget_watts": "Datasheet model-page total PoE budget; matrix from Table 9.",
+    "default_primary": "Ordering guide Table 1."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One A100/L",
+    "asic_count": 1,
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 240,
+    "weight_kg": 8.0,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     47.2
+    ],
+    "port_layout": "24x mGig (1/2.5/5/10G)"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
+    "network_modules": {
+     "group": "c9350-base-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9350-stack-cables"
+    },
+    "stackpower_cables": {
+     "group": "c9350-stackpower-cables"
+    },
+    "power_supplies": {
+     "group": "c9350-psus",
+     "valid_primary": [
+      "PWR-C2-850WAC-I",
+      "PWR-C2-1600WAC-I"
+     ],
+     "default_primary": "PWR-C2-850WAC-I",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": null,
+       "poe_budget_watts": 515
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 1015
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 1365
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 2115
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": null,
+       "poe_budget_watts": 1265
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 1765
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 2115
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 2160
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 9 (PoE budget per PSU combination: single primary, +secondary, and +tertiary where a third PSU is needed to reach the rated budget)."
+    },
+    "license": {
+     "group": "c9350-unified-essentials-m",
+     "additional_groups": [
+      "c9350-unified-advantage-m",
+      "c9350-meraki-classic-essentials-24",
+      "c9350-meraki-classic-advantage-24"
+     ],
+     "regime_offered": [
+      "unified",
+      "meraki-classic"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Shipped by default, not separately selectable (OG section 2).",
+    "fan_modules": "3x C9350-FAN-I (N+1 redundancy)",
+    "mounting_brackets": "2x 19-inch rack brackets",
+    "rfid_module": "Included by default (opt-out at order)."
+   }
+  },
+  {
+   "id": "C9350-48HX",
+   "description": "Cisco Catalyst C9350-48HX, 48x mGig (1/2.5/5/10G), upoe+ (4320W budget), modular uplinks. Unified + Meraki-classic licensing, both tiers.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9350",
+    "poe_capable": true,
+    "poe_type": "upoe+",
+    "poe_budget_watts": 4320,
+    "total_port_count": 48,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-1.6t",
+    "stackpower_capable": true,
+    "license_regime": [
+     "unified",
+     "meraki-classic"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet per-model page port speeds + Table 6. 100M/10M are display-only, not filter speeds.",
+    "poe_budget_watts": "Datasheet model-page total PoE budget; matrix from Table 9.",
+    "default_primary": "Ordering guide Table 1."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One A100/L",
+    "asic_count": 2,
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 240,
+    "weight_kg": 8.5,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     47.2
+    ],
+    "port_layout": "48x mGig (1/2.5/5/10G)",
+    "mtbf_hours": 277660
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
+    "network_modules": {
+     "group": "c9350-8l-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9350-stack-cables"
+    },
+    "stackpower_cables": {
+     "group": "c9350-stackpower-cables"
+    },
+    "power_supplies": {
+     "group": "c9350-psus",
+     "valid_primary": [
+      "PWR-C2-1600WAC-I"
+     ],
+     "default_primary": "PWR-C2-1600WAC-I",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": null,
+       "poe_budget_watts": 1120
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 1620
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 1870
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 2720
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "tertiary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 2120
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "tertiary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 2470
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "tertiary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 3220
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "tertiary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 2470
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "tertiary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 2820
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "tertiary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 3570
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "tertiary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 3220
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "tertiary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 3570
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "tertiary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 4320
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 9 (PoE budget per PSU combination: single primary, +secondary, and +tertiary where a third PSU is needed to reach the rated budget)."
+    },
+    "license": {
+     "group": "c9350-unified-essentials-l",
+     "additional_groups": [
+      "c9350-unified-advantage-l",
+      "c9350-meraki-classic-essentials-48",
+      "c9350-meraki-classic-advantage-48"
+     ],
+     "regime_offered": [
+      "unified",
+      "meraki-classic"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Shipped by default, not separately selectable (OG section 2).",
+    "fan_modules": "3x C9350-FAN-I (N+1 redundancy)",
+    "mounting_brackets": "2x 19-inch rack brackets",
+    "rfid_module": "Included by default (opt-out at order)."
+   }
+  },
+  {
+   "id": "C9350-48HXN",
+   "description": "Cisco Catalyst C9350-48HXN, 36x (1/2.5/5G) + 12x mGig (1/2.5/5/10G), upoe+ (4320W budget), modular uplinks. Unified + Meraki-classic licensing, both tiers.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9350",
+    "poe_capable": true,
+    "poe_type": "upoe+",
+    "poe_budget_watts": 4320,
+    "total_port_count": 48,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-1.6t",
+    "stackpower_capable": true,
+    "license_regime": [
+     "unified",
+     "meraki-classic"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 36,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g"
+     ]
+    },
+    {
+     "count": 12,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet per-model page port speeds + Table 6. 100M/10M are display-only, not filter speeds.",
+    "poe_budget_watts": "Datasheet model-page total PoE budget; matrix from Table 9.",
+    "default_primary": "Ordering guide Table 1."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One A100/L",
+    "asic_count": 1,
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 240,
+    "weight_kg": 8.3,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     47.2
+    ],
+    "port_layout": "36x (1/2.5/5G) + 12x mGig (1/2.5/5/10G)"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
+    "network_modules": {
+     "group": "c9350-base-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9350-stack-cables"
+    },
+    "stackpower_cables": {
+     "group": "c9350-stackpower-cables"
+    },
+    "power_supplies": {
+     "group": "c9350-psus",
+     "valid_primary": [
+      "PWR-C2-850WAC-I",
+      "PWR-C2-1600WAC-I"
+     ],
+     "default_primary": "PWR-C2-850WAC-I",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": null,
+       "poe_budget_watts": 470
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 970
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 1320
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 2070
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "tertiary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 1470
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "tertiary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 1820
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "tertiary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 2570
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "tertiary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 1820
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "tertiary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 2170
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "tertiary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 3220
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "tertiary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 2570
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "tertiary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 3670
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "tertiary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 4320
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": null,
+       "poe_budget_watts": 1220
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 1720
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 1970
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 2820
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "tertiary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 2220
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "tertiary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 2570
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "tertiary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 3320
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "tertiary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 2570
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "tertiary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 2920
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "tertiary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 3670
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "tertiary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 3320
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "tertiary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 3670
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "tertiary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 4320
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 9 (PoE budget per PSU combination: single primary, +secondary, and +tertiary where a third PSU is needed to reach the rated budget)."
+    },
+    "license": {
+     "group": "c9350-unified-essentials-l",
+     "additional_groups": [
+      "c9350-unified-advantage-l",
+      "c9350-meraki-classic-essentials-48",
+      "c9350-meraki-classic-advantage-48"
+     ],
+     "regime_offered": [
+      "unified",
+      "meraki-classic"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Shipped by default, not separately selectable (OG section 2).",
+    "fan_modules": "3x C9350-FAN-I (N+1 redundancy)",
+    "mounting_brackets": "2x 19-inch rack brackets",
+    "rfid_module": "Included by default (opt-out at order)."
+   }
+  },
+  {
+   "id": "C9350-48TX",
+   "description": "Cisco Catalyst C9350-48TX, 48x mGig (1/2.5/5/10G), data-only, no PoE, modular uplinks. Unified + Meraki-classic licensing, both tiers.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9350",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-1.6t",
+    "stackpower_capable": true,
+    "license_regime": [
+     "unified",
+     "meraki-classic"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet per-model page port speeds + Table 6. 100M/10M are display-only, not filter speeds.",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "Ordering guide Table 1."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One A100/L",
+    "asic_count": 2,
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 240,
+    "weight_kg": 8.0,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     47.2
+    ],
+    "port_layout": "48x mGig (1/2.5/5/10G), data-only",
+    "mtbf_hours": 261150
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
+    "network_modules": {
+     "group": "c9350-400g-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9350-stack-cables"
+    },
+    "stackpower_cables": {
+     "group": "c9350-stackpower-cables"
+    },
+    "power_supplies": {
+     "group": "c9350-psus",
+     "valid_primary": [
+      "PWR-C2-500WAC-I"
+     ],
+     "default_primary": "PWR-C2-500WAC-I",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9350-unified-essentials-l",
+     "additional_groups": [
+      "c9350-unified-advantage-l",
+      "c9350-meraki-classic-essentials-48",
+      "c9350-meraki-classic-advantage-48"
+     ],
+     "regime_offered": [
+      "unified",
+      "meraki-classic"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Shipped by default, not separately selectable (OG section 2).",
+    "fan_modules": "3x C9350-FAN-I (N+1 redundancy)",
+    "mounting_brackets": "2x 19-inch rack brackets",
+    "rfid_module": "Included by default (opt-out at order)."
+   }
+  },
+  {
+   "id": "C9350-48HM",
+   "description": "Cisco Catalyst C9350-48HM, 48x mGig (1/2.5G), upoe+ (4320W budget), modular uplinks. Unified + Meraki-classic licensing, both tiers.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9350",
+    "poe_capable": true,
+    "poe_type": "upoe+",
+    "poe_budget_watts": 4320,
+    "total_port_count": 48,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-1.6t",
+    "stackpower_capable": true,
+    "license_regime": [
+     "unified",
+     "meraki-classic"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet per-model page port speeds + Table 6. 100M/10M are display-only, not filter speeds.",
+    "poe_budget_watts": "Datasheet 48HM page total PoE budget (4320W); matrix UNCONFIRMED.",
+    "default_primary": "UNCONFIRMED \u2014 not in datasheet/OG; placeholder pending CCW."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One A100/L",
+    "asic_count": 1,
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 240,
+    "weight_kg": 6.6,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     47.2
+    ],
+    "port_layout": "48x mGig (1/2.5G)"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
+    "network_modules": {
+     "group": "c9350-hm-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9350-stack-cables"
+    },
+    "stackpower_cables": {
+     "group": "c9350-stackpower-cables"
+    },
+    "power_supplies": {
+     "group": "c9350-psus",
+     "valid_primary": [
+      "PWR-C2-850WAC-I",
+      "PWR-C2-1600WAC-I"
+     ],
+     "default_primary": "PWR-C2-850WAC-I",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "UNCONFIRMED \u2014 48HM is absent from datasheet Table 9. poe_budget_watts (4320W) is from the 48HM datasheet page; the per-PSU matrix and default/valid PSU are not sourced. See THINGS-TO-COMPLETE.md."
+    },
+    "license": {
+     "group": "c9350-unified-essentials-l",
+     "additional_groups": [
+      "c9350-unified-advantage-l",
+      "c9350-meraki-classic-essentials-48",
+      "c9350-meraki-classic-advantage-48"
+     ],
+     "regime_offered": [
+      "unified",
+      "meraki-classic"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Shipped by default, not separately selectable (OG section 2).",
+    "fan_modules": "3x C9350-FAN-I (N+1 redundancy)",
+    "mounting_brackets": "2x 19-inch rack brackets",
+    "rfid_module": "Included by default (opt-out at order)."
+   },
+   "_incomplete": [
+    "poe_budget_matrix",
+    "default_primary"
+   ]
+  },
+  {
+   "id": "C9350-48U",
+   "description": "Cisco Catalyst C9350-48U, 48x 1G, upoe (2880W budget), modular uplinks. Unified + Meraki-classic licensing, both tiers.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9350",
+    "poe_capable": true,
+    "poe_type": "upoe",
+    "poe_budget_watts": 2880,
+    "total_port_count": 48,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-1.6t",
+    "stackpower_capable": true,
+    "license_regime": [
+     "unified",
+     "meraki-classic"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet per-model page port speeds + Table 6. 100M/10M are display-only, not filter speeds.",
+    "poe_budget_watts": "Datasheet model-page total PoE budget; matrix from Table 9.",
+    "default_primary": "Ordering guide Table 1."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One A100/L",
+    "asic_count": 1,
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 240,
+    "weight_kg": 6.42,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     38.3
+    ],
+    "port_layout": "48x 1G",
+    "mtbf_hours": 271720
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
+    "network_modules": {
+     "group": "c9350-base-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9350-stack-cables"
+    },
+    "stackpower_cables": {
+     "group": "c9350-stackpower-cables"
+    },
+    "power_supplies": {
+     "group": "c9350-psus",
+     "valid_primary": [
+      "PWR-C2-850WAC-I",
+      "PWR-C2-1600WAC-I"
+     ],
+     "default_primary": "PWR-C2-850WAC-I",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": null,
+       "poe_budget_watts": 570
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 1070
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 1420
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 2170
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": null,
+       "poe_budget_watts": 1320
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 1820
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 2170
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 2880
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 9 (PoE budget per PSU combination: single primary, +secondary, and +tertiary where a third PSU is needed to reach the rated budget)."
+    },
+    "license": {
+     "group": "c9350-unified-essentials-l",
+     "additional_groups": [
+      "c9350-unified-advantage-l",
+      "c9350-meraki-classic-essentials-48",
+      "c9350-meraki-classic-advantage-48"
+     ],
+     "regime_offered": [
+      "unified",
+      "meraki-classic"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Shipped by default, not separately selectable (OG section 2).",
+    "fan_modules": "3x C9350-FAN-I (N+1 redundancy)",
+    "mounting_brackets": "2x 19-inch rack brackets",
+    "rfid_module": "Included by default (opt-out at order)."
+   }
+  },
+  {
+   "id": "C9350-24U",
+   "description": "Cisco Catalyst C9350-24U, 24x 1G, upoe (1440W budget), modular uplinks. Unified + Meraki-classic licensing, both tiers.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9350",
+    "poe_capable": true,
+    "poe_type": "upoe",
+    "poe_budget_watts": 1440,
+    "total_port_count": 24,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-1.6t",
+    "stackpower_capable": true,
+    "license_regime": [
+     "unified",
+     "meraki-classic"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet per-model page port speeds + Table 6. 100M/10M are display-only, not filter speeds.",
+    "poe_budget_watts": "Datasheet model-page total PoE budget; matrix from Table 9.",
+    "default_primary": "Ordering guide Table 1."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One A100/L",
+    "asic_count": 1,
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 240,
+    "weight_kg": 6.35,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     38.3
+    ],
+    "port_layout": "24x 1G",
+    "mtbf_hours": 313860
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
+    "network_modules": {
+     "group": "c9350-base-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9350-stack-cables"
+    },
+    "stackpower_cables": {
+     "group": "c9350-stackpower-cables"
+    },
+    "power_supplies": {
+     "group": "c9350-psus",
+     "valid_primary": [
+      "PWR-C2-850WAC-I",
+      "PWR-C2-1600WAC-I"
+     ],
+     "default_primary": "PWR-C2-850WAC-I",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": null,
+       "poe_budget_watts": 570
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 1070
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 1420
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 1440
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": null,
+       "poe_budget_watts": 1320
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 1440
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 1440
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 9 (PoE budget per PSU combination: single primary, +secondary, and +tertiary where a third PSU is needed to reach the rated budget)."
+    },
+    "license": {
+     "group": "c9350-unified-essentials-m",
+     "additional_groups": [
+      "c9350-unified-advantage-m",
+      "c9350-meraki-classic-essentials-24",
+      "c9350-meraki-classic-advantage-24"
+     ],
+     "regime_offered": [
+      "unified",
+      "meraki-classic"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Shipped by default, not separately selectable (OG section 2).",
+    "fan_modules": "3x C9350-FAN-I (N+1 redundancy)",
+    "mounting_brackets": "2x 19-inch rack brackets",
+    "rfid_module": "Included by default (opt-out at order)."
+   }
+  },
+  {
+   "id": "C9350-48P",
+   "description": "Cisco Catalyst C9350-48P, 48x 1G, poe+ (1440W budget), modular uplinks. Unified + Meraki-classic licensing, both tiers.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9350",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-1.6t",
+    "stackpower_capable": true,
+    "license_regime": [
+     "unified",
+     "meraki-classic"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet per-model page port speeds + Table 6. 100M/10M are display-only, not filter speeds.",
+    "poe_budget_watts": "Datasheet model-page total PoE budget; matrix from Table 9.",
+    "default_primary": "Ordering guide Table 1."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One A100/L",
+    "asic_count": 1,
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 240,
+    "weight_kg": 6.14,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     38.3
+    ],
+    "port_layout": "48x 1G",
+    "mtbf_hours": 391980
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
+    "network_modules": {
+     "group": "c9350-base-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9350-stack-cables"
+    },
+    "stackpower_cables": {
+     "group": "c9350-stackpower-cables"
+    },
+    "power_supplies": {
+     "group": "c9350-psus",
+     "valid_primary": [
+      "PWR-C2-850WAC-I",
+      "PWR-C2-1600WAC-I"
+     ],
+     "default_primary": "PWR-C2-850WAC-I",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": null,
+       "poe_budget_watts": 590
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 1090
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 1440
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 1440
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": null,
+       "poe_budget_watts": 1340
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 1440
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 1440
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 9 (PoE budget per PSU combination: single primary, +secondary, and +tertiary where a third PSU is needed to reach the rated budget)."
+    },
+    "license": {
+     "group": "c9350-unified-essentials-l",
+     "additional_groups": [
+      "c9350-unified-advantage-l",
+      "c9350-meraki-classic-essentials-48",
+      "c9350-meraki-classic-advantage-48"
+     ],
+     "regime_offered": [
+      "unified",
+      "meraki-classic"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Shipped by default, not separately selectable (OG section 2).",
+    "fan_modules": "3x C9350-FAN-I (N+1 redundancy)",
+    "mounting_brackets": "2x 19-inch rack brackets",
+    "rfid_module": "Included by default (opt-out at order)."
+   }
+  },
+  {
+   "id": "C9350-24P",
+   "description": "Cisco Catalyst C9350-24P, 24x 1G, poe+ (720W budget), modular uplinks. Unified + Meraki-classic licensing, both tiers.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9350",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 720,
+    "total_port_count": 24,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-1.6t",
+    "stackpower_capable": true,
+    "license_regime": [
+     "unified",
+     "meraki-classic"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet per-model page port speeds + Table 6. 100M/10M are display-only, not filter speeds.",
+    "poe_budget_watts": "Datasheet model-page total PoE budget; matrix from Table 9.",
+    "default_primary": "Ordering guide Table 1."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One A100/L",
+    "asic_count": 1,
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 240,
+    "weight_kg": 6.14,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     38.3
+    ],
+    "port_layout": "24x 1G",
+    "mtbf_hours": 342720
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
+    "network_modules": {
+     "group": "c9350-base-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9350-stack-cables"
+    },
+    "stackpower_cables": {
+     "group": "c9350-stackpower-cables"
+    },
+    "power_supplies": {
+     "group": "c9350-psus",
+     "valid_primary": [
+      "PWR-C2-850WAC-I",
+      "PWR-C2-1600WAC-I"
+     ],
+     "default_primary": "PWR-C2-850WAC-I",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": null,
+       "poe_budget_watts": 590
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 720
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 720
+      },
+      {
+       "primary": "PWR-C2-850WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 720
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": null,
+       "poe_budget_watts": 720
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-500WAC-I",
+       "poe_budget_watts": 720
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-850WAC-I",
+       "poe_budget_watts": 720
+      },
+      {
+       "primary": "PWR-C2-1600WAC-I",
+       "secondary": "PWR-C2-1600WAC-I",
+       "poe_budget_watts": 720
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 9 (PoE budget per PSU combination: single primary, +secondary, and +tertiary where a third PSU is needed to reach the rated budget)."
+    },
+    "license": {
+     "group": "c9350-unified-essentials-m",
+     "additional_groups": [
+      "c9350-unified-advantage-m",
+      "c9350-meraki-classic-essentials-24",
+      "c9350-meraki-classic-advantage-24"
+     ],
+     "regime_offered": [
+      "unified",
+      "meraki-classic"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Shipped by default, not separately selectable (OG section 2).",
+    "fan_modules": "3x C9350-FAN-I (N+1 redundancy)",
+    "mounting_brackets": "2x 19-inch rack brackets",
+    "rfid_module": "Included by default (opt-out at order)."
+   }
+  },
+  {
+   "id": "C9350-48T",
+   "description": "Cisco Catalyst C9350-48T, 48x 1G, data-only, no PoE, modular uplinks. Unified + Meraki-classic licensing, both tiers.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9350",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-1.6t",
+    "stackpower_capable": true,
+    "license_regime": [
+     "unified",
+     "meraki-classic"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet per-model page port speeds + Table 6. 100M/10M are display-only, not filter speeds.",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "Ordering guide Table 1."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One A100/L",
+    "asic_count": 1,
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 240,
+    "weight_kg": 6.26,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     38.3
+    ],
+    "port_layout": "48x 1G, data-only",
+    "mtbf_hours": 357320
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
+    "network_modules": {
+     "group": "c9350-base-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9350-stack-cables"
+    },
+    "stackpower_cables": {
+     "group": "c9350-stackpower-cables"
+    },
+    "power_supplies": {
+     "group": "c9350-psus",
+     "valid_primary": [
+      "PWR-C2-500WAC-I"
+     ],
+     "default_primary": "PWR-C2-500WAC-I",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9350-unified-essentials-l",
+     "additional_groups": [
+      "c9350-unified-advantage-l",
+      "c9350-meraki-classic-essentials-48",
+      "c9350-meraki-classic-advantage-48"
+     ],
+     "regime_offered": [
+      "unified",
+      "meraki-classic"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Shipped by default, not separately selectable (OG section 2).",
+    "fan_modules": "3x C9350-FAN-I (N+1 redundancy)",
+    "mounting_brackets": "2x 19-inch rack brackets",
+    "rfid_module": "Included by default (opt-out at order)."
+   }
+  },
+  {
+   "id": "C9350-24T",
+   "description": "Cisco Catalyst C9350-24T, 24x 1G, data-only, no PoE, modular uplinks. Unified + Meraki-classic licensing, both tiers.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9350",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 24,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-1.6t",
+    "stackpower_capable": true,
+    "license_regime": [
+     "unified",
+     "meraki-classic"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet per-model page port speeds + Table 6. 100M/10M are display-only, not filter speeds.",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "Ordering guide Table 1."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One A100/L",
+    "asic_count": 1,
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 240,
+    "weight_kg": 6.26,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     38.3
+    ],
+    "port_layout": "24x 1G, data-only",
+    "mtbf_hours": 346560
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
+    "network_modules": {
+     "group": "c9350-base-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9350-stack-cables"
+    },
+    "stackpower_cables": {
+     "group": "c9350-stackpower-cables"
+    },
+    "power_supplies": {
+     "group": "c9350-psus",
+     "valid_primary": [
+      "PWR-C2-500WAC-I"
+     ],
+     "default_primary": "PWR-C2-500WAC-I",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9350-unified-essentials-m",
+     "additional_groups": [
+      "c9350-unified-advantage-m",
+      "c9350-meraki-classic-essentials-24",
+      "c9350-meraki-classic-advantage-24"
+     ],
+     "regime_offered": [
+      "unified",
+      "meraki-classic"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Shipped by default, not separately selectable (OG section 2).",
+    "fan_modules": "3x C9350-FAN-I (N+1 redundancy)",
+    "mounting_brackets": "2x 19-inch rack brackets",
+    "rfid_module": "Included by default (opt-out at order)."
+   }
+  },
+  {
+   "id": "C9350-12Y",
+   "description": "Cisco Catalyst C9350-12Y, 12x SFP28 (1/10/25G), no PoE, modular uplinks. Unified + Meraki-classic licensing, both tiers.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9350",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 12,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-1.6t",
+    "stackpower_capable": true,
+    "license_regime": [
+     "unified",
+     "meraki-classic"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 12,
+     "role": "access",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g",
+      "25g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet per-model page port speeds + Table 6. 100M/10M are display-only, not filter speeds.",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "UNCONFIRMED \u2014 not in datasheet/OG; placeholder pending CCW."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One A100/L",
+    "asic_count": 1,
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 240,
+    "weight_kg": 6.6,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     47.2
+    ],
+    "port_layout": "12x SFP28 (1/10/25G)"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
+    "network_modules": {
+     "group": "c9350-base-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9350-stack-cables"
+    },
+    "stackpower_cables": {
+     "group": "c9350-stackpower-cables"
+    },
+    "power_supplies": {
+     "group": "c9350-psus",
+     "valid_primary": [
+      "PWR-C2-500WAC-I"
+     ],
+     "default_primary": "PWR-C2-500WAC-I",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9350-unified-essentials-m",
+     "additional_groups": [
+      "c9350-unified-advantage-m",
+      "c9350-meraki-classic-essentials-24",
+      "c9350-meraki-classic-advantage-24"
+     ],
+     "regime_offered": [
+      "unified",
+      "meraki-classic"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Shipped by default, not separately selectable (OG section 2).",
+    "fan_modules": "3x C9350-FAN-I (N+1 redundancy)",
+    "mounting_brackets": "2x 19-inch rack brackets",
+    "rfid_module": "Included by default (opt-out at order)."
+   },
+   "_incomplete": [
+    "default_primary"
+   ]
+  },
+  {
+   "id": "C9350-24Y",
+   "description": "Cisco Catalyst C9350-24Y, 24x SFP28 (1/10/25G), no PoE, modular uplinks. Unified + Meraki-classic licensing, both tiers.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9350",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 24,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-1.6t",
+    "stackpower_capable": true,
+    "license_regime": [
+     "unified",
+     "meraki-classic"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g",
+      "25g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet per-model page port speeds + Table 6. 100M/10M are display-only, not filter speeds.",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "UNCONFIRMED \u2014 not in datasheet/OG; placeholder pending CCW."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One A100/L",
+    "asic_count": 2,
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 240,
+    "weight_kg": 6.6,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     47.2
+    ],
+    "port_layout": "24x SFP28 (1/10/25G)"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
+    "network_modules": {
+     "group": "c9350-8l-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9350-stack-cables"
+    },
+    "stackpower_cables": {
+     "group": "c9350-stackpower-cables"
+    },
+    "power_supplies": {
+     "group": "c9350-psus",
+     "valid_primary": [
+      "PWR-C2-500WAC-I"
+     ],
+     "default_primary": "PWR-C2-500WAC-I",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9350-unified-essentials-m",
+     "additional_groups": [
+      "c9350-unified-advantage-m",
+      "c9350-meraki-classic-essentials-24",
+      "c9350-meraki-classic-advantage-24"
+     ],
+     "regime_offered": [
+      "unified",
+      "meraki-classic"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Shipped by default, not separately selectable (OG section 2).",
+    "fan_modules": "3x C9350-FAN-I (N+1 redundancy)",
+    "mounting_brackets": "2x 19-inch rack brackets",
+    "rfid_module": "Included by default (opt-out at order)."
+   },
+   "_incomplete": [
+    "default_primary"
+   ]
+  },
+  {
+   "id": "C9350-48S",
+   "description": "Cisco Catalyst C9350-48S, 48x SFP (1G), no PoE, modular uplinks. Unified + Meraki-classic licensing, both tiers.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9350",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-1.6t",
+    "stackpower_capable": true,
+    "license_regime": [
+     "unified",
+     "meraki-classic"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet per-model page port speeds + Table 6. 100M/10M are display-only, not filter speeds.",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "Ordering guide Table 1."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One A100/L",
+    "asic_count": 1,
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 240,
+    "weight_kg": 6.1,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     47.2
+    ],
+    "port_layout": "48x SFP (1G)"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
+    "network_modules": {
+     "group": "c9350-base-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9350-stack-cables"
+    },
+    "stackpower_cables": {
+     "group": "c9350-stackpower-cables"
+    },
+    "power_supplies": {
+     "group": "c9350-psus",
+     "valid_primary": [
+      "PWR-C2-850WAC-I"
+     ],
+     "default_primary": "PWR-C2-850WAC-I",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9350-unified-essentials-l",
+     "additional_groups": [
+      "c9350-unified-advantage-l",
+      "c9350-meraki-classic-essentials-48",
+      "c9350-meraki-classic-advantage-48"
+     ],
+     "regime_offered": [
+      "unified",
+      "meraki-classic"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Shipped by default, not separately selectable (OG section 2).",
+    "fan_modules": "3x C9350-FAN-I (N+1 redundancy)",
+    "mounting_brackets": "2x 19-inch rack brackets",
+    "rfid_module": "Included by default (opt-out at order)."
+   }
+  },
+  {
+   "id": "C9350-24S",
+   "description": "Cisco Catalyst C9350-24S, 24x SFP (1G), no PoE, modular uplinks. Unified + Meraki-classic licensing, both tiers.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9350",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 24,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-1.6t",
+    "stackpower_capable": true,
+    "license_regime": [
+     "unified",
+     "meraki-classic"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet per-model page port speeds + Table 6. 100M/10M are display-only, not filter speeds.",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "Ordering guide Table 1."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One A100/L",
+    "asic_count": 1,
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 240,
+    "weight_kg": 6.1,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     47.2
+    ],
+    "port_layout": "24x SFP (1G)"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
+    "network_modules": {
+     "group": "c9350-base-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9350-stack-cables"
+    },
+    "stackpower_cables": {
+     "group": "c9350-stackpower-cables"
+    },
+    "power_supplies": {
+     "group": "c9350-psus",
+     "valid_primary": [
+      "PWR-C2-850WAC-I"
+     ],
+     "default_primary": "PWR-C2-850WAC-I",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9350-unified-essentials-m",
+     "additional_groups": [
+      "c9350-unified-advantage-m",
+      "c9350-meraki-classic-essentials-24",
+      "c9350-meraki-classic-advantage-24"
+     ],
+     "regime_offered": [
+      "unified",
+      "meraki-classic"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Shipped by default, not separately selectable (OG section 2).",
+    "fan_modules": "3x C9350-FAN-I (N+1 redundancy)",
+    "mounting_brackets": "2x 19-inch rack brackets",
+    "rfid_module": "Included by default (opt-out at order)."
+   }
+  }
+ ]
 }
