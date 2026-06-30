@@ -443,8 +443,10 @@ function buildCopyBOM(r) {
     if (opt?.moduleId) lines.push(opt.id);
   }
   const dc = r.power?.default_config;
-  if (dc?.primary) lines.push(dc.primary);
-  if (dc?.secondary) lines.push(dc.secondary);
+  if (dc) {
+    if (dc.primary && dc.primary !== r.power.default_primary) lines.push(dc.primary);
+    if (dc.secondary) lines.push(dc.secondary);
+  }
   const a = r.accessories ?? {};
   if (a.stack_cables && a.stack_cables.default !== a.stack_cables.none_option) {
     if (a.stack_cables.stack_kit) lines.push(a.stack_cables.stack_kit);
