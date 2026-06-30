@@ -367,7 +367,7 @@ function renderCandidate(cand, isDefault) {
   kit.className = "kit";
   // uplinks
   const up = r.uplinks.modular
-    ? `uplink modules: ${r.uplinks.options.filter((o) => o.moduleId).map((o) => o.id).join(", ") || "(none valid)"}`
+    ? `uplink module: ${r.uplinks.default ?? "(none)"} default`
     : `fixed uplinks: ${summarisePorts(r.uplinks.options[0]?.ports)}`;
   kit.appendChild(li(up));
   // power — resolved default PSU (single by default; secondary added to meet load)

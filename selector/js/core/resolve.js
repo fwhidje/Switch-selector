@@ -117,11 +117,12 @@ export function resolveBOM(model, query, kb, validOptions) {
 
 function resolveUplinkBOM(model, validOptions) {
   const modular = !!model.axis_values?.uplink_modular;
-  return {
-    modular,
-    // valid uplink choices given the query (modules that satisfy the uplink demand)
-    options: (validOptions ?? []).map((o) => ({ id: o.id, moduleId: o.moduleId, ports: o.ports })),
-  };
+  const opts = (validOptions ?? []).map((o) => ({ id: o.id, moduleId: o.moduleId, ports: o.ports }));
+  // none_option has moduleId === null; prefer it as default (standalone switch, no uplink module fitted).
+  // When a port demand excluded the none_option, fall back to the first valid real module.
+  const noneOpt = opts.find((o) => o.moduleId === null);
+  const dflt = noneOpt ?? opts[0] ?? null;
+  return { modular, default: dflt?.id ?? null, options: opts };
 }
 
 // PSU redundancy is NOT a stored axis: it is a (primary, secondary) pair with a
