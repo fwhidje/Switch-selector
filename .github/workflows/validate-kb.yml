@@ -5,7 +5,7 @@ name: validate-kb
 on:
   push:
     paths:
-      - "C9300/**"
+      - "DB/switching/**"
       - "selector/**"
       - ".github/workflows/validate-kb.yml"
   pull_request:

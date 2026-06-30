@@ -27,8 +27,8 @@ It runs in CI (`.github/workflows/validate-kb.yml`) on every push/PR.
 
 ```
 js/core/   pure, importable engine (no DOM)
-  registry.js  accessors over ../C9300/switching-axes.json (the filterable vocabulary + kind/role)
-  kb.js        load + id-index ../C9300/c9300_knowledge_base.json (catalog, groups, models)
+  registry.js  accessors over ../DB/switching/switching-axes.json (the filterable vocabulary + kind/role)
+  kb.js        load + id-index ../DB/switching/C9300/c9300_knowledge_base.json (catalog, groups, models)
   resolve.js   port pools, configured variants, pool-feasibility (max-flow), and the resolved BOM
   solver.js    solve(query, kb, registry) -> { candidates, default, eliminated }; availableValues()
 tools/

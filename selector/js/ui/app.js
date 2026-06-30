@@ -10,8 +10,8 @@ import { loadRegistry, getAxes, legalValues, portModel, configVariables, poeLeve
 import { loadKB, getModels } from "../core/kb.js";
 import { solve, availableValues } from "../core/solver.js";
 
-const REGISTRY_URL = "../C9300/switching-axes.json";
-const KB_URL = "../C9300/c9300_knowledge_base.json";
+const REGISTRY_URL = "../DB/switching/switching-axes.json";
+const KB_URL = "../DB/switching/C9300/c9300_knowledge_base.json";
 
 let registry = null;
 let kb = null;
