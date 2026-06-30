@@ -89,8 +89,21 @@ details[open] > .filter-group-head::before { transform: rotate(90deg); }
   padding: 10px 12px; margin-bottom: 10px;
 }
 .candidate.default { border-color: #2f7bd6; box-shadow: 0 0 0 1px #2f7bd6 inset; }
-.candidate h3 { margin: 0 0 2px; font-size: 14px; font-family: ui-monospace, Menlo, monospace; }
-.candidate .desc { margin: 0 0 6px; color: #4a5a72; font-size: 12.5px; }
+.candidate h3 { margin: 0 0 2px; font-size: 14px; font-family: ui-monospace, Menlo, monospace; display: inline; }
+.copy-bom-btn {
+  float: right; margin: 0 0 6px 8px;
+  padding: 3px 8px; font-size: 11.5px;
+  border: 1px solid #c4cedd; border-radius: 5px;
+  background: #eef3f9; color: #2f7bd6; cursor: pointer;
+}
+.copy-bom-btn:hover { background: #dce8f7; }
+.copy-bom-fallback {
+  font-size: 11px; font-family: ui-monospace, Menlo, monospace;
+  background: #f5f7fa; border: 1px solid #dbe2ec;
+  border-radius: 5px; padding: 6px; margin: 4px 0;
+  white-space: pre; user-select: all;
+}
+.candidate .desc { margin: 6px 0; color: #4a5a72; font-size: 12.5px; }
 .bundle {
   background: #0f1b2d; color: #d7e4f5; padding: 10px; border-radius: 6px;
   font-size: 11.5px; overflow-x: auto; margin: 6px 0 0;
