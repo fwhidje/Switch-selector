@@ -22,14 +22,26 @@ export const inlineUplinkGroups = (model) => (model.ports ?? []).filter((p) => p
 /**
  * The uplink options for a model. Modular models offer each group member plus a
  * "none" option; fixed-uplink models offer their single soldered configuration.
- * @returns {Array<{id:string, moduleId:string|null, ports:object[]}>}
+ * A dual-mode module (catalog `modes`, e.g. C9350-NM-8Y: 8x25G | 4x50G) expands
+ * into one option per mode — all sharing the same `moduleId` (the real SKU), so
+ * the kitlist/BOM never shows a phantom part number; the mode is only a label.
+ * @returns {Array<{id:string, moduleId:string|null, mode?:string, ports:object[]}>}
  */
 export function uplinkOptions(model, kb) {
   const av = model.axis_values ?? {};
   if (av.uplink_modular) {
     const g = getNetworkModuleGroup(kb, model.configurables?.network_modules?.group);
     if (!g) return [{ id: "none", moduleId: null, ports: [] }];
-    const opts = (g.members ?? []).map((id) => ({ id, moduleId: id, ports: getNetworkModule(kb, id)?.ports ?? [] }));
+    const opts = [];
+    for (const id of g.members ?? []) {
+      const mod = getNetworkModule(kb, id);
+      if (mod?.modes?.length) {
+        for (const mode of mod.modes)
+          opts.push({ id: `${id}#${mode.name}`, moduleId: id, mode: mode.name, ports: mode.ports ?? [] });
+      } else {
+        opts.push({ id, moduleId: id, ports: mod?.ports ?? [] });
+      }
+    }
     opts.push({ id: g.none_option, moduleId: null, ports: [] });
     return opts;
   }
@@ -117,7 +129,7 @@ export function resolveBOM(model, query, kb, validOptions) {
 
 function resolveUplinkBOM(model, validOptions) {
   const modular = !!model.axis_values?.uplink_modular;
-  const opts = (validOptions ?? []).map((o) => ({ id: o.id, moduleId: o.moduleId, ports: o.ports }));
+  const opts = (validOptions ?? []).map((o) => ({ id: o.id, moduleId: o.moduleId, mode: o.mode, ports: o.ports }));
   // none_option has moduleId === null; prefer it as default (standalone switch, no uplink module fitted).
   // When a port demand excluded the none_option, fall back to the first valid real module.
   const noneOpt = opts.find((o) => o.moduleId === null);

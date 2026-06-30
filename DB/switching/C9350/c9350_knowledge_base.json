@@ -1,0 +1,279 @@
+{
+ "header": {
+  "schema_version": "0.7.0",
+  "registry_version": "0.9.0",
+  "axes_file": "../switching-axes.json",
+  "schema_file": "switch-kb.schema.json",
+  "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst C9350 Series Smart Switches. Pass 1 of 2: this file carries the catalog (atomic SKU facts) and groups (named shared compatibility sets) — the reusable scaffolding. Switch models are added in Pass 2; until then 'models' is empty. All C9350 models are modular-uplink (uplink ports come from a fitted network module). Structure: catalog + groups + models.",
+  "sources": [
+   {
+    "name": "Cisco C9350 Series Smart Switches Data Sheet",
+    "url": "https://www.cisco.com/site/us/en/products/collateral/networking/switches/c9350-series-smart-switches/c9350-series-smart-switches-ds.html",
+    "last_verified": "2026-06-30"
+   },
+   {
+    "name": "Cisco C9350 Series Smart Switches Ordering Guide",
+    "url": "https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9000-switches/c9350-series-smart-switches-og.html",
+    "last_verified": "2026-06-30"
+   },
+   {
+    "name": "Cisco Commerce (CCW) — operator-verified ordering (Meraki-classic license SKUs not in the public datasheet/ordering guide)",
+    "url": "https://apps.cisco.com/Commerce/home",
+    "last_verified": "2026-06-30"
+   }
+  ],
+  "design_notes": [
+   "Pass 1 of 2: catalog + groups only. 'models' is empty until Pass 2; the per-model validator checks (valid_primary subset, poe_budget_matrix max, access-port sum == total_port_count) therefore do not yet run. The standalone group-integrity and catalog port-speed checks DO run.",
+   "All C9350 models are modular-uplink: uplink ports come from a fitted network module (configurables.network_modules group). There are no fixed-uplink (inline uplink) models in this family.",
+   "C9350-NM-8Y is dual-mode: 8x 1G/10G/25G OR 4x 50G, mutually exclusive (top row to 50G, bottom row inactive). Modeled with the schema v0.7.0 `modes` concept: ONE orderable SKU, two alternative port configs; resolve.js uplinkOptions() expands each mode into a selectable option whose moduleId stays the real SKU.",
+   "Two license regimes apply: unified (LIC-CS-AC1-* — a single per-device subscription SKU; subscription term is variable, >=36 months, chosen at order rather than as a SKU suffix, so the unified license groups carry no term_variable) and meraki-classic (LIC-C9350-*-{3,5,7}Y term SKUs, term_variable choices_years [3,5,7]). There is NO -E/-A hardware split: the unified hardware offers both Essentials and Advantage; tier is a license choice (Pass-2 models will carry license_tier [essentials, advantage]).",
+   "Source discipline: hardware facts (modules, ports, PoE, PSU, cables) from the C9350 datasheet; SKU forms (PSU -I port-inlet suffix, unified license SKUs) from the ordering guide; the Meraki-classic license SKUs (LIC-C9350-*) are operator-verified in Cisco Commerce (CCW) and are not printed in the public datasheet or ordering guide.",
+   "Series-specific groups (PSU, stack/StackPower cables) are kept as their own named groups per project convention, even where a SKU resembles another series — the C9350 StackWise-1.6T and StackPower+ cables are explicitly NOT interchangeable with C9300 cables (datasheet Table 12)."
+  ]
+ },
+
+ "catalog": {
+  "_comment": "Atomic SKU facts. One row per real orderable component. What a thing IS, independent of which switch uses it.",
+
+  "network_modules": [
+   {
+    "id": "C9350-NM-2C",
+    "description": "Cisco C9350 2x 100G/40G QSFP28 network module",
+    "ports": [
+     { "count": 2, "role": "uplink", "medium": "fiber", "speeds": ["40g", "100g"] }
+    ],
+    "compatible_family": "C9350",
+    "notes": "Two 100G/40G QSFP28 uplinks, 200 Gbps total (datasheet p.25)."
+   },
+   {
+    "id": "C9350-NM-4C",
+    "description": "Cisco C9350 4x 100G/40G QSFP28 network module",
+    "ports": [
+     { "count": 4, "role": "uplink", "medium": "fiber", "speeds": ["40g", "100g"] }
+    ],
+    "compatible_family": "C9350",
+    "notes": "Four 100G/40G QSFP28 uplinks, 400 Gbps total (datasheet p.24). Per-model datasheet uplink lists: 48HX, 48TX, 24Y."
+   },
+   {
+    "id": "C9350-NM-8Y",
+    "description": "Cisco C9350 8x 25G/10G/1G SFP28 (convertible to 4x 50G SFP56) network module",
+    "modes": [
+     {
+      "name": "8x25G",
+      "ports": [
+       { "count": 8, "role": "uplink", "medium": "fiber", "speeds": ["1g", "10g", "25g"] }
+      ],
+      "notes": "Default mode: eight 1G/10G/25G SFP28 ports, 200 Gbps total (datasheet p.25)."
+     },
+     {
+      "name": "4x50G",
+      "ports": [
+       { "count": 4, "role": "uplink", "medium": "fiber", "speeds": ["50g"] }
+      ],
+      "notes": "Converted mode: top row becomes four 50G SFP56 ports; bottom row set inactive (datasheet p.25)."
+     }
+    ],
+    "compatible_family": "C9350",
+    "notes": "Dual-mode, mutually exclusive (8x25G OR 4x50G). One orderable SKU C9350-NM-8Y; the mode is a configuration, not a separate SKU."
+   },
+   {
+    "id": "C9350-NM-8L",
+    "description": "Cisco C9350 8x 50G/25G/10G/1G SFP56 network module",
+    "ports": [
+     { "count": 8, "role": "uplink", "medium": "fiber", "speeds": ["1g", "10g", "25g", "50g"] }
+    ],
+    "compatible_family": "C9350",
+    "notes": "Eight 50G/25G/10G/1G SFP56 fiber uplinks, 400 Gbps total. Supported only on C9350-48HX and C9350-24Y (datasheet p.26)."
+   },
+   {
+    "id": "C9350-NM-8M",
+    "description": "Cisco C9350 8x Multigigabit (10G/5G/2.5G/1G) RJ-45 network module",
+    "ports": [
+     { "count": 8, "role": "uplink", "medium": "copper", "speeds": ["1g", "2.5g", "5g", "10g"] }
+    ],
+    "compatible_family": "C9350",
+    "notes": "Eight 10G/5G/2.5G/1G RJ-45 Multigigabit uplinks, 80 Gbps total (datasheet p.26). Per-model datasheet uplink list: 48HM."
+   }
+  ],
+
+  "power_supplies": [
+   { "id": "PWR-C2-500WAC-I", "watts": 500, "type": "AC", "rating": "Platinum", "notes": "500W AC 80+ Platinum, Config-2 port-inlet (OG Table 4; datasheet Table 8)." },
+   { "id": "PWR-C2-850WAC-I", "watts": 850, "type": "AC", "rating": "Platinum", "notes": "850W AC 80+ Platinum, Config-2 port-inlet (OG Table 4; datasheet Table 8)." },
+   { "id": "PWR-C2-1600WAC-I", "watts": 1600, "type": "AC", "rating": "Titanium", "notes": "1600W AC 80+ Titanium, Config-2 port-inlet. Rated 1600W at 230V input / 1200W at 115V (datasheet Table 8; OG Table 4)." }
+  ],
+
+  "stack_cables": [
+   { "id": "STACK-T1A-50CM", "length_cm": 50, "type": "type-1a", "notes": "StackWise-1.6T 50 cm stacking cable (OG Table 3; datasheet Table 12)." },
+   { "id": "STACK-T1A-1M", "length_cm": 100, "type": "type-1a", "notes": "StackWise-1.6T 1 m stacking cable." },
+   { "id": "STACK-T1A-3M", "length_cm": 300, "type": "type-1a", "notes": "StackWise-1.6T 3 m stacking cable." }
+  ],
+
+  "stackpower_cables": [
+   { "id": "CAB-SPWR-35CM", "length_cm": 35, "notes": "StackPower+ 35 cm cable (OG Table 3; datasheet Table 12)." },
+   { "id": "CAB-SPWR-100CM", "length_cm": 100, "notes": "StackPower+ 100 cm cable (OG Table 3; datasheet Table 12)." }
+  ],
+
+  "licenses": [
+   { "id": "LIC-CS-AC1-L-E", "regime": "unified", "tier": "essentials", "shape": "subscription-based", "term_years": null, "port_class": 48, "notes": "Cisco Switching Essentials License, Access Tier 1, Large (48-port). Single per-device unified subscription SKU; term variable (>=36 months) at order. OG Table 5." },
+   { "id": "LIC-CS-AC1-L-A", "regime": "unified", "tier": "advantage", "shape": "subscription-based", "term_years": null, "port_class": 48, "notes": "Cisco Switching Advantage License, Access Tier 1, Large (48-port). OG Table 5." },
+   { "id": "LIC-CS-AC1-M-E", "regime": "unified", "tier": "essentials", "shape": "subscription-based", "term_years": null, "port_class": 24, "notes": "Cisco Switching Essentials License, Access Tier 1, Medium (up to 24-port). OG Table 5." },
+   { "id": "LIC-CS-AC1-M-A", "regime": "unified", "tier": "advantage", "shape": "subscription-based", "term_years": null, "port_class": 24, "notes": "Cisco Switching Advantage License, Access Tier 1, Medium (up to 24-port). OG Table 5." },
+
+   { "id": "LIC-C9350-48E-3Y", "regime": "meraki-classic", "tier": "essentials", "shape": "term-based", "term_years": 3, "port_class": 48, "notes": "Meraki-classic term license, Essentials, 48-port, 3-year. Operator-verified in CCW; not in public datasheet/OG." },
+   { "id": "LIC-C9350-48E-5Y", "regime": "meraki-classic", "tier": "essentials", "shape": "term-based", "term_years": 5, "port_class": 48, "notes": "Meraki-classic term license, Essentials, 48-port, 5-year. CCW-verified." },
+   { "id": "LIC-C9350-48E-7Y", "regime": "meraki-classic", "tier": "essentials", "shape": "term-based", "term_years": 7, "port_class": 48, "notes": "Meraki-classic term license, Essentials, 48-port, 7-year. CCW-verified." },
+   { "id": "LIC-C9350-48A-3Y", "regime": "meraki-classic", "tier": "advantage", "shape": "term-based", "term_years": 3, "port_class": 48, "notes": "Meraki-classic term license, Advantage, 48-port, 3-year. CCW-verified." },
+   { "id": "LIC-C9350-48A-5Y", "regime": "meraki-classic", "tier": "advantage", "shape": "term-based", "term_years": 5, "port_class": 48, "notes": "Meraki-classic term license, Advantage, 48-port, 5-year. CCW-verified." },
+   { "id": "LIC-C9350-48A-7Y", "regime": "meraki-classic", "tier": "advantage", "shape": "term-based", "term_years": 7, "port_class": 48, "notes": "Meraki-classic term license, Advantage, 48-port, 7-year. CCW-verified." },
+   { "id": "LIC-C9350-24E-3Y", "regime": "meraki-classic", "tier": "essentials", "shape": "term-based", "term_years": 3, "port_class": 24, "notes": "Meraki-classic term license, Essentials, 24-port, 3-year. CCW-verified." },
+   { "id": "LIC-C9350-24E-5Y", "regime": "meraki-classic", "tier": "essentials", "shape": "term-based", "term_years": 5, "port_class": 24, "notes": "Meraki-classic term license, Essentials, 24-port, 5-year. CCW-verified." },
+   { "id": "LIC-C9350-24E-7Y", "regime": "meraki-classic", "tier": "essentials", "shape": "term-based", "term_years": 7, "port_class": 24, "notes": "Meraki-classic term license, Essentials, 24-port, 7-year. CCW-verified." },
+   { "id": "LIC-C9350-24A-3Y", "regime": "meraki-classic", "tier": "advantage", "shape": "term-based", "term_years": 3, "port_class": 24, "notes": "Meraki-classic term license, Advantage, 24-port, 3-year. CCW-verified." },
+   { "id": "LIC-C9350-24A-5Y", "regime": "meraki-classic", "tier": "advantage", "shape": "term-based", "term_years": 5, "port_class": 24, "notes": "Meraki-classic term license, Advantage, 24-port, 5-year. CCW-verified." },
+   { "id": "LIC-C9350-24A-7Y", "regime": "meraki-classic", "tier": "advantage", "shape": "term-based", "term_years": 7, "port_class": 24, "notes": "Meraki-classic term license, Advantage, 24-port, 7-year. CCW-verified." }
+  ]
+ },
+
+ "groups": {
+  "_comment": "Named shared compatibility SETS. A switch references a group by id and inherits the whole set.",
+
+  "network_module_groups": [
+   {
+    "id": "c9350-base-uplink-modules",
+    "members": ["C9350-NM-2C", "C9350-NM-8Y"],
+    "none_option": "C9350-NM-NONE",
+    "bay_count": 1,
+    "notes": "200G-uplink models that take only the NM-2C and NM-8Y modules (datasheet per-model uplink lists): 24HX, 48HXN, 48U, 24U, 48P, 24P, 48T, 24T, 12Y, 48S, 24S. NM-8Y contributes either 8x25G or 4x50G via its modes."
+   },
+   {
+    "id": "c9350-400g-uplink-modules",
+    "members": ["C9350-NM-2C", "C9350-NM-4C", "C9350-NM-8Y"],
+    "none_option": "C9350-NM-NONE",
+    "bay_count": 1,
+    "notes": "Adds the 400G NM-4C: C9350-48TX (datasheet p.17 lists NM-4C/2C/8Y, no NM-8L). 48HX also takes NM-4C but additionally takes NM-8L, so it uses the c9350-8l group."
+   },
+   {
+    "id": "c9350-8l-uplink-modules",
+    "members": ["C9350-NM-2C", "C9350-NM-4C", "C9350-NM-8Y", "C9350-NM-8L"],
+    "none_option": "C9350-NM-NONE",
+    "bay_count": 1,
+    "notes": "Models that take the NM-8L (50G fiber): C9350-48HX and C9350-24Y. Datasheet p.26 states NM-8L is 'supported only on the C9350-24Y and C9350-48HX SKUs'; both also list NM-4C. (The 48HX model page p.16 omits NM-8L; the NM-8L module page is taken as authoritative per project ruling — datasheet wins, including not-yet-orderable models.)"
+   },
+   {
+    "id": "c9350-hm-uplink-modules",
+    "members": ["C9350-NM-2C", "C9350-NM-8Y", "C9350-NM-8M"],
+    "none_option": "C9350-NM-NONE",
+    "bay_count": 1,
+    "notes": "C9350-48HM, which adds the mGig copper NM-8M (datasheet p.18 lists NM-2C/8Y/8M)."
+   }
+  ],
+
+  "power_supply_groups": [
+   {
+    "id": "c9350-psus",
+    "members": ["PWR-C2-500WAC-I", "PWR-C2-850WAC-I", "PWR-C2-1600WAC-I"],
+    "secondary_none_option": "C9350-SPS-NONE",
+    "notes": "Cisco C9350 Config-2 AC PSU family (datasheet Table 8 / OG Table 4, -I port-inlet SKUs). The chassis has 3 PSU bays (N+1); which member is a valid PRIMARY, the default shipped PSU, and the PoE budget per PSU combination are switch-specific and live on the model entry (Pass 2). Excludes ordering variants (-IUP primary-upgrade, /2 redundant, = spare)."
+   }
+  ],
+
+  "stack_cable_groups": [
+   {
+    "id": "c9350-stack-cables",
+    "members": ["STACK-T1A-50CM", "STACK-T1A-1M", "STACK-T1A-3M"],
+    "none_option": "C9350-STACK-NONE",
+    "notes": "StackWise-1.6T Type-1A data-stack cables (datasheet Table 12 / OG Table 3). Datasheet Table 12 note: not interchangeable with C9300-series stacking cables."
+   }
+  ],
+
+  "stackpower_cable_groups": [
+   {
+    "id": "c9350-stackpower-cables",
+    "members": ["CAB-SPWR-35CM", "CAB-SPWR-100CM"],
+    "none_option": "C9350-SPWR-NONE",
+    "notes": "StackPower+ cables (datasheet Table 12 / OG Table 3). Datasheet Table 12 note: not interchangeable with C9300-series StackPower cables."
+   }
+  ],
+
+  "license_groups": [
+   {
+    "id": "c9350-unified-essentials-l",
+    "regime": "unified",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "Large (48-port) C9350 models, Essentials tier, unified subscription.",
+    "perpetual_member": null,
+    "subscription_members": ["LIC-CS-AC1-L-E"]
+   },
+   {
+    "id": "c9350-unified-advantage-l",
+    "regime": "unified",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "Large (48-port) C9350 models, Advantage tier, unified subscription.",
+    "perpetual_member": null,
+    "subscription_members": ["LIC-CS-AC1-L-A"]
+   },
+   {
+    "id": "c9350-unified-essentials-m",
+    "regime": "unified",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "Medium (up to 24-port, incl. 12-port) C9350 models, Essentials tier, unified subscription.",
+    "perpetual_member": null,
+    "subscription_members": ["LIC-CS-AC1-M-E"]
+   },
+   {
+    "id": "c9350-unified-advantage-m",
+    "regime": "unified",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "Medium (up to 24-port, incl. 12-port) C9350 models, Advantage tier, unified subscription.",
+    "perpetual_member": null,
+    "subscription_members": ["LIC-CS-AC1-M-A"]
+   },
+   {
+    "id": "c9350-meraki-classic-essentials-48",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "48-port C9350 models, Essentials tier, Meraki-classic term license.",
+    "perpetual_member": null,
+    "subscription_members": ["LIC-C9350-48E-3Y", "LIC-C9350-48E-5Y", "LIC-C9350-48E-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU." }
+   },
+   {
+    "id": "c9350-meraki-classic-advantage-48",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "48-port C9350 models, Advantage tier, Meraki-classic term license.",
+    "perpetual_member": null,
+    "subscription_members": ["LIC-C9350-48A-3Y", "LIC-C9350-48A-5Y", "LIC-C9350-48A-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU." }
+   },
+   {
+    "id": "c9350-meraki-classic-essentials-24",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "24-port (and 12-port) C9350 models, Essentials tier, Meraki-classic term license.",
+    "perpetual_member": null,
+    "subscription_members": ["LIC-C9350-24E-3Y", "LIC-C9350-24E-5Y", "LIC-C9350-24E-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU." }
+   },
+   {
+    "id": "c9350-meraki-classic-advantage-24",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "24-port (and 12-port) C9350 models, Advantage tier, Meraki-classic term license.",
+    "perpetual_member": null,
+    "subscription_members": ["LIC-C9350-24A-3Y", "LIC-C9350-24A-5Y", "LIC-C9350-24A-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU." }
+   }
+  ]
+ },
+
+ "models": []
+}
