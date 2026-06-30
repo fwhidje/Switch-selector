@@ -357,7 +357,28 @@ function renderCandidate(cand, isDefault) {
 
   const h = document.createElement("h3");
   h.textContent = cand.model.id + (isDefault ? "  ★ default" : "");
+  const copyBtn = document.createElement("button");
+  copyBtn.className = "copy-bom-btn";
+  copyBtn.textContent = "copy BOM";
+  copyBtn.addEventListener("click", () => {
+    const text = buildCopyBOM(r);
+    navigator.clipboard.writeText(text).then(() => {
+      copyBtn.textContent = "copied!";
+      setTimeout(() => { copyBtn.textContent = "copy BOM"; }, 1500);
+    }).catch(() => {
+      const fb = document.createElement("pre");
+      fb.className = "copy-bom-fallback";
+      fb.textContent = text;
+      copyBtn.after(fb);
+      const sel = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(fb);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    });
+  });
   card.appendChild(h);
+  card.appendChild(copyBtn);
   const desc = document.createElement("p");
   desc.className = "desc";
   desc.textContent = cand.model.description;
@@ -413,6 +434,31 @@ function renderCandidate(cand, isDefault) {
   details.appendChild(s); details.appendChild(pre);
   card.appendChild(details);
   return card;
+}
+
+function buildCopyBOM(r) {
+  const lines = [r.switch.id];
+  if (r.uplinks.modular) {
+    const opt = r.uplinks.options.find((o) => o.id === r.uplinks.default);
+    if (opt?.moduleId) lines.push(opt.id);
+  }
+  const dc = r.power?.default_config;
+  if (dc) {
+    if (dc.primary && dc.primary !== r.power.default_primary) lines.push(dc.primary);
+    if (dc.secondary) lines.push(dc.secondary);
+  }
+  const a = r.accessories ?? {};
+  if (a.stack_cables && a.stack_cables.default !== a.stack_cables.none_option) {
+    if (a.stack_cables.stack_kit) lines.push(a.stack_cables.stack_kit);
+    lines.push(a.stack_cables.default);
+  }
+  if (a.stackpower_cables && a.stackpower_cables.default !== a.stackpower_cables.none_option)
+    lines.push(a.stackpower_cables.default);
+  for (const g of r.license?.groups ?? []) {
+    if (g.perpetual_member) lines.push(g.perpetual_member);
+    if (g.chosen_term?.subscription_sku) lines.push(g.chosen_term.subscription_sku);
+  }
+  return lines.join("\n");
 }
 
 const li = (t) => { const e = document.createElement("li"); e.textContent = t; return e; };
