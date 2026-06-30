@@ -3,7 +3,7 @@
   "$id": "switch-kb.schema.json",
   "title": "Networking Equipment Selector — Switch Knowledge Base Schema",
   "description": "Series-agnostic shape + authoring contract for a switch knowledge base. This schema enforces SHAPE (entries are well-formed); switching-axes.json enforces MEANING (which axes exist, their KIND/ROLE and legal enum values); selector/tools/validate-kb.mjs enforces CROSS-REFERENCE INTEGRITY (group references resolve, valid_primary is a subset of the referenced PSU group, poe_budget_watts equals the matrix max, sum of access-port counts equals total_port_count, enum/speed values are registered). All three must pass. See $authoring for the procedure an agent follows to add a model.",
-  "schema_version": "0.7.0",
+  "schema_version": "0.8.0",
   "registry_version": "0.9.0",
 
   "$authoring": {
@@ -366,6 +366,11 @@
         "included_by_default_non_selectable": {
           "type": "object",
           "properties": { "_comment": { "type": "string" } }
+        },
+        "_incomplete": {
+          "type": "array",
+          "items": { "type": "string" },
+          "$comment": "Names of fields whose values are NOT yet sourced from authoritative docs (e.g. 'poe_budget_matrix', 'default_primary'). validate-kb.mjs downgrades checks on these fields to WARNINGS for this model. Tracked centrally in DB/switching/THINGS-TO-COMPLETE.md. Remove an entry once the field is confirmed."
         }
       }
     },
@@ -481,6 +486,7 @@
       "properties": {
         "primary": { "type": "string" },
         "secondary": { "type": ["string", "null"] },
+        "tertiary": { "type": ["string", "null"], "$comment": "Optional THIRD PSU (C9350 has 3 bays). Present only on combos that need a third PSU to reach the stated PoE budget (e.g. 48HX/48HXN 3x1600W -> 4320W). Capacity-only; redundancy is still the primary+secondary pair." },
         "poe_budget_watts": { "type": "integer", "minimum": 0 }
       },
       "additionalProperties": false

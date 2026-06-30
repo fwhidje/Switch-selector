@@ -29,7 +29,9 @@ const TARGETS = [
 ];
 
 const violations = [];
+const warnings = [];
 const fail = (file, path, message) => violations.push({ file, path, message });
+const warn = (file, path, message) => warnings.push({ file, path, message });
 const readJSON = (fullPath) => JSON.parse(readFileSync(fullPath, "utf8"));
 
 // --- shared registry (one vocabulary for every series) ----------------------
@@ -218,18 +220,35 @@ function checkReferences(kb, kbFail) {
 }
 
 // --- Check 7: derived-value coherence ---------------------------------------
-function checkDerived(kb, kbFail) {
+function checkDerived(kb, kbFail, kbWarn) {
   for (const m of kb.models ?? []) {
     const av = m.axis_values ?? {};
+    const incomplete = new Set(m._incomplete ?? []);
     const matrix = m.configurables?.power_supplies?.poe_budget_matrix ?? [];
     if (av.poe_capable === true) {
       const max = matrix.reduce((mx, r) => Math.max(mx, r.poe_budget_watts ?? 0), 0);
-      if (av.poe_budget_watts !== max)
-        kbFail(`${m.id}.axis_values.poe_budget_watts`, `is ${av.poe_budget_watts}, matrix max is ${max}`);
+      if (av.poe_budget_watts !== max) {
+        // The matrix may be unsourced (e.g. 48HM: not in datasheet Table 9) while
+        // the headline poe_budget_watts IS sourced — warn instead of fail.
+        if (incomplete.has("poe_budget_matrix"))
+          kbWarn(`${m.id}.axis_values.poe_budget_watts`, `is ${av.poe_budget_watts} but matrix max is ${max} (poe_budget_matrix unsourced)`);
+        else
+          kbFail(`${m.id}.axis_values.poe_budget_watts`, `is ${av.poe_budget_watts}, matrix max is ${max}`);
+      }
     } else if (matrix.length > 0) {
       kbFail(`${m.id}.poe_budget_matrix`, "non-PoE model must have an empty PoE matrix");
     }
   }
+}
+
+// --- Check 8: incomplete-field flags ----------------------------------------
+// A model may list fields it could not source from authoritative docs. Surface
+// each as a WARNING (not a failure) so the build stays green while the gaps are
+// loud and tracked (DB/switching/THINGS-TO-COMPLETE.md).
+function checkIncomplete(kb, kbWarn) {
+  for (const m of kb.models ?? [])
+    for (const f of m._incomplete ?? [])
+      kbWarn(`${m.id}._incomplete`, `field '${f}' is UNCONFIRMED — not sourced from datasheet/OG; see THINGS-TO-COMPLETE.md`);
 }
 
 // --- per-target driver ------------------------------------------------------
@@ -241,6 +260,7 @@ function validateTarget({ label, dir, schemaFile, kbFile }) {
 
   const kbFail = (path, message) => fail(`${label}:KB`, path, message);
   const schemaFail = (path, message) => fail(`${label}:schema`, path, message);
+  const kbWarn = (path, message) => warn(`${label}:KB`, path, message);
 
   checkVersions(schema, kb, kbFail, schemaFail);
   checkRegistrySchema(schema, schemaFail);
@@ -248,17 +268,26 @@ function validateTarget({ label, dir, schemaFile, kbFile }) {
   checkPorts(kb, kbFail);
   checkGroups(kb, kbFail);
   checkReferences(kb, kbFail);
-  checkDerived(kb, kbFail);
+  checkDerived(kb, kbFail, kbWarn);
+  checkIncomplete(kb, kbWarn);
 
-  return { label, schemaVersion: schema.schema_version, models: (kb.models ?? []).length };
+  const incomplete = (kb.models ?? []).filter((m) => (m._incomplete ?? []).length > 0).length;
+  return { label, schemaVersion: schema.schema_version, models: (kb.models ?? []).length, incomplete };
 }
 
 const summaries = TARGETS.map(validateTarget);
 
+if (warnings.length > 0) {
+  console.warn(`INCOMPLETE — ${warnings.length} warning(s) (unsourced fields, see THINGS-TO-COMPLETE.md):`);
+  for (const w of warnings) console.warn(`  [${w.file}] ${w.path}\n      ${w.message}`);
+  console.warn("");
+}
+
 if (violations.length === 0) {
   console.log(`PASS — registry v${registry.registry_version}.`);
   for (const s of summaries)
-    console.log(`  ${s.label}: schema v${s.schemaVersion}, ${s.models} model(s). All checks green.`);
+    console.log(`  ${s.label}: schema v${s.schemaVersion}, ${s.models} model(s)` +
+      `${s.incomplete ? `, ${s.incomplete} with unsourced fields` : ""}. All checks green.`);
   process.exit(0);
 }
 console.error(`FAIL — ${violations.length} violation(s):\n`);
