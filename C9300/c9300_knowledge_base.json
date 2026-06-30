@@ -419,6 +419,21 @@
     "id": "STACK-T1-3M-M",
     "length_cm": 300,
     "type": "type-1"
+   },
+   {
+    "id": "STACK-T3A-50CM-M",
+    "length_cm": 50,
+    "type": "type-3a"
+   },
+   {
+    "id": "STACK-T3A-1M-M",
+    "length_cm": 100,
+    "type": "type-3a"
+   },
+   {
+    "id": "STACK-T3A-3M-M",
+    "length_cm": 300,
+    "type": "type-3a"
    }
   ],
   "stackpower_cables": [
@@ -1221,14 +1236,14 @@
    },
    {
     "id": "c9300l-m-stack-cables",
-    "stack_kit": "C9300L-STACK-KIT2",
+    "stack_kit": "C9300L-STAK-KIT2-M",
     "members": [
-     "STACK-T3A-50CM",
-     "STACK-T3A-1M",
-     "STACK-T3A-3M"
+     "STACK-T3A-50CM-M",
+     "STACK-T3A-1M-M",
+     "STACK-T3A-3M-M"
     ],
     "none_option": "C9300L-STACK-NONE",
-    "notes": "C9300L-M fixed-uplink stacking via C9300L-STACK-KIT2, Type-3A cables. No -M variants of Type-3A cables exist in the accessories table; uses existing non-M STACK-T3A-* SKUs (cross-compatible per datasheet p. 9). Kept as distinct group from c9300l-stack-cables for series separation."
+    "notes": "C9300L-M fixed-uplink stacking via C9300L-STAK-KIT2-M, Type-3A cables. Kept as distinct group from c9300l-stack-cables for series separation."
    },
    {
     "id": "c9300xm-stack-cables",
@@ -8963,7 +8978,7 @@
      44.5,
      48.77
     ],
-    "weight_kg_with_default_psu": 6.80
+    "weight_kg_with_default_psu": 6.8
    },
    "configurables": {
     "network_modules": {
@@ -9542,6 +9557,793 @@
       }
      ],
      "matrix_provenance": "C9300X-M Datasheet PSU configuration and PoE budgets table, C9300X-48HXN-M row. Secondary column values use default PSU (1100W) as secondary per datasheet footnote."
+    },
+    "license": {
+     "group": "cat9300-meraki-classic-essentials-48",
+     "additional_groups": [
+      "cat9300-meraki-classic-advantage-48",
+      "cat9300-meraki-sub-l-essentials",
+      "cat9300-meraki-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2-M",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Region-specific cable for default PSU; not a selection axis."
+    }
+   }
+  },
+  {
+   "id": "C9300L-24T-4X-M",
+   "description": "Cisco Catalyst 9300L-M (Meraki), 24-port 1G copper, 4x 10G/1G SFP+ fixed uplinks, no PoE, Meraki-managed.",
+   "axis_values": {
+    "_comment": "C9300L-M Meraki-managed variant. Fixed-uplink (StackWise-320, no StackPower).",
+    "series": "C9300L",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-320",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "Sources: C9300L-M Datasheet interface specs table and Power Supply and Specifications table.",
+    "series": "C9300L axis value; -M suffix indicates Meraki-managed.",
+    "total_port_count": "Datasheet interface specs table: 24x 1G RJ-45 access ports (uplinks not counted).",
+    "stacking_technology": "Datasheet: StackWise-320 via C9300L-STAK-KIT2-M.",
+    "stackpower_capable": "false: C9300L fixed-uplink models do not support StackPower.",
+    "license_regime": "Datasheet: supports Meraki Classic and Meraki Subscription regimes.",
+    "ports": "Per-port speed SET from datasheet. Access copper 1G; fixed uplinks 10G/1G SFP+ (inline, uplink_modular=false)."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "port_layout": "24 ports 1G RJ-45, 4x 10G/1G SFP+ fixed uplinks",
+    "default_psu": "PWR-C1-350WAC-P-M",
+    "power_load_watts_idle": 56.85,
+    "power_load_watts_max": 73.54,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     44.9
+    ],
+    "weight_kg_with_default_psu": 6.78
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9300l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9300l-m-psus",
+     "valid_primary": [
+      "PWR-C1-350WAC-P-M"
+     ],
+     "default_primary": "PWR-C1-350WAC-P-M",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "No PoE. Default PSU per C9300L-M Datasheet Power Supply and Specifications table."
+    },
+    "license": {
+     "group": "cat9300-meraki-classic-essentials-24",
+     "additional_groups": [
+      "cat9300-meraki-classic-advantage-24",
+      "cat9300-meraki-sub-m-essentials",
+      "cat9300-meraki-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2-M",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Region-specific cable for default PSU; not a selection axis."
+    }
+   }
+  },
+  {
+   "id": "C9300L-24P-4X-M",
+   "description": "Cisco Catalyst 9300L-M (Meraki), 24-port 1G PoE+ copper, 4x 10G/1G SFP+ fixed uplinks, Meraki-managed.",
+   "axis_values": {
+    "_comment": "C9300L-M Meraki-managed variant. Fixed-uplink (StackWise-320, no StackPower).",
+    "series": "C9300L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 720,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-320",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "Sources: C9300L-M Datasheet interface specs table, PSU configuration and PoE budgets table, and Power Supply and Specifications table.",
+    "series": "C9300L axis value; -M suffix indicates Meraki-managed.",
+    "poe_budget_watts": "Max of poe_budget_matrix (720W). Datasheet PSU configuration and PoE budgets table.",
+    "stacking_technology": "Datasheet: StackWise-320 via C9300L-STAK-KIT2-M.",
+    "stackpower_capable": "false: C9300L fixed-uplink models do not support StackPower.",
+    "license_regime": "Datasheet: supports Meraki Classic and Meraki Subscription regimes.",
+    "ports": "Per-port speed SET from datasheet. Access copper 1G PoE+; fixed uplinks 10G/1G SFP+ (inline, uplink_modular=false)."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "port_layout": "24 ports 1G RJ-45 PoE+, 4x 10G/1G SFP+ fixed uplinks",
+    "default_psu": "PWR-C1-715WAC-P-M",
+    "power_load_watts_idle": 139.6,
+    "power_load_watts_max": 243.7,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     44.9
+    ],
+    "weight_kg_with_default_psu": 7.35
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9300l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9300l-m-psus",
+     "valid_primary": [
+      "PWR-C1-715WAC-P-M"
+     ],
+     "default_primary": "PWR-C1-715WAC-P-M",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C1-715WAC-P-M",
+       "secondary": null,
+       "poe_budget_watts": 505
+      },
+      {
+       "primary": "PWR-C1-715WAC-P-M",
+       "secondary": "PWR-C1-715WAC-P-M",
+       "poe_budget_watts": 720
+      },
+      {
+       "primary": "PWR-C1-715WAC-P-M",
+       "secondary": "PWR-C1-1100WAC-P-M",
+       "poe_budget_watts": 720
+      }
+     ],
+     "matrix_provenance": "C9300L-M Datasheet PSU configuration and PoE budgets table, C9300L-24P-4X-M row. Secondary column values use default PSU (715W) as secondary per datasheet footnote."
+    },
+    "license": {
+     "group": "cat9300-meraki-classic-essentials-24",
+     "additional_groups": [
+      "cat9300-meraki-classic-advantage-24",
+      "cat9300-meraki-sub-m-essentials",
+      "cat9300-meraki-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2-M",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Region-specific cable for default PSU; not a selection axis."
+    }
+   }
+  },
+  {
+   "id": "C9300L-24UXG-4X-M",
+   "description": "Cisco Catalyst 9300L-M (Meraki), 8-port 10G/5G/2.5G/1G + 16-port 1G UPoE copper, 4x 10G/1G SFP+ fixed uplinks, Meraki-managed.",
+   "axis_values": {
+    "_comment": "C9300L-M Meraki-managed variant. Fixed-uplink (StackWise-320, no StackPower).",
+    "series": "C9300L",
+    "poe_capable": true,
+    "poe_type": "upoe",
+    "poe_budget_watts": 1440,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-320",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 16,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "Sources: C9300L-M Datasheet interface specs table, PSU configuration and PoE budgets table, and Power Supply and Specifications table.",
+    "series": "C9300L axis value; -M suffix indicates Meraki-managed.",
+    "poe_budget_watts": "Max of poe_budget_matrix (1440W). Datasheet PSU configuration and PoE budgets table.",
+    "total_port_count": "24 access ports: 8x mGig + 16x 1G (uplinks not counted).",
+    "stacking_technology": "Datasheet: StackWise-320 via C9300L-STAK-KIT2-M.",
+    "stackpower_capable": "false: C9300L fixed-uplink models do not support StackPower.",
+    "license_regime": "Datasheet: supports Meraki Classic and Meraki Subscription regimes.",
+    "ports": "Per-port speed SET from datasheet. 8 mGig ports [1g,2.5g,5g,10g] UPoE, 16 GbE ports [1g] UPoE; fixed uplinks 10G/1G SFP+ (inline, uplink_modular=false)."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "port_layout": "8 ports 1/2.5/5/10G RJ-45 UPoE, 16 ports 1G RJ-45 UPoE, 4x 10G/1G SFP+ fixed uplinks",
+    "default_psu": "PWR-C1-1100WAC-P-M",
+    "power_load_watts_idle": 68.98,
+    "power_load_watts_max": 1049.47,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     48.8
+    ],
+    "weight_kg_with_default_psu": 7.13
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9300l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9300l-m-psus",
+     "valid_primary": [
+      "PWR-C1-1100WAC-P-M"
+     ],
+     "default_primary": "PWR-C1-1100WAC-P-M",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C1-1100WAC-P-M",
+       "secondary": null,
+       "poe_budget_watts": 880
+      },
+      {
+       "primary": "PWR-C1-1100WAC-P-M",
+       "secondary": "PWR-C1-1100WAC-P-M",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "C9300L-M Datasheet PSU configuration and PoE budgets table, C9300L-24UXG-4X-M row. Secondary column value uses default PSU (1100W) as secondary per datasheet footnote."
+    },
+    "license": {
+     "group": "cat9300-meraki-classic-essentials-24",
+     "additional_groups": [
+      "cat9300-meraki-classic-advantage-24",
+      "cat9300-meraki-sub-m-essentials",
+      "cat9300-meraki-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2-M",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Region-specific cable for default PSU; not a selection axis."
+    }
+   }
+  },
+  {
+   "id": "C9300L-48T-4X-M",
+   "description": "Cisco Catalyst 9300L-M (Meraki), 48-port 1G copper, 4x 10G/1G SFP+ fixed uplinks, no PoE, Meraki-managed.",
+   "axis_values": {
+    "_comment": "C9300L-M Meraki-managed variant. Fixed-uplink (StackWise-320, no StackPower).",
+    "series": "C9300L",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-320",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "Sources: C9300L-M Datasheet interface specs table and Power Supply and Specifications table.",
+    "series": "C9300L axis value; -M suffix indicates Meraki-managed.",
+    "total_port_count": "Datasheet interface specs table: 48x 1G RJ-45 access ports (uplinks not counted).",
+    "stacking_technology": "Datasheet: StackWise-320 via C9300L-STAK-KIT2-M.",
+    "stackpower_capable": "false: C9300L fixed-uplink models do not support StackPower.",
+    "license_regime": "Datasheet: supports Meraki Classic and Meraki Subscription regimes.",
+    "ports": "Per-port speed SET from datasheet. Access copper 1G; fixed uplinks 10G/1G SFP+ (inline, uplink_modular=false)."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "port_layout": "48 ports 1G RJ-45, 4x 10G/1G SFP+ fixed uplinks",
+    "default_psu": "PWR-C1-350WAC-P-M",
+    "power_load_watts_idle": 60.97,
+    "power_load_watts_max": 86.77,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     44.9
+    ],
+    "weight_kg_with_default_psu": 7.0
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9300l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9300l-m-psus",
+     "valid_primary": [
+      "PWR-C1-350WAC-P-M"
+     ],
+     "default_primary": "PWR-C1-350WAC-P-M",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "No PoE. Default PSU per C9300L-M Datasheet Power Supply and Specifications table."
+    },
+    "license": {
+     "group": "cat9300-meraki-classic-essentials-48",
+     "additional_groups": [
+      "cat9300-meraki-classic-advantage-48",
+      "cat9300-meraki-sub-l-essentials",
+      "cat9300-meraki-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2-M",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Region-specific cable for default PSU; not a selection axis."
+    }
+   }
+  },
+  {
+   "id": "C9300L-48P-4X-M",
+   "description": "Cisco Catalyst 9300L-M (Meraki), 48-port 1G PoE+ copper, 4x 10G/1G SFP+ fixed uplinks, Meraki-managed.",
+   "axis_values": {
+    "_comment": "C9300L-M Meraki-managed variant. Fixed-uplink (StackWise-320, no StackPower).",
+    "series": "C9300L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-320",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "Sources: C9300L-M Datasheet interface specs table, PSU configuration and PoE budgets table, and Power Supply and Specifications table.",
+    "series": "C9300L axis value; -M suffix indicates Meraki-managed.",
+    "poe_budget_watts": "Max of poe_budget_matrix (1440W). Datasheet PSU configuration and PoE budgets table.",
+    "stacking_technology": "Datasheet: StackWise-320 via C9300L-STAK-KIT2-M.",
+    "stackpower_capable": "false: C9300L fixed-uplink models do not support StackPower.",
+    "license_regime": "Datasheet: supports Meraki Classic and Meraki Subscription regimes.",
+    "ports": "Per-port speed SET from datasheet. Access copper 1G PoE+; fixed uplinks 10G/1G SFP+ (inline, uplink_modular=false)."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "port_layout": "48 ports 1G RJ-45 PoE+, 4x 10G/1G SFP+ fixed uplinks",
+    "default_psu": "PWR-C1-715WAC-P-M",
+    "power_load_watts_idle": 67.4,
+    "power_load_watts_max": 598.6,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     44.9
+    ],
+    "weight_kg_with_default_psu": 7.03
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9300l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9300l-m-psus",
+     "valid_primary": [
+      "PWR-C1-715WAC-P-M"
+     ],
+     "default_primary": "PWR-C1-715WAC-P-M",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C1-715WAC-P-M",
+       "secondary": null,
+       "poe_budget_watts": 505
+      },
+      {
+       "primary": "PWR-C1-715WAC-P-M",
+       "secondary": "PWR-C1-715WAC-P-M",
+       "poe_budget_watts": 1220
+      },
+      {
+       "primary": "PWR-C1-715WAC-P-M",
+       "secondary": "PWR-C1-1100WAC-P-M",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "C9300L-M Datasheet PSU configuration and PoE budgets table, C9300L-48P-4X-M row. Secondary column values use default PSU (715W) as secondary per datasheet footnote."
+    },
+    "license": {
+     "group": "cat9300-meraki-classic-essentials-48",
+     "additional_groups": [
+      "cat9300-meraki-classic-advantage-48",
+      "cat9300-meraki-sub-l-essentials",
+      "cat9300-meraki-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2-M",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Region-specific cable for default PSU; not a selection axis."
+    }
+   }
+  },
+  {
+   "id": "C9300L-48PF-4X-M",
+   "description": "Cisco Catalyst 9300L-M (Meraki), 48-port 1G PoE+ copper (high PoE budget), 4x 10G/1G SFP+ fixed uplinks, Meraki-managed.",
+   "axis_values": {
+    "_comment": "C9300L-M Meraki-managed variant. Fixed-uplink (StackWise-320, no StackPower).",
+    "series": "C9300L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-320",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "Sources: C9300L-M Datasheet interface specs table, PSU configuration and PoE budgets table, and Power Supply and Specifications table.",
+    "series": "C9300L axis value; -M suffix indicates Meraki-managed.",
+    "poe_budget_watts": "Max of poe_budget_matrix (1440W). Datasheet PSU configuration and PoE budgets table.",
+    "stacking_technology": "Datasheet: StackWise-320 via C9300L-STAK-KIT2-M.",
+    "stackpower_capable": "false: C9300L fixed-uplink models do not support StackPower.",
+    "license_regime": "Datasheet: supports Meraki Classic and Meraki Subscription regimes.",
+    "ports": "Per-port speed SET from datasheet. Access copper 1G PoE+; fixed uplinks 10G/1G SFP+ (inline, uplink_modular=false)."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "port_layout": "48 ports 1G RJ-45 PoE+, 4x 10G/1G SFP+ fixed uplinks",
+    "default_psu": "PWR-C1-1100WAC-P-M",
+    "power_load_watts_idle": 67.38,
+    "power_load_watts_max": 1023.56,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     48.8
+    ],
+    "weight_kg_with_default_psu": 7.03
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9300l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9300l-m-psus",
+     "valid_primary": [
+      "PWR-C1-1100WAC-P-M"
+     ],
+     "default_primary": "PWR-C1-1100WAC-P-M",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C1-1100WAC-P-M",
+       "secondary": null,
+       "poe_budget_watts": 890
+      },
+      {
+       "primary": "PWR-C1-1100WAC-P-M",
+       "secondary": "PWR-C1-1100WAC-P-M",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "C9300L-M Datasheet PSU configuration and PoE budgets table, C9300L-48PF-4X-M row. Secondary column value uses default PSU (1100W) as secondary per datasheet footnote."
+    },
+    "license": {
+     "group": "cat9300-meraki-classic-essentials-48",
+     "additional_groups": [
+      "cat9300-meraki-classic-advantage-48",
+      "cat9300-meraki-sub-l-essentials",
+      "cat9300-meraki-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2-M",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Region-specific cable for default PSU; not a selection axis."
+    }
+   }
+  },
+  {
+   "id": "C9300L-48UXG-4X-M",
+   "description": "Cisco Catalyst 9300L-M (Meraki), 12-port 10G/5G/2.5G/1G + 36-port 1G UPoE copper, 4x 10G/1G SFP+ fixed uplinks, Meraki-managed.",
+   "axis_values": {
+    "_comment": "C9300L-M Meraki-managed variant. Fixed-uplink (StackWise-320, no StackPower).",
+    "series": "C9300L",
+    "poe_capable": true,
+    "poe_type": "upoe",
+    "poe_budget_watts": 1775,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-320",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 12,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 36,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "Sources: C9300L-M Datasheet interface specs table, PSU configuration and PoE budgets table, and Power Supply and Specifications table.",
+    "series": "C9300L axis value; -M suffix indicates Meraki-managed.",
+    "poe_budget_watts": "Max of poe_budget_matrix (1775W). Datasheet PSU configuration and PoE budgets table.",
+    "total_port_count": "48 access ports: 12x mGig + 36x 1G (uplinks not counted).",
+    "stacking_technology": "Datasheet: StackWise-320 via C9300L-STAK-KIT2-M.",
+    "stackpower_capable": "false: C9300L fixed-uplink models do not support StackPower.",
+    "license_regime": "Datasheet: supports Meraki Classic and Meraki Subscription regimes.",
+    "ports": "Per-port speed SET from datasheet. 12 mGig ports [1g,2.5g,5g,10g] UPoE, 36 GbE ports [1g] UPoE; fixed uplinks 10G/1G SFP+ (inline, uplink_modular=false)."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "port_layout": "12 ports 1/2.5/5/10G RJ-45 UPoE, 36 ports 1G RJ-45 UPoE, 4x 10G/1G SFP+ fixed uplinks",
+    "default_psu": "PWR-C1-1100WAC-P-M",
+    "power_load_watts_idle": 104.56,
+    "power_load_watts_max": 875.3,
+    "dimensions_cm_hxwxd_chassis_only": [
+     4.4,
+     44.5,
+     48.8
+    ],
+    "weight_kg_with_default_psu": 7.65
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9300l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9300l-m-psus",
+     "valid_primary": [
+      "PWR-C1-1100WAC-P-M"
+     ],
+     "default_primary": "PWR-C1-1100WAC-P-M",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C1-1100WAC-P-M",
+       "secondary": null,
+       "poe_budget_watts": 675
+      },
+      {
+       "primary": "PWR-C1-1100WAC-P-M",
+       "secondary": "PWR-C1-1100WAC-P-M",
+       "poe_budget_watts": 1775
+      }
+     ],
+     "matrix_provenance": "C9300L-M Datasheet PSU configuration and PoE budgets table, C9300L-48UXG-4X-M row. Secondary column value uses default PSU (1100W) as secondary per datasheet footnote."
     },
     "license": {
      "group": "cat9300-meraki-classic-essentials-48",
