@@ -261,7 +261,7 @@
  "models": [
   {
    "id": "C9200-24T-E",
-   "description": "Cisco Catalyst 9200, 24-port 1G data (no PoE) copper, modular uplinks, Network Essentials. StackWise-160, no StackPower.",
+   "description": "Cisco Catalyst C9200, 24-port 1G data copper, modular uplinks, Network Essentials. StackWise-160, no StackPower.",
    "axis_values": {
     "_comment": "Registry-axis values this switch supplies to the solver.",
     "series": "C9200",
@@ -272,17 +272,28 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
-    "license_regime": ["dna-term"],
-    "license_tier": ["essentials"]
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
    },
    "ports": [
-    { "count": 24, "role": "access", "medium": "copper", "speeds": ["1g"] }
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
    ],
    "axis_value_provenance": {
     "_comment": "How resolved values were derived (for re-validation).",
-    "ports": "Datasheet Table 2 'C9200-24T: 24 ports data' = 24x 10/100/1000 copper. Uplinks come from the fitted network module (uplink_modular=true), not stored here.",
-    "poe_*": "Datasheet Table 2 shows no PoE and C9200-24T has no row in Table 4 (PoE budget). poe_capable=false, poe_type='none', poe_budget_watts omitted.",
-    "stacking": "Datasheet Table 5: C9200 (modular) SKUs = StackWise-160, C9200-STACK-KIT. StackPower not offered on C9200 series.",
+    "ports": "Datasheet Table 2 'C9200-24T' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "Datasheet Table 2 shows no PoE and C9200-24T has no Table 4 row. poe_capable=false, poe_type='none', poe_budget_watts omitted.",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-125WAC."
    },
    "attributes": {
@@ -299,24 +310,32 @@
     "stack_members_max": 8,
     "virtual_networks": 4,
     "mtbf_hours": 587800,
-    "weight_kg": 5.0,
+    "weight_kg": 5,
     "port_layout": "24x 1G data",
     "default_ac_power_supply": "PWR-C6-125WAC"
    },
    "configurables": {
     "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
-    "network_modules": { "group": "c9200-modular-uplink-modules" },
-    "stack_cables": { "group": "c9200-stack-cables" },
+    "network_modules": {
+     "group": "c9200-modular-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
     "power_supplies": {
      "group": "c9200-psus",
-     "valid_primary": ["PWR-C6-125WAC"],
+     "valid_primary": [
+      "PWR-C6-125WAC"
+     ],
      "default_primary": "PWR-C6-125WAC",
      "poe_budget_matrix": [],
-     "matrix_provenance": "Datasheet Table 2: default PWR-C6-125WAC, no PoE (data model). Empty matrix => no PoE budget. A second PSU is still orderable for power redundancy."
+     "matrix_provenance": "Datasheet Table 2: default PWR-C6-125WAC, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
     },
     "license": {
      "group": "c9200-dna-essentials-24",
-     "regime_offered": ["dna-term"],
+     "regime_offered": [
+      "dna-term"
+     ],
      "tier_locked": "essentials",
      "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
     }
@@ -325,12 +344,15 @@
     "_comment": "Ships with the switch; not user-configurable, not filterable.",
     "fan_module": "FAN-T2",
     "mounting_brackets": true,
-    "power_cables": { "count": 1, "note": "Ships with one PSU by default; second is optional for redundancy. Region-specific cable chosen at order time." }
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
    }
   },
   {
    "id": "C9200-24T-A",
-   "description": "Cisco Catalyst 9200, 24-port 1G data (no PoE) copper, modular uplinks, Network Advantage. StackWise-160, no StackPower.",
+   "description": "Cisco Catalyst C9200, 24-port 1G data copper, modular uplinks, Network Advantage. StackWise-160, no StackPower.",
    "axis_values": {
     "_comment": "Registry-axis values this switch supplies to the solver.",
     "series": "C9200",
@@ -341,18 +363,29 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
-    "license_regime": ["dna-term"],
-    "license_tier": ["advantage"]
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
    },
    "ports": [
-    { "count": 24, "role": "access", "medium": "copper", "speeds": ["1g"] }
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
    ],
    "axis_value_provenance": {
-    "_comment": "Sibling of C9200-24T-E; identical hardware, Advantage licensing.",
-    "ports": "Datasheet Table 2 'C9200-24T: 24 ports data' = 24x 10/100/1000 copper.",
-    "poe_*": "No PoE (Table 2; no Table 4 row).",
-    "stacking": "Datasheet Table 5: StackWise-160.",
-    "default_primary": "Datasheet Table 2 = PWR-C6-125WAC."
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200-24T' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "Datasheet Table 2 shows no PoE and C9200-24T has no Table 4 row. poe_capable=false, poe_type='none', poe_budget_watts omitted.",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-125WAC."
    },
    "attributes": {
     "_comment": "Displayed, never filtered.",
@@ -368,38 +401,871 @@
     "stack_members_max": 8,
     "virtual_networks": 4,
     "mtbf_hours": 587800,
-    "weight_kg": 5.0,
+    "weight_kg": 5,
     "port_layout": "24x 1G data",
     "default_ac_power_supply": "PWR-C6-125WAC"
    },
    "configurables": {
-    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay.",
-    "network_modules": { "group": "c9200-modular-uplink-modules" },
-    "stack_cables": { "group": "c9200-stack-cables" },
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-modular-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
     "power_supplies": {
      "group": "c9200-psus",
-     "valid_primary": ["PWR-C6-125WAC"],
+     "valid_primary": [
+      "PWR-C6-125WAC"
+     ],
      "default_primary": "PWR-C6-125WAC",
      "poe_budget_matrix": [],
-     "matrix_provenance": "Datasheet Table 2: default PWR-C6-125WAC, no PoE (data model)."
+     "matrix_provenance": "Datasheet Table 2: default PWR-C6-125WAC, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
     },
     "license": {
      "group": "c9200-dna-advantage-24",
-     "regime_offered": ["dna-term"],
+     "regime_offered": [
+      "dna-term"
+     ],
      "tier_locked": "advantage",
-     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription."
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
     }
    },
    "included_by_default_non_selectable": {
-    "_comment": "Ships with the switch; not user-configurable.",
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
     "fan_module": "FAN-T2",
     "mounting_brackets": true,
-    "power_cables": { "count": 1, "note": "One PSU by default; second optional for redundancy." }
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
    }
   },
   {
-   "id": "C9200-48P-A",
-   "description": "Cisco Catalyst 9200, 48-port full PoE+ copper 1G, modular uplinks, Network Advantage. StackWise-160, 1440W PoE budget.",
+   "id": "C9200-24P-E",
+   "description": "Cisco Catalyst C9200, 24-port 1G full PoE+ copper, modular uplinks, Network Essentials. StackWise-160, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-160",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200-24P' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200-24P row: PWR-C6-600WAC single = 370W, with additional secondary PWR-C6-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 128,
+    "switching_capacity_stacked_gbps": 288,
+    "forwarding_rate_mpps": 95.23,
+    "forwarding_rate_stacked_mpps": 214,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 4,
+    "mtbf_hours": 422310,
+    "weight_kg": 5.5,
+    "port_layout": "24x 1G PoE+",
+    "default_ac_power_supply": "PWR-C6-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-modular-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200-psus",
+     "valid_primary": [
+      "PWR-C6-600WAC"
+     ],
+     "default_primary": "PWR-C6-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": "PWR-C6-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200-24P row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200-dna-essentials-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200-24P-A",
+   "description": "Cisco Catalyst C9200, 24-port 1G full PoE+ copper, modular uplinks, Network Advantage. StackWise-160, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-160",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200-24P' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200-24P row: PWR-C6-600WAC single = 370W, with additional secondary PWR-C6-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 128,
+    "switching_capacity_stacked_gbps": 288,
+    "forwarding_rate_mpps": 95.23,
+    "forwarding_rate_stacked_mpps": 214,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 4,
+    "mtbf_hours": 422310,
+    "weight_kg": 5.5,
+    "port_layout": "24x 1G PoE+",
+    "default_ac_power_supply": "PWR-C6-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-modular-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200-psus",
+     "valid_primary": [
+      "PWR-C6-600WAC"
+     ],
+     "default_primary": "PWR-C6-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": "PWR-C6-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200-24P row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200-dna-advantage-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200-24PB-E",
+   "description": "Cisco Catalyst C9200, 24-port 1G full PoE+ copper, modular uplinks, Network Essentials. StackWise-160, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-160",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200-24PB' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200-24PB row: PWR-C6-600WAC single = 370W, with additional secondary PWR-C6-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 128,
+    "switching_capacity_stacked_gbps": 288,
+    "forwarding_rate_mpps": 95.23,
+    "forwarding_rate_stacked_mpps": 214,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 32,
+    "mtbf_hours": 434220,
+    "weight_kg": 5,
+    "port_layout": "24x 1G PoE+",
+    "default_ac_power_supply": "PWR-C6-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-modular-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200-psus",
+     "valid_primary": [
+      "PWR-C6-600WAC"
+     ],
+     "default_primary": "PWR-C6-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": "PWR-C6-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200-24PB row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200-dna-essentials-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200-24PB-A",
+   "description": "Cisco Catalyst C9200, 24-port 1G full PoE+ copper, modular uplinks, Network Advantage. StackWise-160, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-160",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200-24PB' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200-24PB row: PWR-C6-600WAC single = 370W, with additional secondary PWR-C6-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 128,
+    "switching_capacity_stacked_gbps": 288,
+    "forwarding_rate_mpps": 95.23,
+    "forwarding_rate_stacked_mpps": 214,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 32,
+    "mtbf_hours": 434220,
+    "weight_kg": 5,
+    "port_layout": "24x 1G PoE+",
+    "default_ac_power_supply": "PWR-C6-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-modular-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200-psus",
+     "valid_primary": [
+      "PWR-C6-600WAC"
+     ],
+     "default_primary": "PWR-C6-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": "PWR-C6-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200-24PB row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200-dna-advantage-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200-24PXG-E",
+   "description": "Cisco Catalyst C9200, 24-port full PoE+ (8x mGig up to 10G + 16x 1G) copper, modular uplinks, Network Essentials. StackWise-160, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-160",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 16,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200-24PXG' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200-24PXG row: PWR-C6-600WAC single = 370W, with additional secondary PWR-C6-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 352,
+    "switching_capacity_stacked_gbps": 532,
+    "forwarding_rate_mpps": 261.9,
+    "forwarding_rate_stacked_mpps": 395,
+    "mac_address_scale": 32000,
+    "buffer_mb": 12,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 4,
+    "mtbf_hours": 353960,
+    "weight_kg": 5.1,
+    "port_layout": "8x mGig (1/2.5/5/10G) + 16x 1G, PoE+",
+    "default_ac_power_supply": "PWR-C6-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-pxg-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200-psus",
+     "valid_primary": [
+      "PWR-C6-600WAC"
+     ],
+     "default_primary": "PWR-C6-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": "PWR-C6-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200-24PXG row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200-dna-essentials-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200-24PXG-A",
+   "description": "Cisco Catalyst C9200, 24-port full PoE+ (8x mGig up to 10G + 16x 1G) copper, modular uplinks, Network Advantage. StackWise-160, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-160",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 16,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200-24PXG' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200-24PXG row: PWR-C6-600WAC single = 370W, with additional secondary PWR-C6-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 352,
+    "switching_capacity_stacked_gbps": 532,
+    "forwarding_rate_mpps": 261.9,
+    "forwarding_rate_stacked_mpps": 395,
+    "mac_address_scale": 32000,
+    "buffer_mb": 12,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 4,
+    "mtbf_hours": 353960,
+    "weight_kg": 5.1,
+    "port_layout": "8x mGig (1/2.5/5/10G) + 16x 1G, PoE+",
+    "default_ac_power_supply": "PWR-C6-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-pxg-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200-psus",
+     "valid_primary": [
+      "PWR-C6-600WAC"
+     ],
+     "default_primary": "PWR-C6-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": "PWR-C6-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200-24PXG row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200-dna-advantage-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200-48T-E",
+   "description": "Cisco Catalyst C9200, 48-port 1G data copper, modular uplinks, Network Essentials. StackWise-160, no StackPower.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-160",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200-48T' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "Datasheet Table 2 shows no PoE and C9200-48T has no Table 4 row. poe_capable=false, poe_type='none', poe_budget_watts omitted.",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-125WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 176,
+    "switching_capacity_stacked_gbps": 336,
+    "forwarding_rate_mpps": 130.95,
+    "forwarding_rate_stacked_mpps": 250,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 4,
+    "mtbf_hours": 571440,
+    "weight_kg": 5,
+    "port_layout": "48x 1G data",
+    "default_ac_power_supply": "PWR-C6-125WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-modular-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200-psus",
+     "valid_primary": [
+      "PWR-C6-125WAC"
+     ],
+     "default_primary": "PWR-C6-125WAC",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Datasheet Table 2: default PWR-C6-125WAC, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
+    },
+    "license": {
+     "group": "c9200-dna-essentials-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
+   }
+  },
+  {
+   "id": "C9200-48T-A",
+   "description": "Cisco Catalyst C9200, 48-port 1G data copper, modular uplinks, Network Advantage. StackWise-160, no StackPower.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-160",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200-48T' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "Datasheet Table 2 shows no PoE and C9200-48T has no Table 4 row. poe_capable=false, poe_type='none', poe_budget_watts omitted.",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-125WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 176,
+    "switching_capacity_stacked_gbps": 336,
+    "forwarding_rate_mpps": 130.95,
+    "forwarding_rate_stacked_mpps": 250,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 4,
+    "mtbf_hours": 571440,
+    "weight_kg": 5,
+    "port_layout": "48x 1G data",
+    "default_ac_power_supply": "PWR-C6-125WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-modular-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200-psus",
+     "valid_primary": [
+      "PWR-C6-125WAC"
+     ],
+     "default_primary": "PWR-C6-125WAC",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Datasheet Table 2: default PWR-C6-125WAC, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
+    },
+    "license": {
+     "group": "c9200-dna-advantage-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
+   }
+  },
+  {
+   "id": "C9200-48P-E",
+   "description": "Cisco Catalyst C9200, 48-port 1G full PoE+ copper, modular uplinks, Network Essentials. StackWise-160, no StackPower, 1440W PoE budget.",
    "axis_values": {
     "_comment": "Registry-axis values this switch supplies to the solver.",
     "series": "C9200",
@@ -411,18 +1277,29 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
-    "license_regime": ["dna-term"],
-    "license_tier": ["advantage"]
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
    },
    "ports": [
-    { "count": 48, "role": "access", "medium": "copper", "speeds": ["1g"] }
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
    ],
    "axis_value_provenance": {
     "_comment": "How resolved values were derived (for re-validation).",
-    "ports": "Datasheet Table 2 'C9200-48P: 48 ports full PoE+' = 48x 10/100/1000 copper PoE+.",
-    "poe_budget_watts": "Datasheet Table 4: PWR-C6-1KWAC single primary = 740W, with additional secondary PWR-C6-1KWAC = 1440W. Max = 1440. poe_type=poe+ (IEEE 802.3at, 30W).",
-    "stacking": "Datasheet Table 5: StackWise-160.",
-    "default_primary": "Datasheet Table 2 default primary = PWR-C6-1KWAC."
+    "ports": "Datasheet Table 2 'C9200-48P' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200-48P row: PWR-C6-1KWAC single = 740W, with additional secondary PWR-C6-1KWAC = 1440W. Max = 1440. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-1KWAC."
    },
    "attributes": {
     "_comment": "Displayed, never filtered.",
@@ -443,36 +1320,158 @@
     "default_ac_power_supply": "PWR-C6-1KWAC"
    },
    "configurables": {
-    "_comment": "Thin references + per-model PSU/PoE overlay.",
-    "network_modules": { "group": "c9200-modular-uplink-modules" },
-    "stack_cables": { "group": "c9200-stack-cables" },
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-modular-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
     "power_supplies": {
      "group": "c9200-psus",
-     "valid_primary": ["PWR-C6-1KWAC"],
+     "valid_primary": [
+      "PWR-C6-1KWAC"
+     ],
      "default_primary": "PWR-C6-1KWAC",
      "poe_budget_matrix": [
-      { "primary": "PWR-C6-1KWAC", "secondary": null, "poe_budget_watts": 740 },
-      { "primary": "PWR-C6-1KWAC", "secondary": "PWR-C6-1KWAC", "poe_budget_watts": 1440 }
+      {
+       "primary": "PWR-C6-1KWAC",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C6-1KWAC",
+       "secondary": "PWR-C6-1KWAC",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200-48P row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200-dna-essentials-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200-48P-A",
+   "description": "Cisco Catalyst C9200, 48-port 1G full PoE+ copper, modular uplinks, Network Advantage. StackWise-160, no StackPower, 1440W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-160",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200-48P' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200-48P row: PWR-C6-1KWAC single = 740W, with additional secondary PWR-C6-1KWAC = 1440W. Max = 1440. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-1KWAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 176,
+    "switching_capacity_stacked_gbps": 336,
+    "forwarding_rate_mpps": 130.95,
+    "forwarding_rate_stacked_mpps": 250,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 4,
+    "mtbf_hours": 375570,
+    "weight_kg": 5.5,
+    "port_layout": "48x 1G PoE+",
+    "default_ac_power_supply": "PWR-C6-1KWAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-modular-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200-psus",
+     "valid_primary": [
+      "PWR-C6-1KWAC"
+     ],
+     "default_primary": "PWR-C6-1KWAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C6-1KWAC",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C6-1KWAC",
+       "secondary": "PWR-C6-1KWAC",
+       "poe_budget_watts": 1440
+      }
      ],
      "matrix_provenance": "Datasheet Table 4, C9200-48P row (AC only; DC option omitted per series policy)."
     },
     "license": {
      "group": "c9200-dna-advantage-48",
-     "regime_offered": ["dna-term"],
+     "regime_offered": [
+      "dna-term"
+     ],
      "tier_locked": "advantage",
-     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription."
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
     }
    },
    "included_by_default_non_selectable": {
-    "_comment": "Ships with the switch; not user-configurable.",
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
     "fan_module": "FAN-T2",
     "mounting_brackets": true,
-    "power_cables": { "count": 1, "note": "One PSU by default; a second PWR-C6-1KWAC is added for redundancy or to reach the 1440W PoE budget." }
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
    }
   },
   {
    "id": "C9200-48PL-E",
-   "description": "Cisco Catalyst 9200, 48-port partial PoE+ copper 1G, modular uplinks, Network Essentials. StackWise-160, 740W PoE budget.",
+   "description": "Cisco Catalyst C9200, 48-port 1G partial PoE+ copper, modular uplinks, Network Essentials. StackWise-160, no StackPower, 740W PoE budget.",
    "axis_values": {
     "_comment": "Registry-axis values this switch supplies to the solver.",
     "series": "C9200",
@@ -484,18 +1483,29 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
-    "license_regime": ["dna-term"],
-    "license_tier": ["essentials"]
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
    },
    "ports": [
-    { "count": 48, "role": "access", "medium": "copper", "speeds": ["1g"] }
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
    ],
    "axis_value_provenance": {
     "_comment": "How resolved values were derived (for re-validation).",
-    "ports": "Datasheet Table 2 'C9200-48PL: 48 ports partial PoE+' = 48x 10/100/1000 copper. All 48 ports are PoE+ capable; 'partial' denotes a limited aggregate PoE budget (below full-load 48x30W), not fewer PoE ports. total_port_count counts all access ports.",
-    "poe_budget_watts": "Datasheet Table 4: PWR-C6-600WAC single = 370W, additional secondary PWR-C6-600WAC = 740W. Max = 740. poe_type=poe+.",
-    "stacking": "Datasheet Table 5: StackWise-160.",
-    "default_primary": "Datasheet Table 2 default primary = PWR-C6-600WAC."
+    "ports": "Datasheet Table 2 'C9200-48PL' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200-48PL row: PWR-C6-600WAC single = 370W, with additional secondary PWR-C6-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W). 'Partial PoE+': all access ports are PoE+ capable but the aggregate budget is limited (below full-load 30W on every port).",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
    },
    "attributes": {
     "_comment": "Displayed, never filtered.",
@@ -516,68 +1526,416 @@
     "default_ac_power_supply": "PWR-C6-600WAC"
    },
    "configurables": {
-    "_comment": "Thin references + per-model PSU/PoE overlay.",
-    "network_modules": { "group": "c9200-modular-uplink-modules" },
-    "stack_cables": { "group": "c9200-stack-cables" },
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-modular-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
     "power_supplies": {
      "group": "c9200-psus",
-     "valid_primary": ["PWR-C6-600WAC"],
+     "valid_primary": [
+      "PWR-C6-600WAC"
+     ],
      "default_primary": "PWR-C6-600WAC",
      "poe_budget_matrix": [
-      { "primary": "PWR-C6-600WAC", "secondary": null, "poe_budget_watts": 370 },
-      { "primary": "PWR-C6-600WAC", "secondary": "PWR-C6-600WAC", "poe_budget_watts": 740 }
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": "PWR-C6-600WAC",
+       "poe_budget_watts": 740
+      }
      ],
-     "matrix_provenance": "Datasheet Table 4, C9200-48PL row (AC only)."
+     "matrix_provenance": "Datasheet Table 4, C9200-48PL row (AC only; DC option omitted per series policy)."
     },
     "license": {
      "group": "c9200-dna-essentials-48",
-     "regime_offered": ["dna-term"],
+     "regime_offered": [
+      "dna-term"
+     ],
      "tier_locked": "essentials",
-     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription."
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
     }
    },
    "included_by_default_non_selectable": {
-    "_comment": "Ships with the switch; not user-configurable.",
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
     "fan_module": "FAN-T2",
     "mounting_brackets": true,
-    "power_cables": { "count": 1, "note": "One PSU by default; second optional for redundancy / higher PoE budget." }
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
    }
   },
   {
-   "id": "C9200-24PXG-A",
-   "description": "Cisco Catalyst 9200, 24-port full PoE+ (8x mGig up to 10G + 16x 1G) copper, modular uplinks, Network Advantage. StackWise-160, 740W PoE budget.",
+   "id": "C9200-48PL-A",
+   "description": "Cisco Catalyst C9200, 48-port 1G partial PoE+ copper, modular uplinks, Network Advantage. StackWise-160, no StackPower, 740W PoE budget.",
    "axis_values": {
     "_comment": "Registry-axis values this switch supplies to the solver.",
     "series": "C9200",
     "poe_capable": true,
     "poe_type": "poe+",
     "poe_budget_watts": 740,
-    "total_port_count": 24,
+    "total_port_count": 48,
     "uplink_modular": true,
     "stacking_capable": true,
     "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
-    "license_regime": ["dna-term"],
-    "license_tier": ["advantage"]
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
    },
    "ports": [
-    { "count": 8, "role": "access", "medium": "copper", "speeds": ["1g", "2.5g", "5g", "10g"] },
-    { "count": 16, "role": "access", "medium": "copper", "speeds": ["1g"] }
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
    ],
    "axis_value_provenance": {
     "_comment": "How resolved values were derived (for re-validation).",
-    "ports": "Datasheet Table 2 'C9200-24PXG: 24 ports full PoE+ (8 mGig ports up to 10G, 16 ports up to 1G)'. mGig speed set 1/2.5/5/10G (subsumption as data). Access sum 8+16=24.",
-    "poe_budget_watts": "Datasheet Table 4: PWR-C6-600WAC single = 370W, additional secondary = 740W. Max = 740. poe_type=poe+.",
-    "stacking": "Datasheet Table 5: StackWise-160.",
-    "default_primary": "Datasheet Table 2 default primary = PWR-C6-600WAC.",
-    "network_modules": "PXG models take the PXG-only module group (C9200-NM-2Y/2Q/4X; not NM-4G) per OG Table 3 footnotes."
+    "ports": "Datasheet Table 2 'C9200-48PL' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200-48PL row: PWR-C6-600WAC single = 370W, with additional secondary PWR-C6-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W). 'Partial PoE+': all access ports are PoE+ capable but the aggregate budget is limited (below full-load 30W on every port).",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
    },
    "attributes": {
     "_comment": "Displayed, never filtered.",
-    "switching_capacity_gbps": 352,
-    "switching_capacity_stacked_gbps": 532,
-    "forwarding_rate_mpps": 261.90,
-    "forwarding_rate_stacked_mpps": 395,
+    "switching_capacity_gbps": 176,
+    "switching_capacity_stacked_gbps": 336,
+    "forwarding_rate_mpps": 130.95,
+    "forwarding_rate_stacked_mpps": 250,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 4,
+    "mtbf_hours": 375570,
+    "weight_kg": 5.5,
+    "port_layout": "48x 1G partial PoE+",
+    "default_ac_power_supply": "PWR-C6-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-modular-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200-psus",
+     "valid_primary": [
+      "PWR-C6-600WAC"
+     ],
+     "default_primary": "PWR-C6-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C6-600WAC",
+       "secondary": "PWR-C6-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200-48PL row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200-dna-advantage-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200-48PB-E",
+   "description": "Cisco Catalyst C9200, 48-port 1G full PoE+ copper, modular uplinks, Network Essentials. StackWise-160, no StackPower, 1440W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-160",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200-48PB' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200-48PB row: PWR-C6-1KWAC single = 740W, with additional secondary PWR-C6-1KWAC = 1440W. Max = 1440. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-1KWAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 176,
+    "switching_capacity_stacked_gbps": 336,
+    "forwarding_rate_mpps": 130.95,
+    "forwarding_rate_stacked_mpps": 250,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 32,
+    "mtbf_hours": 384980,
+    "weight_kg": 5.5,
+    "port_layout": "48x 1G PoE+",
+    "default_ac_power_supply": "PWR-C6-1KWAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-modular-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200-psus",
+     "valid_primary": [
+      "PWR-C6-1KWAC"
+     ],
+     "default_primary": "PWR-C6-1KWAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C6-1KWAC",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C6-1KWAC",
+       "secondary": "PWR-C6-1KWAC",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200-48PB row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200-dna-essentials-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200-48PB-A",
+   "description": "Cisco Catalyst C9200, 48-port 1G full PoE+ copper, modular uplinks, Network Advantage. StackWise-160, no StackPower, 1440W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-160",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200-48PB' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200-48PB row: PWR-C6-1KWAC single = 740W, with additional secondary PWR-C6-1KWAC = 1440W. Max = 1440. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-1KWAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 176,
+    "switching_capacity_stacked_gbps": 336,
+    "forwarding_rate_mpps": 130.95,
+    "forwarding_rate_stacked_mpps": 250,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 32,
+    "mtbf_hours": 384980,
+    "weight_kg": 5.5,
+    "port_layout": "48x 1G PoE+",
+    "default_ac_power_supply": "PWR-C6-1KWAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-modular-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200-psus",
+     "valid_primary": [
+      "PWR-C6-1KWAC"
+     ],
+     "default_primary": "PWR-C6-1KWAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C6-1KWAC",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C6-1KWAC",
+       "secondary": "PWR-C6-1KWAC",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200-48PB row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200-dna-advantage-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200-48PXG-E",
+   "description": "Cisco Catalyst C9200, 48-port full PoE+ (8x mGig up to 10G + 40x 1G) copper, modular uplinks, Network Essentials. StackWise-160, no StackPower, 1440W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-160",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 40,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200-48PXG' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200-48PXG row: PWR-C6-1KWAC single = 740W, with additional secondary PWR-C6-1KWAC = 1440W. Max = 1440. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-1KWAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 400,
+    "switching_capacity_stacked_gbps": 580,
+    "forwarding_rate_mpps": 297.61,
+    "forwarding_rate_stacked_mpps": 431,
     "mac_address_scale": 32000,
     "buffer_mb": 12,
     "uadp_asic": "UADP 2.0 Mini",
@@ -585,42 +1943,175 @@
     "flash_gb": 4,
     "stack_members_max": 8,
     "virtual_networks": 4,
-    "mtbf_hours": 353960,
-    "weight_kg": 5.1,
-    "port_layout": "8x mGig (1/2.5/5/10G) + 16x 1G, PoE+",
-    "default_ac_power_supply": "PWR-C6-600WAC"
+    "mtbf_hours": 320440,
+    "weight_kg": 5.45,
+    "port_layout": "8x mGig (1/2.5/5/10G) + 40x 1G, PoE+",
+    "default_ac_power_supply": "PWR-C6-1KWAC"
    },
    "configurables": {
-    "_comment": "Thin references + per-model PSU/PoE overlay. PXG module group.",
-    "network_modules": { "group": "c9200-pxg-uplink-modules" },
-    "stack_cables": { "group": "c9200-stack-cables" },
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-pxg-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
     "power_supplies": {
      "group": "c9200-psus",
-     "valid_primary": ["PWR-C6-600WAC"],
-     "default_primary": "PWR-C6-600WAC",
-     "poe_budget_matrix": [
-      { "primary": "PWR-C6-600WAC", "secondary": null, "poe_budget_watts": 370 },
-      { "primary": "PWR-C6-600WAC", "secondary": "PWR-C6-600WAC", "poe_budget_watts": 740 }
+     "valid_primary": [
+      "PWR-C6-1KWAC"
      ],
-     "matrix_provenance": "Datasheet Table 4, C9200-24PXG row (AC only)."
+     "default_primary": "PWR-C6-1KWAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C6-1KWAC",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C6-1KWAC",
+       "secondary": "PWR-C6-1KWAC",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200-48PXG row (AC only; DC option omitted per series policy)."
     },
     "license": {
-     "group": "c9200-dna-advantage-24",
-     "regime_offered": ["dna-term"],
-     "tier_locked": "advantage",
-     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription."
+     "group": "c9200-dna-essentials-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
     }
    },
    "included_by_default_non_selectable": {
-    "_comment": "Ships with the switch; not user-configurable.",
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
     "fan_module": "FAN-T2",
     "mounting_brackets": true,
-    "power_cables": { "count": 1, "note": "One PSU by default; second optional for redundancy / higher PoE budget." }
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200-48PXG-A",
+   "description": "Cisco Catalyst C9200, 48-port full PoE+ (8x mGig up to 10G + 40x 1G) copper, modular uplinks, Network Advantage. StackWise-160, no StackPower, 1440W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": true,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-160",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 40,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200-48PXG' access ports (uplinks from the fitted network module, uplink_modular=true). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200-48PXG row: PWR-C6-1KWAC single = 740W, with additional secondary PWR-C6-1KWAC = 1440W. Max = 1440. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200 = StackWise-160, C9200-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-1KWAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 400,
+    "switching_capacity_stacked_gbps": 580,
+    "forwarding_rate_mpps": 297.61,
+    "forwarding_rate_stacked_mpps": 431,
+    "mac_address_scale": 32000,
+    "buffer_mb": 12,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 4,
+    "mtbf_hours": 320440,
+    "weight_kg": 5.45,
+    "port_layout": "8x mGig (1/2.5/5/10G) + 40x 1G, PoE+",
+    "default_ac_power_supply": "PWR-C6-1KWAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Modular uplinks (no inline uplink ports).",
+    "network_modules": {
+     "group": "c9200-pxg-uplink-modules"
+    },
+    "stack_cables": {
+     "group": "c9200-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200-psus",
+     "valid_primary": [
+      "PWR-C6-1KWAC"
+     ],
+     "default_primary": "PWR-C6-1KWAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C6-1KWAC",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C6-1KWAC",
+       "secondary": "PWR-C6-1KWAC",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200-48PXG row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200-dna-advantage-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable.",
+    "fan_module": "FAN-T2",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
    }
   },
   {
    "id": "C9200L-24T-4G-E",
-   "description": "Cisco Catalyst 9200L, 24-port 1G data (no PoE) copper, 4x 1G SFP fixed uplinks, Network Essentials. StackWise-80, no StackPower.",
+   "description": "Cisco Catalyst C9200L, 24-port 1G data copper, 4x 1G SFP fixed uplinks, Network Essentials. StackWise-80, no StackPower.",
    "axis_values": {
     "_comment": "Registry-axis values this switch supplies to the solver.",
     "series": "C9200L",
@@ -631,19 +2122,37 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
-    "license_regime": ["dna-term"],
-    "license_tier": ["essentials"]
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
    },
    "ports": [
-    { "count": 24, "role": "access", "medium": "copper", "speeds": ["1g"] },
-    { "count": 4, "role": "uplink", "medium": "fiber", "speeds": ["1g"] }
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
    ],
    "axis_value_provenance": {
-    "_comment": "How resolved values were derived (for re-validation). Fixed-uplink model: uplink ports carried inline.",
-    "ports": "Datasheet Table 2 'C9200L-24T-4G: 24 ports data, 4x 1G fixed uplinks'. Access 24x copper 1G; inline uplink 4x 1G SFP fiber (uplink_modular=false).",
-    "poe_*": "Datasheet Table 2 no PoE; no Table 4 row. poe_capable=false.",
-    "stacking": "Datasheet Table 5: C9200L (fixed) SKUs = StackWise-80, C9200L-STACK-KIT. No StackPower.",
-    "default_primary": "Datasheet Table 2 default primary = PWR-C5-125WAC."
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-24T-4G' access ports; inline uplink 4x 1G SFP (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "Datasheet Table 2 shows no PoE and C9200L-24T-4G has no Table 4 row. poe_capable=false, poe_type='none', poe_budget_watts omitted.",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
    },
    "attributes": {
     "_comment": "Displayed, never filtered.",
@@ -665,32 +2174,550 @@
     "default_ac_power_supply": "PWR-C5-125WAC"
    },
    "configurables": {
-    "_comment": "Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
-    "stack_cables": { "group": "c9200l-stack-cables" },
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
     "power_supplies": {
      "group": "c9200l-psus",
-     "valid_primary": ["PWR-C5-125WAC"],
+     "valid_primary": [
+      "PWR-C5-125WAC"
+     ],
      "default_primary": "PWR-C5-125WAC",
      "poe_budget_matrix": [],
-     "matrix_provenance": "Datasheet Table 2: default PWR-C5-125WAC, no PoE (data model). Empty matrix; second PSU still orderable for redundancy."
+     "matrix_provenance": "Datasheet Table 2: default PWR-C5-125WAC, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
     },
     "license": {
      "group": "c9200l-dna-essentials-24",
-     "regime_offered": ["dna-term"],
+     "regime_offered": [
+      "dna-term"
+     ],
      "tier_locked": "essentials",
-     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription."
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
     }
    },
    "included_by_default_non_selectable": {
     "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
     "fans": "Fixed dual redundant (not FRU)",
     "mounting_brackets": true,
-    "power_cables": { "count": 1, "note": "One PSU by default; second optional for redundancy." }
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
    }
   },
   {
-   "id": "C9200L-48P-4X-A",
-   "description": "Cisco Catalyst 9200L, 48-port full PoE+ copper 1G, 4x 1/10G SFP+ fixed uplinks, Network Advantage. StackWise-80, 1440W PoE budget, ENERGY STAR certified.",
+   "id": "C9200L-24T-4G-A",
+   "description": "Cisco Catalyst C9200L, 24-port 1G data copper, 4x 1G SFP fixed uplinks, Network Advantage. StackWise-80, no StackPower.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-24T-4G' access ports; inline uplink 4x 1G SFP (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "Datasheet Table 2 shows no PoE and C9200L-24T-4G has no Table 4 row. poe_capable=false, poe_type='none', poe_budget_watts omitted.",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 56,
+    "switching_capacity_stacked_gbps": 136,
+    "forwarding_rate_mpps": 41.67,
+    "forwarding_rate_stacked_mpps": 101,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 531030,
+    "weight_kg": 4.35,
+    "port_layout": "24x 1G data",
+    "fixed_uplinks": "4x 1G SFP",
+    "default_ac_power_supply": "PWR-C5-125WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-125WAC"
+     ],
+     "default_primary": "PWR-C5-125WAC",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Datasheet Table 2: default PWR-C5-125WAC, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
+    },
+    "license": {
+     "group": "c9200l-dna-advantage-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24P-4G-E",
+   "description": "Cisco Catalyst C9200L, 24-port 1G full PoE+ copper, 4x 1G SFP fixed uplinks, Network Essentials. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-24P-4G' access ports; inline uplink 4x 1G SFP (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-24P-4G row: PWR-C5-600WAC single = 370W, with additional secondary PWR-C5-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 56,
+    "switching_capacity_stacked_gbps": 136,
+    "forwarding_rate_mpps": 41.67,
+    "forwarding_rate_stacked_mpps": 101,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 392210,
+    "weight_kg": 4.71,
+    "port_layout": "24x 1G PoE+",
+    "fixed_uplinks": "4x 1G SFP",
+    "default_ac_power_supply": "PWR-C5-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC"
+     ],
+     "default_primary": "PWR-C5-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": "PWR-C5-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-24P-4G row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-essentials-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24P-4G-A",
+   "description": "Cisco Catalyst C9200L, 24-port 1G full PoE+ copper, 4x 1G SFP fixed uplinks, Network Advantage. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-24P-4G' access ports; inline uplink 4x 1G SFP (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-24P-4G row: PWR-C5-600WAC single = 370W, with additional secondary PWR-C5-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 56,
+    "switching_capacity_stacked_gbps": 136,
+    "forwarding_rate_mpps": 41.67,
+    "forwarding_rate_stacked_mpps": 101,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 392210,
+    "weight_kg": 4.71,
+    "port_layout": "24x 1G PoE+",
+    "fixed_uplinks": "4x 1G SFP",
+    "default_ac_power_supply": "PWR-C5-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC"
+     ],
+     "default_primary": "PWR-C5-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": "PWR-C5-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-24P-4G row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-advantage-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48T-4G-E",
+   "description": "Cisco Catalyst C9200L, 48-port 1G data copper, 4x 1G SFP fixed uplinks, Network Essentials. StackWise-80, no StackPower.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48T-4G' access ports; inline uplink 4x 1G SFP (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "Datasheet Table 2 shows no PoE and C9200L-48T-4G has no Table 4 row. poe_capable=false, poe_type='none', poe_budget_watts omitted.",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 104,
+    "switching_capacity_stacked_gbps": 184,
+    "forwarding_rate_mpps": 77.38,
+    "forwarding_rate_stacked_mpps": 137,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 508700,
+    "weight_kg": 4.53,
+    "port_layout": "48x 1G data",
+    "fixed_uplinks": "4x 1G SFP",
+    "default_ac_power_supply": "PWR-C5-125WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-125WAC"
+     ],
+     "default_primary": "PWR-C5-125WAC",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Datasheet Table 2: default PWR-C5-125WAC, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
+    },
+    "license": {
+     "group": "c9200l-dna-essentials-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48T-4G-A",
+   "description": "Cisco Catalyst C9200L, 48-port 1G data copper, 4x 1G SFP fixed uplinks, Network Advantage. StackWise-80, no StackPower.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48T-4G' access ports; inline uplink 4x 1G SFP (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "Datasheet Table 2 shows no PoE and C9200L-48T-4G has no Table 4 row. poe_capable=false, poe_type='none', poe_budget_watts omitted.",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 104,
+    "switching_capacity_stacked_gbps": 184,
+    "forwarding_rate_mpps": 77.38,
+    "forwarding_rate_stacked_mpps": 137,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 508700,
+    "weight_kg": 4.53,
+    "port_layout": "48x 1G data",
+    "fixed_uplinks": "4x 1G SFP",
+    "default_ac_power_supply": "PWR-C5-125WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-125WAC"
+     ],
+     "default_primary": "PWR-C5-125WAC",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Datasheet Table 2: default PWR-C5-125WAC, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
+    },
+    "license": {
+     "group": "c9200l-dna-advantage-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48P-4G-E",
+   "description": "Cisco Catalyst C9200L, 48-port 1G full PoE+ copper, 4x 1G SFP fixed uplinks, Network Essentials. StackWise-80, no StackPower, 1440W PoE budget.",
    "axis_values": {
     "_comment": "Registry-axis values this switch supplies to the solver.",
     "series": "C9200L",
@@ -702,19 +2729,1086 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
-    "license_regime": ["dna-term"],
-    "license_tier": ["advantage"]
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
    },
    "ports": [
-    { "count": 48, "role": "access", "medium": "copper", "speeds": ["1g"] },
-    { "count": 4, "role": "uplink", "medium": "fiber", "speeds": ["1g", "10g"] }
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
    ],
    "axis_value_provenance": {
-    "_comment": "How resolved values were derived (for re-validation). Fixed-uplink model.",
-    "ports": "Datasheet Table 2 'C9200L-48P-4X: 48 ports full PoE+, 4x 1/10G fixed uplinks'. Access 48x copper 1G; inline uplink 4x 1/10G SFP+ fiber.",
-    "poe_budget_watts": "Datasheet Table 4: PWR-C5-1KWAC single = 740W, additional secondary = 1440W. Max = 1440. poe_type=poe+.",
-    "stacking": "Datasheet Table 5: StackWise-80.",
-    "default_primary": "Datasheet Table 2 default primary = PWR-C5-1KWAC.",
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48P-4G' access ports; inline uplink 4x 1G SFP (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-48P-4G row: PWR-C5-1KWAC single = 740W, with additional secondary PWR-C5-1KWAC = 1440W. Max = 1440. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-1KWAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 104,
+    "switching_capacity_stacked_gbps": 184,
+    "forwarding_rate_mpps": 77.38,
+    "forwarding_rate_stacked_mpps": 137,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 347760,
+    "weight_kg": 4.8,
+    "port_layout": "48x 1G PoE+",
+    "fixed_uplinks": "4x 1G SFP",
+    "default_ac_power_supply": "PWR-C5-1KWAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-1KWAC"
+     ],
+     "default_primary": "PWR-C5-1KWAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": "PWR-C5-1KWAC",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-48P-4G row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-essentials-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48P-4G-A",
+   "description": "Cisco Catalyst C9200L, 48-port 1G full PoE+ copper, 4x 1G SFP fixed uplinks, Network Advantage. StackWise-80, no StackPower, 1440W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48P-4G' access ports; inline uplink 4x 1G SFP (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-48P-4G row: PWR-C5-1KWAC single = 740W, with additional secondary PWR-C5-1KWAC = 1440W. Max = 1440. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-1KWAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 104,
+    "switching_capacity_stacked_gbps": 184,
+    "forwarding_rate_mpps": 77.38,
+    "forwarding_rate_stacked_mpps": 137,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 347760,
+    "weight_kg": 4.8,
+    "port_layout": "48x 1G PoE+",
+    "fixed_uplinks": "4x 1G SFP",
+    "default_ac_power_supply": "PWR-C5-1KWAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-1KWAC"
+     ],
+     "default_primary": "PWR-C5-1KWAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": "PWR-C5-1KWAC",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-48P-4G row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-advantage-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48PL-4G-E",
+   "description": "Cisco Catalyst C9200L, 48-port 1G partial PoE+ copper, 4x 1G SFP fixed uplinks, Network Essentials. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48PL-4G' access ports; inline uplink 4x 1G SFP (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-48PL-4G row: PWR-C5-600WAC single = 370W, with additional secondary PWR-C5-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W). 'Partial PoE+': all access ports are PoE+ capable but the aggregate budget is limited (below full-load 30W on every port).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 104,
+    "switching_capacity_stacked_gbps": 184,
+    "forwarding_rate_mpps": 77.38,
+    "forwarding_rate_stacked_mpps": 137,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 347760,
+    "weight_kg": 4.8,
+    "port_layout": "48x 1G partial PoE+",
+    "fixed_uplinks": "4x 1G SFP",
+    "default_ac_power_supply": "PWR-C5-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC"
+     ],
+     "default_primary": "PWR-C5-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": "PWR-C5-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-48PL-4G row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-essentials-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48PL-4G-A",
+   "description": "Cisco Catalyst C9200L, 48-port 1G partial PoE+ copper, 4x 1G SFP fixed uplinks, Network Advantage. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48PL-4G' access ports; inline uplink 4x 1G SFP (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-48PL-4G row: PWR-C5-600WAC single = 370W, with additional secondary PWR-C5-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W). 'Partial PoE+': all access ports are PoE+ capable but the aggregate budget is limited (below full-load 30W on every port).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 104,
+    "switching_capacity_stacked_gbps": 184,
+    "forwarding_rate_mpps": 77.38,
+    "forwarding_rate_stacked_mpps": 137,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 347760,
+    "weight_kg": 4.8,
+    "port_layout": "48x 1G partial PoE+",
+    "fixed_uplinks": "4x 1G SFP",
+    "default_ac_power_supply": "PWR-C5-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC"
+     ],
+     "default_primary": "PWR-C5-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": "PWR-C5-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-48PL-4G row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-advantage-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24T-4X-E",
+   "description": "Cisco Catalyst C9200L, 24-port 1G data copper, 4x 1/10G SFP+ fixed uplinks, Network Essentials. StackWise-80, no StackPower.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-24T-4X' access ports; inline uplink 4x 1/10G SFP+ (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "Datasheet Table 2 shows no PoE and C9200L-24T-4X has no Table 4 row. poe_capable=false, poe_type='none', poe_budget_watts omitted.",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 128,
+    "switching_capacity_stacked_gbps": 208,
+    "forwarding_rate_mpps": 95.23,
+    "forwarding_rate_stacked_mpps": 155,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 525990,
+    "weight_kg": 4.35,
+    "port_layout": "24x 1G data",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-125WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-125WAC"
+     ],
+     "default_primary": "PWR-C5-125WAC",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Datasheet Table 2: default PWR-C5-125WAC, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
+    },
+    "license": {
+     "group": "c9200l-dna-essentials-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24T-4X-A",
+   "description": "Cisco Catalyst C9200L, 24-port 1G data copper, 4x 1/10G SFP+ fixed uplinks, Network Advantage. StackWise-80, no StackPower.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-24T-4X' access ports; inline uplink 4x 1/10G SFP+ (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "Datasheet Table 2 shows no PoE and C9200L-24T-4X has no Table 4 row. poe_capable=false, poe_type='none', poe_budget_watts omitted.",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 128,
+    "switching_capacity_stacked_gbps": 208,
+    "forwarding_rate_mpps": 95.23,
+    "forwarding_rate_stacked_mpps": 155,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 525990,
+    "weight_kg": 4.35,
+    "port_layout": "24x 1G data",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-125WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-125WAC"
+     ],
+     "default_primary": "PWR-C5-125WAC",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Datasheet Table 2: default PWR-C5-125WAC, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
+    },
+    "license": {
+     "group": "c9200l-dna-advantage-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24P-4X-E",
+   "description": "Cisco Catalyst C9200L, 24-port 1G full PoE+ copper, 4x 1/10G SFP+ fixed uplinks, Network Essentials. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-24P-4X' access ports; inline uplink 4x 1/10G SFP+ (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-24P-4X row: PWR-C5-600WAC single = 370W, with additional secondary PWR-C5-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 128,
+    "switching_capacity_stacked_gbps": 208,
+    "forwarding_rate_mpps": 95.23,
+    "forwarding_rate_stacked_mpps": 155,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 390310,
+    "weight_kg": 4.71,
+    "port_layout": "24x 1G PoE+",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC"
+     ],
+     "default_primary": "PWR-C5-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": "PWR-C5-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-24P-4X row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-essentials-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24P-4X-A",
+   "description": "Cisco Catalyst C9200L, 24-port 1G full PoE+ copper, 4x 1/10G SFP+ fixed uplinks, Network Advantage. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-24P-4X' access ports; inline uplink 4x 1/10G SFP+ (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-24P-4X row: PWR-C5-600WAC single = 370W, with additional secondary PWR-C5-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 128,
+    "switching_capacity_stacked_gbps": 208,
+    "forwarding_rate_mpps": 95.23,
+    "forwarding_rate_stacked_mpps": 155,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 390310,
+    "weight_kg": 4.71,
+    "port_layout": "24x 1G PoE+",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC"
+     ],
+     "default_primary": "PWR-C5-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": "PWR-C5-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-24P-4X row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-advantage-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48T-4X-E",
+   "description": "Cisco Catalyst C9200L, 48-port 1G data copper, 4x 1/10G SFP+ fixed uplinks, Network Essentials. StackWise-80, no StackPower.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48T-4X' access ports; inline uplink 4x 1/10G SFP+ (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "Datasheet Table 2 shows no PoE and C9200L-48T-4X has no Table 4 row. poe_capable=false, poe_type='none', poe_budget_watts omitted.",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 176,
+    "switching_capacity_stacked_gbps": 256,
+    "forwarding_rate_mpps": 130.95,
+    "forwarding_rate_stacked_mpps": 190,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 503400,
+    "weight_kg": 4.53,
+    "port_layout": "48x 1G data",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-125WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-125WAC"
+     ],
+     "default_primary": "PWR-C5-125WAC",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Datasheet Table 2: default PWR-C5-125WAC, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
+    },
+    "license": {
+     "group": "c9200l-dna-essentials-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48T-4X-A",
+   "description": "Cisco Catalyst C9200L, 48-port 1G data copper, 4x 1/10G SFP+ fixed uplinks, Network Advantage. StackWise-80, no StackPower.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48T-4X' access ports; inline uplink 4x 1/10G SFP+ (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "Datasheet Table 2 shows no PoE and C9200L-48T-4X has no Table 4 row. poe_capable=false, poe_type='none', poe_budget_watts omitted.",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 176,
+    "switching_capacity_stacked_gbps": 256,
+    "forwarding_rate_mpps": 130.95,
+    "forwarding_rate_stacked_mpps": 190,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 503400,
+    "weight_kg": 4.53,
+    "port_layout": "48x 1G data",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-125WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-125WAC"
+     ],
+     "default_primary": "PWR-C5-125WAC",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Datasheet Table 2: default PWR-C5-125WAC, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
+    },
+    "license": {
+     "group": "c9200l-dna-advantage-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48P-4X-E",
+   "description": "Cisco Catalyst C9200L, 48-port 1G full PoE+ copper, 4x 1/10G SFP+ fixed uplinks, Network Essentials. StackWise-80, no StackPower, 1440W PoE budget, ENERGY STAR certified.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48P-4X' access ports; inline uplink 4x 1/10G SFP+ (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-48P-4X row: PWR-C5-1KWAC single = 740W, with additional secondary PWR-C5-1KWAC = 1440W. Max = 1440. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-1KWAC.",
     "energy_star": "Datasheet Table 2 marks C9200L-48P-4X ENERGY STAR certified."
    },
    "attributes": {
@@ -731,42 +3825,391 @@
     "stack_members_max": 8,
     "virtual_networks": 1,
     "mtbf_hours": 346270,
-    "weight_kg": 4.80,
+    "weight_kg": 4.8,
     "energy_star_certified": true,
     "port_layout": "48x 1G PoE+",
     "fixed_uplinks": "4x 1/10G SFP+",
     "default_ac_power_supply": "PWR-C5-1KWAC"
    },
    "configurables": {
-    "_comment": "Fixed-uplink: no network_modules group.",
-    "stack_cables": { "group": "c9200l-stack-cables" },
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
     "power_supplies": {
      "group": "c9200l-psus",
-     "valid_primary": ["PWR-C5-1KWAC"],
+     "valid_primary": [
+      "PWR-C5-1KWAC"
+     ],
      "default_primary": "PWR-C5-1KWAC",
      "poe_budget_matrix": [
-      { "primary": "PWR-C5-1KWAC", "secondary": null, "poe_budget_watts": 740 },
-      { "primary": "PWR-C5-1KWAC", "secondary": "PWR-C5-1KWAC", "poe_budget_watts": 1440 }
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": "PWR-C5-1KWAC",
+       "poe_budget_watts": 1440
+      }
      ],
-     "matrix_provenance": "Datasheet Table 4, C9200L-48P-4X row (AC only)."
+     "matrix_provenance": "Datasheet Table 4, C9200L-48P-4X row (AC only; DC option omitted per series policy)."
     },
     "license": {
-     "group": "c9200l-dna-advantage-48",
-     "regime_offered": ["dna-term"],
-     "tier_locked": "advantage",
-     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription."
+     "group": "c9200l-dna-essentials-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
     }
    },
    "included_by_default_non_selectable": {
-    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed.",
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
     "fans": "Fixed dual redundant (not FRU)",
     "mounting_brackets": true,
-    "power_cables": { "count": 1, "note": "One PSU by default; a second PWR-C5-1KWAC is added for redundancy or to reach 1440W PoE." }
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
    }
   },
   {
-   "id": "C9200L-24PXG-2Y-E",
-   "description": "Cisco Catalyst 9200L, 24-port full PoE+ (8x mGig up to 10G + 16x 1G) copper, 2x 1/10/25G SFP28 fixed uplinks, Network Essentials. StackWise-80, 740W PoE budget.",
+   "id": "C9200L-48P-4X-A",
+   "description": "Cisco Catalyst C9200L, 48-port 1G full PoE+ copper, 4x 1/10G SFP+ fixed uplinks, Network Advantage. StackWise-80, no StackPower, 1440W PoE budget, ENERGY STAR certified.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48P-4X' access ports; inline uplink 4x 1/10G SFP+ (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-48P-4X row: PWR-C5-1KWAC single = 740W, with additional secondary PWR-C5-1KWAC = 1440W. Max = 1440. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-1KWAC.",
+    "energy_star": "Datasheet Table 2 marks C9200L-48P-4X ENERGY STAR certified."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 176,
+    "switching_capacity_stacked_gbps": 256,
+    "forwarding_rate_mpps": 130.95,
+    "forwarding_rate_stacked_mpps": 190,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 346270,
+    "weight_kg": 4.8,
+    "energy_star_certified": true,
+    "port_layout": "48x 1G PoE+",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-1KWAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-1KWAC"
+     ],
+     "default_primary": "PWR-C5-1KWAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": "PWR-C5-1KWAC",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-48P-4X row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-advantage-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48PL-4X-E",
+   "description": "Cisco Catalyst C9200L, 48-port 1G partial PoE+ copper, 4x 1/10G SFP+ fixed uplinks, Network Essentials. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48PL-4X' access ports; inline uplink 4x 1/10G SFP+ (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-48PL-4X row: PWR-C5-600WAC single = 370W, with additional secondary PWR-C5-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W). 'Partial PoE+': all access ports are PoE+ capable but the aggregate budget is limited (below full-load 30W on every port).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 176,
+    "switching_capacity_stacked_gbps": 256,
+    "forwarding_rate_mpps": 130.95,
+    "forwarding_rate_stacked_mpps": 190,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 346270,
+    "weight_kg": 4.8,
+    "port_layout": "48x 1G partial PoE+",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC"
+     ],
+     "default_primary": "PWR-C5-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": "PWR-C5-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-48PL-4X row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-essentials-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48PL-4X-A",
+   "description": "Cisco Catalyst C9200L, 48-port 1G partial PoE+ copper, 4x 1/10G SFP+ fixed uplinks, Network Advantage. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48PL-4X' access ports; inline uplink 4x 1/10G SFP+ (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-48PL-4X row: PWR-C5-600WAC single = 370W, with additional secondary PWR-C5-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W). 'Partial PoE+': all access ports are PoE+ capable but the aggregate budget is limited (below full-load 30W on every port).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 176,
+    "switching_capacity_stacked_gbps": 256,
+    "forwarding_rate_mpps": 130.95,
+    "forwarding_rate_stacked_mpps": 190,
+    "mac_address_scale": 16000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 346270,
+    "weight_kg": 4.8,
+    "port_layout": "48x 1G partial PoE+",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC"
+     ],
+     "default_primary": "PWR-C5-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": "PWR-C5-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-48PL-4X row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-advantage-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24PXG-4X-E",
+   "description": "Cisco Catalyst C9200L, 24-port full PoE+ (8x mGig up to 10G + 16x 1G) copper, 4x 1/10G SFP+ fixed uplinks, Network Essentials. StackWise-80, no StackPower, 740W PoE budget.",
    "axis_values": {
     "_comment": "Registry-axis values this switch supplies to the solver.",
     "series": "C9200L",
@@ -778,20 +4221,534 @@
     "stacking_capable": true,
     "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
-    "license_regime": ["dna-term"],
-    "license_tier": ["essentials"]
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
    },
    "ports": [
-    { "count": 8, "role": "access", "medium": "copper", "speeds": ["1g", "2.5g", "5g", "10g"] },
-    { "count": 16, "role": "access", "medium": "copper", "speeds": ["1g"] },
-    { "count": 2, "role": "uplink", "medium": "fiber", "speeds": ["1g", "10g", "25g"] }
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 16,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
    ],
    "axis_value_provenance": {
-    "_comment": "How resolved values were derived (for re-validation). Fixed-uplink mGig model with 25G uplinks.",
-    "ports": "Datasheet Table 2 'C9200L-24PXG-2Y: 24 ports full PoE+ (8 mGig up to 10G, 16 ports up to 1G), 2x 1/10/25G fixed uplinks'. Access 8x mGig (1/2.5/5/10G) + 16x 1G = 24; inline uplink 2x 1/10/25G SFP28 fiber.",
-    "poe_budget_watts": "Datasheet Table 4: PWR-C5-600WAC single = 370W, additional secondary = 740W. Max = 740. poe_type=poe+.",
-    "stacking": "Datasheet Table 5: StackWise-80.",
-    "default_primary": "Datasheet Table 2 default primary = PWR-C5-600WAC."
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-24PXG-4X' access ports; inline uplink 4x 1/10G SFP+ (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-24PXG-4X row: PWR-C5-600WAC single = 370W, with additional secondary PWR-C5-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 272,
+    "switching_capacity_stacked_gbps": 352,
+    "forwarding_rate_mpps": 214.28,
+    "forwarding_rate_stacked_mpps": 262,
+    "mac_address_scale": 16000,
+    "buffer_mb": 12,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 379410,
+    "weight_kg": 5.44,
+    "port_layout": "8x mGig (1/2.5/5/10G) + 16x 1G, PoE+",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC"
+     ],
+     "default_primary": "PWR-C5-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": "PWR-C5-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-24PXG-4X row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-essentials-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24PXG-4X-A",
+   "description": "Cisco Catalyst C9200L, 24-port full PoE+ (8x mGig up to 10G + 16x 1G) copper, 4x 1/10G SFP+ fixed uplinks, Network Advantage. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 16,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-24PXG-4X' access ports; inline uplink 4x 1/10G SFP+ (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-24PXG-4X row: PWR-C5-600WAC single = 370W, with additional secondary PWR-C5-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 272,
+    "switching_capacity_stacked_gbps": 352,
+    "forwarding_rate_mpps": 214.28,
+    "forwarding_rate_stacked_mpps": 262,
+    "mac_address_scale": 16000,
+    "buffer_mb": 12,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 379410,
+    "weight_kg": 5.44,
+    "port_layout": "8x mGig (1/2.5/5/10G) + 16x 1G, PoE+",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC"
+     ],
+     "default_primary": "PWR-C5-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": "PWR-C5-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-24PXG-4X row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-advantage-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48PXG-4X-E",
+   "description": "Cisco Catalyst C9200L, 48-port full PoE+ (12x mGig up to 10G + 36x 1G) copper, 4x 1/10G SFP+ fixed uplinks, Network Essentials. StackWise-80, no StackPower, 1440W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 12,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 36,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48PXG-4X' access ports; inline uplink 4x 1/10G SFP+ (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-48PXG-4X row: PWR-C5-1KWAC single = 740W, with additional secondary PWR-C5-1KWAC = 1440W. Max = 1440. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-1KWAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 392,
+    "switching_capacity_stacked_gbps": 472,
+    "forwarding_rate_mpps": 291.66,
+    "forwarding_rate_stacked_mpps": 351,
+    "mac_address_scale": 16000,
+    "buffer_mb": 12,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 337360,
+    "weight_kg": 5.71,
+    "port_layout": "12x mGig (1/2.5/5/10G) + 36x 1G, PoE+",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-1KWAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-1KWAC"
+     ],
+     "default_primary": "PWR-C5-1KWAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": "PWR-C5-1KWAC",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-48PXG-4X row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-essentials-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48PXG-4X-A",
+   "description": "Cisco Catalyst C9200L, 48-port full PoE+ (12x mGig up to 10G + 36x 1G) copper, 4x 1/10G SFP+ fixed uplinks, Network Advantage. StackWise-80, no StackPower, 1440W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 12,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 36,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48PXG-4X' access ports; inline uplink 4x 1/10G SFP+ (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-48PXG-4X row: PWR-C5-1KWAC single = 740W, with additional secondary PWR-C5-1KWAC = 1440W. Max = 1440. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-1KWAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 392,
+    "switching_capacity_stacked_gbps": 472,
+    "forwarding_rate_mpps": 291.66,
+    "forwarding_rate_stacked_mpps": 351,
+    "mac_address_scale": 16000,
+    "buffer_mb": 12,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 337360,
+    "weight_kg": 5.71,
+    "port_layout": "12x mGig (1/2.5/5/10G) + 36x 1G, PoE+",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-1KWAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-1KWAC"
+     ],
+     "default_primary": "PWR-C5-1KWAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": "PWR-C5-1KWAC",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-48PXG-4X row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-advantage-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24PXG-2Y-E",
+   "description": "Cisco Catalyst C9200L, 24-port full PoE+ (8x mGig up to 10G + 16x 1G) copper, 2x 1/10/25G SFP28 fixed uplinks, Network Essentials. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 16,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g",
+      "25g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-24PXG-2Y' access ports; inline uplink 2x 1/10/25G SFP28 (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-24PXG-2Y row: PWR-C5-600WAC single = 370W, with additional secondary PWR-C5-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
    },
    "attributes": {
     "_comment": "Displayed, never filtered.",
@@ -813,30 +4770,413 @@
     "default_ac_power_supply": "PWR-C5-600WAC"
    },
    "configurables": {
-    "_comment": "Fixed-uplink: no network_modules group.",
-    "stack_cables": { "group": "c9200l-stack-cables" },
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
     "power_supplies": {
      "group": "c9200l-psus",
-     "valid_primary": ["PWR-C5-600WAC"],
+     "valid_primary": [
+      "PWR-C5-600WAC"
+     ],
      "default_primary": "PWR-C5-600WAC",
      "poe_budget_matrix": [
-      { "primary": "PWR-C5-600WAC", "secondary": null, "poe_budget_watts": 370 },
-      { "primary": "PWR-C5-600WAC", "secondary": "PWR-C5-600WAC", "poe_budget_watts": 740 }
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": "PWR-C5-600WAC",
+       "poe_budget_watts": 740
+      }
      ],
-     "matrix_provenance": "Datasheet Table 4, C9200L-24PXG-2Y row (AC only)."
+     "matrix_provenance": "Datasheet Table 4, C9200L-24PXG-2Y row (AC only; DC option omitted per series policy)."
     },
     "license": {
      "group": "c9200l-dna-essentials-24",
-     "regime_offered": ["dna-term"],
+     "regime_offered": [
+      "dna-term"
+     ],
      "tier_locked": "essentials",
-     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription."
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
     }
    },
    "included_by_default_non_selectable": {
-    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed.",
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
     "fans": "Fixed dual redundant (not FRU)",
     "mounting_brackets": true,
-    "power_cables": { "count": 1, "note": "One PSU by default; second optional for redundancy / higher PoE budget." }
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24PXG-2Y-A",
+   "description": "Cisco Catalyst C9200L, 24-port full PoE+ (8x mGig up to 10G + 16x 1G) copper, 2x 1/10/25G SFP28 fixed uplinks, Network Advantage. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 16,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g",
+      "25g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-24PXG-2Y' access ports; inline uplink 2x 1/10/25G SFP28 (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-24PXG-2Y row: PWR-C5-600WAC single = 370W, with additional secondary PWR-C5-600WAC = 740W. Max = 740. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 292,
+    "switching_capacity_stacked_gbps": 372,
+    "forwarding_rate_mpps": 229.16,
+    "forwarding_rate_stacked_mpps": 277,
+    "mac_address_scale": 16000,
+    "buffer_mb": 12,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 374730,
+    "weight_kg": 5.44,
+    "port_layout": "8x mGig (1/2.5/5/10G) + 16x 1G, PoE+",
+    "fixed_uplinks": "2x 1/10/25G SFP28",
+    "default_ac_power_supply": "PWR-C5-600WAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC"
+     ],
+     "default_primary": "PWR-C5-600WAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC",
+       "secondary": "PWR-C5-600WAC",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-24PXG-2Y row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-advantage-24",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48PXG-2Y-E",
+   "description": "Cisco Catalyst C9200L, 48-port full PoE+ (8x mGig up to 10G + 40x 1G) copper, 2x 1/10/25G SFP28 fixed uplinks, Network Essentials. StackWise-80, no StackPower, 1440W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "essentials"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 40,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g",
+      "25g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48PXG-2Y' access ports; inline uplink 2x 1/10/25G SFP28 (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-48PXG-2Y row: PWR-C5-1KWAC single = 740W, with additional secondary PWR-C5-1KWAC = 1440W. Max = 1440. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-1KWAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 340,
+    "switching_capacity_stacked_gbps": 420,
+    "forwarding_rate_mpps": 252.97,
+    "forwarding_rate_stacked_mpps": 313,
+    "mac_address_scale": 16000,
+    "buffer_mb": 12,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 337260,
+    "weight_kg": 5.71,
+    "port_layout": "8x mGig (1/2.5/5/10G) + 40x 1G, PoE+",
+    "fixed_uplinks": "2x 1/10/25G SFP28",
+    "default_ac_power_supply": "PWR-C5-1KWAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-1KWAC"
+     ],
+     "default_primary": "PWR-C5-1KWAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": "PWR-C5-1KWAC",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-48PXG-2Y row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-essentials-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "essentials",
+     "tier_lock_reason": "-E suffix forces Network Essentials perpetual and an Essentials-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48PXG-2Y-A",
+   "description": "Cisco Catalyst C9200L, 48-port full PoE+ (8x mGig up to 10G + 40x 1G) copper, 2x 1/10/25G SFP28 fixed uplinks, Network Advantage. StackWise-80, no StackPower, 1440W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "dna-term"
+    ],
+    "license_tier": [
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 40,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g",
+      "25g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 'C9200L-48PXG-2Y' access ports; inline uplink 2x 1/10/25G SFP28 (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_budget_watts": "Datasheet Table 4, C9200L-48PXG-2Y row: PWR-C5-1KWAC single = 740W, with additional secondary PWR-C5-1KWAC = 1440W. Max = 1440. poe_type=poe+ (IEEE 802.3at, 30W).",
+    "stacking": "Datasheet Table 5: C9200L = StackWise-80, C9200L-STACK-KIT. No StackPower on the C9200 series.",
+    "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-1KWAC."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 340,
+    "switching_capacity_stacked_gbps": 420,
+    "forwarding_rate_mpps": 252.97,
+    "forwarding_rate_stacked_mpps": 313,
+    "mac_address_scale": 16000,
+    "buffer_mb": 12,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 2,
+    "flash_gb": 4,
+    "stack_members_max": 8,
+    "virtual_networks": 1,
+    "mtbf_hours": 337260,
+    "weight_kg": 5.71,
+    "port_layout": "8x mGig (1/2.5/5/10G) + 40x 1G, PoE+",
+    "fixed_uplinks": "2x 1/10/25G SFP28",
+    "default_ac_power_supply": "PWR-C5-1KWAC"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. Fixed-uplink: no network_modules group (uplinks inline in model.ports).",
+    "stack_cables": {
+     "group": "c9200l-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-psus",
+     "valid_primary": [
+      "PWR-C5-1KWAC"
+     ],
+     "default_primary": "PWR-C5-1KWAC",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C5-1KWAC",
+       "secondary": "PWR-C5-1KWAC",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "Datasheet Table 4, C9200L-48PXG-2Y row (AC only; DC option omitted per series policy)."
+    },
+    "license": {
+     "group": "c9200l-dna-advantage-48",
+     "regime_offered": [
+      "dna-term"
+     ],
+     "tier_locked": "advantage",
+     "tier_lock_reason": "-A suffix forces Network Advantage perpetual and an Advantage-tier DNA subscription (subscription tier must match network stack tier)."
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable. C9200L fans are fixed (not field-replaceable).",
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
    }
   }
  ]
