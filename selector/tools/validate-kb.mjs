@@ -5,8 +5,8 @@
 // historically referenced). It REUSES the solver's own loaders/index so it
 // validates the exact structures the engine consumes.
 //
-// Validates EVERY series target below against the shared registry and its own
-// per-series schema. Add a series by appending to TARGETS.
+// Validates EVERY series target against the shared registry and its own
+// per-series schema. Add a series by appending to ../../DB/switching/families.json.
 //
 // Run: `npm run validate`  (or `node selector/tools/validate-kb.mjs`)
 // Exit 0 = all checks pass; 1 = at least one violation.
@@ -19,20 +19,21 @@ import { getAxes, isCountAtLevelAxis, portModel } from "../js/core/registry.js";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SWITCHING = resolvePath(HERE, "../../DB/switching");
+const readJSON = (fullPath) => JSON.parse(readFileSync(fullPath, "utf8"));
 
-// Per-series validation targets. Each carries its own schema + KB; all share the
-// one registry. The KB may have an empty `models` (a series mid-build): the
-// catalog/group checks still run; the per-model checks simply find nothing.
-const TARGETS = [
-  { label: "C9300", dir: "C9300", schemaFile: "switch-kb.schema.json", kbFile: "c9300_knowledge_base.json" },
-  { label: "C9350", dir: "C9350", schemaFile: "switch-kb.schema.json", kbFile: "c9350_knowledge_base.json" },
-];
+// Per-series validation targets, derived from the shared family manifest
+// (also read by the UI loader) so a new series is registered in one place.
+// Each carries its own schema + KB; all share the one registry. The KB may
+// have an empty `models` (a series mid-build): the catalog/group checks
+// still run; the per-model checks simply find nothing.
+const families = readJSON(resolvePath(SWITCHING, "families.json"));
+const TARGETS = families.map(({ series, dir, kbFile }) =>
+  ({ label: series, dir, schemaFile: "switch-kb.schema.json", kbFile }));
 
 const violations = [];
 const warnings = [];
 const fail = (file, path, message) => violations.push({ file, path, message });
 const warn = (file, path, message) => warnings.push({ file, path, message });
-const readJSON = (fullPath) => JSON.parse(readFileSync(fullPath, "utf8"));
 
 // --- shared registry (one vocabulary for every series) ----------------------
 const registry = readJSON(resolvePath(SWITCHING, "switching-axes.json"));
