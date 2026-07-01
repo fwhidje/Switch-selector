@@ -37,6 +37,18 @@
       "legal_values": [1, 3, 5, 7, 10],
       "source": "license_group.term_variable.choices_years",
       "notes": "Subscription term length in years. Available choices vary per license group (some groups carry no term_variable). The pick resolves the concrete subscription SKU (matched on the '-<n>Y' suffix). Never eliminates a model."
+    },
+    "psu_triple": {
+      "type": "boolean",
+      "legal_values": [false, true],
+      "source": "configurator default policy",
+      "notes": "Off by default. When ON, forces a triple-PSU (primary+secondary+tertiary) configuration on models whose poe_budget_matrix has a tertiary-capable row; has no effect on models without one (e.g. two-bay chassis). Never eliminates a model."
+    },
+    "cable_length": {
+      "type": "enum",
+      "legal_values": ["none", "shortest", "longest"],
+      "source": "configurator default policy",
+      "notes": "Which stack-cable / StackPower-cable to default to in the kitlist. Unset: auto — 'none' (standalone) unless the matching stacking_capable/stackpower_capable requirement is set, in which case defaults to 'shortest'. Never eliminates a model."
     }
   },
 

@@ -122,7 +122,7 @@ export function resolveBOM(model, query, kb, validOptions) {
     uplinks: resolveUplinkBOM(model, validOptions),
     power: resolvePower(model, query, kb),
     license: resolveLicense(model, query, kb),
-    accessories: resolveAccessories(model, kb),
+    accessories: resolveAccessories(model, query, kb),
     included_by_default: stripComment(model.included_by_default_non_selectable),
   };
 }
@@ -146,6 +146,7 @@ function resolvePower(model, query, kb) {
   const group = getPowerSupplyGroup(kb, ps.group);
   const need = numericMin(query, "poe_budget_watts");
   const redundancy = configValue(query, "psu_redundancy") === true;
+  const triple = configValue(query, "psu_triple") === true;
   const matrix = ps.poe_budget_matrix ?? [];
   const rows = need == null ? matrix : matrix.filter((r) => r.poe_budget_watts >= need);
   const poe = matrix.length > 0;
@@ -156,23 +157,39 @@ function resolvePower(model, query, kb) {
     default_primary: ps.default_primary,
     secondary_none_option: group?.secondary_none_option,
     redundant_capable: poe ? matrix.some((r) => r.secondary != null) : true,
-    default_config: chooseDefaultPsu(ps, kb, need, redundancy),
+    default_config: chooseDefaultPsu(ps, kb, need, redundancy, triple),
     poe_budget_matrix: rows,
     meets_requested_budget: need == null ? null : rows.length > 0,
   };
 }
 
 // Resolve the default PSU config from default_primary.
+//   triple: force a tertiary-equipped row (primary+secondary+tertiary), regardless
+//     of the redundancy toggle — a third PSU is itself the strongest redundancy ask.
 //   redundancy OFF: ship a single PSU; to reach a higher PoE load ADD a secondary;
 //     upsize the primary only when no secondary covers it (min primary, then secondary).
 //   redundancy ON: a true backup must at least MATCH the primary, so default to a
 //     matched pair (secondary == primary); prefer keeping the default primary and the
-//     smallest matched pair that still meets the load.
-function chooseDefaultPsu(ps, kb, need, redundancy) {
+//     smallest matched pair that still meets the load. If that pair would NOT survive
+//     losing one PSU at the requested load (single-PSU capacity < need), and the KB
+//     sources a tertiary-equipped row for that same pair, upgrade to it (real N+1).
+function chooseDefaultPsu(ps, kb, need, redundancy, triple) {
   const dp = ps.default_primary;
   const matrix = ps.poe_budget_matrix ?? [];
   const w = (id) => (id == null ? 0 : getPowerSupply(kb, id)?.watts ?? 0);
   const meets = (r) => need == null || r.poe_budget_watts >= need;
+  const singleCapacity = (id) => matrix.find((m) => m.primary === id && m.secondary == null)?.poe_budget_watts ?? w(id);
+
+  if (triple) {
+    const cand = matrix.filter((r) => r.tertiary != null && meets(r));
+    if (!cand.length) return null;
+    cand.sort((a, b) =>
+      ((a.primary === dp ? 0 : 1) - (b.primary === dp ? 0 : 1)) ||
+      (w(a.primary) - w(b.primary)) || (w(a.secondary) - w(b.secondary)) || (w(a.tertiary) - w(b.tertiary)));
+    const r = cand[0];
+    return { primary: r.primary, secondary: r.secondary, tertiary: r.tertiary, watts: r.poe_budget_watts,
+             reason: "triple PSU required" };
+  }
 
   if (redundancy) {
     if (matrix.length === 0)
@@ -186,9 +203,19 @@ function chooseDefaultPsu(ps, kb, need, redundancy) {
       ((a.secondary === a.primary ? 0 : 1) - (b.secondary === b.primary ? 0 : 1)) ||
       ((a.primary === dp ? 0 : 1) - (b.primary === dp ? 0 : 1)) ||
       (w(a.primary) - w(b.primary)) || (w(a.secondary) - w(b.secondary)));
-    const r = cand[0];
-    return { primary: r.primary, secondary: r.secondary, tertiary: r.tertiary ?? null, watts: r.poe_budget_watts,
-             reason: r.secondary === r.primary ? "redundant matched pair" : "redundant pair (secondary ≥ primary)" };
+    const pair = cand[0];
+
+    const tolerant = need == null || singleCapacity(pair.primary) >= need;
+    if (!tolerant) {
+      const upgrade = matrix
+        .filter((r) => r.tertiary != null && r.primary === pair.primary && r.secondary === pair.secondary && meets(r))
+        .sort((a, b) => w(a.tertiary) - w(b.tertiary))[0];
+      if (upgrade)
+        return { primary: upgrade.primary, secondary: upgrade.secondary, tertiary: upgrade.tertiary, watts: upgrade.poe_budget_watts,
+                 reason: "upgraded to triple PSU — a matched pair alone would not survive a PSU failure at this load" };
+    }
+    return { primary: pair.primary, secondary: pair.secondary, tertiary: pair.tertiary ?? null, watts: pair.poe_budget_watts,
+             reason: pair.secondary === pair.primary ? "redundant matched pair" : "redundant pair (secondary ≥ primary)" };
   }
 
   if (matrix.length === 0)
@@ -271,27 +298,46 @@ function resolveLicense(model, query, kb) {
   };
 }
 
-function resolveAccessories(model, kb) {
+function resolveAccessories(model, query, kb) {
   const cfg = model.configurables ?? {};
   const out = {};
   const stack = getStackCableGroup(kb, cfg.stack_cables?.group);
-  if (stack) out.stack_cables = cableInfo(stack, kb._index.stack_cables);
+  if (stack) out.stack_cables = cableInfo(stack, kb._index.stack_cables, cableLengthPref(query, "stacking_capable"));
   const sp = getStackpowerCableGroup(kb, cfg.stackpower_cables?.group);
-  if (sp) out.stackpower_cables = cableInfo(sp, kb._index.stackpower_cables);
+  if (sp) out.stackpower_cables = cableInfo(sp, kb._index.stackpower_cables, cableLengthPref(query, "stackpower_capable"));
   if (cfg.ssd_accessory) out.ssd_accessory = cfg.ssd_accessory;
   return out;
 }
 
-// A standalone switch needs no cable: default to the group's none_option. If a
-// cable IS taken, the default length is the shortest available.
-function cableInfo(group, catIndex) {
+// The 'cable_length' config-variable picks a length directly (none/shortest/
+// longest); left unset, auto-default to 'shortest' once the matching capability
+// (stacking_capable/stackpower_capable) is a hard requirement, else 'none'.
+function cableLengthPref(query, capabilityAxis) {
+  const picked = configValue(query, "cable_length");
+  if (picked) return picked;
+  return hardBoolTrue(query, capabilityAxis) ? "shortest" : "none";
+}
+function hardBoolTrue(query, axis) {
+  return (query ?? []).some((c) => c.axis === axis && c.condition === "==" && c.value === true && (c.severity ?? "hard") === "hard");
+}
+
+// A standalone switch needs no cable: default to the group's none_option unless
+// `pref` picks 'shortest'/'longest' (explicitly, or auto-derived from a stacking/
+// stackpower requirement — see cableLengthPref).
+function cableInfo(group, catIndex, pref) {
   const withLen = (group.members ?? []).map((id) => ({ id, len: catIndex.get(id)?.length_cm ?? Infinity }))
     .sort((a, b) => a.len - b.len);
+  const shortest = withLen[0]?.id ?? null;
+  const longest = withLen[withLen.length - 1]?.id ?? null;
+  const chosen = pref === "shortest" ? (shortest ?? group.none_option)
+    : pref === "longest" ? (longest ?? group.none_option)
+    : group.none_option;
   return {
     group: group.id,
-    default: group.none_option,
+    default: chosen,
     none_option: group.none_option,
-    shortest: withLen[0]?.id ?? null,
+    shortest,
+    longest,
     members: group.members ?? [],
     stack_kit: group.stack_kit,
   };
