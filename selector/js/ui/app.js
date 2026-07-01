@@ -29,12 +29,12 @@ const GROUPS = [
   { id: "poe",       label: "PoE",
     axes: ["poe_capable", "poe_type", "poe_budget_watts"],
     poeDemand: true },
-  { id: "stacking",  label: "Stacking / StackPower / Redundant PSU",
+  { id: "stacking",  label: "Stacking / StackPower / PSU / Cabling",
     axes: ["stacking_capable", "stacking_technology", "stackpower_capable"],
-    configVar: "psu_redundancy" },
+    configVars: ["psu_redundancy", "psu_triple", "cable_length"] },
   { id: "licensing", label: "Licensing",
     axes: ["license_regime", "license_tier"],
-    configVar: "license_term" },
+    configVars: ["license_term"] },
 ];
 
 async function init() {
@@ -97,13 +97,17 @@ function buildControls() {
     }
     if (group.ports) body.appendChild(portsSection());
     if (group.poeDemand) body.appendChild(poeDemandSection());
-    if (group.configVar) {
-      const def = cvs[group.configVar];
-      if (def) {
-        const subHead = document.createElement("div");
-        subHead.className = "section-head";
-        subHead.textContent = "configuration";
-        body.appendChild(subHead);
+    if (group.configVars?.length) {
+      let subHead = null;
+      for (const cvName of group.configVars) {
+        const def = cvs[cvName];
+        if (!def) continue;
+        if (!subHead) {
+          subHead = document.createElement("div");
+          subHead.className = "section-head";
+          subHead.textContent = "configuration";
+          body.appendChild(subHead);
+        }
         let kind, opts;
         if (def.type === "boolean") {
           kind = "config-bool"; opts = [["", "any"], ["true", "required"]];
@@ -112,7 +116,7 @@ function buildControls() {
         } else {
           kind = "config-enum"; opts = [["", "any"], ...(def.legal_values ?? []).map((v) => [String(v), String(v)])];
         }
-        body.appendChild(row(group.configVar, def.notes, select(group.configVar, kind, opts)));
+        body.appendChild(row(cvName, def.notes, select(cvName, kind, opts)));
       }
     }
 
@@ -391,9 +395,12 @@ function renderCandidate(cand, isDefault) {
 
   const kit = document.createElement("ul");
   kit.className = "kit";
-  // uplinks
+  // uplinks — show the real orderable SKU (moduleId), mode as a separate label;
+  // r.uplinks.default is the internal `${moduleId}#${mode}` id used for option matching only.
+  const upOpt = r.uplinks.options.find((o) => o.id === r.uplinks.default);
+  const upLabel = upOpt?.moduleId ? `${upOpt.moduleId}${upOpt.mode ? ` (mode: ${upOpt.mode})` : ""}` : "(none)";
   const up = r.uplinks.modular
-    ? `uplink module: ${r.uplinks.default ?? "(none)"} default`
+    ? `uplink module: ${upLabel} default`
     : `fixed uplinks: ${summarisePorts(r.uplinks.options[0]?.ports)}`;
   kit.appendChild(li(up));
   // power — resolved default PSU (single by default; secondary added to meet load)
@@ -445,7 +452,7 @@ function buildCopyBOM(r) {
   const lines = [r.switch.id];
   if (r.uplinks.modular) {
     const opt = r.uplinks.options.find((o) => o.id === r.uplinks.default);
-    if (opt?.moduleId) lines.push(opt.id);
+    if (opt?.moduleId) lines.push(opt.moduleId);
   }
   const dc = r.power?.default_config;
   if (dc) {
