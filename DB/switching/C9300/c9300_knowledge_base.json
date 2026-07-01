@@ -1,7 +1,7 @@
 {
  "header": {
   "schema_version": "0.6.0",
-  "registry_version": "0.9.0",
+  "registry_version": "0.10.0",
   "axes_file": "../switching-axes.json",
   "schema_file": "switch-kb.schema.json",
   "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9300 family, spanning the C9300 (modular uplink), C9300LM, and C9300L (fixed uplink) sub-families. Structure: axis_registry (filterable vocabulary) + catalog (atomic SKU facts) + groups (named shared compatibility sets) + models (switch entries that supply axis values, reference groups, and on fixed-uplink models carry an inline uplink_capacity block in place of a module-group reference).",

@@ -1,0 +1,262 @@
+{
+ "header": {
+  "schema_version": "0.8.0",
+  "registry_version": "0.10.0",
+  "axes_file": "../switching-axes.json",
+  "schema_file": "switch-kb.schema.json",
+  "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9200 Series switches. Pass 1 of 2: this file carries the catalog (atomic SKU facts) and groups (named shared compatibility sets) — the reusable scaffolding. Switch models are added in Pass 2; until then 'models' is empty. Scope: C9200 (modular uplink) and C9200L (fixed uplink). The compact C9200CX sub-family is deferred to a later pass (fixed internal PSU / UPOE / HVDC do not fit the current PSU schema); Meraki (C9200L-M) is out of scope. Structure: catalog + groups + models.",
+  "sources": [
+   {
+    "name": "Cisco Catalyst 9200 Series Switches Data Sheet",
+    "url": "https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9200-series-switches/nb-06-cat9200-ser-data-sheet-cte-en.html",
+    "last_verified": "2026-07-01"
+   },
+   {
+    "name": "Cisco Catalyst 9200 Series Ordering Guide",
+    "url": "https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9200-series-switches/nb-06-cat9200-swit-ser-cte-en.html",
+    "last_verified": "2026-07-01"
+   }
+  ],
+  "design_notes": [
+   "Pass 1 of 2: catalog + groups only. 'models' is empty until Pass 2; the per-model validator checks (valid_primary subset, poe_budget_matrix max, access-port sum == total_port_count) therefore do not yet run. The standalone group-integrity and catalog port-speed checks DO run.",
+   "Scope: C9200 (modular uplink, FRU PSU + FRU fans, StackWise-160) and C9200L (fixed uplink, FRU PSU + fixed fans, StackWise-80). C9200CX (compact, fanless, fixed internal PSU, UPOE/UPOE+/HVDC) is deferred to its own pass. Meraki C9200L-M is out of scope.",
+   "Licensing: DNA-term regime only, tier locked by the -E/-A hardware suffix (Network Essentials/Advantage perpetual embedded + a mandatory-attach 3/5/7-yr DNA subscription). The newer 'Cisco Catalyst Software' (DNX) subscription printed in OG Tables 12-15 is intentionally dropped, mirroring the C9300 treatment.",
+   "Power supplies: AC only. The DC options (PWR-C5-715WDC / PWR-C6-715WDC, spare-only, PoE-models-only per datasheet Table 4) are intentionally omitted — never proposed in practice. With DC gone, each model's valid_primary is a single AC SKU (fixed by the model's port/PoE class per datasheet Table 2), and the poe_budget_matrix expresses single vs redundant (identical second PSU), not a wattage choice.",
+   "No StackPower on the C9200 series (data stacking only, StackWise-160 / StackWise-80). stackpower_cables and stackpower_cable_groups are intentionally empty.",
+   "Network-module compatibility (OG Table 3 footnotes): C9200-NM-2Y and C9200-NM-2Q are supported only on C9200-24PXG / C9200-48PXG; C9200-NM-4G is not supported on those PXG models. Hence two module groups (c9200-modular-uplink-modules vs c9200-pxg-uplink-modules). Fixed-uplink C9200L models carry their uplinks inline (Pass 2), so they reference no module group.",
+   "The *-NONE none-option values (C9200-SPS-NONE, C9200-STACK-NONE, etc.) are configurator constructs (CCW 'remove the category' selections), not catalog SKUs and not validated against the catalog — matching the C9300 convention. C9200-NM-BLANK is the real OG-sourced blank network module.",
+   "Series-specific groups (PSU, stack cables) are kept as their own named groups per project convention even where a SKU or cable resembles another sub-family: C9200 (Config-6 PWR-C6-*) and C9200L (Config-5 PWR-C5-*) do not share power supplies, and each uses its own stack kit (C9200-STACK-KIT vs C9200L-STACK-KIT)."
+  ]
+ },
+
+ "catalog": {
+  "_comment": "Atomic SKU facts. One row per real orderable component. What a thing IS, independent of which switch uses it.",
+
+  "network_modules": [
+   {
+    "id": "C9200-NM-2Y",
+    "description": "Cisco Catalyst 9200 2x 25GE (25G/10G/1G SFP28) network module",
+    "ports": [
+     { "count": 2, "role": "uplink", "medium": "fiber", "speeds": ["1g", "10g", "25g"] }
+    ],
+    "compatible_family": "C9200",
+    "notes": "Datasheet Table 3 '2 x 25G network module'. Speed set (1/10/25G) taken from the datasheet Table 2 C9200L-*PXG-2Y '2x 1/10/25G' fixed-uplink description (same SFP28 optics). OG Table 3 footnote: supported only on C9200-24PXG / C9200-48PXG."
+   },
+   {
+    "id": "C9200-NM-2Q",
+    "description": "Cisco Catalyst 9200 2x 40GE QSFP+ network module",
+    "ports": [
+     { "count": 2, "role": "uplink", "medium": "fiber", "speeds": ["40g"] }
+    ],
+    "compatible_family": "C9200",
+    "notes": "Datasheet Table 3 '2 x 40G network module'. OG Table 3 footnote: supported only on C9200-24PXG / C9200-48PXG."
+   },
+   {
+    "id": "C9200-NM-4G",
+    "description": "Cisco Catalyst 9200 4x 1GE SFP network module",
+    "ports": [
+     { "count": 4, "role": "uplink", "medium": "fiber", "speeds": ["1g"] }
+    ],
+    "compatible_family": "C9200",
+    "notes": "Datasheet Table 3 '4x 1G network module'. OG Table 3 footnote: NOT supported on C9200-24PXG / C9200-48PXG."
+   },
+   {
+    "id": "C9200-NM-4X",
+    "description": "Cisco Catalyst 9200 4x 1G/10G SFP+ network module",
+    "ports": [
+     { "count": 4, "role": "uplink", "medium": "fiber", "speeds": ["1g", "10g"] }
+    ],
+    "compatible_family": "C9200",
+    "notes": "Datasheet Table 3 '4x 1G/10G network module'. No compatibility footnote — supported on all modular C9200 models."
+   }
+  ],
+
+  "power_supplies": [
+   { "id": "PWR-C6-125WAC", "watts": 125, "type": "AC", "rating": null, "notes": "125W AC Config-6 (OG Table 5). C9200 modular series. Data-model default primary (datasheet Table 2)." },
+   { "id": "PWR-C6-600WAC", "watts": 600, "type": "AC", "rating": null, "notes": "600W AC Config-6 (OG Table 5). C9200 modular series. 24-port PoE / 48-partial-PoE default primary (datasheet Table 2/4)." },
+   { "id": "PWR-C6-1KWAC", "watts": 1000, "type": "AC", "rating": null, "notes": "1KW AC Config-6 (OG Table 5). C9200 modular series. 48-port full-PoE default primary (datasheet Table 2/4)." },
+   { "id": "PWR-C5-125WAC", "watts": 125, "type": "AC", "rating": null, "notes": "125W AC Config-5 (OG Table 5). C9200L fixed-uplink series. Data-model default primary (datasheet Table 2)." },
+   { "id": "PWR-C5-600WAC", "watts": 600, "type": "AC", "rating": null, "notes": "600W AC Config-5 (OG Table 5). C9200L fixed-uplink series. 24-port PoE / 48-partial-PoE default primary (datasheet Table 2/4)." },
+   { "id": "PWR-C5-1KWAC", "watts": 1000, "type": "AC", "rating": null, "notes": "1KW AC Config-5 (OG Table 5). C9200L fixed-uplink series. 48-port full-PoE default primary (datasheet Table 2/4)." }
+  ],
+
+  "stack_cables": [
+   { "id": "STACK-T4-50CM", "length_cm": 50, "type": "type-4", "notes": "Data stack 50 cm cable, default with the stack kit (datasheet Table 6). SKU name and datasheet say T4; OG Table 4 description column labels it 'Type 3 Stacking Cable' — nomenclature discrepancy, stored per the SKU/datasheet as type-4." },
+   { "id": "STACK-T4-1M", "length_cm": 100, "type": "type-4", "notes": "Data stack 1 m cable (datasheet Table 6)." },
+   { "id": "STACK-T4-3M", "length_cm": 300, "type": "type-4", "notes": "Data stack 3 m cable (datasheet Table 6)." }
+  ],
+
+  "stackpower_cables": [],
+
+  "licenses": [
+   { "id": "NETWORK-ESSENTIALS-PERPETUAL", "regime": "dna-term", "tier": "essentials", "shape": "perpetual", "term_years": null, "port_class": null, "notes": "Network stack perpetual license, embedded with hardware, included at no separate selection. Tier locked to the switch's -E suffix. Pairs with the mandatory-attach DNA term subscription (OG License matrix, Table 10 datasheet)." },
+   { "id": "NETWORK-ADVANTAGE-PERPETUAL", "regime": "dna-term", "tier": "advantage", "shape": "perpetual", "term_years": null, "port_class": null, "notes": "Network stack perpetual license, embedded with hardware, included at no separate selection. Tier locked to the switch's -A suffix. Pairs with the mandatory-attach DNA term subscription (OG License matrix, Table 10 datasheet)." },
+
+   { "id": "C9200-DNA-E-48-3Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 3, "port_class": 48, "notes": "C9200 DNA Essentials, 48-port, 3-year term (OG Table 8)." },
+   { "id": "C9200-DNA-E-48-5Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 5, "port_class": 48, "notes": "C9200 DNA Essentials, 48-port, 5-year term (OG Table 8)." },
+   { "id": "C9200-DNA-E-48-7Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 7, "port_class": 48, "notes": "C9200 DNA Essentials, 48-port, 7-year term (OG Table 8)." },
+   { "id": "C9200-DNA-A-48-3Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 3, "port_class": 48, "notes": "C9200 DNA Advantage, 48-port, 3-year term (OG Table 8)." },
+   { "id": "C9200-DNA-A-48-5Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 5, "port_class": 48, "notes": "C9200 DNA Advantage, 48-port, 5-year term (OG Table 8)." },
+   { "id": "C9200-DNA-A-48-7Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 7, "port_class": 48, "notes": "C9200 DNA Advantage, 48-port, 7-year term (OG Table 8)." },
+   { "id": "C9200-DNA-E-24-3Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 3, "port_class": 24, "notes": "C9200 DNA Essentials, 24-port, 3-year term (OG Table 9)." },
+   { "id": "C9200-DNA-E-24-5Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 5, "port_class": 24, "notes": "C9200 DNA Essentials, 24-port, 5-year term (OG Table 9)." },
+   { "id": "C9200-DNA-E-24-7Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 7, "port_class": 24, "notes": "C9200 DNA Essentials, 24-port, 7-year term (OG Table 9)." },
+   { "id": "C9200-DNA-A-24-3Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 3, "port_class": 24, "notes": "C9200 DNA Advantage, 24-port, 3-year term (OG Table 9)." },
+   { "id": "C9200-DNA-A-24-5Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 5, "port_class": 24, "notes": "C9200 DNA Advantage, 24-port, 5-year term (OG Table 9)." },
+   { "id": "C9200-DNA-A-24-7Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 7, "port_class": 24, "notes": "C9200 DNA Advantage, 24-port, 7-year term (OG Table 9)." },
+
+   { "id": "C9200L-DNA-E-48-3Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 3, "port_class": 48, "notes": "C9200L DNA Essentials, 48-port, 3-year term (OG Table 8)." },
+   { "id": "C9200L-DNA-E-48-5Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 5, "port_class": 48, "notes": "C9200L DNA Essentials, 48-port, 5-year term (OG Table 8)." },
+   { "id": "C9200L-DNA-E-48-7Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 7, "port_class": 48, "notes": "C9200L DNA Essentials, 48-port, 7-year term (OG Table 8)." },
+   { "id": "C9200L-DNA-A-48-3Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 3, "port_class": 48, "notes": "C9200L DNA Advantage, 48-port, 3-year term (OG Table 8)." },
+   { "id": "C9200L-DNA-A-48-5Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 5, "port_class": 48, "notes": "C9200L DNA Advantage, 48-port, 5-year term (OG Table 8)." },
+   { "id": "C9200L-DNA-A-48-7Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 7, "port_class": 48, "notes": "C9200L DNA Advantage, 48-port, 7-year term (OG Table 8)." },
+   { "id": "C9200L-DNA-E-24-3Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 3, "port_class": 24, "notes": "C9200L DNA Essentials, 24-port, 3-year term (OG Table 9)." },
+   { "id": "C9200L-DNA-E-24-5Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 5, "port_class": 24, "notes": "C9200L DNA Essentials, 24-port, 5-year term (OG Table 9)." },
+   { "id": "C9200L-DNA-E-24-7Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 7, "port_class": 24, "notes": "C9200L DNA Essentials, 24-port, 7-year term (OG Table 9)." },
+   { "id": "C9200L-DNA-A-24-3Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 3, "port_class": 24, "notes": "C9200L DNA Advantage, 24-port, 3-year term (OG Table 9)." },
+   { "id": "C9200L-DNA-A-24-5Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 5, "port_class": 24, "notes": "C9200L DNA Advantage, 24-port, 5-year term (OG Table 9)." },
+   { "id": "C9200L-DNA-A-24-7Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 7, "port_class": 24, "notes": "C9200L DNA Advantage, 24-port, 7-year term (OG Table 9)." }
+  ]
+ },
+
+ "groups": {
+  "_comment": "Named shared compatibility SETS. A switch references a group by id and inherits the whole set.",
+
+  "network_module_groups": [
+   {
+    "id": "c9200-modular-uplink-modules",
+    "members": ["C9200-NM-4G", "C9200-NM-4X"],
+    "none_option": "C9200-NM-BLANK",
+    "bay_count": 1,
+    "notes": "Non-PXG modular C9200 models (24T, 24P, 24PB, 48T, 48P, 48PL, 48PB). C9200-NM-2Y/2Q are PXG-only and excluded; C9200-NM-4G is not on the PXG models (OG Table 3 footnotes)."
+   },
+   {
+    "id": "c9200-pxg-uplink-modules",
+    "members": ["C9200-NM-2Y", "C9200-NM-2Q", "C9200-NM-4X"],
+    "none_option": "C9200-NM-BLANK",
+    "bay_count": 1,
+    "notes": "C9200-24PXG / C9200-48PXG only. Adds the PXG-only 25G (NM-2Y) and 40G (NM-2Q) modules; C9200-NM-4G is not supported on PXG models (OG Table 3 footnotes)."
+   }
+  ],
+
+  "power_supply_groups": [
+   {
+    "id": "c9200-psus",
+    "members": ["PWR-C6-125WAC", "PWR-C6-600WAC", "PWR-C6-1KWAC"],
+    "secondary_none_option": "C9200-SPS-NONE",
+    "notes": "Cisco Catalyst 9200 (modular uplink) Config-6 AC PSU family (OG Table 5). AC only (DC PWR-C6-715WDC intentionally omitted). Which member is a valid PRIMARY, the default shipped PSU, and the PoE budget per (primary,secondary) pair are switch-specific and live on the model entry (Pass 2)."
+   },
+   {
+    "id": "c9200l-psus",
+    "members": ["PWR-C5-125WAC", "PWR-C5-600WAC", "PWR-C5-1KWAC"],
+    "secondary_none_option": "C9200L-SPS-NONE",
+    "notes": "Cisco Catalyst 9200L (fixed uplink) Config-5 AC PSU family (OG Table 5). AC only (DC PWR-C5-715WDC intentionally omitted). Distinct SKUs from the C9200 Config-6 family (shallower chassis); kept as its own named group. Per-model valid_primary/default/PoE budget live on the model entry (Pass 2)."
+   }
+  ],
+
+  "stack_cable_groups": [
+   {
+    "id": "c9200-stack-cables",
+    "members": ["STACK-T4-50CM", "STACK-T4-1M", "STACK-T4-3M"],
+    "stack_kit": "C9200-STACK-KIT",
+    "none_option": "C9200-STACK-NONE",
+    "notes": "StackWise-160 data stacking for C9200 modular models via C9200-STACK-KIT (two data stack adapters + one cable, 50 cm default). Type-4 data stack cables (datasheet Tables 5-6)."
+   },
+   {
+    "id": "c9200l-stack-cables",
+    "members": ["STACK-T4-50CM", "STACK-T4-1M", "STACK-T4-3M"],
+    "stack_kit": "C9200L-STACK-KIT",
+    "none_option": "C9200L-STACK-NONE",
+    "notes": "StackWise-80 data stacking for C9200L fixed-uplink models via C9200L-STACK-KIT. Same Type-4 STACK-T4 cables as the C9200 group but a distinct kit; kept as its own named group per project convention (datasheet Tables 5-6)."
+   }
+  ],
+
+  "stackpower_cable_groups": [],
+
+  "license_groups": [
+   {
+    "id": "c9200-dna-essentials-48",
+    "regime": "dna-term",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "48-port C9200 (modular) models, Essentials tier (-E suffix).",
+    "perpetual_member": "NETWORK-ESSENTIALS-PERPETUAL",
+    "subscription_members": ["C9200-DNA-E-48-3Y", "C9200-DNA-E-48-5Y", "C9200-DNA-E-48-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU. Subscription is mandatory; tier locked to -E." }
+   },
+   {
+    "id": "c9200-dna-advantage-48",
+    "regime": "dna-term",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "48-port C9200 (modular) models, Advantage tier (-A suffix).",
+    "perpetual_member": "NETWORK-ADVANTAGE-PERPETUAL",
+    "subscription_members": ["C9200-DNA-A-48-3Y", "C9200-DNA-A-48-5Y", "C9200-DNA-A-48-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU. Subscription is mandatory; tier locked to -A." }
+   },
+   {
+    "id": "c9200-dna-essentials-24",
+    "regime": "dna-term",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "24-port C9200 (modular) models, Essentials tier (-E suffix).",
+    "perpetual_member": "NETWORK-ESSENTIALS-PERPETUAL",
+    "subscription_members": ["C9200-DNA-E-24-3Y", "C9200-DNA-E-24-5Y", "C9200-DNA-E-24-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU. Subscription is mandatory; tier locked to -E." }
+   },
+   {
+    "id": "c9200-dna-advantage-24",
+    "regime": "dna-term",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "24-port C9200 (modular) models, Advantage tier (-A suffix).",
+    "perpetual_member": "NETWORK-ADVANTAGE-PERPETUAL",
+    "subscription_members": ["C9200-DNA-A-24-3Y", "C9200-DNA-A-24-5Y", "C9200-DNA-A-24-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU. Subscription is mandatory; tier locked to -A." }
+   },
+   {
+    "id": "c9200l-dna-essentials-48",
+    "regime": "dna-term",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "48-port C9200L (fixed uplink) models, Essentials tier (-E suffix).",
+    "perpetual_member": "NETWORK-ESSENTIALS-PERPETUAL",
+    "subscription_members": ["C9200L-DNA-E-48-3Y", "C9200L-DNA-E-48-5Y", "C9200L-DNA-E-48-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU. Subscription is mandatory; tier locked to -E." }
+   },
+   {
+    "id": "c9200l-dna-advantage-48",
+    "regime": "dna-term",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "48-port C9200L (fixed uplink) models, Advantage tier (-A suffix).",
+    "perpetual_member": "NETWORK-ADVANTAGE-PERPETUAL",
+    "subscription_members": ["C9200L-DNA-A-48-3Y", "C9200L-DNA-A-48-5Y", "C9200L-DNA-A-48-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU. Subscription is mandatory; tier locked to -A." }
+   },
+   {
+    "id": "c9200l-dna-essentials-24",
+    "regime": "dna-term",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "24-port C9200L (fixed uplink) models, Essentials tier (-E suffix).",
+    "perpetual_member": "NETWORK-ESSENTIALS-PERPETUAL",
+    "subscription_members": ["C9200L-DNA-E-24-3Y", "C9200L-DNA-E-24-5Y", "C9200L-DNA-E-24-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU. Subscription is mandatory; tier locked to -E." }
+   },
+   {
+    "id": "c9200l-dna-advantage-24",
+    "regime": "dna-term",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "24-port C9200L (fixed uplink) models, Advantage tier (-A suffix).",
+    "perpetual_member": "NETWORK-ADVANTAGE-PERPETUAL",
+    "subscription_members": ["C9200L-DNA-A-24-3Y", "C9200L-DNA-A-24-5Y", "C9200L-DNA-A-24-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU. Subscription is mandatory; tier locked to -A." }
+   }
+  ]
+ },
+
+ "models": []
+}
