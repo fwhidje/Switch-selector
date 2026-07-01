@@ -1,7 +1,7 @@
 {
   "$id": "switching-axes.json",
   "title": "Switching Axis Registry",
-  "registry_version": "0.9.0",
+  "registry_version": "0.10.0",
   "role": "Authoritative vocabulary for the Networking Equipment Selector. The registry enforces MEANING (what can be constrained, how, and which values are legal). It is the SOURCE; the KB schema is a projection of it. Nothing is filterable unless declared here. Each axis declares KIND (ordered | count-at-level | monotonic-capability | discriminating | numeric | boolean) and ROLE (requirement). CONFIG-VARIABLES (config_variables block) are not filter axes: they do not eliminate models, they refine the resolved kitlist (BOM) and are surfaced at the configuration stage. validate-kb.mjs checks model values against this file.",
   "consumers": [
     "Web UI builds form controls from this registry (KIND drives the control; ROLE drives WHEN it surfaces).",
@@ -52,7 +52,7 @@
       "type": "enum",
       "kind": "discriminating",
       "role": "requirement",
-      "legal_values": ["C9300", "C9300L", "C9300X", "C9300LM", "C9350"],
+      "legal_values": ["C9300", "C9300L", "C9300X", "C9300LM", "C9350", "C9200", "C9200L", "C9200CX"],
       "accepted_conditions": ["==", "in"],
       "required_on_model": true,
       "notes": "Series is an ordinary axis, not a privileged root. Sub-families are distinct series values. Legal_values will grow as families are added."
@@ -133,10 +133,10 @@
       "type": "enum",
       "kind": "discriminating",
       "role": "requirement",
-      "legal_values": ["stackwise-480", "stackwise-1t", "stackwise-320", "stackwise-1.6t"],
+      "legal_values": ["stackwise-480", "stackwise-1t", "stackwise-320", "stackwise-1.6t", "stackwise-160", "stackwise-80"],
       "accepted_conditions": ["==", "in"],
       "required_on_model": "when_stacking_capable",
-      "notes": "Required and non-blank on a model when stacking_capable is true. May be left unconstrained in a QUERY."
+      "notes": "Required and non-blank on a model when stacking_capable is true. May be left unconstrained in a QUERY. v0.10.0 added 'stackwise-160' (C9200 modular, 160 Gbps data stacking) and 'stackwise-80' (C9200L fixed, 80 Gbps)."
     },
     {
       "name": "stackpower_capable",

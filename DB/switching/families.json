@@ -1,4 +1,5 @@
 [
   { "series": "C9300", "dir": "C9300", "kbFile": "c9300_knowledge_base.json" },
-  { "series": "C9350", "dir": "C9350", "kbFile": "c9350_knowledge_base.json" }
+  { "series": "C9350", "dir": "C9350", "kbFile": "c9350_knowledge_base.json" },
+  { "series": "C9200", "dir": "C9200", "kbFile": "c9200_knowledge_base.json" }
 ]
