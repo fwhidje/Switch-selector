@@ -302,42 +302,29 @@ function resolveAccessories(model, query, kb) {
   const cfg = model.configurables ?? {};
   const out = {};
   const stack = getStackCableGroup(kb, cfg.stack_cables?.group);
-  if (stack) out.stack_cables = cableInfo(stack, kb._index.stack_cables, cableLengthPref(query, "stacking_capable"));
+  if (stack) out.stack_cables = cableInfo(stack, kb._index.stack_cables, hardBoolTrue(query, "stacking_capable"));
   const sp = getStackpowerCableGroup(kb, cfg.stackpower_cables?.group);
-  if (sp) out.stackpower_cables = cableInfo(sp, kb._index.stackpower_cables, cableLengthPref(query, "stackpower_capable"));
+  if (sp) out.stackpower_cables = cableInfo(sp, kb._index.stackpower_cables, hardBoolTrue(query, "stackpower_capable"));
   if (cfg.ssd_accessory) out.ssd_accessory = cfg.ssd_accessory;
   return out;
 }
 
-// The 'cable_length' config-variable picks a length directly (none/shortest/
-// longest); left unset, auto-default to 'shortest' once the matching capability
-// (stacking_capable/stackpower_capable) is a hard requirement, else 'none'.
-function cableLengthPref(query, capabilityAxis) {
-  const picked = configValue(query, "cable_length");
-  if (picked) return picked;
-  return hardBoolTrue(query, capabilityAxis) ? "shortest" : "none";
-}
 function hardBoolTrue(query, axis) {
   return (query ?? []).some((c) => c.axis === axis && c.condition === "==" && c.value === true && (c.severity ?? "hard") === "hard");
 }
 
-// A standalone switch needs no cable: default to the group's none_option unless
-// `pref` picks 'shortest'/'longest' (explicitly, or auto-derived from a stacking/
-// stackpower requirement — see cableLengthPref).
-function cableInfo(group, catIndex, pref) {
+// A standalone switch needs no cable: default to the group's none_option. If
+// the matching stacking/stackpower capability is a hard requirement, default
+// to the shortest cable available instead.
+function cableInfo(group, catIndex, preferShortest) {
   const withLen = (group.members ?? []).map((id) => ({ id, len: catIndex.get(id)?.length_cm ?? Infinity }))
     .sort((a, b) => a.len - b.len);
   const shortest = withLen[0]?.id ?? null;
-  const longest = withLen[withLen.length - 1]?.id ?? null;
-  const chosen = pref === "shortest" ? (shortest ?? group.none_option)
-    : pref === "longest" ? (longest ?? group.none_option)
-    : group.none_option;
   return {
     group: group.id,
-    default: chosen,
+    default: preferShortest ? (shortest ?? group.none_option) : group.none_option,
     none_option: group.none_option,
     shortest,
-    longest,
     members: group.members ?? [],
     stack_kit: group.stack_kit,
   };
