@@ -30,7 +30,8 @@ export function solve(query, kb, registry) {
     const fail = firstFailingScalar(model, hardScalar, registry);
     if (fail) { eliminated.push({ id: model.id, reason: describe(fail) }); continue; }
 
-    const options = uplinkOptions(model, kb);
+    const modelKb = model._kb ?? kb;
+    const options = uplinkOptions(model, modelKb);
     const demands = hardPort.map((c) => ({ where: c.where, min: c.value }));
     const validOptions = demands.length
       ? options.filter((o) => poolFeasible(variantPool(model, o), demands))
@@ -47,7 +48,7 @@ export function solve(query, kb, registry) {
 
   const candidates = survivors.map((s) => ({
     model: { id: s.model.id, description: s.model.description },
-    resolved: resolveBOM(s.model, cons, kb, s.validOptions),
+    resolved: resolveBOM(s.model, cons, s.model._kb ?? kb, s.validOptions),
   }));
 
   return { candidates, default: candidates[0] ?? null, eliminated };

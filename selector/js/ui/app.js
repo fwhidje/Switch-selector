@@ -7,11 +7,11 @@
 // present in the data. Every change re-solves; dead facet values are disabled.
 
 import { loadRegistry, getAxes, legalValues, portModel, configVariables, poeLevelWatts } from "../core/registry.js";
-import { loadKB, getModels } from "../core/kb.js";
+import { loadKBs, getModels } from "../core/kb.js";
 import { solve, availableValues } from "../core/solver.js";
 
 const REGISTRY_URL = "../DB/switching/switching-axes.json";
-const KB_URL = "../DB/switching/C9300/c9300_knowledge_base.json";
+const FAMILIES_URL = "../DB/switching/families.json";
 
 let registry = null;
 let kb = null;
@@ -40,7 +40,11 @@ const GROUPS = [
 async function init() {
   const status = document.getElementById("status");
   try {
-    [registry, kb] = await Promise.all([loadRegistry(REGISTRY_URL), loadKB(KB_URL)]);
+    const familiesRes = await fetch(FAMILIES_URL);
+    if (!familiesRes.ok) throw new Error(`families fetch failed: ${familiesRes.status} ${FAMILIES_URL}`);
+    const families = await familiesRes.json();
+    const kbUrls = families.map((f) => `../DB/switching/${f.dir}/${f.kbFile}`);
+    [registry, kb] = await Promise.all([loadRegistry(REGISTRY_URL), loadKBs(kbUrls)]);
     speedOrder = portModel(registry)?.selector_enums?.port_speed?.order ?? [];
     portCombos = enumeratePortCombos(kb);
     levelWatts = poeLevelWatts(registry);
@@ -59,7 +63,8 @@ function enumeratePortCombos(kb) {
   const set = new Map();
   const add = (g) => (g.speeds ?? []).forEach((sp) => set.set(`${g.role}|${g.medium}|${sp}`, { role: g.role, medium: g.medium, speed: sp }));
   for (const m of getModels(kb)) (m.ports ?? []).forEach(add);
-  for (const nm of kb.catalog?.network_modules ?? []) (nm.ports ?? []).forEach(add);
+  for (const src of kb._sources ?? [])
+    for (const nm of src.catalog?.network_modules ?? []) (nm.ports ?? []).forEach(add);
   const roleRank = { access: 0, uplink: 1 };
   return [...set.values()].sort((a, b) =>
     (roleRank[a.role] - roleRank[b.role]) || a.medium.localeCompare(b.medium) ||

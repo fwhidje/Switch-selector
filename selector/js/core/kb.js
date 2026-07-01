@@ -21,6 +21,30 @@ export async function loadKB(url) {
   return kb;
 }
 
+/**
+ * Load and merge several family KBs into one pool for the solver.
+ *
+ * Catalog/group ids are only unique WITHIN a family (a future family could
+ * reuse a real Cisco SKU another family already uses), so this does not
+ * flatten catalogs/groups into one shared index. Instead each model keeps a
+ * back-reference to its own family's KB (with its own `_index`), and callers
+ * that dereference a model's modules/PSUs/cables/licenses must look them up
+ * via that model's `_kb`, not the merged object.
+ * @param {string[]} urls
+ * @returns {Promise<object>} { models, _sources } — models is flat and tagged
+ */
+export async function loadKBs(urls) {
+  const sources = await Promise.all(urls.map(loadKB));
+  const models = [];
+  for (const kb of sources) {
+    for (const m of getModels(kb)) {
+      Object.defineProperty(m, "_kb", { value: kb, enumerable: false });
+      models.push(m);
+    }
+  }
+  return { models, _sources: sources };
+}
+
 function indexById(arr) {
   const map = new Map();
   for (const item of arr ?? []) map.set(item.id, item);
