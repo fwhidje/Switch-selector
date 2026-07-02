@@ -4,7 +4,7 @@
   "registry_version": "0.10.0",
   "axes_file": "../switching-axes.json",
   "schema_file": "switch-kb.schema.json",
-  "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9200 Series switches. Carries the catalog (atomic SKU facts), groups (named shared compatibility sets), and switch models for C9200 (modular uplink), C9200L (fixed uplink), and C9200CX (compact, fanless, fixed uplink). Meraki (C9200L-M) is out of scope. Structure: catalog + groups + models.",
+  "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9200 Series switches. Carries the catalog (atomic SKU facts), groups (named shared compatibility sets), and switch models for C9200 (modular uplink), C9200L (fixed uplink), C9200CX (compact, fanless, fixed uplink), and C9200L-M (Meraki-managed, fixed uplink). C9200L-M model entries are pending (catalog + groups only so far). Structure: catalog + groups + models.",
   "sources": [
    {
     "name": "Cisco Catalyst 9200 Series Switches Data Sheet",
@@ -15,11 +15,17 @@
     "name": "Cisco Catalyst 9200 Series Ordering Guide",
     "url": "https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9200-series-switches/nb-06-cat9200-swit-ser-cte-en.html",
     "last_verified": "2026-07-01"
+   },
+   {
+    "name": "Cisco Catalyst 9200L-M (Meraki) Data Sheet",
+    "url": "user-provided (pasted content, no URL supplied)",
+    "last_verified": "2026-07-02"
    }
   ],
   "design_notes": [
    "Pass 1 of 2: catalog + groups only. 'models' is empty until Pass 2; the per-model validator checks (valid_primary subset, poe_budget_matrix max, access-port sum == total_port_count) therefore do not yet run. The standalone group-integrity and catalog port-speed checks DO run.",
-   "Scope: C9200 (modular uplink, FRU PSU + FRU fans, StackWise-160) and C9200L (fixed uplink, FRU PSU + fixed fans, StackWise-80). C9200CX (compact, fanless, fixed internal PSU, UPOE/UPOE+/HVDC) is deferred to its own pass. Meraki C9200L-M is out of scope.",
+   "Scope: C9200 (modular uplink, FRU PSU + FRU fans, StackWise-160) and C9200L (fixed uplink, FRU PSU + fixed fans, StackWise-80). C9200CX (compact, fanless, fixed internal PSU, UPOE/UPOE+/HVDC) is deferred to its own pass.",
+   "Meraki C9200L-M: catalog SKUs and groups added (Pass 1 of 2 for this sub-family) from the Meraki C9200L-M datasheet — 3 -M power supplies (PWR-C5-*WAC-M), 3 -M stack cables (STACK-T4-*-M) plus stack kit C9200L-STAK-KIT-M, 12 meraki-classic per-term license SKUs (LIC-C9200L-{24,48}{E,A}-{1,3,5}Y), 4 meraki-subscription tier-split license SKUs (LIC-MS-200-{M,L}-{E,A}), and the corresponding c9200l-m-psus / c9200l-m-stack-cables / 8 cat9200l-meraki-* license_groups. Two modeling decisions were made because the datasheet gives only ONE base order code per tier/port-class (no per-term or per-tier SKUs printed): (1) tier vocabulary mapped Enterprise(-E)->essentials, Advanced(-A)->advantage, consistent with the -E/-A convention used elsewhere in this file; (2) classic per-term SKUs (-1Y/-3Y/-5Y) and subscription per-tier SKUs (-E/-A) were synthesized by appending suffixes to the datasheet's base order code, mirroring the C9300L-M LIC-C9300-24E-1Y.../LIC-MS-300-M-E/-A pattern — these synthesized SKU strings are not independently datasheet-confirmed order codes. C9200L-M switch model[] entries (Pass 2 for this sub-family) are not yet added.",
    "Licensing: DNA-term regime only, tier locked by the -E/-A hardware suffix (Network Essentials/Advantage perpetual embedded + a mandatory-attach 3/5/7-yr DNA subscription). The newer 'Cisco Catalyst Software' (DNX) subscription printed in OG Tables 12-15 is intentionally dropped, mirroring the C9300 treatment.",
    "Power supplies: AC only. The DC options (PWR-C5-715WDC / PWR-C6-715WDC, spare-only, PoE-models-only per datasheet Table 4) are intentionally omitted — never proposed in practice. With DC gone, each model's valid_primary is a single AC SKU (fixed by the model's port/PoE class per datasheet Table 2), and the poe_budget_matrix expresses single vs redundant (identical second PSU), not a wattage choice.",
    "No StackPower on the C9200 series (data stacking only, StackWise-160 / StackWise-80). stackpower_cables and stackpower_cable_groups are intentionally empty.",
@@ -170,6 +176,27 @@
     "type": "DC",
     "rating": null,
     "notes": "DC-DC power adapter for the C9200CX-12T-2X2G compact switch (OG Table 5)."
+   },
+   {
+    "id": "PWR-C5-125WAC-M",
+    "watts": 125,
+    "type": "AC",
+    "rating": null,
+    "notes": "125W AC Config-5 power supply for C9200L-M (Meraki), Optional Accessories table, C9200L-M Datasheet."
+   },
+   {
+    "id": "PWR-C5-600WAC-M",
+    "watts": 600,
+    "type": "AC",
+    "rating": null,
+    "notes": "600W AC Config-5 power supply for C9200L-M (Meraki), Optional Accessories table, C9200L-M Datasheet."
+   },
+   {
+    "id": "PWR-C5-1KWAC-M",
+    "watts": 1000,
+    "type": "AC",
+    "rating": null,
+    "notes": "1000W AC Config-5 power supply for C9200L-M (Meraki), Optional Accessories table, C9200L-M Datasheet."
    }
   ],
   "stack_cables": [
@@ -190,6 +217,24 @@
     "length_cm": 300,
     "type": "type-4",
     "notes": "Data stack 3 m cable (datasheet Table 6)."
+   },
+   {
+    "id": "STACK-T4-50CM-M",
+    "length_cm": 50,
+    "type": "type-4",
+    "notes": "Data stack 50 cm cable for C9200L-M (Meraki), default with the C9200L-STAK-KIT-M stack kit, Optional Accessories table, C9200L-M Datasheet."
+   },
+   {
+    "id": "STACK-T4-1M-M",
+    "length_cm": 100,
+    "type": "type-4",
+    "notes": "Data stack 1 m cable for C9200L-M (Meraki), Optional Accessories table, C9200L-M Datasheet."
+   },
+   {
+    "id": "STACK-T4-3M-M",
+    "length_cm": 300,
+    "type": "type-4",
+    "notes": "Data stack 3 m cable for C9200L-M (Meraki), Optional Accessories table, C9200L-M Datasheet."
    }
   ],
   "stackpower_cables": [],
@@ -535,6 +580,150 @@
     "term_years": 7,
     "port_class": 8,
     "notes": "C9200CX DNA Advantage, 8-port, 7-year term (OG Table 11)."
+   },
+   {
+    "id": "LIC-C9200L-24E-1Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-C9200L-24E (Catalyst 9200L-M License Structure table, Enterprise Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-24E-3Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (3-year); datasheet prints only base order code LIC-C9200L-24E (Catalyst 9200L-M License Structure table, Enterprise Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-24E-5Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (5-year); datasheet prints only base order code LIC-C9200L-24E (Catalyst 9200L-M License Structure table, Enterprise Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-24A-1Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-C9200L-24A (Catalyst 9200L-M License Structure table, Advanced Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-24A-3Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (3-year); datasheet prints only base order code LIC-C9200L-24A (Catalyst 9200L-M License Structure table, Advanced Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-24A-5Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (5-year); datasheet prints only base order code LIC-C9200L-24A (Catalyst 9200L-M License Structure table, Advanced Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-48E-1Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-C9200L-48E (Catalyst 9200L-M License Structure table, Enterprise Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-48E-3Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (3-year); datasheet prints only base order code LIC-C9200L-48E (Catalyst 9200L-M License Structure table, Enterprise Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-48E-5Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (5-year); datasheet prints only base order code LIC-C9200L-48E (Catalyst 9200L-M License Structure table, Enterprise Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-48A-1Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-C9200L-48A (Catalyst 9200L-M License Structure table, Advanced Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-48A-3Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (3-year); datasheet prints only base order code LIC-C9200L-48A (Catalyst 9200L-M License Structure table, Advanced Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-48A-5Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (5-year); datasheet prints only base order code LIC-C9200L-48A (Catalyst 9200L-M License Structure table, Advanced Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-MS-200-M-E",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 24,
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only base order code LIC-MS-200-M covering the MS200 Medium class (24-port), per C9300L-M LIC-MS-300-M-E/-A convention. Datasheet subscription-licensing hardware list for MS200 Medium also includes legacy MS210/MS225/MS250/MS320-24* hardware and classic (non-M) C9200L-24T-4G*/-24P-4G*/-24T-4X*/-24P-4X*/-24PXG-4X*/-24PXG-2Y* hardware; scope here stays limited to the C9200L-M models being added in Part 2."
+   },
+   {
+    "id": "LIC-MS-200-M-A",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 24,
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only base order code LIC-MS-200-M covering the MS200 Medium class (24-port), per C9300L-M LIC-MS-300-M-E/-A convention. Datasheet subscription-licensing hardware list for MS200 Medium also includes legacy MS210/MS225/MS250/MS320-24* hardware and classic (non-M) C9200L-24T-4G*/-24P-4G*/-24T-4X*/-24P-4X*/-24PXG-4X*/-24PXG-2Y* hardware; scope here stays limited to the C9200L-M models being added in Part 2."
+   },
+   {
+    "id": "LIC-MS-200-L-E",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 48,
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only base order code LIC-MS-200-L covering the MS200 Large class (48-port), per C9300L-M LIC-MS-300-L-E/-A convention. Datasheet subscription-licensing hardware list for MS200 Large also includes legacy MS210/MS225/MS250/MS320-48* hardware and classic (non-M) C9200L-48T-4G*/-48P-4G*/-48PL-4G*/-48T-4X*/-48P-4X*/-48PL-4X*/-48PXG-4X*/-48PXG-2Y* hardware; scope here stays limited to the C9200L-M models being added in Part 2."
+   },
+   {
+    "id": "LIC-MS-200-L-A",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 48,
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only base order code LIC-MS-200-L covering the MS200 Large class (48-port), per C9300L-M LIC-MS-300-L-E/-A convention. Datasheet subscription-licensing hardware list for MS200 Large also includes legacy MS210/MS225/MS250/MS320-48* hardware and classic (non-M) C9200L-48T-4G*/-48P-4G*/-48PL-4G*/-48T-4X*/-48P-4X*/-48PL-4X*/-48PXG-4X*/-48PXG-2Y* hardware; scope here stays limited to the C9200L-M models being added in Part 2."
    }
   ]
  },
@@ -608,6 +797,16 @@
     ],
     "secondary_none_option": "C9200CX-SPS-NONE",
     "notes": "C9200CX-12T-2X2G only. This model ships with NO internal power supply (OG: 'does not come with a power supply by default'); its true default powering is as a PD drawing 802.3bt Class 6 / UPOE from an upstream switch's uplink. These two SKUs are the optional external adapters (AC-DC and DC-DC, both 80W). default_primary proposes the AC-DC adapter so power is not overlooked at order time; running with no adapter at all (pure PD) is fully valid but is not offered as a selectable group member since every catalog power_supply requires watts>=1 — see the model's axis_value_provenance.power_source."
+   },
+   {
+    "id": "c9200l-m-psus",
+    "members": [
+     "PWR-C5-125WAC-M",
+     "PWR-C5-600WAC-M",
+     "PWR-C5-1KWAC-M"
+    ],
+    "secondary_none_option": "C9200L-SPS-NONE",
+    "notes": "Cisco Catalyst 9200L-M (Meraki) series PSU set (Optional Accessories table, C9200L-M Datasheet). -M SKUs, same wattages as the base C9200L Config-5 family; reuses the existing C9200L-SPS-NONE none-option per the C9300L-M convention. Which member is valid as PRIMARY and the PoE budget per (primary,secondary) pair are switch-specific and live on the model entry (Part 2)."
    }
   ],
   "stack_cable_groups": [
@@ -632,6 +831,17 @@
     "stack_kit": "C9200L-STACK-KIT",
     "none_option": "C9200L-STACK-NONE",
     "notes": "StackWise-80 data stacking for C9200L fixed-uplink models via C9200L-STACK-KIT. Same Type-4 STACK-T4 cables as the C9200 group but a distinct kit; kept as its own named group per project convention (datasheet Tables 5-6)."
+   },
+   {
+    "id": "c9200l-m-stack-cables",
+    "members": [
+     "STACK-T4-50CM-M",
+     "STACK-T4-1M-M",
+     "STACK-T4-3M-M"
+    ],
+    "stack_kit": "C9200L-STAK-KIT-M",
+    "none_option": "C9200L-STACK-NONE",
+    "notes": "C9200L-M (Meraki) fixed-uplink StackWise-80 stacking via C9200L-STAK-KIT-M (two adapters + one 50cm cable, Optional Accessories table, C9200L-M Datasheet). Type-4 cables, -M SKUs; reuses the existing C9200L-STACK-NONE none-option per the C9300L-M convention. Kept distinct from c9200l-stack-cables per project convention (series-specific groups kept separate even where cable specs match)."
    }
   ],
   "stackpower_cable_groups": [],
@@ -899,6 +1109,142 @@
      ],
      "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU. Subscription is mandatory; tier locked to -A."
     }
+   },
+   {
+    "id": "cat9200l-meraki-classic-essentials-24",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "24-port C9200L-M (Meraki) platforms, Enterprise Features tier (LIC-C9200L-24E) (C9200L-M Datasheet, Catalyst 9200L-M License Structure table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-C9200L-24E-1Y",
+     "LIC-C9200L-24E-3Y",
+     "LIC-C9200L-24E-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option; no tier lock by hardware suffix — tier is a customer choice at order time, per project convention for Meraki-classic licensing. Per-term SKUs synthesized (datasheet prints only the base order code LIC-C9200L-24E and states 1/3/5-year terms are offered)."
+    }
+   },
+   {
+    "id": "cat9200l-meraki-classic-advantage-24",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "24-port C9200L-M (Meraki) platforms, Advanced Features tier (LIC-C9200L-24A) (C9200L-M Datasheet, Catalyst 9200L-M License Structure table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-C9200L-24A-1Y",
+     "LIC-C9200L-24A-3Y",
+     "LIC-C9200L-24A-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option; no tier lock by hardware suffix — tier is a customer choice at order time, per project convention for Meraki-classic licensing. Per-term SKUs synthesized (datasheet prints only the base order code LIC-C9200L-24A and states 1/3/5-year terms are offered)."
+    }
+   },
+   {
+    "id": "cat9200l-meraki-classic-essentials-48",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "48-port C9200L-M (Meraki) platforms, Enterprise Features tier (LIC-C9200L-48E) (C9200L-M Datasheet, Catalyst 9200L-M License Structure table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-C9200L-48E-1Y",
+     "LIC-C9200L-48E-3Y",
+     "LIC-C9200L-48E-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option; no tier lock by hardware suffix — tier is a customer choice at order time, per project convention for Meraki-classic licensing. Per-term SKUs synthesized (datasheet prints only the base order code LIC-C9200L-48E and states 1/3/5-year terms are offered)."
+    }
+   },
+   {
+    "id": "cat9200l-meraki-classic-advantage-48",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "48-port C9200L-M (Meraki) platforms, Advanced Features tier (LIC-C9200L-48A) (C9200L-M Datasheet, Catalyst 9200L-M License Structure table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-C9200L-48A-1Y",
+     "LIC-C9200L-48A-3Y",
+     "LIC-C9200L-48A-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option; no tier lock by hardware suffix — tier is a customer choice at order time, per project convention for Meraki-classic licensing. Per-term SKUs synthesized (datasheet prints only the base order code LIC-C9200L-48A and states 1/3/5-year terms are offered)."
+    }
+   },
+   {
+    "id": "cat9200l-meraki-sub-m-essentials",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "MS200 Medium class — 24-port C9200L-M (Meraki) switches (C9200L-M Datasheet, Subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-200-M-E"
+    ],
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only the base order code LIC-MS-200-M covering the whole MS200 Medium class, per the C9300L-M LIC-MS-300-M-E/-A convention."
+   },
+   {
+    "id": "cat9200l-meraki-sub-m-advantage",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "MS200 Medium class — 24-port C9200L-M (Meraki) switches (C9200L-M Datasheet, Subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-200-M-A"
+    ],
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only the base order code LIC-MS-200-M covering the whole MS200 Medium class, per the C9300L-M LIC-MS-300-M-E/-A convention."
+   },
+   {
+    "id": "cat9200l-meraki-sub-l-essentials",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "MS200 Large class — 48-port C9200L-M (Meraki) switches (C9200L-M Datasheet, Subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-200-L-E"
+    ],
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only the base order code LIC-MS-200-L covering the whole MS200 Large class, per the C9300L-M LIC-MS-300-L-E/-A convention."
+   },
+   {
+    "id": "cat9200l-meraki-sub-l-advantage",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "MS200 Large class — 48-port C9200L-M (Meraki) switches (C9200L-M Datasheet, Subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-200-L-A"
+    ],
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only the base order code LIC-MS-200-L covering the whole MS200 Large class, per the C9300L-M LIC-MS-300-L-E/-A convention."
    }
   ]
  },
