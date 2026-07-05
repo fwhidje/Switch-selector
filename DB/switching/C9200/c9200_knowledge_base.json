@@ -4,7 +4,7 @@
   "registry_version": "0.10.0",
   "axes_file": "../switching-axes.json",
   "schema_file": "switch-kb.schema.json",
-  "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9200 Series switches. Carries the catalog (atomic SKU facts), groups (named shared compatibility sets), and switch models for C9200 (modular uplink), C9200L (fixed uplink), and C9200CX (compact, fanless, fixed uplink). Meraki (C9200L-M) is out of scope. Structure: catalog + groups + models.",
+  "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9200 Series switches. Carries the catalog (atomic SKU facts), groups (named shared compatibility sets), and switch models for C9200 (modular uplink), C9200L (fixed uplink), C9200CX (compact, fanless, fixed uplink), and C9200L-M (Meraki-managed, fixed uplink). C9200L-M model entries (14) are complete. Structure: catalog + groups + models.",
   "sources": [
    {
     "name": "Cisco Catalyst 9200 Series Switches Data Sheet",
@@ -15,11 +15,17 @@
     "name": "Cisco Catalyst 9200 Series Ordering Guide",
     "url": "https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9200-series-switches/nb-06-cat9200-swit-ser-cte-en.html",
     "last_verified": "2026-07-01"
+   },
+   {
+    "name": "Cisco Catalyst 9200L-M (Meraki) Data Sheet",
+    "url": "user-provided (pasted content, no URL supplied)",
+    "last_verified": "2026-07-02"
    }
   ],
   "design_notes": [
    "Pass 1 of 2: catalog + groups only. 'models' is empty until Pass 2; the per-model validator checks (valid_primary subset, poe_budget_matrix max, access-port sum == total_port_count) therefore do not yet run. The standalone group-integrity and catalog port-speed checks DO run.",
-   "Scope: C9200 (modular uplink, FRU PSU + FRU fans, StackWise-160) and C9200L (fixed uplink, FRU PSU + fixed fans, StackWise-80). C9200CX (compact, fanless, fixed internal PSU, UPOE/UPOE+/HVDC) is deferred to its own pass. Meraki C9200L-M is out of scope.",
+   "Scope: C9200 (modular uplink, FRU PSU + FRU fans, StackWise-160) and C9200L (fixed uplink, FRU PSU + fixed fans, StackWise-80). C9200CX (compact, fanless, fixed internal PSU, UPOE/UPOE+/HVDC) is deferred to its own pass.",
+   "Meraki C9200L-M: catalog SKUs and groups added (Pass 1 of 2 for this sub-family) from the Meraki C9200L-M datasheet — 3 -M power supplies (PWR-C5-*WAC-M), 3 -M stack cables (STACK-T4-*-M) plus stack kit C9200L-STAK-KIT-M, 12 meraki-classic per-term license SKUs (LIC-C9200L-{24,48}{E,A}-{1,3,5}Y), 4 meraki-subscription tier-split license SKUs (LIC-MS-200-{M,L}-{E,A}), and the corresponding c9200l-m-psus / c9200l-m-stack-cables / 8 cat9200l-meraki-* license_groups. Two modeling decisions were made because the datasheet gives only ONE base order code per tier/port-class (no per-term or per-tier SKUs printed): (1) tier vocabulary mapped Enterprise(-E)->essentials, Advanced(-A)->advantage, consistent with the -E/-A convention used elsewhere in this file; (2) classic per-term SKUs (-1Y/-3Y/-5Y) and subscription per-tier SKUs (-E/-A) were synthesized by appending suffixes to the datasheet's base order code, mirroring the C9300L-M LIC-C9300-24E-1Y.../LIC-MS-300-M-E/-A pattern — these synthesized SKU strings are not independently datasheet-confirmed order codes. C9200L-M switch model[] entries added (Pass 2 for this sub-family, 14 models: 24T-4G/24P-4G/48T-4G/48P-4G/48PL-4G/24T-4X/24P-4X/48T-4X/48P-4X/48PL-4X/24PXG-4X/48PXG-4X/24PXG-2Y/48PXG-2Y). Every field was either directly datasheet-sourced (ports, PoE budgets, weights, power_load_watts_idle/max) or copied unchanged from the physically-identical non-M analog where the Meraki datasheet independently confirmed an identical value (switching capacity, forwarding rate, weight, PoE budget matrix) — verified line-for-line for all 14 pairs. Silicon/board-level display specs the Meraki datasheet omits (mtbf_hours, buffer_mb, uadp_asic, dram_gb, flash_gb, stack_members_max, virtual_networks, mac_address_scale) are left off entirely rather than inferred, per this file's own THINGS-TO-COMPLETE.md convention that undocumented display-only attributes are simply omitted (not tracked via _incomplete, which is reserved for functional/filterable fields). ENERGY STAR certification (present on the non-M C9200L-48P-4X-E/A analog) was NOT carried over to C9200L-48P-4X-M since the Meraki datasheet makes no such claim.",
    "Licensing: DNA-term regime only, tier locked by the -E/-A hardware suffix (Network Essentials/Advantage perpetual embedded + a mandatory-attach 3/5/7-yr DNA subscription). The newer 'Cisco Catalyst Software' (DNX) subscription printed in OG Tables 12-15 is intentionally dropped, mirroring the C9300 treatment.",
    "Power supplies: AC only. The DC options (PWR-C5-715WDC / PWR-C6-715WDC, spare-only, PoE-models-only per datasheet Table 4) are intentionally omitted — never proposed in practice. With DC gone, each model's valid_primary is a single AC SKU (fixed by the model's port/PoE class per datasheet Table 2), and the poe_budget_matrix expresses single vs redundant (identical second PSU), not a wattage choice.",
    "No StackPower on the C9200 series (data stacking only, StackWise-160 / StackWise-80). stackpower_cables and stackpower_cable_groups are intentionally empty.",
@@ -170,6 +176,27 @@
     "type": "DC",
     "rating": null,
     "notes": "DC-DC power adapter for the C9200CX-12T-2X2G compact switch (OG Table 5)."
+   },
+   {
+    "id": "PWR-C5-125WAC-M",
+    "watts": 125,
+    "type": "AC",
+    "rating": null,
+    "notes": "125W AC Config-5 power supply for C9200L-M (Meraki), Optional Accessories table, C9200L-M Datasheet."
+   },
+   {
+    "id": "PWR-C5-600WAC-M",
+    "watts": 600,
+    "type": "AC",
+    "rating": null,
+    "notes": "600W AC Config-5 power supply for C9200L-M (Meraki), Optional Accessories table, C9200L-M Datasheet."
+   },
+   {
+    "id": "PWR-C5-1KWAC-M",
+    "watts": 1000,
+    "type": "AC",
+    "rating": null,
+    "notes": "1000W AC Config-5 power supply for C9200L-M (Meraki), Optional Accessories table, C9200L-M Datasheet."
    }
   ],
   "stack_cables": [
@@ -190,6 +217,24 @@
     "length_cm": 300,
     "type": "type-4",
     "notes": "Data stack 3 m cable (datasheet Table 6)."
+   },
+   {
+    "id": "STACK-T4-50CM-M",
+    "length_cm": 50,
+    "type": "type-4",
+    "notes": "Data stack 50 cm cable for C9200L-M (Meraki), default with the C9200L-STAK-KIT-M stack kit, Optional Accessories table, C9200L-M Datasheet."
+   },
+   {
+    "id": "STACK-T4-1M-M",
+    "length_cm": 100,
+    "type": "type-4",
+    "notes": "Data stack 1 m cable for C9200L-M (Meraki), Optional Accessories table, C9200L-M Datasheet."
+   },
+   {
+    "id": "STACK-T4-3M-M",
+    "length_cm": 300,
+    "type": "type-4",
+    "notes": "Data stack 3 m cable for C9200L-M (Meraki), Optional Accessories table, C9200L-M Datasheet."
    }
   ],
   "stackpower_cables": [],
@@ -535,6 +580,150 @@
     "term_years": 7,
     "port_class": 8,
     "notes": "C9200CX DNA Advantage, 8-port, 7-year term (OG Table 11)."
+   },
+   {
+    "id": "LIC-C9200L-24E-1Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-C9200L-24E (Catalyst 9200L-M License Structure table, Enterprise Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-24E-3Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (3-year); datasheet prints only base order code LIC-C9200L-24E (Catalyst 9200L-M License Structure table, Enterprise Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-24E-5Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (5-year); datasheet prints only base order code LIC-C9200L-24E (Catalyst 9200L-M License Structure table, Enterprise Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-24A-1Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-C9200L-24A (Catalyst 9200L-M License Structure table, Advanced Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-24A-3Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (3-year); datasheet prints only base order code LIC-C9200L-24A (Catalyst 9200L-M License Structure table, Advanced Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-24A-5Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (5-year); datasheet prints only base order code LIC-C9200L-24A (Catalyst 9200L-M License Structure table, Advanced Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-48E-1Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-C9200L-48E (Catalyst 9200L-M License Structure table, Enterprise Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-48E-3Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (3-year); datasheet prints only base order code LIC-C9200L-48E (Catalyst 9200L-M License Structure table, Enterprise Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-48E-5Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (5-year); datasheet prints only base order code LIC-C9200L-48E (Catalyst 9200L-M License Structure table, Enterprise Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-48A-1Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-C9200L-48A (Catalyst 9200L-M License Structure table, Advanced Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-48A-3Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (3-year); datasheet prints only base order code LIC-C9200L-48A (Catalyst 9200L-M License Structure table, Advanced Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-C9200L-48A-5Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (5-year); datasheet prints only base order code LIC-C9200L-48A (Catalyst 9200L-M License Structure table, Advanced Features tier) and states 1/3/5-year terms are offered, per C9300L-M SKU-per-term convention."
+   },
+   {
+    "id": "LIC-MS-200-M-E",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 24,
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only base order code LIC-MS-200-M covering the MS200 Medium class (24-port), per C9300L-M LIC-MS-300-M-E/-A convention. Datasheet subscription-licensing hardware list for MS200 Medium also includes legacy MS210/MS225/MS250/MS320-24* hardware and classic (non-M) C9200L-24T-4G*/-24P-4G*/-24T-4X*/-24P-4X*/-24PXG-4X*/-24PXG-2Y* hardware; scope here stays limited to the C9200L-M models being added in Part 2."
+   },
+   {
+    "id": "LIC-MS-200-M-A",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 24,
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only base order code LIC-MS-200-M covering the MS200 Medium class (24-port), per C9300L-M LIC-MS-300-M-E/-A convention. Datasheet subscription-licensing hardware list for MS200 Medium also includes legacy MS210/MS225/MS250/MS320-24* hardware and classic (non-M) C9200L-24T-4G*/-24P-4G*/-24T-4X*/-24P-4X*/-24PXG-4X*/-24PXG-2Y* hardware; scope here stays limited to the C9200L-M models being added in Part 2."
+   },
+   {
+    "id": "LIC-MS-200-L-E",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 48,
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only base order code LIC-MS-200-L covering the MS200 Large class (48-port), per C9300L-M LIC-MS-300-L-E/-A convention. Datasheet subscription-licensing hardware list for MS200 Large also includes legacy MS210/MS225/MS250/MS320-48* hardware and classic (non-M) C9200L-48T-4G*/-48P-4G*/-48PL-4G*/-48T-4X*/-48P-4X*/-48PL-4X*/-48PXG-4X*/-48PXG-2Y* hardware; scope here stays limited to the C9200L-M models being added in Part 2."
+   },
+   {
+    "id": "LIC-MS-200-L-A",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 48,
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only base order code LIC-MS-200-L covering the MS200 Large class (48-port), per C9300L-M LIC-MS-300-L-E/-A convention. Datasheet subscription-licensing hardware list for MS200 Large also includes legacy MS210/MS225/MS250/MS320-48* hardware and classic (non-M) C9200L-48T-4G*/-48P-4G*/-48PL-4G*/-48T-4X*/-48P-4X*/-48PL-4X*/-48PXG-4X*/-48PXG-2Y* hardware; scope here stays limited to the C9200L-M models being added in Part 2."
    }
   ]
  },
@@ -608,6 +797,16 @@
     ],
     "secondary_none_option": "C9200CX-SPS-NONE",
     "notes": "C9200CX-12T-2X2G only. This model ships with NO internal power supply (OG: 'does not come with a power supply by default'); its true default powering is as a PD drawing 802.3bt Class 6 / UPOE from an upstream switch's uplink. These two SKUs are the optional external adapters (AC-DC and DC-DC, both 80W). default_primary proposes the AC-DC adapter so power is not overlooked at order time; running with no adapter at all (pure PD) is fully valid but is not offered as a selectable group member since every catalog power_supply requires watts>=1 — see the model's axis_value_provenance.power_source."
+   },
+   {
+    "id": "c9200l-m-psus",
+    "members": [
+     "PWR-C5-125WAC-M",
+     "PWR-C5-600WAC-M",
+     "PWR-C5-1KWAC-M"
+    ],
+    "secondary_none_option": "C9200L-SPS-NONE",
+    "notes": "Cisco Catalyst 9200L-M (Meraki) series PSU set (Optional Accessories table, C9200L-M Datasheet). -M SKUs, same wattages as the base C9200L Config-5 family; reuses the existing C9200L-SPS-NONE none-option per the C9300L-M convention. Which member is valid as PRIMARY and the PoE budget per (primary,secondary) pair are switch-specific and live on the model entry (Part 2)."
    }
   ],
   "stack_cable_groups": [
@@ -632,6 +831,17 @@
     "stack_kit": "C9200L-STACK-KIT",
     "none_option": "C9200L-STACK-NONE",
     "notes": "StackWise-80 data stacking for C9200L fixed-uplink models via C9200L-STACK-KIT. Same Type-4 STACK-T4 cables as the C9200 group but a distinct kit; kept as its own named group per project convention (datasheet Tables 5-6)."
+   },
+   {
+    "id": "c9200l-m-stack-cables",
+    "members": [
+     "STACK-T4-50CM-M",
+     "STACK-T4-1M-M",
+     "STACK-T4-3M-M"
+    ],
+    "stack_kit": "C9200L-STAK-KIT-M",
+    "none_option": "C9200L-STACK-NONE",
+    "notes": "C9200L-M (Meraki) fixed-uplink StackWise-80 stacking via C9200L-STAK-KIT-M (two adapters + one 50cm cable, Optional Accessories table, C9200L-M Datasheet). Type-4 cables, -M SKUs; reuses the existing C9200L-STACK-NONE none-option per the C9300L-M convention. Kept distinct from c9200l-stack-cables per project convention (series-specific groups kept separate even where cable specs match)."
    }
   ],
   "stackpower_cable_groups": [],
@@ -899,6 +1109,142 @@
      ],
      "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU. Subscription is mandatory; tier locked to -A."
     }
+   },
+   {
+    "id": "cat9200l-meraki-classic-essentials-24",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "24-port C9200L-M (Meraki) platforms, Enterprise Features tier (LIC-C9200L-24E) (C9200L-M Datasheet, Catalyst 9200L-M License Structure table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-C9200L-24E-1Y",
+     "LIC-C9200L-24E-3Y",
+     "LIC-C9200L-24E-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option; no tier lock by hardware suffix — tier is a customer choice at order time, per project convention for Meraki-classic licensing. Per-term SKUs synthesized (datasheet prints only the base order code LIC-C9200L-24E and states 1/3/5-year terms are offered)."
+    }
+   },
+   {
+    "id": "cat9200l-meraki-classic-advantage-24",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "24-port C9200L-M (Meraki) platforms, Advanced Features tier (LIC-C9200L-24A) (C9200L-M Datasheet, Catalyst 9200L-M License Structure table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-C9200L-24A-1Y",
+     "LIC-C9200L-24A-3Y",
+     "LIC-C9200L-24A-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option; no tier lock by hardware suffix — tier is a customer choice at order time, per project convention for Meraki-classic licensing. Per-term SKUs synthesized (datasheet prints only the base order code LIC-C9200L-24A and states 1/3/5-year terms are offered)."
+    }
+   },
+   {
+    "id": "cat9200l-meraki-classic-essentials-48",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "48-port C9200L-M (Meraki) platforms, Enterprise Features tier (LIC-C9200L-48E) (C9200L-M Datasheet, Catalyst 9200L-M License Structure table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-C9200L-48E-1Y",
+     "LIC-C9200L-48E-3Y",
+     "LIC-C9200L-48E-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option; no tier lock by hardware suffix — tier is a customer choice at order time, per project convention for Meraki-classic licensing. Per-term SKUs synthesized (datasheet prints only the base order code LIC-C9200L-48E and states 1/3/5-year terms are offered)."
+    }
+   },
+   {
+    "id": "cat9200l-meraki-classic-advantage-48",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "48-port C9200L-M (Meraki) platforms, Advanced Features tier (LIC-C9200L-48A) (C9200L-M Datasheet, Catalyst 9200L-M License Structure table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-C9200L-48A-1Y",
+     "LIC-C9200L-48A-3Y",
+     "LIC-C9200L-48A-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option; no tier lock by hardware suffix — tier is a customer choice at order time, per project convention for Meraki-classic licensing. Per-term SKUs synthesized (datasheet prints only the base order code LIC-C9200L-48A and states 1/3/5-year terms are offered)."
+    }
+   },
+   {
+    "id": "cat9200l-meraki-sub-m-essentials",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "MS200 Medium class — 24-port C9200L-M (Meraki) switches (C9200L-M Datasheet, Subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-200-M-E"
+    ],
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only the base order code LIC-MS-200-M covering the whole MS200 Medium class, per the C9300L-M LIC-MS-300-M-E/-A convention."
+   },
+   {
+    "id": "cat9200l-meraki-sub-m-advantage",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "MS200 Medium class — 24-port C9200L-M (Meraki) switches (C9200L-M Datasheet, Subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-200-M-A"
+    ],
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only the base order code LIC-MS-200-M covering the whole MS200 Medium class, per the C9300L-M LIC-MS-300-M-E/-A convention."
+   },
+   {
+    "id": "cat9200l-meraki-sub-l-essentials",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "MS200 Large class — 48-port C9200L-M (Meraki) switches (C9200L-M Datasheet, Subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-200-L-E"
+    ],
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only the base order code LIC-MS-200-L covering the whole MS200 Large class, per the C9300L-M LIC-MS-300-L-E/-A convention."
+   },
+   {
+    "id": "cat9200l-meraki-sub-l-advantage",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "MS200 Large class — 48-port C9200L-M (Meraki) switches (C9200L-M Datasheet, Subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-200-L-A"
+    ],
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only the base order code LIC-MS-200-L covering the whole MS200 Large class, per the C9300L-M LIC-MS-300-L-E/-A convention."
    }
   ]
  },
@@ -7218,6 +7564,1483 @@
     "power_cables": {
      "count": 1,
      "note": "Ships with the fixed internal AC supply; a region-specific AC power cord is selected at order time."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24T-4G-M",
+   "description": "Cisco Catalyst 9200L-M (Meraki), 24-port 1G data copper, 4x 1G SFP fixed uplinks, Meraki-managed. StackWise-80, no StackPower.",
+   "axis_values": {
+    "series": "C9200L",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "C9200L-M Datasheet Models table + Interfaces Specifications table: 24x 1G data, 4x 1G SFP fixed uplinks (uplink_modular=false).",
+    "poe_*": "C9200L-M Datasheet Interfaces Specifications table: PoE Capabilities = n/a. poe_capable=false, poe_type='none'.",
+    "stacking": "C9200L-M Datasheet Interfaces Specifications table: 2x 80G hardware stack ports (StackWise-80), via C9200L-STAK-KIT-M. No StackPower on the C9200 series.",
+    "default_primary": "C9200L-M Datasheet Power Supply and Specifications table: default PSU = PWR-C5-125WAC-M.",
+    "weight_kg": "C9200L-M Datasheet Physical Specifications table."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 56,
+    "switching_capacity_stacked_gbps": 136,
+    "forwarding_rate_mpps": 41.67,
+    "forwarding_rate_stacked_mpps": 101,
+    "weight_kg": 4.35,
+    "power_load_watts_idle": 27.39,
+    "power_load_watts_max": 36.23,
+    "port_layout": "24x 1G data",
+    "fixed_uplinks": "4x 1G SFP",
+    "default_ac_power_supply": "PWR-C5-125WAC-M"
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9200l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-m-psus",
+     "valid_primary": [
+      "PWR-C5-125WAC-M"
+     ],
+     "default_primary": "PWR-C5-125WAC-M",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "C9200L-M Datasheet Power Supply and Specifications table: default PWR-C5-125WAC-M, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
+    },
+    "license": {
+     "group": "cat9200l-meraki-classic-essentials-24",
+     "additional_groups": [
+      "cat9200l-meraki-classic-advantage-24",
+      "cat9200l-meraki-sub-m-essentials",
+      "cat9200l-meraki-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24P-4G-M",
+   "description": "Cisco Catalyst 9200L-M (Meraki), 24-port 1G full PoE+ copper, 4x 1G SFP fixed uplinks, Meraki-managed. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "C9200L-M Datasheet Models table + Interfaces Specifications table: 24x 1G full PoE+, 4x 1G SFP fixed uplinks (uplink_modular=false).",
+    "poe_*": "C9200L-M Datasheet Interfaces Specifications table: 30W PoE+ capability. poe_type=poe+ (IEEE 802.3at, 30W). Power Supply table: PWR-C5-600WAC-M single = 370W, with additional secondary PWR-C5-600WAC-M = 740W.",
+    "stacking": "C9200L-M Datasheet Interfaces Specifications table: 2x 80G hardware stack ports (StackWise-80), via C9200L-STAK-KIT-M. No StackPower on the C9200 series.",
+    "default_primary": "C9200L-M Datasheet Power Supply and Specifications table: default PSU = PWR-C5-600WAC-M.",
+    "weight_kg": "C9200L-M Datasheet Physical Specifications table."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 56,
+    "switching_capacity_stacked_gbps": 136,
+    "forwarding_rate_mpps": 41.67,
+    "forwarding_rate_stacked_mpps": 101,
+    "weight_kg": 4.71,
+    "power_load_watts_idle": 39.59,
+    "power_load_watts_max": 466.34,
+    "port_layout": "24x 1G PoE+",
+    "fixed_uplinks": "4x 1G SFP",
+    "default_ac_power_supply": "PWR-C5-600WAC-M"
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9200l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-m-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC-M"
+     ],
+     "default_primary": "PWR-C5-600WAC-M",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC-M",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC-M",
+       "secondary": "PWR-C5-600WAC-M",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "C9200L-M Datasheet Power Supply and Specifications table row for C9200L-24P-4G: primary PWR-C5-600WAC-M = 370W, with additional secondary PWR-C5-600WAC-M = 740W."
+    },
+    "license": {
+     "group": "cat9200l-meraki-classic-essentials-24",
+     "additional_groups": [
+      "cat9200l-meraki-classic-advantage-24",
+      "cat9200l-meraki-sub-m-essentials",
+      "cat9200l-meraki-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48T-4G-M",
+   "description": "Cisco Catalyst 9200L-M (Meraki), 48-port 1G data copper, 4x 1G SFP fixed uplinks, Meraki-managed. StackWise-80, no StackPower.",
+   "axis_values": {
+    "series": "C9200L",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "C9200L-M Datasheet Models table + Interfaces Specifications table: 48x 1G data, 4x 1G SFP fixed uplinks (uplink_modular=false).",
+    "poe_*": "C9200L-M Datasheet Interfaces Specifications table: PoE Capabilities = n/a. poe_capable=false, poe_type='none'.",
+    "stacking": "C9200L-M Datasheet Interfaces Specifications table: 2x 80G hardware stack ports (StackWise-80), via C9200L-STAK-KIT-M. No StackPower on the C9200 series.",
+    "default_primary": "C9200L-M Datasheet Power Supply and Specifications table: default PSU = PWR-C5-125WAC-M.",
+    "weight_kg": "C9200L-M Datasheet Physical Specifications table."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 104,
+    "switching_capacity_stacked_gbps": 184,
+    "forwarding_rate_mpps": 77.38,
+    "forwarding_rate_stacked_mpps": 137,
+    "weight_kg": 4.53,
+    "power_load_watts_idle": 33.85,
+    "power_load_watts_max": 47.33,
+    "port_layout": "48x 1G data",
+    "fixed_uplinks": "4x 1G SFP",
+    "default_ac_power_supply": "PWR-C5-125WAC-M"
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9200l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-m-psus",
+     "valid_primary": [
+      "PWR-C5-125WAC-M"
+     ],
+     "default_primary": "PWR-C5-125WAC-M",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "C9200L-M Datasheet Power Supply and Specifications table: default PWR-C5-125WAC-M, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
+    },
+    "license": {
+     "group": "cat9200l-meraki-classic-essentials-48",
+     "additional_groups": [
+      "cat9200l-meraki-classic-advantage-48",
+      "cat9200l-meraki-sub-l-essentials",
+      "cat9200l-meraki-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48P-4G-M",
+   "description": "Cisco Catalyst 9200L-M (Meraki), 48-port 1G full PoE+ copper, 4x 1G SFP fixed uplinks, Meraki-managed. StackWise-80, no StackPower, 1440W PoE budget.",
+   "axis_values": {
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "C9200L-M Datasheet Models table + Interfaces Specifications table: 48x 1G full PoE+, 4x 1G SFP fixed uplinks (uplink_modular=false).",
+    "poe_*": "C9200L-M Datasheet Interfaces Specifications table: 30W PoE+ capability. poe_type=poe+ (IEEE 802.3at, 30W). Power Supply table: PWR-C5-1KWAC-M single = 740W, with additional secondary PWR-C5-1KWAC-M = 1440W.",
+    "stacking": "C9200L-M Datasheet Interfaces Specifications table: 2x 80G hardware stack ports (StackWise-80), via C9200L-STAK-KIT-M. No StackPower on the C9200 series.",
+    "default_primary": "C9200L-M Datasheet Power Supply and Specifications table: default PSU = PWR-C5-1KWAC-M.",
+    "weight_kg": "C9200L-M Datasheet Physical Specifications table."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 104,
+    "switching_capacity_stacked_gbps": 184,
+    "forwarding_rate_mpps": 77.38,
+    "forwarding_rate_stacked_mpps": 137,
+    "weight_kg": 4.8,
+    "power_load_watts_idle": 45.82,
+    "power_load_watts_max": 933.03,
+    "port_layout": "48x 1G PoE+",
+    "fixed_uplinks": "4x 1G SFP",
+    "default_ac_power_supply": "PWR-C5-1KWAC-M"
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9200l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-m-psus",
+     "valid_primary": [
+      "PWR-C5-1KWAC-M"
+     ],
+     "default_primary": "PWR-C5-1KWAC-M",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-1KWAC-M",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C5-1KWAC-M",
+       "secondary": "PWR-C5-1KWAC-M",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "C9200L-M Datasheet Power Supply and Specifications table row for C9200L-48P-4G: primary PWR-C5-1KWAC-M = 740W, with additional secondary PWR-C5-1KWAC-M = 1440W."
+    },
+    "license": {
+     "group": "cat9200l-meraki-classic-essentials-48",
+     "additional_groups": [
+      "cat9200l-meraki-classic-advantage-48",
+      "cat9200l-meraki-sub-l-essentials",
+      "cat9200l-meraki-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48PL-4G-M",
+   "description": "Cisco Catalyst 9200L-M (Meraki), 48-port 1G partial PoE+ copper, 4x 1G SFP fixed uplinks, Meraki-managed. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "C9200L-M Datasheet Models table + Interfaces Specifications table: 48x 1G partial PoE+, 4x 1G SFP fixed uplinks (uplink_modular=false).",
+    "poe_*": "C9200L-M Datasheet Interfaces Specifications table: 30W PoE+ capability. poe_type=poe+ (IEEE 802.3at, 30W). Power Supply table: PWR-C5-600WAC-M single = 370W, with additional secondary PWR-C5-600WAC-M = 740W. 'Partial PoE+': all access ports are PoE+ capable but the aggregate budget is limited (below full-load 30W on every port).",
+    "stacking": "C9200L-M Datasheet Interfaces Specifications table: 2x 80G hardware stack ports (StackWise-80), via C9200L-STAK-KIT-M. No StackPower on the C9200 series.",
+    "default_primary": "C9200L-M Datasheet Power Supply and Specifications table: default PSU = PWR-C5-600WAC-M.",
+    "weight_kg": "C9200L-M Datasheet Physical Specifications table."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 104,
+    "switching_capacity_stacked_gbps": 184,
+    "forwarding_rate_mpps": 77.38,
+    "forwarding_rate_stacked_mpps": 137,
+    "weight_kg": 4.8,
+    "power_load_watts_idle": 39.59,
+    "power_load_watts_max": 466.34,
+    "port_layout": "48x 1G partial PoE+",
+    "fixed_uplinks": "4x 1G SFP",
+    "default_ac_power_supply": "PWR-C5-600WAC-M"
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9200l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-m-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC-M"
+     ],
+     "default_primary": "PWR-C5-600WAC-M",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC-M",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC-M",
+       "secondary": "PWR-C5-600WAC-M",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "C9200L-M Datasheet Power Supply and Specifications table row for C9200L-48PL-4G: primary PWR-C5-600WAC-M = 370W, with additional secondary PWR-C5-600WAC-M = 740W."
+    },
+    "license": {
+     "group": "cat9200l-meraki-classic-essentials-48",
+     "additional_groups": [
+      "cat9200l-meraki-classic-advantage-48",
+      "cat9200l-meraki-sub-l-essentials",
+      "cat9200l-meraki-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24T-4X-M",
+   "description": "Cisco Catalyst 9200L-M (Meraki), 24-port 1G data copper, 4x 1/10G SFP+ fixed uplinks, Meraki-managed. StackWise-80, no StackPower.",
+   "axis_values": {
+    "series": "C9200L",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "C9200L-M Datasheet Models table + Interfaces Specifications table: 24x 1G data, 4x 1/10G SFP+ fixed uplinks (uplink_modular=false).",
+    "poe_*": "C9200L-M Datasheet Interfaces Specifications table: PoE Capabilities = n/a. poe_capable=false, poe_type='none'.",
+    "stacking": "C9200L-M Datasheet Interfaces Specifications table: 2x 80G hardware stack ports (StackWise-80), via C9200L-STAK-KIT-M. No StackPower on the C9200 series.",
+    "default_primary": "C9200L-M Datasheet Power Supply and Specifications table: default PSU = PWR-C5-125WAC-M.",
+    "weight_kg": "C9200L-M Datasheet Physical Specifications table."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 128,
+    "switching_capacity_stacked_gbps": 208,
+    "forwarding_rate_mpps": 95.23,
+    "forwarding_rate_stacked_mpps": 155,
+    "weight_kg": 4.35,
+    "power_load_watts_idle": 27.82,
+    "power_load_watts_max": 38.6,
+    "port_layout": "24x 1G data",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-125WAC-M"
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9200l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-m-psus",
+     "valid_primary": [
+      "PWR-C5-125WAC-M"
+     ],
+     "default_primary": "PWR-C5-125WAC-M",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "C9200L-M Datasheet Power Supply and Specifications table: default PWR-C5-125WAC-M, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
+    },
+    "license": {
+     "group": "cat9200l-meraki-classic-essentials-24",
+     "additional_groups": [
+      "cat9200l-meraki-classic-advantage-24",
+      "cat9200l-meraki-sub-m-essentials",
+      "cat9200l-meraki-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24P-4X-M",
+   "description": "Cisco Catalyst 9200L-M (Meraki), 24-port 1G full PoE+ copper, 4x 1/10G SFP+ fixed uplinks, Meraki-managed. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "C9200L-M Datasheet Models table + Interfaces Specifications table: 24x 1G full PoE+, 4x 1/10G SFP+ fixed uplinks (uplink_modular=false).",
+    "poe_*": "C9200L-M Datasheet Interfaces Specifications table: 30W PoE+ capability. poe_type=poe+ (IEEE 802.3at, 30W). Power Supply table: PWR-C5-600WAC-M single = 370W, with additional secondary PWR-C5-600WAC-M = 740W.",
+    "stacking": "C9200L-M Datasheet Interfaces Specifications table: 2x 80G hardware stack ports (StackWise-80), via C9200L-STAK-KIT-M. No StackPower on the C9200 series.",
+    "default_primary": "C9200L-M Datasheet Power Supply and Specifications table: default PSU = PWR-C5-600WAC-M.",
+    "weight_kg": "C9200L-M Datasheet Physical Specifications table."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 128,
+    "switching_capacity_stacked_gbps": 208,
+    "forwarding_rate_mpps": 95.23,
+    "forwarding_rate_stacked_mpps": 155,
+    "weight_kg": 4.71,
+    "power_load_watts_idle": 39.48,
+    "power_load_watts_max": 434.06,
+    "port_layout": "24x 1G PoE+",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-600WAC-M"
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9200l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-m-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC-M"
+     ],
+     "default_primary": "PWR-C5-600WAC-M",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC-M",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC-M",
+       "secondary": "PWR-C5-600WAC-M",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "C9200L-M Datasheet Power Supply and Specifications table row for C9200L-24P-4X: primary PWR-C5-600WAC-M = 370W, with additional secondary PWR-C5-600WAC-M = 740W."
+    },
+    "license": {
+     "group": "cat9200l-meraki-classic-essentials-24",
+     "additional_groups": [
+      "cat9200l-meraki-classic-advantage-24",
+      "cat9200l-meraki-sub-m-essentials",
+      "cat9200l-meraki-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48T-4X-M",
+   "description": "Cisco Catalyst 9200L-M (Meraki), 48-port 1G data copper, 4x 1/10G SFP+ fixed uplinks, Meraki-managed. StackWise-80, no StackPower.",
+   "axis_values": {
+    "series": "C9200L",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "C9200L-M Datasheet Models table + Interfaces Specifications table: 48x 1G data, 4x 1/10G SFP+ fixed uplinks (uplink_modular=false).",
+    "poe_*": "C9200L-M Datasheet Interfaces Specifications table: PoE Capabilities = n/a. poe_capable=false, poe_type='none'.",
+    "stacking": "C9200L-M Datasheet Interfaces Specifications table: 2x 80G hardware stack ports (StackWise-80), via C9200L-STAK-KIT-M. No StackPower on the C9200 series.",
+    "default_primary": "C9200L-M Datasheet Power Supply and Specifications table: default PSU = PWR-C5-125WAC-M.",
+    "weight_kg": "C9200L-M Datasheet Physical Specifications table."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 176,
+    "switching_capacity_stacked_gbps": 256,
+    "forwarding_rate_mpps": 130.95,
+    "forwarding_rate_stacked_mpps": 190,
+    "weight_kg": 4.53,
+    "power_load_watts_idle": 36.08,
+    "power_load_watts_max": 53.6,
+    "port_layout": "48x 1G data",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-125WAC-M"
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9200l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-m-psus",
+     "valid_primary": [
+      "PWR-C5-125WAC-M"
+     ],
+     "default_primary": "PWR-C5-125WAC-M",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "C9200L-M Datasheet Power Supply and Specifications table: default PWR-C5-125WAC-M, no PoE (data model). Empty matrix; a second PSU is still orderable for power redundancy."
+    },
+    "license": {
+     "group": "cat9200l-meraki-classic-essentials-48",
+     "additional_groups": [
+      "cat9200l-meraki-classic-advantage-48",
+      "cat9200l-meraki-sub-l-essentials",
+      "cat9200l-meraki-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48P-4X-M",
+   "description": "Cisco Catalyst 9200L-M (Meraki), 48-port 1G full PoE+ copper, 4x 1/10G SFP+ fixed uplinks, Meraki-managed. StackWise-80, no StackPower, 1440W PoE budget.",
+   "axis_values": {
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "C9200L-M Datasheet Models table + Interfaces Specifications table: 48x 1G full PoE+, 4x 1/10G SFP+ fixed uplinks (uplink_modular=false).",
+    "poe_*": "C9200L-M Datasheet Interfaces Specifications table: 30W PoE+ capability. poe_type=poe+ (IEEE 802.3at, 30W). Power Supply table: PWR-C5-1KWAC-M single = 740W, with additional secondary PWR-C5-1KWAC-M = 1440W.",
+    "stacking": "C9200L-M Datasheet Interfaces Specifications table: 2x 80G hardware stack ports (StackWise-80), via C9200L-STAK-KIT-M. No StackPower on the C9200 series.",
+    "default_primary": "C9200L-M Datasheet Power Supply and Specifications table: default PSU = PWR-C5-1KWAC-M.",
+    "weight_kg": "C9200L-M Datasheet Physical Specifications table."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 176,
+    "switching_capacity_stacked_gbps": 256,
+    "forwarding_rate_mpps": 130.95,
+    "forwarding_rate_stacked_mpps": 190,
+    "weight_kg": 4.8,
+    "power_load_watts_idle": 50.31,
+    "power_load_watts_max": 872.6,
+    "port_layout": "48x 1G PoE+",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-1KWAC-M"
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9200l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-m-psus",
+     "valid_primary": [
+      "PWR-C5-1KWAC-M"
+     ],
+     "default_primary": "PWR-C5-1KWAC-M",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-1KWAC-M",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C5-1KWAC-M",
+       "secondary": "PWR-C5-1KWAC-M",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "C9200L-M Datasheet Power Supply and Specifications table row for C9200L-48P-4X: primary PWR-C5-1KWAC-M = 740W, with additional secondary PWR-C5-1KWAC-M = 1440W."
+    },
+    "license": {
+     "group": "cat9200l-meraki-classic-essentials-48",
+     "additional_groups": [
+      "cat9200l-meraki-classic-advantage-48",
+      "cat9200l-meraki-sub-l-essentials",
+      "cat9200l-meraki-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48PL-4X-M",
+   "description": "Cisco Catalyst 9200L-M (Meraki), 48-port 1G partial PoE+ copper, 4x 1/10G SFP+ fixed uplinks, Meraki-managed. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "C9200L-M Datasheet Models table + Interfaces Specifications table: 48x 1G partial PoE+, 4x 1/10G SFP+ fixed uplinks (uplink_modular=false).",
+    "poe_*": "C9200L-M Datasheet Interfaces Specifications table: 30W PoE+ capability. poe_type=poe+ (IEEE 802.3at, 30W). Power Supply table: PWR-C5-600WAC-M single = 370W, with additional secondary PWR-C5-600WAC-M = 740W. 'Partial PoE+': all access ports are PoE+ capable but the aggregate budget is limited (below full-load 30W on every port).",
+    "stacking": "C9200L-M Datasheet Interfaces Specifications table: 2x 80G hardware stack ports (StackWise-80), via C9200L-STAK-KIT-M. No StackPower on the C9200 series.",
+    "default_primary": "C9200L-M Datasheet Power Supply and Specifications table: default PSU = PWR-C5-600WAC-M.",
+    "weight_kg": "C9200L-M Datasheet Physical Specifications table."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 176,
+    "switching_capacity_stacked_gbps": 256,
+    "forwarding_rate_mpps": 130.95,
+    "forwarding_rate_stacked_mpps": 190,
+    "weight_kg": 4.8,
+    "power_load_watts_idle": 40.17,
+    "power_load_watts_max": 445.35,
+    "port_layout": "48x 1G partial PoE+",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-600WAC-M"
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9200l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-m-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC-M"
+     ],
+     "default_primary": "PWR-C5-600WAC-M",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC-M",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC-M",
+       "secondary": "PWR-C5-600WAC-M",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "C9200L-M Datasheet Power Supply and Specifications table row for C9200L-48PL-4X: primary PWR-C5-600WAC-M = 370W, with additional secondary PWR-C5-600WAC-M = 740W."
+    },
+    "license": {
+     "group": "cat9200l-meraki-classic-essentials-48",
+     "additional_groups": [
+      "cat9200l-meraki-classic-advantage-48",
+      "cat9200l-meraki-sub-l-essentials",
+      "cat9200l-meraki-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24PXG-4X-M",
+   "description": "Cisco Catalyst 9200L-M (Meraki), 24-port full PoE+ (8x mGig up to 10G + 16x 1G) copper, 4x 1/10G SFP+ fixed uplinks, Meraki-managed. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 16,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "C9200L-M Datasheet Models table + Interfaces Specifications table: 24 ports full PoE+ (8 mGig ports up to 10G, 16 ports up to 1G), 4x 1/10G SFP+ fixed uplinks (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "C9200L-M Datasheet Interfaces Specifications table: 30W PoE+ capability. poe_type=poe+ (IEEE 802.3at, 30W). Power Supply table: PWR-C5-600WAC-M single = 370W, with additional secondary PWR-C5-600WAC-M = 740W.",
+    "stacking": "C9200L-M Datasheet Interfaces Specifications table: 2x 80G hardware stack ports (StackWise-80), via C9200L-STAK-KIT-M. No StackPower on the C9200 series.",
+    "default_primary": "C9200L-M Datasheet Power Supply and Specifications table: default PSU = PWR-C5-600WAC-M.",
+    "weight_kg": "C9200L-M Datasheet Physical Specifications table."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 272,
+    "switching_capacity_stacked_gbps": 352,
+    "forwarding_rate_mpps": 214.28,
+    "forwarding_rate_stacked_mpps": 262,
+    "weight_kg": 5.44,
+    "power_load_watts_idle": 64.54,
+    "power_load_watts_max": 472.39,
+    "port_layout": "8x mGig (1/2.5/5/10G) + 16x 1G, PoE+",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-600WAC-M"
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9200l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-m-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC-M"
+     ],
+     "default_primary": "PWR-C5-600WAC-M",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC-M",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC-M",
+       "secondary": "PWR-C5-600WAC-M",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "C9200L-M Datasheet Power Supply and Specifications table row for C9200L-24PXG-4X: primary PWR-C5-600WAC-M = 370W, with additional secondary PWR-C5-600WAC-M = 740W."
+    },
+    "license": {
+     "group": "cat9200l-meraki-classic-essentials-24",
+     "additional_groups": [
+      "cat9200l-meraki-classic-advantage-24",
+      "cat9200l-meraki-sub-m-essentials",
+      "cat9200l-meraki-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48PXG-4X-M",
+   "description": "Cisco Catalyst 9200L-M (Meraki), 48-port full PoE+ (12x mGig up to 10G + 36x 1G) copper, 4x 1/10G SFP+ fixed uplinks, Meraki-managed. StackWise-80, no StackPower, 1440W PoE budget.",
+   "axis_values": {
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 12,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 36,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "C9200L-M Datasheet Models table + Interfaces Specifications table: 48 ports full PoE+ (12 mGig ports up to 10G, 36 ports up to 1G), 4x 1/10G SFP+ fixed uplinks (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "C9200L-M Datasheet Interfaces Specifications table: 30W PoE+ capability. poe_type=poe+ (IEEE 802.3at, 30W). Power Supply table: PWR-C5-1KWAC-M single = 740W, with additional secondary PWR-C5-1KWAC-M = 1440W.",
+    "stacking": "C9200L-M Datasheet Interfaces Specifications table: 2x 80G hardware stack ports (StackWise-80), via C9200L-STAK-KIT-M. No StackPower on the C9200 series.",
+    "default_primary": "C9200L-M Datasheet Power Supply and Specifications table: default PSU = PWR-C5-1KWAC-M.",
+    "weight_kg": "C9200L-M Datasheet Physical Specifications table."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 392,
+    "switching_capacity_stacked_gbps": 472,
+    "forwarding_rate_mpps": 291.66,
+    "forwarding_rate_stacked_mpps": 351,
+    "weight_kg": 5.71,
+    "power_load_watts_idle": 72.14,
+    "power_load_watts_max": 930.11,
+    "port_layout": "12x mGig (1/2.5/5/10G) + 36x 1G, PoE+",
+    "fixed_uplinks": "4x 1/10G SFP+",
+    "default_ac_power_supply": "PWR-C5-1KWAC-M"
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9200l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-m-psus",
+     "valid_primary": [
+      "PWR-C5-1KWAC-M"
+     ],
+     "default_primary": "PWR-C5-1KWAC-M",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-1KWAC-M",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C5-1KWAC-M",
+       "secondary": "PWR-C5-1KWAC-M",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "C9200L-M Datasheet Power Supply and Specifications table row for C9200L-48PXG-4X: primary PWR-C5-1KWAC-M = 740W, with additional secondary PWR-C5-1KWAC-M = 1440W."
+    },
+    "license": {
+     "group": "cat9200l-meraki-classic-essentials-48",
+     "additional_groups": [
+      "cat9200l-meraki-classic-advantage-48",
+      "cat9200l-meraki-sub-l-essentials",
+      "cat9200l-meraki-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-24PXG-2Y-M",
+   "description": "Cisco Catalyst 9200L-M (Meraki), 24-port full PoE+ (8x mGig up to 10G + 16x 1G) copper, 2x 1/10/25G SFP28 fixed uplinks, Meraki-managed. StackWise-80, no StackPower, 740W PoE budget.",
+   "axis_values": {
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 16,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g",
+      "25g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "C9200L-M Datasheet Models table + Interfaces Specifications table: 24 ports full PoE+ (8 mGig ports up to 10G, 16 ports up to 1G), 2x 1/10/25G SFP28 fixed uplinks (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "C9200L-M Datasheet Interfaces Specifications table: 30W PoE+ capability. poe_type=poe+ (IEEE 802.3at, 30W). Power Supply table: PWR-C5-600WAC-M single = 370W, with additional secondary PWR-C5-600WAC-M = 740W.",
+    "stacking": "C9200L-M Datasheet Interfaces Specifications table: 2x 80G hardware stack ports (StackWise-80), via C9200L-STAK-KIT-M. No StackPower on the C9200 series.",
+    "default_primary": "C9200L-M Datasheet Power Supply and Specifications table: default PSU = PWR-C5-600WAC-M.",
+    "weight_kg": "C9200L-M Datasheet Physical Specifications table."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 292,
+    "switching_capacity_stacked_gbps": 372,
+    "forwarding_rate_mpps": 229.16,
+    "forwarding_rate_stacked_mpps": 277,
+    "weight_kg": 5.44,
+    "power_load_watts_idle": 65.58,
+    "power_load_watts_max": 489.62,
+    "port_layout": "8x mGig (1/2.5/5/10G) + 16x 1G, PoE+",
+    "fixed_uplinks": "2x 1/10/25G SFP28",
+    "default_ac_power_supply": "PWR-C5-600WAC-M"
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9200l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-m-psus",
+     "valid_primary": [
+      "PWR-C5-600WAC-M"
+     ],
+     "default_primary": "PWR-C5-600WAC-M",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-600WAC-M",
+       "secondary": null,
+       "poe_budget_watts": 370
+      },
+      {
+       "primary": "PWR-C5-600WAC-M",
+       "secondary": "PWR-C5-600WAC-M",
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "C9200L-M Datasheet Power Supply and Specifications table row for C9200L-24PXG-2Y: primary PWR-C5-600WAC-M = 370W, with additional secondary PWR-C5-600WAC-M = 740W."
+    },
+    "license": {
+     "group": "cat9200l-meraki-classic-essentials-24",
+     "additional_groups": [
+      "cat9200l-meraki-classic-advantage-24",
+      "cat9200l-meraki-sub-m-essentials",
+      "cat9200l-meraki-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  },
+  {
+   "id": "C9200L-48PXG-2Y-M",
+   "description": "Cisco Catalyst 9200L-M (Meraki), 48-port full PoE+ (8x mGig up to 10G + 40x 1G) copper, 2x 1/10/25G SFP28 fixed uplinks, Meraki-managed. StackWise-80, no StackPower, 1440W PoE budget.",
+   "axis_values": {
+    "series": "C9200L",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 1440,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-80",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 40,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g",
+      "25g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "C9200L-M Datasheet Models table + Interfaces Specifications table: 48 ports full PoE+ (8 mGig ports up to 10G, 40 ports up to 1G), 2x 1/10/25G SFP28 fixed uplinks (uplink_modular=false). mGig speed set 1/2.5/5/10G as data-subsumption where present.",
+    "poe_*": "C9200L-M Datasheet Interfaces Specifications table: 30W PoE+ capability. poe_type=poe+ (IEEE 802.3at, 30W). Power Supply table: PWR-C5-1KWAC-M single = 740W, with additional secondary PWR-C5-1KWAC-M = 1440W.",
+    "stacking": "C9200L-M Datasheet Interfaces Specifications table: 2x 80G hardware stack ports (StackWise-80), via C9200L-STAK-KIT-M. No StackPower on the C9200 series.",
+    "default_primary": "C9200L-M Datasheet Power Supply and Specifications table: default PSU = PWR-C5-1KWAC-M.",
+    "weight_kg": "C9200L-M Datasheet Physical Specifications table."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 340,
+    "switching_capacity_stacked_gbps": 420,
+    "forwarding_rate_mpps": 252.97,
+    "forwarding_rate_stacked_mpps": 313,
+    "weight_kg": 5.71,
+    "power_load_watts_idle": 71.45,
+    "power_load_watts_max": 934.08,
+    "port_layout": "8x mGig (1/2.5/5/10G) + 40x 1G, PoE+",
+    "fixed_uplinks": "2x 1/10/25G SFP28",
+    "default_ac_power_supply": "PWR-C5-1KWAC-M"
+   },
+   "configurables": {
+    "stack_cables": {
+     "group": "c9200l-m-stack-cables"
+    },
+    "power_supplies": {
+     "group": "c9200l-m-psus",
+     "valid_primary": [
+      "PWR-C5-1KWAC-M"
+     ],
+     "default_primary": "PWR-C5-1KWAC-M",
+     "poe_budget_matrix": [
+      {
+       "primary": "PWR-C5-1KWAC-M",
+       "secondary": null,
+       "poe_budget_watts": 740
+      },
+      {
+       "primary": "PWR-C5-1KWAC-M",
+       "secondary": "PWR-C5-1KWAC-M",
+       "poe_budget_watts": 1440
+      }
+     ],
+     "matrix_provenance": "C9200L-M Datasheet Power Supply and Specifications table row for C9200L-48PXG-2Y: primary PWR-C5-1KWAC-M = 740W, with additional secondary PWR-C5-1KWAC-M = 1440W."
+    },
+    "license": {
+     "group": "cat9200l-meraki-classic-essentials-48",
+     "additional_groups": [
+      "cat9200l-meraki-classic-advantage-48",
+      "cat9200l-meraki-sub-l-essentials",
+      "cat9200l-meraki-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed dual redundant (not FRU)",
+    "mounting_brackets": true,
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
     }
    }
   }
