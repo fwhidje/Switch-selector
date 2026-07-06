@@ -1,0 +1,31 @@
+{
+ "header": {
+  "schema_version": "0.8.0",
+  "registry_version": "0.10.0",
+  "axes_file": "../switching-axes.json",
+  "schema_file": "switch-kb.schema.json",
+  "description": "Networking Equipment Selector knowledge base for the Cisco Meraki MS130 and MS150 Series switches (native Meraki cloud-managed access switches — distinct from the Catalyst 9200L-M/9300L-M hybrid Meraki-managed models, which live in their own C9200/C9300 KB files). Carries the catalog (atomic SKU facts), groups (named shared compatibility sets), and switch models for MS130 (compact access) and MS150 (stackable access). Structure: catalog + groups + models.",
+  "sources": [],
+  "design_notes": [
+   "Skeleton only (created ahead of any datasheet data): catalog, groups, and models are all empty. Populated in parts per project convention, from data pasted into the authoring session — never invented or inferred: (1) MS130 catalog + groups, (2) MS130 models, (3) MS150 catalog + groups, (4) MS150 models. header.sources is filled in once the datasheet reference (name/URL/date) is known.",
+   "New legal_values needed on an EXISTING axis (e.g. 'MS130'/'MS150' added to the 'series' enum, or any new stacking_technology/poe_type/license_tier value these native-Meraki models turn out to need) are a STRUCTURAL change per this schema's $authoring.cheap_vs_structural block and switching-axes.json's own change_policy — these are flagged for explicit human sign-off, never made unilaterally."
+  ]
+ },
+ "catalog": {
+  "_comment": "Atomic SKU facts. One row per real orderable component. What a thing IS, independent of which switch uses it.",
+  "network_modules": [],
+  "power_supplies": [],
+  "stack_cables": [],
+  "stackpower_cables": [],
+  "licenses": []
+ },
+ "groups": {
+  "_comment": "Named shared compatibility sets referencing catalog SKUs by id.",
+  "network_module_groups": [],
+  "power_supply_groups": [],
+  "stack_cable_groups": [],
+  "stackpower_cable_groups": [],
+  "license_groups": []
+ },
+ "models": []
+}
