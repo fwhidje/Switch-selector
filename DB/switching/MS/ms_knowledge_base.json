@@ -4,10 +4,15 @@
   "registry_version": "0.10.0",
   "axes_file": "../switching-axes.json",
   "schema_file": "switch-kb.schema.json",
-  "description": "Networking Equipment Selector knowledge base for the Cisco Meraki MS130 and MS150 Series switches (native Meraki cloud-managed access switches — distinct from the Catalyst 9200L-M/9300L-M hybrid Meraki-managed models, which live in their own C9200/C9300 KB files). Carries the catalog (atomic SKU facts), groups (named shared compatibility sets), and switch models for MS130 (compact access) and MS150 (stackable access). MS130 licensing catalog/groups and MS130 model entries (11: 8/8P/8P-I/8X/12X/24/24P/24X/48/48P/48X) are complete. MS150 is not yet started. Structure: catalog + groups + models.",
+  "description": "Networking Equipment Selector knowledge base for the Cisco Meraki MS130 and MS150 Series switches (native Meraki cloud-managed access switches — distinct from the Catalyst 9200L-M/9300L-M hybrid Meraki-managed models, which live in their own C9200/C9300 KB files). Carries the catalog (atomic SKU facts), groups (named shared compatibility sets), and switch models for MS130 (compact access) and MS150 (stackable access). MS130 licensing catalog/groups and MS130 model entries (11: 8/8P/8P-I/8X/12X/24/24P/24X/48/48P/48X) are complete. MS150 licensing catalog/groups and stack_cables/stack_cable_groups are complete; MS150 model entries are not yet added. Structure: catalog + groups + models.",
   "sources": [
    {
     "name": "Cisco Meraki MS130 Series Data Sheet",
+    "url": "user-provided (pasted content, no URL supplied)",
+    "last_verified": "2026-07-06"
+   },
+   {
+    "name": "Cisco Meraki MS150 Series Data Sheet",
     "url": "user-provided (pasted content, no URL supplied)",
     "last_verified": "2026-07-06"
    }
@@ -21,12 +26,35 @@
    "MS130 subscription license structure (regime meraki-subscription, shape subscription-based, term_years null): LIC-MS-100-{S,M,L}-{E,A}, tier-split per the C9200L-M LIC-MS-200-{M,L}-{E,A} convention. MS100 Small = compact class (8/12-port models); MS100 Medium = 24-port class; MS100 Large = 48-port class.",
    "Tier vocabulary: MS130's own tier names are Enterprise/Advanced; mapped to the registry's existing essentials/advantage legal_values (Enterprise->essentials, Advanced->advantage), same mapping convention used for C9200L-M. No new license_tier axis value.",
    "port_class on the compact-class license catalog entries and groups is recorded as null (not 8), since that class spans two distinct port counts (8-port and 12-port models) and the schema's port_class field is a single integer-or-null.",
-   "A trailing 'MS120' line at the end of the user's pasted subscription table was confirmed to be a paste artifact (not MS130 data) and is not reflected anywhere in this file."
+   "A trailing 'MS120' line at the end of the user's pasted subscription table was confirmed to be a paste artifact (not MS130 data) and is not reflected anywhere in this file.",
+   "Pass 3 (this pass): MS150 licensing (catalog.licenses + license_groups) and stack_cables/stack_cable_groups, from MS150 datasheet excerpts pasted into the authoring session. MS150 model entries are deferred to Pass 4. Same 'compact (8/12)'-style bundling pattern as MS130's classic table: the datasheet prints LIC-MS150-24(A)/-48(A) each against one representative model row, but the '24 ports'/'48 ports' wording covers the whole port-class family. Confirmed with the user: 24-port class = MS150-24T-4G/-24P-4G/-24T-4X/-24P-4X/-24MP-4X; 48-port class = MS150-48T-4G/-48LP-4G/-48FP-4G/-48T-4X/-48LP-4X/-48FP-4X/-48MP-4X. Unlike MS130, this MS150 excerpt does not itself restate a term-year list for the classic SKUs; per confirmed user direction, the MS130 term structure (Enterprise 1/3/5/7/10y, Advanced 1/3/5y) was reused as-is rather than left unsourced.",
+   "MS150 subscription licensing reuses the EXACT SAME catalog SKUs already added for MS130 (LIC-MS-100-M-E/-A for the 24-port/'MS100 Medium' class, LIC-MS-100-L-E/-A for the 48-port/'MS100 Large' class) — the MS150 datasheet prints the identical base order codes for its own port classes, confirming these are shared cross-family SKUs. No new subscription catalog.licenses entries were added for MS150; the 4 existing entries' notes were updated to record the added MS150 coverage, and 4 new MS150-specific license_groups (ms150-sub-*) reference those same catalog ids with MS150's own applies_to model list.",
+   "MS150 stacking cables: the datasheet's Stacking Cables table visually groups MA-CBL-100G-50CM/-1M/-3M against different model subsets (by port count and -4G vs -4X suffix), mirroring the same blank-cell/merged-cell layout seen in the license tables. Confirmed with the user that, unlike the license tables, this is NOT a per-model compatibility restriction: all three cable lengths are usable across all 12 MS150 models. Modeled as ONE shared stack_cable_group ('ms150-stack-cables') referenced by every MS150 model, rather than per-port-class subsets."
   ]
  },
  "catalog": {
   "_comment": "Atomic SKU facts. One row per real orderable component. What a thing IS, independent of which switch uses it.",
   "network_modules": [],
+  "stack_cables": [
+   {
+    "id": "MA-CBL-100G-50CM",
+    "length_cm": 50,
+    "type": "100G",
+    "notes": "MS150 100G stacking cable, 50cm (MS150 Datasheet, Stacking Cables table)."
+   },
+   {
+    "id": "MA-CBL-100G-1M",
+    "length_cm": 100,
+    "type": "100G",
+    "notes": "MS150 100G stacking cable, 1m (MS150 Datasheet, Stacking Cables table)."
+   },
+   {
+    "id": "MA-CBL-100G-3M",
+    "length_cm": 300,
+    "type": "100G",
+    "notes": "MS150 100G stacking cable, 3m (MS150 Datasheet, Stacking Cables table)."
+   }
+  ],
   "power_supplies": [
    {
     "id": "MS130-8-PSU-SYN",
@@ -106,7 +134,6 @@
     "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS130-48X datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240V~, 12-6A, 50-60Hz' and 'Power Load (idle/max): 60W/808W'. watts is a proxy = this model's own stated Power Load (max) (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
    }
   ],
-  "stack_cables": [],
   "stackpower_cables": [],
   "licenses": [
    {
@@ -350,7 +377,7 @@
     "shape": "subscription-based",
     "term_years": null,
     "port_class": 24,
-    "notes": "Tier suffix synthesized (Essentials); datasheet prints only base order code 'MS100 Medium' / LIC-MS-100-M covering the 24-port class (MS130-24/-24P/-24X), per the C9200L-M LIC-MS-200-M-E/-A convention."
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only base order code 'MS100 Medium' / LIC-MS-100-M covering the 24-port class, per the C9200L-M LIC-MS-200-M-E/-A convention. Shared across families: covers MS130-24/-24P/-24X (MS130 datasheet) AND MS150-24T-4G/-24P-4G/-24T-4X/-24P-4X/-24MP-4X (MS150 datasheet, confirmed identical SKU printed in both)."
    },
    {
     "id": "LIC-MS-100-M-A",
@@ -359,7 +386,7 @@
     "shape": "subscription-based",
     "term_years": null,
     "port_class": 24,
-    "notes": "Tier suffix synthesized (Advantage); datasheet prints only base order code 'MS100 Medium' / LIC-MS-100-M covering the 24-port class (MS130-24/-24P/-24X), per the C9200L-M LIC-MS-200-M-E/-A convention."
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only base order code 'MS100 Medium' / LIC-MS-100-M covering the 24-port class, per the C9200L-M LIC-MS-200-M-E/-A convention. Shared across families: covers MS130-24/-24P/-24X (MS130 datasheet) AND MS150-24T-4G/-24P-4G/-24T-4X/-24P-4X/-24MP-4X (MS150 datasheet, confirmed identical SKU printed in both)."
    },
    {
     "id": "LIC-MS-100-L-E",
@@ -368,7 +395,7 @@
     "shape": "subscription-based",
     "term_years": null,
     "port_class": 48,
-    "notes": "Tier suffix synthesized (Essentials); datasheet prints only base order code 'MS100 Large' / LIC-MS-100-L covering the 48-port class (MS130-48/-48P/-48X), per the C9200L-M LIC-MS-200-M-E/-A convention."
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only base order code 'MS100 Large' / LIC-MS-100-L covering the 48-port class, per the C9200L-M LIC-MS-200-M-E/-A convention. Shared across families: covers MS130-48/-48P/-48X (MS130 datasheet) AND MS150-48T-4G/-48LP-4G/-48FP-4G/-48T-4X/-48LP-4X/-48FP-4X/-48MP-4X (MS150 datasheet, confirmed identical SKU printed in both)."
    },
    {
     "id": "LIC-MS-100-L-A",
@@ -377,7 +404,151 @@
     "shape": "subscription-based",
     "term_years": null,
     "port_class": 48,
-    "notes": "Tier suffix synthesized (Advantage); datasheet prints only base order code 'MS100 Large' / LIC-MS-100-L covering the 48-port class (MS130-48/-48P/-48X), per the C9200L-M LIC-MS-200-M-E/-A convention."
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only base order code 'MS100 Large' / LIC-MS-100-L covering the 48-port class, per the C9200L-M LIC-MS-200-M-E/-A convention. Shared across families: covers MS130-48/-48P/-48X (MS130 datasheet) AND MS150-48T-4G/-48LP-4G/-48FP-4G/-48T-4X/-48LP-4X/-48FP-4X/-48MP-4X (MS150 datasheet, confirmed identical SKU printed in both)."
+   },
+   {
+    "id": "LIC-MS150-24-1Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS150-24 (MS150 classic license table, Enterprise tier, '24 ports' row) and states '24 ports Enterprise License and support'. Covers MS150-24T-4G/-24P-4G/-24T-4X/-24P-4X/-24MP-4X. Term-year set (1/3/5/7/10y) reused from the MS130 classic convention per confirmed user direction (this datasheet excerpt does not itself restate the term list)."
+   },
+   {
+    "id": "LIC-MS150-24-3Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS150-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-24-5Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS150-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-24-7Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 7,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (7-year); see LIC-MS150-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-24-10Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 10,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (10-year); see LIC-MS150-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-24A-1Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS150-24A (MS150 classic license table, Advanced tier, '24 ports' row) and states '24 ports Advance License and Support'. Covers MS150-24T-4G/-24P-4G/-24T-4X/-24P-4X/-24MP-4X. Term-year set (1/3/5y, no 7/10y) reused from the MS130 classic convention per confirmed user direction (this datasheet excerpt does not itself restate the term list)."
+   },
+   {
+    "id": "LIC-MS150-24A-3Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS150-24A-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-24A-5Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS150-24A-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-48-1Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS150-48 (MS150 classic license table, Enterprise tier, '48 ports' row) and states '48 ports Enterprise License and support'. Covers MS150-48T-4G/-48LP-4G/-48FP-4G/-48T-4X/-48LP-4X/-48FP-4X/-48MP-4X. Term-year set (1/3/5/7/10y) reused from the MS130 classic convention per confirmed user direction (this datasheet excerpt does not itself restate the term list)."
+   },
+   {
+    "id": "LIC-MS150-48-3Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS150-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-48-5Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS150-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-48-7Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 7,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (7-year); see LIC-MS150-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-48-10Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 10,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (10-year); see LIC-MS150-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-48A-1Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS150-48A (MS150 classic license table, Advanced tier, '48 ports' row) and states '48 ports Advance License and Support'. Covers MS150-48T-4G/-48LP-4G/-48FP-4G/-48T-4X/-48LP-4X/-48FP-4X/-48MP-4X. Term-year set (1/3/5y, no 7/10y) reused from the MS130 classic convention per confirmed user direction (this datasheet excerpt does not itself restate the term list)."
+   },
+   {
+    "id": "LIC-MS150-48A-3Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS150-48A-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-48A-5Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS150-48A-1Y for base-code and coverage provenance."
    }
   ]
  },
@@ -463,7 +634,17 @@
     "notes": "Fixed internal supply on MS130-48X. Single-member group, same rationale as ms130-8-psu."
    }
   ],
-  "stack_cable_groups": [],
+  "stack_cable_groups": [
+   {
+    "id": "ms150-stack-cables",
+    "members": [
+     "MA-CBL-100G-50CM",
+     "MA-CBL-100G-1M",
+     "MA-CBL-100G-3M"
+    ],
+    "notes": "MS150 100G stacking cables (MS150 Datasheet, Stacking Cables table). Per confirmed user direction, all three lengths are usable across all 12 MS150 models (MS150-24T-4G/-24P-4G/-24T-4X/-24P-4X/-24MP-4X/-48T-4G/-48LP-4G/-48FP-4G/-48T-4X/-48LP-4X/-48FP-4X/-48MP-4X) — kept as ONE shared group rather than per-model-class subsets, unlike the datasheet table's row grouping (which the user clarified is not a compatibility restriction)."
+   }
+  ],
   "stackpower_cable_groups": [],
   "license_groups": [
    {
@@ -681,6 +862,130 @@
      "LIC-MS-100-L-A"
     ],
     "notes": "Tier suffix synthesized (Advantage); datasheet prints only the base order code LIC-MS-100-L / 'MS100 Large' covering the whole 48-port class, per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "ms150-classic-essentials-24",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "MS150-24T-4G, MS150-24P-4G, MS150-24T-4X, MS150-24P-4X, MS150-24MP-4X (24-port class, Enterprise tier, LIC-MS150-24) (MS150 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS150-24-1Y",
+     "LIC-MS150-24-3Y",
+     "LIC-MS150-24-5Y",
+     "LIC-MS150-24-7Y",
+     "LIC-MS150-24-10Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [1, 3, 5, 7, 10],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS150-24); term-year set (1/3/5/7/10y) reused from the MS130 classic convention per confirmed user direction, since this MS150 excerpt doesn't itself restate a term list."
+    }
+   },
+   {
+    "id": "ms150-classic-advantage-24",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "MS150-24T-4G, MS150-24P-4G, MS150-24T-4X, MS150-24P-4X, MS150-24MP-4X (24-port class, Advanced tier, LIC-MS150-24A) (MS150 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS150-24A-1Y",
+     "LIC-MS150-24A-3Y",
+     "LIC-MS150-24A-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [1, 3, 5],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS150-24A); term-year set (1/3/5y, no 7/10y) reused from the MS130 classic convention per confirmed user direction, since this MS150 excerpt doesn't itself restate a term list."
+    }
+   },
+   {
+    "id": "ms150-classic-essentials-48",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "MS150-48T-4G, MS150-48LP-4G, MS150-48FP-4G, MS150-48T-4X, MS150-48LP-4X, MS150-48FP-4X, MS150-48MP-4X (48-port class, Enterprise tier, LIC-MS150-48) (MS150 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS150-48-1Y",
+     "LIC-MS150-48-3Y",
+     "LIC-MS150-48-5Y",
+     "LIC-MS150-48-7Y",
+     "LIC-MS150-48-10Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [1, 3, 5, 7, 10],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS150-48); term-year set (1/3/5/7/10y) reused from the MS130 classic convention per confirmed user direction, since this MS150 excerpt doesn't itself restate a term list."
+    }
+   },
+   {
+    "id": "ms150-classic-advantage-48",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "MS150-48T-4G, MS150-48LP-4G, MS150-48FP-4G, MS150-48T-4X, MS150-48LP-4X, MS150-48FP-4X, MS150-48MP-4X (48-port class, Advanced tier, LIC-MS150-48A) (MS150 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS150-48A-1Y",
+     "LIC-MS150-48A-3Y",
+     "LIC-MS150-48A-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [1, 3, 5],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS150-48A); term-year set (1/3/5y, no 7/10y) reused from the MS130 classic convention per confirmed user direction, since this MS150 excerpt doesn't itself restate a term list."
+    }
+   },
+   {
+    "id": "ms150-sub-m-essentials",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "MS100 Medium class — MS150-24T-4G, MS150-24P-4G, MS150-24T-4X, MS150-24P-4X, MS150-24MP-4X (MS150 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-M-E"
+    ],
+    "notes": "Reuses the existing LIC-MS-100-M-E catalog SKU (already added for MS130's 24-port class) — the MS150 subscription table prints the identical base order code 'MS100 Medium' / LIC-MS-100-M for its own 24-port models, confirming this is a shared cross-family SKU, not a new one."
+   },
+   {
+    "id": "ms150-sub-m-advantage",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "MS100 Medium class — MS150-24T-4G, MS150-24P-4G, MS150-24T-4X, MS150-24P-4X, MS150-24MP-4X (MS150 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-M-A"
+    ],
+    "notes": "Reuses the existing LIC-MS-100-M-A catalog SKU (already added for MS130's 24-port class) — the MS150 subscription table prints the identical base order code 'MS100 Medium' / LIC-MS-100-M for its own 24-port models, confirming this is a shared cross-family SKU, not a new one."
+   },
+   {
+    "id": "ms150-sub-l-essentials",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "MS100 Large class — MS150-48T-4G, MS150-48LP-4G, MS150-48FP-4G, MS150-48T-4X, MS150-48LP-4X, MS150-48FP-4X, MS150-48MP-4X (MS150 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-L-E"
+    ],
+    "notes": "Reuses the existing LIC-MS-100-L-E catalog SKU (already added for MS130's 48-port class) — the MS150 subscription table prints the identical base order code 'MS100 Large' / LIC-MS-100-L for its own 48-port models, confirming this is a shared cross-family SKU, not a new one."
+   },
+   {
+    "id": "ms150-sub-l-advantage",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "MS100 Large class — MS150-48T-4G, MS150-48LP-4G, MS150-48FP-4G, MS150-48T-4X, MS150-48LP-4X, MS150-48FP-4X, MS150-48MP-4X (MS150 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-L-A"
+    ],
+    "notes": "Reuses the existing LIC-MS-100-L-A catalog SKU (already added for MS130's 48-port class) — the MS150 subscription table prints the identical base order code 'MS100 Large' / LIC-MS-100-L for its own 48-port models, confirming this is a shared cross-family SKU, not a new one."
    }
   ]
  },
