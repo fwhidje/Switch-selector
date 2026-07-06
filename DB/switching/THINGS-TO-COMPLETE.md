@@ -51,6 +51,30 @@ model's own stated Power Load (max) as a conservative proxy for `watts`.
   excerpts); `stacking_capable`/`stackpower_capable` are `false` and fully sourced,
   not tracked here.
 
+## MS150 (`DB/switching/MS/ms_knowledge_base.json`)
+
+All 12 MS150 models (`24T-4G`/`24P-4G`/`24T-4X`/`24P-4X`/`24MP-4X`/`48T-4G`/`48LP-4G`/
+`48FP-4G`/`48T-4X`/`48LP-4X`/`48FP-4X`/`48MP-4X`) flag `_incomplete:
+["power_supply_watts"]`, same gap and same confirmed proxy approach as MS130 (each
+model's own Power Load (max), here rounded to the nearest integer since several
+MS150 figures are non-integer, e.g. 32.4W).
+
+| Field | Why incomplete | Where to source |
+|---|---|---|
+| `power_supply_watts` (all 12 models) | No PSU part number or nameplate wattage disclosed in the datasheet excerpts provided. | An accessories/ordering-guide-style table with real PSU SKUs and rated wattages. |
+
+### Notes
+- `MS150-24MP-4X` / `MS150-48MP-4X` have a mixed-PoE chassis (standard 1G ports vs.
+  the mGig-capable ports, which the datasheet's own footnote says reach "PoE++ up to
+  60W"). `axis_values.poe_type` is set to `upoe` (the switch's maximum deliverable
+  capability, matching the mGig-port ceiling) per confirmed user direction, since the
+  registry has no per-port-group PoE level. This is a **modeling simplification**,
+  not an incomplete-data flag (the datasheet values themselves are fully sourced) —
+  noted here for visibility, not tracked as `_incomplete`.
+- `stacking_technology: "meraki-stack-100g"` was added to `switching-axes.json` with
+  explicit human sign-off for this series; fully sourced (2x stacking ports, 80Gbps,
+  MA-CBL-100G-* cables), not tracked here.
+
 ## How to verify
 `node selector/tools/validate-kb.mjs` — prints an `INCOMPLETE` warning block
 listing every flagged field, then `PASS` (exit 0) when no hard violations remain.
