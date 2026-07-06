@@ -28,6 +28,53 @@ invented; placeholders are clearly marked in-file.
   `mtbf_hours` for several models) are simply left off; they are not filterable
   and are not tracked as `_incomplete`.
 
+## MS130 (`DB/switching/MS/ms_knowledge_base.json`)
+
+All 11 MS130 models (`8`/`8P`/`8P-I`/`8X`/`12X`/`24`/`24P`/`24X`/`48`/`48P`/`48X`)
+flag `_incomplete: ["power_supply_watts"]`. The pasted MS130 datasheet excerpts give
+no PSU/power-adapter part number or nameplate wattage rating anywhere — only
+`Power Input` (voltage × current) and `Power Load (idle/max)`, which is the switch's
+own consumption, not the supply's rated capacity. Per confirmed user direction, each
+model's synthetic catalog PSU (`<model>-PSU-SYN`, e.g. `MS130-8P-PSU-SYN`) uses that
+model's own stated Power Load (max) as a conservative proxy for `watts`.
+
+| Field | Why incomplete | Where to source |
+|---|---|---|
+| `power_supply_watts` (all 11 models) | No PSU/adapter part number or nameplate wattage disclosed in the datasheet excerpts provided. | An accessories/ordering-guide-style table with real PSU/adapter SKUs and rated wattages (not the main spec-sheet table used for this pass). |
+
+### Notes
+- These switches have no separate orderable PSU at all (fixed external adapter or
+  fixed internal supply, no bay, no redundancy) — the synthetic catalog entries
+  exist only so the standard `configurables.power_supplies` shape applies (same
+  convention as the C9200CX fixed/internal PSU placeholders).
+- No stacking on MS130 (confirmed: no stacking row anywhere in the datasheet
+  excerpts); `stacking_capable`/`stackpower_capable` are `false` and fully sourced,
+  not tracked here.
+
+## MS150 (`DB/switching/MS/ms_knowledge_base.json`)
+
+All 12 MS150 models (`24T-4G`/`24P-4G`/`24T-4X`/`24P-4X`/`24MP-4X`/`48T-4G`/`48LP-4G`/
+`48FP-4G`/`48T-4X`/`48LP-4X`/`48FP-4X`/`48MP-4X`) flag `_incomplete:
+["power_supply_watts"]`, same gap and same confirmed proxy approach as MS130 (each
+model's own Power Load (max), here rounded to the nearest integer since several
+MS150 figures are non-integer, e.g. 32.4W).
+
+| Field | Why incomplete | Where to source |
+|---|---|---|
+| `power_supply_watts` (all 12 models) | No PSU part number or nameplate wattage disclosed in the datasheet excerpts provided. | An accessories/ordering-guide-style table with real PSU SKUs and rated wattages. |
+
+### Notes
+- `MS150-24MP-4X` / `MS150-48MP-4X` have a mixed-PoE chassis (standard 1G ports vs.
+  the mGig-capable ports, which the datasheet's own footnote says reach "PoE++ up to
+  60W"). `axis_values.poe_type` is set to `upoe` (the switch's maximum deliverable
+  capability, matching the mGig-port ceiling) per confirmed user direction, since the
+  registry has no per-port-group PoE level. This is a **modeling simplification**,
+  not an incomplete-data flag (the datasheet values themselves are fully sourced) —
+  noted here for visibility, not tracked as `_incomplete`.
+- `stacking_technology: "meraki-stack-100g"` was added to `switching-axes.json` with
+  explicit human sign-off for this series; fully sourced (2x stacking ports, 80Gbps,
+  MA-CBL-100G-* cables), not tracked here.
+
 ## How to verify
 `node selector/tools/validate-kb.mjs` — prints an `INCOMPLETE` warning block
 listing every flagged field, then `PASS` (exit 0) when no hard violations remain.

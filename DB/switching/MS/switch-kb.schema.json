@@ -1,0 +1,508 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "switch-kb.schema.json",
+  "title": "Networking Equipment Selector — Switch Knowledge Base Schema",
+  "description": "Series-agnostic shape + authoring contract for a switch knowledge base. This schema enforces SHAPE (entries are well-formed); switching-axes.json enforces MEANING (which axes exist, their KIND/ROLE and legal enum values); selector/tools/validate-kb.mjs enforces CROSS-REFERENCE INTEGRITY (group references resolve, valid_primary is a subset of the referenced PSU group, poe_budget_watts equals the matrix max, sum of access-port counts equals total_port_count, enum/speed values are registered). All three must pass. See $authoring for the procedure an agent follows to add a model.",
+  "schema_version": "0.8.0",
+  "registry_version": "0.10.0",
+
+  "$authoring": {
+    "_comment": "NON-VALIDATING. Procedure + rules for an agent populating new switch models. Read this before touching data.",
+
+    "prime_directive": "Push everything into DATA; keep the solver small and dumb. Never encode a compatibility quirk as logic. If a relationship between specs exists (speed sets, PSU-pair budgets, tier locks), express it as data in this KB, not as code elsewhere.",
+
+    "sourcing_discipline": [
+      "All facts come from authoritative Cisco documentation ONLY — never from memory or inference.",
+      "Derive the fetch targets from the KB header 'sources' block (datasheet URL + ordering guide URL).",
+      "Fetch the datasheet AND the ordering guide before proposing any values for a model.",
+      "Record how each resolved value was derived in the model's axis_value_provenance block, citing the source table."
+    ],
+
+    "working_copy_discipline": "Project knowledge files are the source of truth; edit them in lockstep (registry -> schema -> KB) and run validate-kb.mjs before considering a change done. When catalog/group state becomes uncertain mid-session, rebuild deterministically from an explicit list rather than patching incrementally.",
+
+    "cheap_vs_structural": {
+      "cheap_do_freely": [
+        "Add a new model entry.",
+        "Add a new catalog SKU (network module, PSU, cable, license).",
+        "Add a new group, even one whose membership duplicates an existing group."
+      ],
+      "structural_STOP_and_ask": [
+        "Adding, renaming, or re-typing an AXIS in switching-axes.json (touches UI + MCP params + maybe solver). Bump registry_version only after human sign-off.",
+        "Adding a new legal enum value to an existing axis (incl. a new port_speed / port_medium / port_role).",
+        "Changing the KIND or ROLE of an axis.",
+        "Changing group topology conventions.",
+        "Any change to this schema's required-field or conditional rules."
+      ]
+    },
+
+    "axis_vs_variable_vs_attribute": {
+      "rule": "Sort every datasheet property three ways before deciding where it goes.",
+      "axis": "A filterable capability. Declared in switching-axes.json (with KIND + ROLE) and supplied as a value under model.axis_values, OR (for ports) as structured rows under model.ports addressed by the parametrised port_count axis. Example: poe_type, total_port_count, port_count{role,medium,speed}, stacking_capable.",
+      "variable": "The orderable option that REALIZES a capability, picked AFTER a switch survives the filter. Lives inside model.configurables (a group reference or inline block). NOT an axis. Example: the specific PSU pair, the fitted network module, the subscription term length. (Registry ROLE=config-variable marks an axis that behaves this way.)",
+      "attribute": "Displayed, never filtered, never picked. Lives loose under model.attributes. Example: switching_capacity_gbps, weight, MTBF."
+    },
+
+    "capability_resolution": {
+      "ports": "Port capability is the unified DATA model (registry v0.4.0). model.ports is an array of port groups {count, role, medium, speeds[]}: N physical ports each able to run a SET of speeds. ACCESS ports (role=access) live on the model. UPLINK ports come from the fitted network module (catalog network_module.ports, role=uplink) on modular models (uplink_modular=true), or are carried inline on the model as role=uplink rows on fixed-uplink models (uplink_modular=false). A configured VARIANT's port pool = model access groups + the fitted module's uplink groups. The parametrised port_count axis counts ports in matching groups whose speeds[] include the requested speed.",
+      "speed_subsumption": "Subsumption is DATA: a port lists every speed it natively supports (a 25G SFP28 access/uplink port -> [1g,10g,25g]; a 10G mGig copper port -> [1g,2.5g,5g,10g]; a QSFP28 100G port -> [40g,100g]). The solver NEVER infers downshift. QSFP/SFP BREAKOUT (e.g. 40G->4x10G) is deliberately NOT modelled here: it needs a breakout cable SKU and is a future configurable, not a free speed.",
+      "poe_budget": "poe_budget_watts is the MAX across configurables.power_supplies.poe_budget_matrix ({primary, secondary} -> watts). The PSU pair delivering a requested wattage is read from the matrix at solve time.",
+      "totals": "total_port_count = sum of model.ports[role=access] counts (validator-checked). It does NOT count uplinks."
+    },
+
+    "per_model_procedure": [
+      "1. Read the KB header 'sources'; fetch datasheet + ordering guide for the target model.",
+      "2. For every property the datasheet exposes, apply axis_vs_variable_vs_attribute. If it implies a NEW axis / enum value / port_speed -> STOP, surface for ruling.",
+      "3. Fill axis_values with the registry scalar axes (omit optional axes that don't apply). Build model.ports as access port groups (+ inline uplink groups for fixed-uplink models). Never put port counts in axis_values.",
+      "4. Build configurables: reference existing groups where the set matches; create a new group if the set differs. Build the poe_budget_matrix from the datasheet PSU table; set poe_budget_watts = matrix max.",
+      "5. Fill axis_value_provenance for every resolved value, citing the source table.",
+      "6. Fill attributes (display) and included_by_default_non_selectable.",
+      "7. Validate: this schema (shape) + validate-kb.mjs (cross-reference integrity). Both must pass."
+    ],
+
+    "conventions": [
+      "License groups are split on BOTH port-class and tier. Tier is locked by the -E/-A hardware suffix; the subscription tier must match the network-stack tier.",
+      "Term length (3/5/7-yr) is a VARIABLE, not an axis — it lives in the license group's term_variable.",
+      "PSU groups represent the COMPLETE orderable family for a series, not just what one switch's PoE matrix needs.",
+      "The -M (Meraki) variant is a DISTINCT model entry, not a toggle. It carries meraki-classic / meraki-subscription regimes.",
+      "Series-specific groups (PSU, stacking cables) are kept as their own named groups even when membership currently matches another series, so they can diverge later.",
+      "Ports: declare the real per-port speed SET; the implicit '1G-copper remainder' is now an explicit role=access, medium=copper, speeds=[1g] group, so no inference is needed.",
+      "PSU redundancy is NOT an axis: it is realised by a (primary, secondary) pair with secondary != none. configurables.power_supplies.default_primary is the single PSU the switch ships with (Cisco default-PSU table; -M models use their sole valid_primary). The configurator starts from default_primary and, only when a PoE request exceeds it, ADDS a secondary (from the PoE matrix) before upsizing the primary; psu_redundancy=true forces a pair.",
+      "License TIER is a FILTER axis (license_tier = the SET of tiers a model offers, derived from its license groups; mirrors license_regime). Choosing a tier drops models that cannot provide it (DNA -E vs -A); Meraki -M offers both and is never dropped. License TERM stays a config-variable that resolves the concrete subscription SKU from subscription_members via the '-<n>Y' suffix (or the single device-tied SKU where no term applies)."
+    ]
+  },
+
+  "type": "object",
+  "required": ["header", "catalog", "groups", "models"],
+  "additionalProperties": false,
+  "properties": {
+    "header": { "$ref": "#/$defs/header" },
+    "catalog": { "$ref": "#/$defs/catalog" },
+    "groups": { "$ref": "#/$defs/groups" },
+    "models": {
+      "type": "array",
+      "description": "Switch entries. Each is a flat, self-contained model. No inheritance between sibling variants (-E vs -A vs -M).",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/model" }
+    }
+  },
+
+  "$defs": {
+
+    "port_group": {
+      "type": "object",
+      "description": "A homogeneous group of N physical ports, each able to run the SAME set of speeds. The unit of the v0.4.0 port model. role=access groups live on a model; role=uplink groups live on a catalog network_module (modular) or inline on a fixed-uplink model.",
+      "required": ["count", "role", "medium", "speeds"],
+      "additionalProperties": false,
+      "properties": {
+        "count": { "type": "integer", "minimum": 1 },
+        "role": { "type": "string", "enum": ["access", "uplink"] },
+        "medium": { "type": "string", "enum": ["copper", "fiber"] },
+        "speeds": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "enum": ["1g", "2.5g", "5g", "10g", "25g", "40g", "50g", "100g"] },
+          "$comment": "Ordered low->high per switching-axes.json port_speed (registry v0.9.0 added 50g). Every speed the port natively supports (subsumption as data). 100M is display-only and not listed."
+        },
+        "notes": { "type": "string" }
+      }
+    },
+
+    "header": {
+      "type": "object",
+      "description": "Provenance + versioning for the whole KB.",
+      "required": ["schema_version", "registry_version", "description", "sources"],
+      "properties": {
+        "schema_version": { "type": "string" },
+        "registry_version": { "type": "string" },
+        "axes_file": { "type": "string" },
+        "schema_file": { "type": "string" },
+        "description": { "type": "string" },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "url", "last_verified"],
+            "properties": {
+              "name": { "type": "string" },
+              "url": { "type": "string", "format": "uri" },
+              "cisco_updated": { "type": "string" },
+              "last_verified": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "design_notes": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+
+    "catalog": {
+      "type": "object",
+      "description": "Atomic SKU facts: one row per real orderable component.",
+      "required": ["network_modules", "power_supplies", "stack_cables", "stackpower_cables", "licenses"],
+      "properties": {
+        "_comment": { "type": "string" },
+        "network_modules": { "type": "array", "items": { "$ref": "#/$defs/catalog_network_module" } },
+        "power_supplies": { "type": "array", "items": { "$ref": "#/$defs/catalog_power_supply" } },
+        "stack_cables": { "type": "array", "items": { "$ref": "#/$defs/catalog_stack_cable" } },
+        "stackpower_cables": { "type": "array", "items": { "$ref": "#/$defs/catalog_stackpower_cable" } },
+        "licenses": { "type": "array", "items": { "$ref": "#/$defs/catalog_license" } }
+      },
+      "additionalProperties": false
+    },
+
+    "catalog_network_module": {
+      "type": "object",
+      "description": "A network (uplink) module. Carries EITHER a single fixed `ports` config OR a `modes` array of mutually-exclusive alternative port configs (e.g. C9350-NM-8Y: 8x25G OR 4x50G — a re-mode of the same physical ports). A module with `modes` is still ONE orderable SKU: the fitted variant selects exactly one mode, and the kitlist/BOM shows the real module id with a mode label. A mode is NEVER a separate SKU.",
+      "required": ["id", "description", "compatible_family"],
+      "oneOf": [
+        { "required": ["ports"], "not": { "required": ["modes"] } },
+        { "required": ["modes"], "not": { "required": ["ports"] } }
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "description": { "type": "string" },
+        "ports": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/port_group" },
+          "$comment": "Single fixed config: role=uplink port groups this module provides, combined into a variant's port pool when fitted. Mutually exclusive with `modes`."
+        },
+        "modes": {
+          "type": "array",
+          "minItems": 2,
+          "$comment": "Mutually-exclusive alternative port configs of ONE module (a re-mode of the same physical ports; the bottom row may go inactive). The fitted variant uses exactly one mode. Mutually exclusive with `ports`. uplinkOptions() expands each mode into a selectable option whose moduleId stays the real SKU.",
+          "items": {
+            "type": "object",
+            "required": ["name", "ports"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string", "$comment": "Short mode label, unique within the module (e.g. '8x25G', '4x50G'). Used as the option-id suffix; not an orderable SKU." },
+              "ports": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "$ref": "#/$defs/port_group" }
+              },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "compatible_family": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "catalog_power_supply": {
+      "type": "object",
+      "required": ["id", "watts", "type", "rating"],
+      "properties": {
+        "id": { "type": "string" },
+        "watts": { "type": "integer", "minimum": 1 },
+        "type": { "type": "string", "enum": ["AC", "DC"] },
+        "rating": { "type": ["string", "null"] },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "catalog_stack_cable": {
+      "type": "object",
+      "required": ["id", "length_cm", "type"],
+      "properties": {
+        "id": { "type": "string" },
+        "length_cm": { "type": "integer", "minimum": 1 },
+        "type": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "catalog_stackpower_cable": {
+      "type": "object",
+      "required": ["id", "length_cm"],
+      "properties": {
+        "id": { "type": "string" },
+        "length_cm": { "type": "integer", "minimum": 1 },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "catalog_license": {
+      "type": "object",
+      "required": ["id", "regime", "tier", "shape", "term_years", "port_class"],
+      "properties": {
+        "id": { "type": "string" },
+        "regime": { "type": "string" },
+        "tier": { "type": "string", "enum": ["essentials", "advantage"] },
+        "shape": { "type": "string", "enum": ["term-based", "subscription-based", "perpetual"] },
+        "term_years": { "type": ["integer", "null"] },
+        "port_class": { "type": ["integer", "null"] },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "groups": {
+      "type": "object",
+      "description": "Named shared compatibility SETS. A switch references a group by name and inherits the whole set.",
+      "required": ["network_module_groups", "power_supply_groups", "stack_cable_groups", "stackpower_cable_groups", "license_groups"],
+      "properties": {
+        "_comment": { "type": "string" },
+        "network_module_groups": { "type": "array", "items": { "$ref": "#/$defs/network_module_group" } },
+        "power_supply_groups": { "type": "array", "items": { "$ref": "#/$defs/power_supply_group" } },
+        "stack_cable_groups": { "type": "array", "items": { "$ref": "#/$defs/stack_cable_group" } },
+        "stackpower_cable_groups": { "type": "array", "items": { "$ref": "#/$defs/stackpower_cable_group" } },
+        "license_groups": { "type": "array", "items": { "$ref": "#/$defs/license_group" } }
+      },
+      "additionalProperties": false
+    },
+
+    "network_module_group": {
+      "type": "object",
+      "description": "The set of network modules compatible with a model. Per-module port capability lives on each catalog network_module (ports[]); the variant materialiser fits bay_count modules from members.",
+      "required": ["id", "members", "none_option"],
+      "properties": {
+        "id": { "type": "string" },
+        "members": { "type": "array", "items": { "type": "string" }, "$comment": "catalog network_module ids; validator checks they resolve." },
+        "none_option": { "type": "string", "$comment": "CCW SKU used to remove the category when no module is required." },
+        "bay_count": { "type": "integer", "minimum": 1, "$comment": "Module bays. Default 1 if omitted. With bay_count 1 exactly one module is fitted per variant." },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "power_supply_group": {
+      "type": "object",
+      "description": "Complete orderable PSU family for a series. Which member is a valid PRIMARY and the PoE budget per pair are switch-specific and live on the model.",
+      "required": ["id", "members", "secondary_none_option"],
+      "properties": {
+        "id": { "type": "string" },
+        "members": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "secondary_none_option": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "stack_cable_group": {
+      "type": "object",
+      "required": ["id", "members", "none_option"],
+      "properties": {
+        "id": { "type": "string" },
+        "stack_kit": { "type": "string" },
+        "members": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "none_option": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "stackpower_cable_group": {
+      "type": "object",
+      "required": ["id", "members", "none_option"],
+      "properties": {
+        "id": { "type": "string" },
+        "members": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "none_option": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "license_group": {
+      "type": "object",
+      "description": "A license SET keyed on regime + tier + port_class. A model links to the set, not a single license.",
+      "required": ["id", "regime", "tier", "port_class", "perpetual_member", "subscription_members"],
+      "properties": {
+        "id": { "type": "string" },
+        "regime": { "type": "string" },
+        "tier": { "type": "string", "enum": ["essentials", "advantage"] },
+        "port_class": { "type": ["integer", "null"] },
+        "applies_to": { "type": "string" },
+        "perpetual_member": { "type": ["string", "null"] },
+        "subscription_members": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "term_variable": {
+          "type": "object",
+          "required": ["choices_years"],
+          "properties": {
+            "axis": { "type": "string" },
+            "choices_years": { "type": "array", "items": { "type": "integer" }, "minItems": 1 },
+            "notes": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "model": {
+      "type": "object",
+      "description": "One switch SKU. Flat and self-contained.",
+      "required": ["id", "description", "axis_values", "ports", "axis_value_provenance", "attributes", "configurables", "included_by_default_non_selectable"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "description": { "type": "string" },
+        "axis_values": { "$ref": "#/$defs/axis_values" },
+        "ports": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/port_group" },
+          "$comment": "Port groups for THIS switch: role=access always; role=uplink only on fixed-uplink models (uplink_modular=false). Modular models carry access only; uplink groups come from the fitted module."
+        },
+        "axis_value_provenance": {
+          "type": "object",
+          "properties": { "_comment": { "type": "string" } }
+        },
+        "attributes": {
+          "type": "object",
+          "properties": { "_comment": { "type": "string" } }
+        },
+        "configurables": { "$ref": "#/$defs/configurables" },
+        "included_by_default_non_selectable": {
+          "type": "object",
+          "properties": { "_comment": { "type": "string" } }
+        },
+        "_incomplete": {
+          "type": "array",
+          "items": { "type": "string" },
+          "$comment": "Names of fields whose values are NOT yet sourced from authoritative docs (e.g. 'poe_budget_matrix', 'default_primary'). validate-kb.mjs downgrades checks on these fields to WARNINGS for this model. Tracked centrally in DB/switching/THINGS-TO-COMPLETE.md. Remove an entry once the field is confirmed."
+        }
+      }
+    },
+
+    "axis_values": {
+      "type": "object",
+      "description": "Scalar registry-axis values for this switch. additionalProperties is FALSE: only declared scalar axes may appear. Port counts are NOT here (they live in model.ports, addressed by the parametrised port_count axis). Optional axes are omitted when they do not apply.",
+      "required": ["series", "poe_capable", "poe_type", "total_port_count", "uplink_modular", "stacking_capable", "stackpower_capable", "license_regime", "license_tier"],
+      "additionalProperties": false,
+      "properties": {
+        "_comment": { "type": "string" },
+        "series": { "type": "string" },
+        "poe_capable": { "type": "boolean" },
+        "poe_type": { "type": "string" },
+        "poe_budget_watts": { "type": "integer", "minimum": 1 },
+        "total_port_count": { "type": "integer", "minimum": 1 },
+        "uplink_modular": { "type": "boolean" },
+        "stacking_capable": { "type": "boolean" },
+        "stacking_technology": { "type": "string" },
+        "stackpower_capable": { "type": "boolean" },
+        "license_regime": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "license_tier": {
+          "type": "array",
+          "description": "SET of license tiers the model offers (enum-set), derived from its license groups. Filter axis, parallel to license_regime.",
+          "items": { "type": "string" },
+          "minItems": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "poe_capable": { "const": true } } },
+          "then": {
+            "required": ["poe_budget_watts"],
+            "properties": { "poe_type": { "not": { "const": "none" } } }
+          }
+        },
+        {
+          "if": { "properties": { "poe_capable": { "const": false } } },
+          "then": {
+            "properties": { "poe_type": { "const": "none" } },
+            "not": { "required": ["poe_budget_watts"] }
+          }
+        },
+        {
+          "if": { "properties": { "stacking_capable": { "const": true } } },
+          "then": { "required": ["stacking_technology"] }
+        }
+      ]
+    },
+
+    "configurables": {
+      "type": "object",
+      "description": "Thin references to shared groups + switch-specific overlay. network_modules is present iff axis_values.uplink_modular is true (fixed-uplink models carry their uplink ports inline in model.ports). Cross-field consistency enforced by validate-kb.mjs.",
+      "required": ["power_supplies", "license"],
+      "additionalProperties": false,
+      "properties": {
+        "_comment": { "type": "string" },
+        "network_modules": {
+          "type": "object",
+          "required": ["group"],
+          "properties": { "group": { "type": "string" }, "notes": { "type": "string" } },
+          "additionalProperties": false
+        },
+        "stack_cables": {
+          "type": "object",
+          "required": ["group"],
+          "properties": { "group": { "type": "string" }, "notes": { "type": "string" } },
+          "additionalProperties": false
+        },
+        "stackpower_cables": {
+          "type": "object",
+          "required": ["group"],
+          "properties": { "group": { "type": "string" }, "notes": { "type": "string" } },
+          "additionalProperties": false
+        },
+        "power_supplies": { "$ref": "#/$defs/configurable_power_supplies" },
+        "license": { "$ref": "#/$defs/configurable_license" },
+        "ssd_accessory": {
+          "type": "object",
+          "required": ["option"],
+          "properties": {
+            "option": { "type": "string" },
+            "notes": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+
+    "configurable_power_supplies": {
+      "type": "object",
+      "required": ["group", "valid_primary", "default_primary", "poe_budget_matrix", "matrix_provenance"],
+      "properties": {
+        "group": { "type": "string" },
+        "valid_primary": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "default_primary": { "type": "string", "$comment": "The single PSU the switch ships with by default (from Cisco's default-PSU table; -M models use their sole valid_primary). Must be a member of valid_primary (validator-checked). The configurator starts here and escalates only when a PoE request exceeds it." },
+        "poe_budget_matrix": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/poe_matrix_row" }
+        },
+        "matrix_provenance": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "poe_matrix_row": {
+      "type": "object",
+      "required": ["primary", "secondary", "poe_budget_watts"],
+      "properties": {
+        "primary": { "type": "string" },
+        "secondary": { "type": ["string", "null"] },
+        "tertiary": { "type": ["string", "null"], "$comment": "Optional THIRD PSU (C9350 has 3 bays). Present only on combos that need a third PSU to reach the stated PoE budget (e.g. 48HX/48HXN 3x1600W -> 4320W). Capacity-only; redundancy is still the primary+secondary pair." },
+        "poe_budget_watts": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+
+    "configurable_license": {
+      "type": "object",
+      "required": ["group", "regime_offered"],
+      "properties": {
+        "group": { "type": "string" },
+        "additional_groups": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "regime_offered": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "tier_locked": { "type": "string", "enum": ["essentials", "advantage"] },
+        "tier_lock_reason": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

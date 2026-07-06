@@ -1,0 +1,3593 @@
+{
+ "header": {
+  "schema_version": "0.8.0",
+  "registry_version": "0.10.0",
+  "axes_file": "../switching-axes.json",
+  "schema_file": "switch-kb.schema.json",
+  "description": "Networking Equipment Selector knowledge base for the Cisco Meraki MS130 and MS150 Series switches (native Meraki cloud-managed access switches — distinct from the Catalyst 9200L-M/9300L-M hybrid Meraki-managed models, which live in their own C9200/C9300 KB files). Carries the catalog (atomic SKU facts), groups (named shared compatibility sets), and switch models for MS130 (compact access) and MS150 (stackable access). MS130 (11 models: 8/8P/8P-I/8X/12X/24/24P/24X/48/48P/48X) and MS150 (12 models: 24T-4G/24P-4G/24T-4X/24P-4X/24MP-4X/48T-4G/48LP-4G/48FP-4G/48T-4X/48LP-4X/48FP-4X/48MP-4X) are both fully complete: licensing catalog/groups, stacking cables (MS150 only), and switch models. Structure: catalog + groups + models.",
+  "sources": [
+   {
+    "name": "Cisco Meraki MS130 Series Data Sheet",
+    "url": "user-provided (pasted content, no URL supplied)",
+    "last_verified": "2026-07-06"
+   },
+   {
+    "name": "Cisco Meraki MS150 Series Data Sheet",
+    "url": "user-provided (pasted content, no URL supplied)",
+    "last_verified": "2026-07-06"
+   }
+  ],
+  "design_notes": [
+   "Pass 1: MS130 licensing — catalog.licenses + groups.license_groups, from MS130 datasheet excerpts pasted into the authoring session.",
+   "Pass 2 (this pass): 11 MS130 switch models added (8/8P/8P-I/8X/12X/24/24P/24X/48/48P/48X), from the two MS130 spec-table images/text pasted into the authoring session. No network_modules (fixed uplinks only, uplink_modular=false throughout) and no stack_cables/stackpower_cables (no stacking on this series, confirmed below). Four modeling decisions were confirmed with the user (AskUserQuestion) before authoring: (1) PoE type — every PoE model states 'PoE Type: 802.3bt' with a 30W per-port budget; mapped to registry poe_type 'poe+' since its level_watts (30W) matches exactly, rather than inventing an '802.3bt' enum value. (2) -X model ports — mGbe RJ45 ports (8X/12X/24X/48X) modeled as role=access, speeds=[1g,2.5g] (100M omitted, sub-1G isn't a tracked speed); 10GbE SFP+ ports modeled as role=uplink, speeds=[1g,10g] (dual-rate, matching how other SFP+ uplinks are modeled elsewhere in this project). (3) Stacking — no stacking row appears anywhere in the pasted MS130 tables; confirmed as stacking_capable=false/stackpower_capable=false for all 11 models, with no PSU redundancy either (single fixed PSU only, no secondary/redundant option on any model). (4) PSU wattage — no PSU/adapter part number or nameplate wattage is given anywhere in the tables (only 'Power Input' voltage x current, and 'Power Load idle/max'); confirmed approach is to use each model's own Power Load (max) figure as a conservative proxy for the SYNTHETIC catalog PSU's watts field (same synthetic-placeholder convention as C9200CX's fixed/internal supplies), flagged _incomplete:['power_supply_watts'] on every model and tracked in THINGS-TO-COMPLETE.md pending a real nameplate rating.",
+   "The 24/48-series models' 'Dedicated Mgmt Interface' row is recorded as attributes.dedicated_mgmt_interface (boolean) rather than a ports[] row, since the registry's port_role enum only has 'access'/'uplink' — an out-of-band management port isn't a registered role, so per this project's own axis/variable/attribute trichotomy it is a display-only attribute, excluded from total_port_count.",
+   "'MS130' and 'MS150' were added to the 'series' enum in switching-axes.json with explicit human sign-off (structural change, per this schema's $authoring.cheap_vs_structural). No registry_version bump was made for this addition since no axis KIND/ROLE/shape changed — only its legal_values grew, matching how registry_version is scoped in this project (a bump is for a structural/typed change to the axis SET, not every enum-value addition).",
+   "MS130 classic license structure (regime meraki-classic, shape term-based): the datasheet's classic table prints the LIC-MS130-CMPT(A)/-24(A)/-48(A) base order codes each against ONE representative model row, but the 'compact switch (8/12)' / '24 ports' / '48 ports' wording in the Description column states each SKU applies to the WHOLE port-class family, not just the row it's printed on. Confirmed with the user: 'compact' = MS130-8/-8P/-8P-I/-8X/-12X (both Enterprise and Advanced SKUs available across all five); '24' = MS130-24/-24P/-24X; '48' = MS130-48/-48P/-48X. Per-term SKU strings (-1Y/-3Y/.../-10Y) are synthesized by appending suffixes to the datasheet's base order code (datasheet prints only the base code + a stated term list), mirroring the C9200L-M convention. Enterprise offers 1/3/5/7/10-year terms; Advanced offers 1/3/5-year terms only (no 7/10y) — confirmed uniform across all three port classes.",
+   "MS130 subscription license structure (regime meraki-subscription, shape subscription-based, term_years null): LIC-MS-100-{S,M,L}-{E,A}, tier-split per the C9200L-M LIC-MS-200-{M,L}-{E,A} convention. MS100 Small = compact class (8/12-port models); MS100 Medium = 24-port class; MS100 Large = 48-port class.",
+   "Tier vocabulary: MS130's own tier names are Enterprise/Advanced; mapped to the registry's existing essentials/advantage legal_values (Enterprise->essentials, Advanced->advantage), same mapping convention used for C9200L-M. No new license_tier axis value.",
+   "port_class on the compact-class license catalog entries and groups is recorded as null (not 8), since that class spans two distinct port counts (8-port and 12-port models) and the schema's port_class field is a single integer-or-null.",
+   "A trailing 'MS120' line at the end of the user's pasted subscription table was confirmed to be a paste artifact (not MS130 data) and is not reflected anywhere in this file.",
+   "Pass 3 (this pass): MS150 licensing (catalog.licenses + license_groups) and stack_cables/stack_cable_groups, from MS150 datasheet excerpts pasted into the authoring session. MS150 model entries are deferred to Pass 4. Same 'compact (8/12)'-style bundling pattern as MS130's classic table: the datasheet prints LIC-MS150-24(A)/-48(A) each against one representative model row, but the '24 ports'/'48 ports' wording covers the whole port-class family. Confirmed with the user: 24-port class = MS150-24T-4G/-24P-4G/-24T-4X/-24P-4X/-24MP-4X; 48-port class = MS150-48T-4G/-48LP-4G/-48FP-4G/-48T-4X/-48LP-4X/-48FP-4X/-48MP-4X. Unlike MS130, this MS150 excerpt does not itself restate a term-year list for the classic SKUs; per confirmed user direction, the MS130 term structure (Enterprise 1/3/5/7/10y, Advanced 1/3/5y) was reused as-is rather than left unsourced.",
+   "MS150 subscription licensing reuses the EXACT SAME catalog SKUs already added for MS130 (LIC-MS-100-M-E/-A for the 24-port/'MS100 Medium' class, LIC-MS-100-L-E/-A for the 48-port/'MS100 Large' class) — the MS150 datasheet prints the identical base order codes for its own port classes, confirming these are shared cross-family SKUs. No new subscription catalog.licenses entries were added for MS150; the 4 existing entries' notes were updated to record the added MS150 coverage, and 4 new MS150-specific license_groups (ms150-sub-*) reference those same catalog ids with MS150's own applies_to model list.",
+   "MS150 stacking cables: the datasheet's Stacking Cables table visually groups MA-CBL-100G-50CM/-1M/-3M against different model subsets (by port count and -4G vs -4X suffix), mirroring the same blank-cell/merged-cell layout seen in the license tables. Confirmed with the user that, unlike the license tables, this is NOT a per-model compatibility restriction: all three cable lengths are usable across all 12 MS150 models. Modeled as ONE shared stack_cable_group ('ms150-stack-cables') referenced by every MS150 model, rather than per-port-class subsets.",
+   "Pass 4 (this pass): 12 MS150 switch models added (24T-4G/24P-4G/24T-4X/24P-4X/24MP-4X/48T-4G/48LP-4G/48FP-4G/48T-4X/48LP-4X/48FP-4X/48MP-4X), from the two MS150 spec-table images/text pasted into the authoring session. No network_modules (fixed uplinks only). Two modeling decisions were confirmed with the user (AskUserQuestion) before authoring: (1) Stacking technology — every model states 'Stacking Ports: 2' / 'Stacking Bandwidth: 80Gbps', but none of the registry's existing stacking_technology legal_values (all Cisco StackWise) fit Meraki's own mechanism; 'meraki-stack-100g' was added to switching-axes.json with explicit human sign-off (structural change; no registry_version bump, same convention as the 'series' addition). All 12 MS150 models carry stacking_capable=true, stacking_technology='meraki-stack-100g', stackpower_capable=false (no StackPower concept in the datasheet). (2) Mixed PoE on the -MP-4X models — 24MP-4X/48MP-4X each have TWO different PoE ceilings in one chassis (standard 1G ports vs the 8/16 mGig-capable ports, which the datasheet's own footnote says reach 'PoE++ up to 60W'); since the registry's poe_type is a single scalar per model with no per-port-group level, poe_type was set to 'upoe' (registry level_watts 60W matches the mGig-port ceiling) per confirmed user direction — 'the switches barely provide enough power to do 60W on those ports anyway'. The per-port asymmetry (which ports reach the higher rate) is recorded in axis_value_provenance and attributes.poe_port_budget_note, since the axis system has no way to express it structurally. poe_budget_watts (the total switch-wide budget, 370W/740W) is unambiguous either way. PSU wattage proxy reuses the exact approach confirmed for MS130 (each model's own Power Load-max, here rounded to the nearest integer since several MS150 Power Load figures are non-integer, e.g. 32.4W/422.2W — flagged _incomplete:['power_supply_watts'] on every model, same as MS130.",
+   "mGbe RJ45 ports on the -MP-4X models are modeled as role=access, speeds=[1g,2.5g,5g] (the datasheet states these ports top out at 5G, one level higher than MS130's 2.5G mGbe ports — 5g is already a legal port_speed value in the registry, no axis change needed). 10GbE SFP+ uplinks reuse the same [1g,10g] dual-rate convention established for MS130's -X models. 'Layer 3 Routing: Static Routing' and 'Stacking Ports'/'Stacking Bandwidth' are recorded as plain display attributes (attributes.layer3_routing, attributes.stacking_ports, attributes.stacking_bandwidth_gbps) rather than new axes, since every MS150 model has the identical value (no discriminating/filtering need identified yet)."
+  ]
+ },
+ "catalog": {
+  "_comment": "Atomic SKU facts. One row per real orderable component. What a thing IS, independent of which switch uses it.",
+  "network_modules": [],
+  "stack_cables": [
+   {
+    "id": "MA-CBL-100G-50CM",
+    "length_cm": 50,
+    "type": "100G",
+    "notes": "MS150 100G stacking cable, 50cm (MS150 Datasheet, Stacking Cables table)."
+   },
+   {
+    "id": "MA-CBL-100G-1M",
+    "length_cm": 100,
+    "type": "100G",
+    "notes": "MS150 100G stacking cable, 1m (MS150 Datasheet, Stacking Cables table)."
+   },
+   {
+    "id": "MA-CBL-100G-3M",
+    "length_cm": 300,
+    "type": "100G",
+    "notes": "MS150 100G stacking cable, 3m (MS150 Datasheet, Stacking Cables table)."
+   }
+  ],
+  "power_supplies": [
+   {
+    "id": "MS130-8-PSU-SYN",
+    "watts": 8,
+    "type": "DC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — Cisco/Meraki does not sell this as an orderable SKU. MS130-8 datasheet gives no PSU/adapter part number or nameplate wattage, only 'Power Input: 12VDC, 2.5A' and 'Power Load (idle/max): 8W/8W'. watts is a proxy = this model's own stated Power Load (max), NOT an independently disclosed PSU rating (confirmed approach; see THINGS-TO-COMPLETE.md). Fixed external power brick, not field-replaceable/orderable separately."
+   },
+   {
+    "id": "MS130-8P-PSU-SYN",
+    "watts": 128,
+    "type": "DC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS130-8P datasheet gives no PSU/adapter part number or nameplate wattage, only 'Power Input: 54VDC, 2.78A' and 'Power Load (idle/max): 8W/128W'. watts is a proxy = this model's own stated Power Load (max) (see THINGS-TO-COMPLETE.md). Fixed external power brick."
+   },
+   {
+    "id": "MS130-8P-I-PSU-SYN",
+    "watts": 128,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS130-8P-I datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240V~, 2.8A-1.2A, 50-60Hz' and 'Power Load (idle/max): 8W/128W'. watts is a proxy = this model's own stated Power Load (max) (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) AC supply, distinct from the DC-brick-powered 8P."
+   },
+   {
+    "id": "MS130-8X-PSU-SYN",
+    "watts": 136,
+    "type": "DC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS130-8X datasheet gives no PSU/adapter part number or nameplate wattage, only 'Power Input: 54VDC, 2.78A' and 'Power Load (idle/max): 16W/136W'. watts is a proxy = this model's own stated Power Load (max) (see THINGS-TO-COMPLETE.md). Fixed external power brick."
+   },
+   {
+    "id": "MS130-12X-PSU-SYN",
+    "watts": 260,
+    "type": "DC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS130-12X datasheet gives no PSU/adapter part number or nameplate wattage, only 'Power Input: 54VDC, 5.56A' and 'Power Load (idle/max): 19W/260W'. watts is a proxy = this model's own stated Power Load (max) (see THINGS-TO-COMPLETE.md). Fixed external power brick."
+   },
+   {
+    "id": "MS130-24-PSU-SYN",
+    "watts": 15,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS130-24 datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240V~, 1.5-0.85A, 50-60Hz' and 'Power Load (idle/max): 15W/15W'. watts is a proxy = this model's own stated Power Load (max) (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS130-24P-PSU-SYN",
+    "watts": 406,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS130-24P datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240V~, 8A-4A, 50-60Hz' and 'Power Load (idle/max): 32W/406W'. watts is a proxy = this model's own stated Power Load (max) (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS130-24X-PSU-SYN",
+    "watts": 421,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS130-24X datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240V~, 8A-4A, 50-60Hz' and 'Power Load (idle/max): 50W/421W'. watts is a proxy = this model's own stated Power Load (max) (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS130-48-PSU-SYN",
+    "watts": 28,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS130-48 datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240V~, 1.5-0.85A, 50-60Hz' and 'Power Load (idle/max): 28W/28W'. watts is a proxy = this model's own stated Power Load (max) (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS130-48P-PSU-SYN",
+    "watts": 803,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS130-48P datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240V~, 12-6A, 50-60Hz' and 'Power Load (idle/max): 49W/803W'. watts is a proxy = this model's own stated Power Load (max) (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS130-48X-PSU-SYN",
+    "watts": 808,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS130-48X datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240V~, 12-6A, 50-60Hz' and 'Power Load (idle/max): 60W/808W'. watts is a proxy = this model's own stated Power Load (max) (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS150-24T-4G-PSU-SYN",
+    "watts": 32,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS150-24T-4G datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240VAC' and 'Power Load (idle/max): 13.7W/32.4W'. watts is a proxy = this model's own stated Power Load (max), rounded to the nearest integer (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS150-24P-4G-PSU-SYN",
+    "watts": 422,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS150-24P-4G datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240VAC' and 'Power Load (idle/max): 22.9W/422.2W'. watts is a proxy = this model's own stated Power Load (max), rounded to the nearest integer (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS150-24T-4X-PSU-SYN",
+    "watts": 32,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS150-24T-4X datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240VAC' and 'Power Load (idle/max): 13.7W/32.4W'. watts is a proxy = this model's own stated Power Load (max), rounded to the nearest integer (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS150-24P-4X-PSU-SYN",
+    "watts": 422,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS150-24P-4X datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240VAC' and 'Power Load (idle/max): 22.9W/422.2W'. watts is a proxy = this model's own stated Power Load (max), rounded to the nearest integer (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS150-24MP-4X-PSU-SYN",
+    "watts": 454,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS150-24MP-4X datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240VAC' and 'Power Load (idle/max): 43W/454W'. watts is a proxy = this model's own stated Power Load (max), rounded to the nearest integer (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS150-48T-4G-PSU-SYN",
+    "watts": 50,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS150-48T-4G datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240VAC' and 'Power Load (idle/max): 23.1W/49.8W'. watts is a proxy = this model's own stated Power Load (max), rounded to the nearest integer (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS150-48LP-4G-PSU-SYN",
+    "watts": 461,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS150-48LP-4G datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240VAC' and 'Power Load (idle/max): 36.2W/460.6W'. watts is a proxy = this model's own stated Power Load (max), rounded to the nearest integer (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS150-48FP-4G-PSU-SYN",
+    "watts": 891,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS150-48FP-4G datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240VAC' and 'Power Load (idle/max): 44.6W/891.4W'. watts is a proxy = this model's own stated Power Load (max), rounded to the nearest integer (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS150-48T-4X-PSU-SYN",
+    "watts": 50,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS150-48T-4X datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240VAC' and 'Power Load (idle/max): 23.1W/49.8W'. watts is a proxy = this model's own stated Power Load (max), rounded to the nearest integer (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS150-48LP-4X-PSU-SYN",
+    "watts": 461,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS150-48LP-4X datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240VAC' and 'Power Load (idle/max): 36.2W/460.6W'. watts is a proxy = this model's own stated Power Load (max), rounded to the nearest integer (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS150-48FP-4X-PSU-SYN",
+    "watts": 891,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS150-48FP-4X datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240VAC' and 'Power Load (idle/max): 44.6W/891.4W'. watts is a proxy = this model's own stated Power Load (max), rounded to the nearest integer (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   },
+   {
+    "id": "MS150-48MP-4X-PSU-SYN",
+    "watts": 933,
+    "type": "AC",
+    "rating": null,
+    "notes": "SYNTHETIC catalog placeholder — not a real Cisco/Meraki SKU. MS150-48MP-4X datasheet gives no PSU part number or nameplate wattage, only 'Power Input: 100-240VAC' and 'Power Load (idle/max): 76W/933W'. watts is a proxy = this model's own stated Power Load (max), rounded to the nearest integer (see THINGS-TO-COMPLETE.md). Fixed internal (non-removable) supply, no bay/redundancy."
+   }
+  ],
+  "stackpower_cables": [],
+  "licenses": [
+   {
+    "id": "LIC-MS130-CMPT-1Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": null,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS130-CMPT (MS130 classic license table, Enterprise tier, 'compact switch (8/12)' row) and states Enterprise is offered in 1/3/5/7/10-year terms. Covers MS130-8/-8P/-8P-I/-8X/-12X (shared SKU family spanning both 8- and 12-port compact models; port_class recorded as null)."
+   },
+   {
+    "id": "LIC-MS130-CMPT-3Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": null,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS130-CMPT-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-CMPT-5Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": null,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS130-CMPT-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-CMPT-7Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 7,
+    "port_class": null,
+    "notes": "Term suffix synthesized (7-year); see LIC-MS130-CMPT-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-CMPT-10Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 10,
+    "port_class": null,
+    "notes": "Term suffix synthesized (10-year); see LIC-MS130-CMPT-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-CMPTA-1Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": null,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS130-CMPTA (MS130 classic license table, Advanced tier, 'compact switch (8/12)' row) and states Advanced is offered in 1/3/5-year terms (no 7/10y). Covers MS130-8/-8P/-8P-I/-8X/-12X (shared SKU family spanning both 8- and 12-port compact models; port_class recorded as null)."
+   },
+   {
+    "id": "LIC-MS130-CMPTA-3Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": null,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS130-CMPTA-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-CMPTA-5Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": null,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS130-CMPTA-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-24-1Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS130-24 (MS130 classic license table, Enterprise tier, '24 ports' row) and states Enterprise is offered in 1/3/5/7/10-year terms. Covers MS130-24/-24P/-24X."
+   },
+   {
+    "id": "LIC-MS130-24-3Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS130-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-24-5Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS130-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-24-7Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 7,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (7-year); see LIC-MS130-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-24-10Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 10,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (10-year); see LIC-MS130-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-24A-1Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS130-24A (MS130 classic license table, Advanced tier, '24 ports' row) and states Advanced is offered in 1/3/5-year terms (no 7/10y). Covers MS130-24/-24P/-24X."
+   },
+   {
+    "id": "LIC-MS130-24A-3Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS130-24A-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-24A-5Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS130-24A-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-48-1Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS130-48 (MS130 classic license table, Enterprise tier, '48 ports' row) and states Enterprise is offered in 1/3/5/7/10-year terms. Covers MS130-48/-48P/-48X."
+   },
+   {
+    "id": "LIC-MS130-48-3Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS130-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-48-5Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS130-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-48-7Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 7,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (7-year); see LIC-MS130-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-48-10Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 10,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (10-year); see LIC-MS130-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-48A-1Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS130-48A (MS130 classic license table, Advanced tier, '48 ports' row) and states Advanced is offered in 1/3/5-year terms (no 7/10y). Covers MS130-48/-48P/-48X."
+   },
+   {
+    "id": "LIC-MS130-48A-3Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS130-48A-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-48A-5Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS130-48A-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS-100-S-E",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": null,
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only base order code 'MS100 Small' / LIC-MS-100-S covering the compact class (MS130-8/-8P/-8P-I/-8X/-12X), per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "LIC-MS-100-S-A",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": null,
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only base order code 'MS100 Small' / LIC-MS-100-S covering the compact class (MS130-8/-8P/-8P-I/-8X/-12X), per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "LIC-MS-100-M-E",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 24,
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only base order code 'MS100 Medium' / LIC-MS-100-M covering the 24-port class, per the C9200L-M LIC-MS-200-M-E/-A convention. Shared across families: covers MS130-24/-24P/-24X (MS130 datasheet) AND MS150-24T-4G/-24P-4G/-24T-4X/-24P-4X/-24MP-4X (MS150 datasheet, confirmed identical SKU printed in both)."
+   },
+   {
+    "id": "LIC-MS-100-M-A",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 24,
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only base order code 'MS100 Medium' / LIC-MS-100-M covering the 24-port class, per the C9200L-M LIC-MS-200-M-E/-A convention. Shared across families: covers MS130-24/-24P/-24X (MS130 datasheet) AND MS150-24T-4G/-24P-4G/-24T-4X/-24P-4X/-24MP-4X (MS150 datasheet, confirmed identical SKU printed in both)."
+   },
+   {
+    "id": "LIC-MS-100-L-E",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 48,
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only base order code 'MS100 Large' / LIC-MS-100-L covering the 48-port class, per the C9200L-M LIC-MS-200-M-E/-A convention. Shared across families: covers MS130-48/-48P/-48X (MS130 datasheet) AND MS150-48T-4G/-48LP-4G/-48FP-4G/-48T-4X/-48LP-4X/-48FP-4X/-48MP-4X (MS150 datasheet, confirmed identical SKU printed in both)."
+   },
+   {
+    "id": "LIC-MS-100-L-A",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 48,
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only base order code 'MS100 Large' / LIC-MS-100-L covering the 48-port class, per the C9200L-M LIC-MS-200-M-E/-A convention. Shared across families: covers MS130-48/-48P/-48X (MS130 datasheet) AND MS150-48T-4G/-48LP-4G/-48FP-4G/-48T-4X/-48LP-4X/-48FP-4X/-48MP-4X (MS150 datasheet, confirmed identical SKU printed in both)."
+   },
+   {
+    "id": "LIC-MS150-24-1Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS150-24 (MS150 classic license table, Enterprise tier, '24 ports' row) and states '24 ports Enterprise License and support'. Covers MS150-24T-4G/-24P-4G/-24T-4X/-24P-4X/-24MP-4X. Term-year set (1/3/5/7/10y) reused from the MS130 classic convention per confirmed user direction (this datasheet excerpt does not itself restate the term list)."
+   },
+   {
+    "id": "LIC-MS150-24-3Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS150-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-24-5Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS150-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-24-7Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 7,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (7-year); see LIC-MS150-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-24-10Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 10,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (10-year); see LIC-MS150-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-24A-1Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS150-24A (MS150 classic license table, Advanced tier, '24 ports' row) and states '24 ports Advance License and Support'. Covers MS150-24T-4G/-24P-4G/-24T-4X/-24P-4X/-24MP-4X. Term-year set (1/3/5y, no 7/10y) reused from the MS130 classic convention per confirmed user direction (this datasheet excerpt does not itself restate the term list)."
+   },
+   {
+    "id": "LIC-MS150-24A-3Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS150-24A-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-24A-5Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS150-24A-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-48-1Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS150-48 (MS150 classic license table, Enterprise tier, '48 ports' row) and states '48 ports Enterprise License and support'. Covers MS150-48T-4G/-48LP-4G/-48FP-4G/-48T-4X/-48LP-4X/-48FP-4X/-48MP-4X. Term-year set (1/3/5/7/10y) reused from the MS130 classic convention per confirmed user direction (this datasheet excerpt does not itself restate the term list)."
+   },
+   {
+    "id": "LIC-MS150-48-3Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS150-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-48-5Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS150-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-48-7Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 7,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (7-year); see LIC-MS150-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-48-10Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 10,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (10-year); see LIC-MS150-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-48A-1Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS150-48A (MS150 classic license table, Advanced tier, '48 ports' row) and states '48 ports Advance License and Support'. Covers MS150-48T-4G/-48LP-4G/-48FP-4G/-48T-4X/-48LP-4X/-48FP-4X/-48MP-4X. Term-year set (1/3/5y, no 7/10y) reused from the MS130 classic convention per confirmed user direction (this datasheet excerpt does not itself restate the term list)."
+   },
+   {
+    "id": "LIC-MS150-48A-3Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS150-48A-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS150-48A-5Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS150-48A-1Y for base-code and coverage provenance."
+   }
+  ]
+ },
+ "groups": {
+  "_comment": "Named shared compatibility sets referencing catalog SKUs by id.",
+  "network_module_groups": [],
+  "power_supply_groups": [
+   {
+    "id": "ms130-8-psu",
+    "members": [
+     "MS130-8-PSU-SYN"
+    ],
+    "notes": "Fixed external power brick on MS130-8. Single-member group: no PSU bay, no FRU, no redundancy pair — exists only so the standard power_supplies shape applies (same rationale as the C9200CX single-member PSU groups)."
+   },
+   {
+    "id": "ms130-8p-psu",
+    "members": [
+     "MS130-8P-PSU-SYN"
+    ],
+    "notes": "Fixed external power brick on MS130-8P. Single-member group, same rationale as ms130-8-psu."
+   },
+   {
+    "id": "ms130-8p-i-psu",
+    "members": [
+     "MS130-8P-I-PSU-SYN"
+    ],
+    "notes": "Fixed internal AC supply on MS130-8P-I. Single-member group, same rationale as ms130-8-psu."
+   },
+   {
+    "id": "ms130-8x-psu",
+    "members": [
+     "MS130-8X-PSU-SYN"
+    ],
+    "notes": "Fixed external power brick on MS130-8X. Single-member group, same rationale as ms130-8-psu."
+   },
+   {
+    "id": "ms130-12x-psu",
+    "members": [
+     "MS130-12X-PSU-SYN"
+    ],
+    "notes": "Fixed external power brick on MS130-12X. Single-member group, same rationale as ms130-8-psu."
+   },
+   {
+    "id": "ms130-24-psu",
+    "members": [
+     "MS130-24-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS130-24. Single-member group, same rationale as ms130-8-psu."
+   },
+   {
+    "id": "ms130-24p-psu",
+    "members": [
+     "MS130-24P-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS130-24P. Single-member group, same rationale as ms130-8-psu."
+   },
+   {
+    "id": "ms130-24x-psu",
+    "members": [
+     "MS130-24X-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS130-24X. Single-member group, same rationale as ms130-8-psu."
+   },
+   {
+    "id": "ms130-48-psu",
+    "members": [
+     "MS130-48-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS130-48. Single-member group, same rationale as ms130-8-psu."
+   },
+   {
+    "id": "ms130-48p-psu",
+    "members": [
+     "MS130-48P-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS130-48P. Single-member group, same rationale as ms130-8-psu."
+   },
+   {
+    "id": "ms130-48x-psu",
+    "members": [
+     "MS130-48X-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS130-48X. Single-member group, same rationale as ms130-8-psu."
+   },
+   {
+    "id": "ms150-24t-4g-psu",
+    "members": [
+     "MS150-24T-4G-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS150-24T-4G. Single-member group, same rationale as ms130-8-psu (no bay, no FRU, no redundancy pair)."
+   },
+   {
+    "id": "ms150-24p-4g-psu",
+    "members": [
+     "MS150-24P-4G-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS150-24P-4G. Single-member group, same rationale as ms130-8-psu (no bay, no FRU, no redundancy pair)."
+   },
+   {
+    "id": "ms150-24t-4x-psu",
+    "members": [
+     "MS150-24T-4X-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS150-24T-4X. Single-member group, same rationale as ms130-8-psu (no bay, no FRU, no redundancy pair)."
+   },
+   {
+    "id": "ms150-24p-4x-psu",
+    "members": [
+     "MS150-24P-4X-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS150-24P-4X. Single-member group, same rationale as ms130-8-psu (no bay, no FRU, no redundancy pair)."
+   },
+   {
+    "id": "ms150-24mp-4x-psu",
+    "members": [
+     "MS150-24MP-4X-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS150-24MP-4X. Single-member group, same rationale as ms130-8-psu (no bay, no FRU, no redundancy pair)."
+   },
+   {
+    "id": "ms150-48t-4g-psu",
+    "members": [
+     "MS150-48T-4G-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS150-48T-4G. Single-member group, same rationale as ms130-8-psu (no bay, no FRU, no redundancy pair)."
+   },
+   {
+    "id": "ms150-48lp-4g-psu",
+    "members": [
+     "MS150-48LP-4G-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS150-48LP-4G. Single-member group, same rationale as ms130-8-psu (no bay, no FRU, no redundancy pair)."
+   },
+   {
+    "id": "ms150-48fp-4g-psu",
+    "members": [
+     "MS150-48FP-4G-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS150-48FP-4G. Single-member group, same rationale as ms130-8-psu (no bay, no FRU, no redundancy pair)."
+   },
+   {
+    "id": "ms150-48t-4x-psu",
+    "members": [
+     "MS150-48T-4X-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS150-48T-4X. Single-member group, same rationale as ms130-8-psu (no bay, no FRU, no redundancy pair)."
+   },
+   {
+    "id": "ms150-48lp-4x-psu",
+    "members": [
+     "MS150-48LP-4X-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS150-48LP-4X. Single-member group, same rationale as ms130-8-psu (no bay, no FRU, no redundancy pair)."
+   },
+   {
+    "id": "ms150-48fp-4x-psu",
+    "members": [
+     "MS150-48FP-4X-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS150-48FP-4X. Single-member group, same rationale as ms130-8-psu (no bay, no FRU, no redundancy pair)."
+   },
+   {
+    "id": "ms150-48mp-4x-psu",
+    "members": [
+     "MS150-48MP-4X-PSU-SYN"
+    ],
+    "notes": "Fixed internal supply on MS150-48MP-4X. Single-member group, same rationale as ms130-8-psu (no bay, no FRU, no redundancy pair)."
+   }
+  ],
+  "stack_cable_groups": [
+   {
+    "id": "ms150-stack-cables",
+    "members": [
+     "MA-CBL-100G-50CM",
+     "MA-CBL-100G-1M",
+     "MA-CBL-100G-3M"
+    ],
+    "notes": "MS150 100G stacking cables (MS150 Datasheet, Stacking Cables table). Per confirmed user direction, all three lengths are usable across all 12 MS150 models (MS150-24T-4G/-24P-4G/-24T-4X/-24P-4X/-24MP-4X/-48T-4G/-48LP-4G/-48FP-4G/-48T-4X/-48LP-4X/-48FP-4X/-48MP-4X) — kept as ONE shared group rather than per-model-class subsets, unlike the datasheet table's row grouping (which the user clarified is not a compatibility restriction)."
+   }
+  ],
+  "stackpower_cable_groups": [],
+  "license_groups": [
+   {
+    "id": "ms130-classic-essentials-compact",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": null,
+    "applies_to": "MS130-8, MS130-8P, MS130-8P-I, MS130-8X, MS130-12X (compact class, Enterprise tier, LIC-MS130-CMPT) (MS130 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS130-CMPT-1Y",
+     "LIC-MS130-CMPT-3Y",
+     "LIC-MS130-CMPT-5Y",
+     "LIC-MS130-CMPT-7Y",
+     "LIC-MS130-CMPT-10Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5,
+      7,
+      10
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS130-CMPT and states 1/3/5/7/10-year terms are offered for Enterprise)."
+    }
+   },
+   {
+    "id": "ms130-classic-advantage-compact",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": null,
+    "applies_to": "MS130-8, MS130-8P, MS130-8P-I, MS130-8X, MS130-12X (compact class, Advanced tier, LIC-MS130-CMPTA) (MS130 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS130-CMPTA-1Y",
+     "LIC-MS130-CMPTA-3Y",
+     "LIC-MS130-CMPTA-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS130-CMPTA and states 1/3/5-year terms are offered for Advanced; no 7/10-year option)."
+    }
+   },
+   {
+    "id": "ms130-classic-essentials-24",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "MS130-24, MS130-24P, MS130-24X (24-port class, Enterprise tier, LIC-MS130-24) (MS130 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS130-24-1Y",
+     "LIC-MS130-24-3Y",
+     "LIC-MS130-24-5Y",
+     "LIC-MS130-24-7Y",
+     "LIC-MS130-24-10Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5,
+      7,
+      10
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS130-24 and states 1/3/5/7/10-year terms are offered for Enterprise)."
+    }
+   },
+   {
+    "id": "ms130-classic-advantage-24",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "MS130-24, MS130-24P, MS130-24X (24-port class, Advanced tier, LIC-MS130-24A) (MS130 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS130-24A-1Y",
+     "LIC-MS130-24A-3Y",
+     "LIC-MS130-24A-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS130-24A and states 1/3/5-year terms are offered for Advanced; no 7/10-year option)."
+    }
+   },
+   {
+    "id": "ms130-classic-essentials-48",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "MS130-48, MS130-48P, MS130-48X (48-port class, Enterprise tier, LIC-MS130-48) (MS130 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS130-48-1Y",
+     "LIC-MS130-48-3Y",
+     "LIC-MS130-48-5Y",
+     "LIC-MS130-48-7Y",
+     "LIC-MS130-48-10Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5,
+      7,
+      10
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS130-48 and states 1/3/5/7/10-year terms are offered for Enterprise)."
+    }
+   },
+   {
+    "id": "ms130-classic-advantage-48",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "MS130-48, MS130-48P, MS130-48X (48-port class, Advanced tier, LIC-MS130-48A) (MS130 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS130-48A-1Y",
+     "LIC-MS130-48A-3Y",
+     "LIC-MS130-48A-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS130-48A and states 1/3/5-year terms are offered for Advanced; no 7/10-year option)."
+    }
+   },
+   {
+    "id": "ms130-sub-s-essentials",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "port_class": null,
+    "applies_to": "MS100 Small class — MS130-8, MS130-8P, MS130-8P-I, MS130-8X, MS130-12X (MS130 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-S-E"
+    ],
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only the base order code LIC-MS-100-S / 'MS100 Small' covering the whole compact class, per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "ms130-sub-s-advantage",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "port_class": null,
+    "applies_to": "MS100 Small class — MS130-8, MS130-8P, MS130-8P-I, MS130-8X, MS130-12X (MS130 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-S-A"
+    ],
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only the base order code LIC-MS-100-S / 'MS100 Small' covering the whole compact class, per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "ms130-sub-m-essentials",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "MS100 Medium class — MS130-24, MS130-24P, MS130-24X (MS130 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-M-E"
+    ],
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only the base order code LIC-MS-100-M / 'MS100 Medium' covering the whole 24-port class, per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "ms130-sub-m-advantage",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "MS100 Medium class — MS130-24, MS130-24P, MS130-24X (MS130 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-M-A"
+    ],
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only the base order code LIC-MS-100-M / 'MS100 Medium' covering the whole 24-port class, per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "ms130-sub-l-essentials",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "MS100 Large class — MS130-48, MS130-48P, MS130-48X (MS130 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-L-E"
+    ],
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only the base order code LIC-MS-100-L / 'MS100 Large' covering the whole 48-port class, per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "ms130-sub-l-advantage",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "MS100 Large class — MS130-48, MS130-48P, MS130-48X (MS130 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-L-A"
+    ],
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only the base order code LIC-MS-100-L / 'MS100 Large' covering the whole 48-port class, per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "ms150-classic-essentials-24",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "MS150-24T-4G, MS150-24P-4G, MS150-24T-4X, MS150-24P-4X, MS150-24MP-4X (24-port class, Enterprise tier, LIC-MS150-24) (MS150 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS150-24-1Y",
+     "LIC-MS150-24-3Y",
+     "LIC-MS150-24-5Y",
+     "LIC-MS150-24-7Y",
+     "LIC-MS150-24-10Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5,
+      7,
+      10
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS150-24); term-year set (1/3/5/7/10y) reused from the MS130 classic convention per confirmed user direction, since this MS150 excerpt doesn't itself restate a term list."
+    }
+   },
+   {
+    "id": "ms150-classic-advantage-24",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "MS150-24T-4G, MS150-24P-4G, MS150-24T-4X, MS150-24P-4X, MS150-24MP-4X (24-port class, Advanced tier, LIC-MS150-24A) (MS150 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS150-24A-1Y",
+     "LIC-MS150-24A-3Y",
+     "LIC-MS150-24A-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS150-24A); term-year set (1/3/5y, no 7/10y) reused from the MS130 classic convention per confirmed user direction, since this MS150 excerpt doesn't itself restate a term list."
+    }
+   },
+   {
+    "id": "ms150-classic-essentials-48",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "MS150-48T-4G, MS150-48LP-4G, MS150-48FP-4G, MS150-48T-4X, MS150-48LP-4X, MS150-48FP-4X, MS150-48MP-4X (48-port class, Enterprise tier, LIC-MS150-48) (MS150 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS150-48-1Y",
+     "LIC-MS150-48-3Y",
+     "LIC-MS150-48-5Y",
+     "LIC-MS150-48-7Y",
+     "LIC-MS150-48-10Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5,
+      7,
+      10
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS150-48); term-year set (1/3/5/7/10y) reused from the MS130 classic convention per confirmed user direction, since this MS150 excerpt doesn't itself restate a term list."
+    }
+   },
+   {
+    "id": "ms150-classic-advantage-48",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "MS150-48T-4G, MS150-48LP-4G, MS150-48FP-4G, MS150-48T-4X, MS150-48LP-4X, MS150-48FP-4X, MS150-48MP-4X (48-port class, Advanced tier, LIC-MS150-48A) (MS150 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS150-48A-1Y",
+     "LIC-MS150-48A-3Y",
+     "LIC-MS150-48A-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS150-48A); term-year set (1/3/5y, no 7/10y) reused from the MS130 classic convention per confirmed user direction, since this MS150 excerpt doesn't itself restate a term list."
+    }
+   },
+   {
+    "id": "ms150-sub-m-essentials",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "MS100 Medium class — MS150-24T-4G, MS150-24P-4G, MS150-24T-4X, MS150-24P-4X, MS150-24MP-4X (MS150 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-M-E"
+    ],
+    "notes": "Reuses the existing LIC-MS-100-M-E catalog SKU (already added for MS130's 24-port class) — the MS150 subscription table prints the identical base order code 'MS100 Medium' / LIC-MS-100-M for its own 24-port models, confirming this is a shared cross-family SKU, not a new one."
+   },
+   {
+    "id": "ms150-sub-m-advantage",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "MS100 Medium class — MS150-24T-4G, MS150-24P-4G, MS150-24T-4X, MS150-24P-4X, MS150-24MP-4X (MS150 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-M-A"
+    ],
+    "notes": "Reuses the existing LIC-MS-100-M-A catalog SKU (already added for MS130's 24-port class) — the MS150 subscription table prints the identical base order code 'MS100 Medium' / LIC-MS-100-M for its own 24-port models, confirming this is a shared cross-family SKU, not a new one."
+   },
+   {
+    "id": "ms150-sub-l-essentials",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "MS100 Large class — MS150-48T-4G, MS150-48LP-4G, MS150-48FP-4G, MS150-48T-4X, MS150-48LP-4X, MS150-48FP-4X, MS150-48MP-4X (MS150 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-L-E"
+    ],
+    "notes": "Reuses the existing LIC-MS-100-L-E catalog SKU (already added for MS130's 48-port class) — the MS150 subscription table prints the identical base order code 'MS100 Large' / LIC-MS-100-L for its own 48-port models, confirming this is a shared cross-family SKU, not a new one."
+   },
+   {
+    "id": "ms150-sub-l-advantage",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "MS100 Large class — MS150-48T-4G, MS150-48LP-4G, MS150-48FP-4G, MS150-48T-4X, MS150-48LP-4X, MS150-48FP-4X, MS150-48MP-4X (MS150 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-L-A"
+    ],
+    "notes": "Reuses the existing LIC-MS-100-L-A catalog SKU (already added for MS130's 48-port class) — the MS150 subscription table prints the identical base order code 'MS100 Large' / LIC-MS-100-L for its own 48-port models, confirming this is a shared cross-family SKU, not a new one."
+   }
+  ]
+ },
+ "models": [
+  {
+   "id": "MS130-8",
+   "description": "Cisco Meraki MS130-8, native cloud-managed access switch. 8-port class, non-PoE, external power, fanless. No stacking.",
+   "axis_values": {
+    "series": "MS130",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 8,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS130 Datasheet spec table: access = 8x copper [1g] (RJ45), uplink = 2x fiber [1g] (SFP). total_port_count = access sum = 8.",
+    "poe_*": "MS130 Datasheet: 'PoE Type: -' (no PoE row value). poe_capable=false, poe_type='none'.",
+    "stacking": "No stacking row appears anywhere in the MS130 datasheet excerpts provided; confirmed with user as 'no stacking' for this series. stacking_capable=false, stackpower_capable=false; no PSU redundancy either (single fixed PSU, no secondary/redundant option).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS130-8-PSU-SYN): no PSU/adapter part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 8W, used as a conservative proxy per confirmed approach (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS130 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 20,
+    "power_load_watts_idle": 8,
+    "power_load_watts_max": 8,
+    "power_input": "12VDC, 2.5A",
+    "weight_kg": 0.88,
+    "dimensions_hwd_in": "1.1 x 8.74 x 6in",
+    "dimensions_hwd_cm": "2.8 x 22.2 x 15cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": false
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms130-8-psu",
+     "valid_primary": [
+      "MS130-8-PSU-SYN"
+     ],
+     "default_primary": "MS130-8-PSU-SYN",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "MS130 Datasheet: single fixed PSU (synthetic), no PoE (data model). Empty matrix; no secondary/redundant PSU option on this model."
+    },
+    "license": {
+     "group": "ms130-classic-essentials-compact",
+     "additional_groups": [
+      "ms130-classic-advantage-compact",
+      "ms130-sub-s-essentials",
+      "ms130-sub-s-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fanless",
+    "mounting": "Desktop, Integrated Wall mount",
+    "power_supply": "Fixed external power adapter/brick (not field-replaceable, not user-swappable for another wattage)."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS130-8P",
+   "description": "Cisco Meraki MS130-8P, native cloud-managed access switch. 8-port class, PoE+ (802.3bt, 30W/port), external power, fanless. No stacking.",
+   "axis_values": {
+    "series": "MS130",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 120,
+    "total_port_count": 8,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS130 Datasheet spec table: access = 8x copper [1g] (RJ45), uplink = 2x fiber [1g] (SFP). total_port_count = access sum = 8.",
+    "poe_*": "MS130 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 30W', 'PoE Switch Budget: 120W'. poe_type mapped to registry 'poe+' (level_watts 30W matches the stated port budget exactly); poe_budget_watts = stated PoE Switch Budget.",
+    "stacking": "No stacking row appears anywhere in the MS130 datasheet excerpts provided; confirmed with user as 'no stacking' for this series. stacking_capable=false, stackpower_capable=false; no PSU redundancy either (single fixed PSU, no secondary/redundant option).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS130-8P-PSU-SYN): no PSU/adapter part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 128W, used as a conservative proxy per confirmed approach (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS130 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 20,
+    "power_load_watts_idle": 8,
+    "power_load_watts_max": 128,
+    "poe_port_budget_watts": 30,
+    "power_input": "54VDC, 2.78A",
+    "weight_kg": 0.88,
+    "dimensions_hwd_in": "1.1 x 8.74 x 6in",
+    "dimensions_hwd_cm": "2.8 x 22.2 x 15cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": false
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms130-8p-psu",
+     "valid_primary": [
+      "MS130-8P-PSU-SYN"
+     ],
+     "default_primary": "MS130-8P-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS130-8P-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 120
+      }
+     ],
+     "matrix_provenance": "MS130 Datasheet: single fixed PSU (MS130-8P-PSU-SYN, synthetic), PoE Switch Budget = 120W. No secondary/redundant PSU option on this model."
+    },
+    "license": {
+     "group": "ms130-classic-essentials-compact",
+     "additional_groups": [
+      "ms130-classic-advantage-compact",
+      "ms130-sub-s-essentials",
+      "ms130-sub-s-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fanless",
+    "mounting": "Desktop, Integrated Wall mount",
+    "power_supply": "Fixed external power adapter/brick (not field-replaceable, not user-swappable for another wattage)."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS130-8P-I",
+   "description": "Cisco Meraki MS130-8P-I, native cloud-managed access switch. 8-port class, PoE+ (802.3bt, 30W/port), internal power, fanless. No stacking.",
+   "axis_values": {
+    "series": "MS130",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 120,
+    "total_port_count": 8,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS130 Datasheet spec table: access = 8x copper [1g] (RJ45), uplink = 2x fiber [1g] (SFP). total_port_count = access sum = 8.",
+    "poe_*": "MS130 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 30W', 'PoE Switch Budget: 120W'. poe_type mapped to registry 'poe+' (level_watts 30W matches the stated port budget exactly); poe_budget_watts = stated PoE Switch Budget.",
+    "stacking": "No stacking row appears anywhere in the MS130 datasheet excerpts provided; confirmed with user as 'no stacking' for this series. stacking_capable=false, stackpower_capable=false; no PSU redundancy either (single fixed PSU, no secondary/redundant option).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS130-8P-I-PSU-SYN): no PSU/adapter part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 128W, used as a conservative proxy per confirmed approach (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS130 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 20,
+    "power_load_watts_idle": 8,
+    "power_load_watts_max": 128,
+    "poe_port_budget_watts": 30,
+    "power_input": "100-240V~, 2.8A-1.2A, 50-60Hz",
+    "weight_kg": 1.3,
+    "dimensions_hwd_in": "1.75 x 9 x 8.58in",
+    "dimensions_hwd_cm": "4.4 x 23 x 23cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": false
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms130-8p-i-psu",
+     "valid_primary": [
+      "MS130-8P-I-PSU-SYN"
+     ],
+     "default_primary": "MS130-8P-I-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS130-8P-I-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 120
+      }
+     ],
+     "matrix_provenance": "MS130 Datasheet: single fixed PSU (MS130-8P-I-PSU-SYN, synthetic), PoE Switch Budget = 120W. No secondary/redundant PSU option on this model."
+    },
+    "license": {
+     "group": "ms130-classic-essentials-compact",
+     "additional_groups": [
+      "ms130-classic-advantage-compact",
+      "ms130-sub-s-essentials",
+      "ms130-sub-s-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fanless",
+    "mounting": "Desktop, Integrated Wall mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS130-8X",
+   "description": "Cisco Meraki MS130-8X, native cloud-managed access switch. 8-port class, PoE+ (802.3bt, 30W/port), external power, fixed internal. No stacking.",
+   "axis_values": {
+    "series": "MS130",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 120,
+    "total_port_count": 8,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 6,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS130 Datasheet spec table: access = 6x copper [1g] + 2x copper [1g/2.5g] (RJ45/mGbe RJ45), uplink = 2x fiber [1g/10g] (SFP+). total_port_count = access sum = 8.",
+    "poe_*": "MS130 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 30W', 'PoE Switch Budget: 120W'. poe_type mapped to registry 'poe+' (level_watts 30W matches the stated port budget exactly); poe_budget_watts = stated PoE Switch Budget.",
+    "stacking": "No stacking row appears anywhere in the MS130 datasheet excerpts provided; confirmed with user as 'no stacking' for this series. stacking_capable=false, stackpower_capable=false; no PSU redundancy either (single fixed PSU, no secondary/redundant option).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS130-8X-PSU-SYN): no PSU/adapter part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 136W, used as a conservative proxy per confirmed approach (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS130 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 62,
+    "power_load_watts_idle": 16,
+    "power_load_watts_max": 136,
+    "poe_port_budget_watts": 30,
+    "power_input": "54VDC, 2.78A",
+    "weight_kg": 0.96,
+    "dimensions_hwd_in": "1.75 x 9 x 8.58in",
+    "dimensions_hwd_cm": "4.4 x 23 x 23cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": false
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms130-8x-psu",
+     "valid_primary": [
+      "MS130-8X-PSU-SYN"
+     ],
+     "default_primary": "MS130-8X-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS130-8X-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 120
+      }
+     ],
+     "matrix_provenance": "MS130 Datasheet: single fixed PSU (MS130-8X-PSU-SYN, synthetic), PoE Switch Budget = 120W. No secondary/redundant PSU option on this model."
+    },
+    "license": {
+     "group": "ms130-classic-essentials-compact",
+     "additional_groups": [
+      "ms130-classic-advantage-compact",
+      "ms130-sub-s-essentials",
+      "ms130-sub-s-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed internal",
+    "mounting": "Desktop, Integrated Wall mount",
+    "power_supply": "Fixed external power adapter/brick (not field-replaceable, not user-swappable for another wattage)."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS130-12X",
+   "description": "Cisco Meraki MS130-12X, native cloud-managed access switch. 12-port class, PoE+ (802.3bt, 30W/port), external power, fixed internal. No stacking.",
+   "axis_values": {
+    "series": "MS130",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 240,
+    "total_port_count": 12,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS130 Datasheet spec table: access = 8x copper [1g] + 4x copper [1g/2.5g] (RJ45/mGbe RJ45), uplink = 2x fiber [1g/10g] (SFP+). total_port_count = access sum = 12.",
+    "poe_*": "MS130 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 30W', 'PoE Switch Budget: 240W'. poe_type mapped to registry 'poe+' (level_watts 30W matches the stated port budget exactly); poe_budget_watts = stated PoE Switch Budget.",
+    "stacking": "No stacking row appears anywhere in the MS130 datasheet excerpts provided; confirmed with user as 'no stacking' for this series. stacking_capable=false, stackpower_capable=false; no PSU redundancy either (single fixed PSU, no secondary/redundant option).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS130-12X-PSU-SYN): no PSU/adapter part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 260W, used as a conservative proxy per confirmed approach (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS130 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 76,
+    "power_load_watts_idle": 19,
+    "power_load_watts_max": 260,
+    "poe_port_budget_watts": 30,
+    "power_input": "54VDC, 5.56A",
+    "weight_kg": 1.06,
+    "dimensions_hwd_in": "1.75 x 9 x 8.58in",
+    "dimensions_hwd_cm": "4.4 x 23 x 23cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": false
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms130-12x-psu",
+     "valid_primary": [
+      "MS130-12X-PSU-SYN"
+     ],
+     "default_primary": "MS130-12X-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS130-12X-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 240
+      }
+     ],
+     "matrix_provenance": "MS130 Datasheet: single fixed PSU (MS130-12X-PSU-SYN, synthetic), PoE Switch Budget = 240W. No secondary/redundant PSU option on this model."
+    },
+    "license": {
+     "group": "ms130-classic-essentials-compact",
+     "additional_groups": [
+      "ms130-classic-advantage-compact",
+      "ms130-sub-s-essentials",
+      "ms130-sub-s-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed internal",
+    "mounting": "Desktop, Integrated Wall mount",
+    "power_supply": "Fixed external power adapter/brick (not field-replaceable, not user-swappable for another wattage)."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS130-24",
+   "description": "Cisco Meraki MS130-24, native cloud-managed access switch. 24-port class, non-PoE, internal power, fanless. No stacking.",
+   "axis_values": {
+    "series": "MS130",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS130 Datasheet spec table: access = 24x copper [1g] (RJ45), uplink = 4x fiber [1g] (SFP). total_port_count = access sum = 24.",
+    "poe_*": "MS130 Datasheet: 'PoE Type: -' (no PoE row value). poe_capable=false, poe_type='none'.",
+    "stacking": "No stacking row appears anywhere in the MS130 datasheet excerpts provided; confirmed with user as 'no stacking' for this series. stacking_capable=false, stackpower_capable=false; no PSU redundancy either (single fixed PSU, no secondary/redundant option).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS130-24-PSU-SYN): no PSU/adapter part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 15W, used as a conservative proxy per confirmed approach (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS130 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 56,
+    "power_load_watts_idle": 15,
+    "power_load_watts_max": 15,
+    "power_input": "100-240V~, 1.5-0.85A, 50-60Hz",
+    "weight_kg": 3.26,
+    "dimensions_hwd_in": "1.73 x 17.32 x 10in",
+    "dimensions_hwd_cm": "4.4 x 44 x 25cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms130-24-psu",
+     "valid_primary": [
+      "MS130-24-PSU-SYN"
+     ],
+     "default_primary": "MS130-24-PSU-SYN",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "MS130 Datasheet: single fixed PSU (synthetic), no PoE (data model). Empty matrix; no secondary/redundant PSU option on this model."
+    },
+    "license": {
+     "group": "ms130-classic-essentials-24",
+     "additional_groups": [
+      "ms130-classic-advantage-24",
+      "ms130-sub-m-essentials",
+      "ms130-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fanless",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS130-24P",
+   "description": "Cisco Meraki MS130-24P, native cloud-managed access switch. 24-port class, PoE+ (802.3bt, 30W/port), internal power, fixed internal. No stacking.",
+   "axis_values": {
+    "series": "MS130",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 370,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS130 Datasheet spec table: access = 24x copper [1g] (RJ45), uplink = 4x fiber [1g] (SFP). total_port_count = access sum = 24.",
+    "poe_*": "MS130 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 30W', 'PoE Switch Budget: 370W'. poe_type mapped to registry 'poe+' (level_watts 30W matches the stated port budget exactly); poe_budget_watts = stated PoE Switch Budget.",
+    "stacking": "No stacking row appears anywhere in the MS130 datasheet excerpts provided; confirmed with user as 'no stacking' for this series. stacking_capable=false, stackpower_capable=false; no PSU redundancy either (single fixed PSU, no secondary/redundant option).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS130-24P-PSU-SYN): no PSU/adapter part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 406W, used as a conservative proxy per confirmed approach (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS130 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 56,
+    "power_load_watts_idle": 32,
+    "power_load_watts_max": 406,
+    "poe_port_budget_watts": 30,
+    "power_input": "100-240V~, 8A-4A, 50-60Hz",
+    "weight_kg": 4.04,
+    "dimensions_hwd_in": "1.73 x 17.32 x 10in",
+    "dimensions_hwd_cm": "4.4 x 44 x 25cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms130-24p-psu",
+     "valid_primary": [
+      "MS130-24P-PSU-SYN"
+     ],
+     "default_primary": "MS130-24P-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS130-24P-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 370
+      }
+     ],
+     "matrix_provenance": "MS130 Datasheet: single fixed PSU (MS130-24P-PSU-SYN, synthetic), PoE Switch Budget = 370W. No secondary/redundant PSU option on this model."
+    },
+    "license": {
+     "group": "ms130-classic-essentials-24",
+     "additional_groups": [
+      "ms130-classic-advantage-24",
+      "ms130-sub-m-essentials",
+      "ms130-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS130-24X",
+   "description": "Cisco Meraki MS130-24X, native cloud-managed access switch. 24-port class, PoE+ (802.3bt, 30W/port), internal power, fixed internal. No stacking.",
+   "axis_values": {
+    "series": "MS130",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 370,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 18,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 6,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS130 Datasheet spec table: access = 18x copper [1g] + 6x copper [1g/2.5g] (RJ45/mGbe RJ45), uplink = 4x fiber [1g/10g] (SFP+). total_port_count = access sum = 24.",
+    "poe_*": "MS130 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 30W', 'PoE Switch Budget: 370W'. poe_type mapped to registry 'poe+' (level_watts 30W matches the stated port budget exactly); poe_budget_watts = stated PoE Switch Budget.",
+    "stacking": "No stacking row appears anywhere in the MS130 datasheet excerpts provided; confirmed with user as 'no stacking' for this series. stacking_capable=false, stackpower_capable=false; no PSU redundancy either (single fixed PSU, no secondary/redundant option).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS130-24X-PSU-SYN): no PSU/adapter part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 421W, used as a conservative proxy per confirmed approach (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS130 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 146,
+    "power_load_watts_idle": 50,
+    "power_load_watts_max": 421,
+    "poe_port_budget_watts": 30,
+    "power_input": "100-240V~, 8A-4A, 50-60Hz",
+    "weight_kg": 4.25,
+    "dimensions_hwd_in": "1.73 x 17.32 x 10in",
+    "dimensions_hwd_cm": "4.4 x 44 x 25cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms130-24x-psu",
+     "valid_primary": [
+      "MS130-24X-PSU-SYN"
+     ],
+     "default_primary": "MS130-24X-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS130-24X-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 370
+      }
+     ],
+     "matrix_provenance": "MS130 Datasheet: single fixed PSU (MS130-24X-PSU-SYN, synthetic), PoE Switch Budget = 370W. No secondary/redundant PSU option on this model."
+    },
+    "license": {
+     "group": "ms130-classic-essentials-24",
+     "additional_groups": [
+      "ms130-classic-advantage-24",
+      "ms130-sub-m-essentials",
+      "ms130-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS130-48",
+   "description": "Cisco Meraki MS130-48, native cloud-managed access switch. 48-port class, non-PoE, internal power, fanless. No stacking.",
+   "axis_values": {
+    "series": "MS130",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS130 Datasheet spec table: access = 48x copper [1g] (RJ45), uplink = 4x fiber [1g] (SFP). total_port_count = access sum = 48.",
+    "poe_*": "MS130 Datasheet: 'PoE Type: -' (no PoE row value). poe_capable=false, poe_type='none'.",
+    "stacking": "No stacking row appears anywhere in the MS130 datasheet excerpts provided; confirmed with user as 'no stacking' for this series. stacking_capable=false, stackpower_capable=false; no PSU redundancy either (single fixed PSU, no secondary/redundant option).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS130-48-PSU-SYN): no PSU/adapter part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 28W, used as a conservative proxy per confirmed approach (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS130 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 104,
+    "power_load_watts_idle": 28,
+    "power_load_watts_max": 28,
+    "power_input": "100-240V~, 1.5-0.85A, 50-60Hz",
+    "weight_kg": 3.69,
+    "dimensions_hwd_in": "1.73 x 17.32 x 10in",
+    "dimensions_hwd_cm": "4.4 x 44 x 25cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms130-48-psu",
+     "valid_primary": [
+      "MS130-48-PSU-SYN"
+     ],
+     "default_primary": "MS130-48-PSU-SYN",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "MS130 Datasheet: single fixed PSU (synthetic), no PoE (data model). Empty matrix; no secondary/redundant PSU option on this model."
+    },
+    "license": {
+     "group": "ms130-classic-essentials-48",
+     "additional_groups": [
+      "ms130-classic-advantage-48",
+      "ms130-sub-l-essentials",
+      "ms130-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fanless",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS130-48P",
+   "description": "Cisco Meraki MS130-48P, native cloud-managed access switch. 48-port class, PoE+ (802.3bt, 30W/port), internal power, fixed internal. No stacking.",
+   "axis_values": {
+    "series": "MS130",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS130 Datasheet spec table: access = 48x copper [1g] (RJ45), uplink = 4x fiber [1g] (SFP). total_port_count = access sum = 48.",
+    "poe_*": "MS130 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 30W', 'PoE Switch Budget: 740W'. poe_type mapped to registry 'poe+' (level_watts 30W matches the stated port budget exactly); poe_budget_watts = stated PoE Switch Budget.",
+    "stacking": "No stacking row appears anywhere in the MS130 datasheet excerpts provided; confirmed with user as 'no stacking' for this series. stacking_capable=false, stackpower_capable=false; no PSU redundancy either (single fixed PSU, no secondary/redundant option).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS130-48P-PSU-SYN): no PSU/adapter part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 803W, used as a conservative proxy per confirmed approach (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS130 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 104,
+    "power_load_watts_idle": 49,
+    "power_load_watts_max": 803,
+    "poe_port_budget_watts": 30,
+    "power_input": "100-240V~, 12-6A, 50-60Hz",
+    "weight_kg": 5.5,
+    "dimensions_hwd_in": "1.73 x 17.32 x 13.4in",
+    "dimensions_hwd_cm": "4.4 x 44 x 34cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms130-48p-psu",
+     "valid_primary": [
+      "MS130-48P-PSU-SYN"
+     ],
+     "default_primary": "MS130-48P-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS130-48P-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "MS130 Datasheet: single fixed PSU (MS130-48P-PSU-SYN, synthetic), PoE Switch Budget = 740W. No secondary/redundant PSU option on this model."
+    },
+    "license": {
+     "group": "ms130-classic-essentials-48",
+     "additional_groups": [
+      "ms130-classic-advantage-48",
+      "ms130-sub-l-essentials",
+      "ms130-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS130-48X",
+   "description": "Cisco Meraki MS130-48X, native cloud-managed access switch. 48-port class, PoE+ (802.3bt, 30W/port), internal power, fixed internal. No stacking.",
+   "axis_values": {
+    "series": "MS130",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 40,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS130 Datasheet spec table: access = 40x copper [1g] + 8x copper [1g/2.5g] (RJ45/mGbe RJ45), uplink = 4x fiber [1g/10g] (SFP+). total_port_count = access sum = 48.",
+    "poe_*": "MS130 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 30W', 'PoE Switch Budget: 740W'. poe_type mapped to registry 'poe+' (level_watts 30W matches the stated port budget exactly); poe_budget_watts = stated PoE Switch Budget.",
+    "stacking": "No stacking row appears anywhere in the MS130 datasheet excerpts provided; confirmed with user as 'no stacking' for this series. stacking_capable=false, stackpower_capable=false; no PSU redundancy either (single fixed PSU, no secondary/redundant option).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS130-48X-PSU-SYN): no PSU/adapter part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 808W, used as a conservative proxy per confirmed approach (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS130 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 200,
+    "power_load_watts_idle": 60,
+    "power_load_watts_max": 808,
+    "poe_port_budget_watts": 30,
+    "power_input": "100-240V~, 12-6A, 50-60Hz",
+    "weight_kg": 5.71,
+    "dimensions_hwd_in": "1.73 x 17.32 x 13.4in",
+    "dimensions_hwd_cm": "4.4 x 44 x 34cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms130-48x-psu",
+     "valid_primary": [
+      "MS130-48X-PSU-SYN"
+     ],
+     "default_primary": "MS130-48X-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS130-48X-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "MS130 Datasheet: single fixed PSU (MS130-48X-PSU-SYN, synthetic), PoE Switch Budget = 740W. No secondary/redundant PSU option on this model."
+    },
+    "license": {
+     "group": "ms130-classic-essentials-48",
+     "additional_groups": [
+      "ms130-classic-advantage-48",
+      "ms130-sub-l-essentials",
+      "ms130-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS150-24T-4G",
+   "description": "Cisco Meraki MS150-24T-4G, native cloud-managed access switch. 24-port class, non-PoE, fixed internal power, fixed internal fan. Stacking-capable (2x stacking ports, 80Gbps).",
+   "axis_values": {
+    "series": "MS150",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "meraki-stack-100g",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS150 Datasheet spec table: access = 24x copper [1g] (RJ45), uplink = 4x fiber [1g] (SFP). total_port_count = access sum = 24.",
+    "poe_*": "MS150 Datasheet: 'PoE Type: -' (no PoE row value). poe_capable=false, poe_type='none'.",
+    "stacking": "MS150 Datasheet: 'Stacking Ports: 2', 'Stacking Bandwidth: 80Gbps' on every model. stacking_technology='meraki-stack-100g' added to the registry with explicit human sign-off (not a Cisco StackWise technology). stackpower_capable=false (no StackPower row/concept in the datasheet).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS150-24T-4G-PSU-SYN): no PSU part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 32.4W, rounded to the nearest integer (32) for the schema's integer-typed catalog field, used as a conservative proxy per the same approach confirmed for MS130 (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS150 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 56,
+    "stacking_ports": 2,
+    "stacking_bandwidth_gbps": 80,
+    "layer3_routing": "Static Routing",
+    "power_load_watts_idle": 13.7,
+    "power_load_watts_max": 32.4,
+    "power_input": "100-240VAC",
+    "weight_kg": 3.45,
+    "dimensions_hwd_in": "1.72 x 19 x 9.84in",
+    "dimensions_hwd_cm": "4.4 x 48.2 x 25cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms150-24t-4g-psu",
+     "valid_primary": [
+      "MS150-24T-4G-PSU-SYN"
+     ],
+     "default_primary": "MS150-24T-4G-PSU-SYN",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "MS150 Datasheet: single fixed PSU (synthetic), no PoE (data model). Empty matrix; no secondary/redundant PSU option on this model."
+    },
+    "stack_cables": {
+     "group": "ms150-stack-cables",
+     "notes": "Shared MS150 stacking-cable group (MA-CBL-100G-50CM/-1M/-3M); per confirmed user direction all three lengths are usable on every MS150 model."
+    },
+    "license": {
+     "group": "ms150-classic-essentials-24",
+     "additional_groups": [
+      "ms150-classic-advantage-24",
+      "ms150-sub-m-essentials",
+      "ms150-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed Internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS150-24P-4G",
+   "description": "Cisco Meraki MS150-24P-4G, native cloud-managed access switch. 24-port class, PoE (802.3bt, 30W/port), fixed internal power, fixed internal fan. Stacking-capable (2x stacking ports, 80Gbps).",
+   "axis_values": {
+    "series": "MS150",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 370,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "meraki-stack-100g",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS150 Datasheet spec table: access = 24x copper [1g] (RJ45), uplink = 4x fiber [1g] (SFP). total_port_count = access sum = 24.",
+    "poe_*": "MS150 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 30W', 'PoE Switch Budget: 370W'. poe_type mapped to registry 'poe+' (level_watts 30W matches the stated port budget exactly, same convention as MS130).",
+    "stacking": "MS150 Datasheet: 'Stacking Ports: 2', 'Stacking Bandwidth: 80Gbps' on every model. stacking_technology='meraki-stack-100g' added to the registry with explicit human sign-off (not a Cisco StackWise technology). stackpower_capable=false (no StackPower row/concept in the datasheet).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS150-24P-4G-PSU-SYN): no PSU part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 422.2W, rounded to the nearest integer (422) for the schema's integer-typed catalog field, used as a conservative proxy per the same approach confirmed for MS130 (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS150 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 56,
+    "stacking_ports": 2,
+    "stacking_bandwidth_gbps": 80,
+    "layer3_routing": "Static Routing",
+    "power_load_watts_idle": 22.9,
+    "power_load_watts_max": 422.2,
+    "poe_port_budget_watts": 30,
+    "power_input": "100-240VAC",
+    "weight_kg": 3.6,
+    "dimensions_hwd_in": "1.72 x 19 x 9.84in",
+    "dimensions_hwd_cm": "4.4 x 48.2 x 25cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms150-24p-4g-psu",
+     "valid_primary": [
+      "MS150-24P-4G-PSU-SYN"
+     ],
+     "default_primary": "MS150-24P-4G-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS150-24P-4G-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 370
+      }
+     ],
+     "matrix_provenance": "MS150 Datasheet: single fixed PSU (MS150-24P-4G-PSU-SYN, synthetic), PoE Switch Budget = 370W. No secondary/redundant PSU option on this model."
+    },
+    "stack_cables": {
+     "group": "ms150-stack-cables",
+     "notes": "Shared MS150 stacking-cable group (MA-CBL-100G-50CM/-1M/-3M); per confirmed user direction all three lengths are usable on every MS150 model."
+    },
+    "license": {
+     "group": "ms150-classic-essentials-24",
+     "additional_groups": [
+      "ms150-classic-advantage-24",
+      "ms150-sub-m-essentials",
+      "ms150-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed Internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS150-24T-4X",
+   "description": "Cisco Meraki MS150-24T-4X, native cloud-managed access switch. 24-port class, non-PoE, fixed internal power, fixed internal fan. Stacking-capable (2x stacking ports, 80Gbps).",
+   "axis_values": {
+    "series": "MS150",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "meraki-stack-100g",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS150 Datasheet spec table: access = 24x copper [1g] (RJ45), uplink = 4x fiber [1g/10g] (SFP+). total_port_count = access sum = 24.",
+    "poe_*": "MS150 Datasheet: 'PoE Type: -' (no PoE row value). poe_capable=false, poe_type='none'.",
+    "stacking": "MS150 Datasheet: 'Stacking Ports: 2', 'Stacking Bandwidth: 80Gbps' on every model. stacking_technology='meraki-stack-100g' added to the registry with explicit human sign-off (not a Cisco StackWise technology). stackpower_capable=false (no StackPower row/concept in the datasheet).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS150-24T-4X-PSU-SYN): no PSU part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 32.4W, rounded to the nearest integer (32) for the schema's integer-typed catalog field, used as a conservative proxy per the same approach confirmed for MS130 (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS150 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 128,
+    "stacking_ports": 2,
+    "stacking_bandwidth_gbps": 80,
+    "layer3_routing": "Static Routing",
+    "power_load_watts_idle": 13.7,
+    "power_load_watts_max": 32.4,
+    "power_input": "100-240VAC",
+    "weight_kg": 3.45,
+    "dimensions_hwd_in": "1.72 x 19 x 9.84in",
+    "dimensions_hwd_cm": "4.4 x 48.2 x 25cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms150-24t-4x-psu",
+     "valid_primary": [
+      "MS150-24T-4X-PSU-SYN"
+     ],
+     "default_primary": "MS150-24T-4X-PSU-SYN",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "MS150 Datasheet: single fixed PSU (synthetic), no PoE (data model). Empty matrix; no secondary/redundant PSU option on this model."
+    },
+    "stack_cables": {
+     "group": "ms150-stack-cables",
+     "notes": "Shared MS150 stacking-cable group (MA-CBL-100G-50CM/-1M/-3M); per confirmed user direction all three lengths are usable on every MS150 model."
+    },
+    "license": {
+     "group": "ms150-classic-essentials-24",
+     "additional_groups": [
+      "ms150-classic-advantage-24",
+      "ms150-sub-m-essentials",
+      "ms150-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed Internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS150-24P-4X",
+   "description": "Cisco Meraki MS150-24P-4X, native cloud-managed access switch. 24-port class, PoE (802.3bt, 30W/port), fixed internal power, fixed internal fan. Stacking-capable (2x stacking ports, 80Gbps).",
+   "axis_values": {
+    "series": "MS150",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 370,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "meraki-stack-100g",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 24,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS150 Datasheet spec table: access = 24x copper [1g] (RJ45), uplink = 4x fiber [1g/10g] (SFP+). total_port_count = access sum = 24.",
+    "poe_*": "MS150 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 30W', 'PoE Switch Budget: 370W'. poe_type mapped to registry 'poe+' (level_watts 30W matches the stated port budget exactly, same convention as MS130).",
+    "stacking": "MS150 Datasheet: 'Stacking Ports: 2', 'Stacking Bandwidth: 80Gbps' on every model. stacking_technology='meraki-stack-100g' added to the registry with explicit human sign-off (not a Cisco StackWise technology). stackpower_capable=false (no StackPower row/concept in the datasheet).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS150-24P-4X-PSU-SYN): no PSU part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 422.2W, rounded to the nearest integer (422) for the schema's integer-typed catalog field, used as a conservative proxy per the same approach confirmed for MS130 (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS150 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 128,
+    "stacking_ports": 2,
+    "stacking_bandwidth_gbps": 80,
+    "layer3_routing": "Static Routing",
+    "power_load_watts_idle": 22.9,
+    "power_load_watts_max": 422.2,
+    "poe_port_budget_watts": 30,
+    "power_input": "100-240VAC",
+    "weight_kg": 3.6,
+    "dimensions_hwd_in": "1.72 x 19 x 9.84in",
+    "dimensions_hwd_cm": "4.4 x 48.2 x 25cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms150-24p-4x-psu",
+     "valid_primary": [
+      "MS150-24P-4X-PSU-SYN"
+     ],
+     "default_primary": "MS150-24P-4X-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS150-24P-4X-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 370
+      }
+     ],
+     "matrix_provenance": "MS150 Datasheet: single fixed PSU (MS150-24P-4X-PSU-SYN, synthetic), PoE Switch Budget = 370W. No secondary/redundant PSU option on this model."
+    },
+    "stack_cables": {
+     "group": "ms150-stack-cables",
+     "notes": "Shared MS150 stacking-cable group (MA-CBL-100G-50CM/-1M/-3M); per confirmed user direction all three lengths are usable on every MS150 model."
+    },
+    "license": {
+     "group": "ms150-classic-essentials-24",
+     "additional_groups": [
+      "ms150-classic-advantage-24",
+      "ms150-sub-m-essentials",
+      "ms150-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed Internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS150-24MP-4X",
+   "description": "Cisco Meraki MS150-24MP-4X, native cloud-managed access switch. 24-port class, PoE (802.3bt, up to 60W on mGig ports), fixed internal power, fixed internal fan. Stacking-capable (2x stacking ports, 80Gbps).",
+   "axis_values": {
+    "series": "MS150",
+    "poe_capable": true,
+    "poe_type": "upoe",
+    "poe_budget_watts": 370,
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "meraki-stack-100g",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 16,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS150 Datasheet spec table: access = 16x copper [1g] + 8x copper [1g/2.5g/5g] (RJ45/mGbe RJ45), uplink = 4x fiber [1g/10g] (SFP+). total_port_count = access sum = 24.",
+    "poe_*": "MS150 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 60W**' (footnote: PoE++ up to 60W on the mGig-capable ports only), 'PoE Switch Budget: 370W'. poe_type mapped to registry 'upoe' (level_watts 60W matches the stated mGig-port ceiling); this is a MIXED-PoE chassis (standard ports vs mGig ports have different ceilings, not separately quantified in the datasheet) — 'upoe' records the switch's maximum deliverable capability, per confirmed user direction. poe_budget_watts = stated PoE Switch Budget (unambiguous, applies switch-wide regardless of the per-port asymmetry).",
+    "stacking": "MS150 Datasheet: 'Stacking Ports: 2', 'Stacking Bandwidth: 80Gbps' on every model. stacking_technology='meraki-stack-100g' added to the registry with explicit human sign-off (not a Cisco StackWise technology). stackpower_capable=false (no StackPower row/concept in the datasheet).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS150-24MP-4X-PSU-SYN): no PSU part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 454W, rounded to the nearest integer (454) for the schema's integer-typed catalog field, used as a conservative proxy per the same approach confirmed for MS130 (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS150 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 192,
+    "stacking_ports": 2,
+    "stacking_bandwidth_gbps": 80,
+    "layer3_routing": "Static Routing",
+    "power_load_watts_idle": 43,
+    "power_load_watts_max": 454,
+    "poe_port_budget_watts": 60,
+    "poe_port_budget_note": "60W PoE++ figure applies specifically to ports 17-24 (the mGig-capable ports), per the datasheet's own footnote; the standard 1G ports (1-16) are not separately quantified in the source table.",
+    "power_input": "100-240VAC",
+    "weight_kg": 5.5,
+    "dimensions_hwd_in": "1.72 x 19 x 9.84in",
+    "dimensions_hwd_cm": "4.4 x 48.2 x 25cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms150-24mp-4x-psu",
+     "valid_primary": [
+      "MS150-24MP-4X-PSU-SYN"
+     ],
+     "default_primary": "MS150-24MP-4X-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS150-24MP-4X-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 370
+      }
+     ],
+     "matrix_provenance": "MS150 Datasheet: single fixed PSU (MS150-24MP-4X-PSU-SYN, synthetic), PoE Switch Budget = 370W. No secondary/redundant PSU option on this model."
+    },
+    "stack_cables": {
+     "group": "ms150-stack-cables",
+     "notes": "Shared MS150 stacking-cable group (MA-CBL-100G-50CM/-1M/-3M); per confirmed user direction all three lengths are usable on every MS150 model."
+    },
+    "license": {
+     "group": "ms150-classic-essentials-24",
+     "additional_groups": [
+      "ms150-classic-advantage-24",
+      "ms150-sub-m-essentials",
+      "ms150-sub-m-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed Internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS150-48T-4G",
+   "description": "Cisco Meraki MS150-48T-4G, native cloud-managed access switch. 48-port class, non-PoE, fixed internal power, fixed internal fan. Stacking-capable (2x stacking ports, 80Gbps).",
+   "axis_values": {
+    "series": "MS150",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "meraki-stack-100g",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS150 Datasheet spec table: access = 48x copper [1g] (RJ45), uplink = 4x fiber [1g] (SFP). total_port_count = access sum = 48.",
+    "poe_*": "MS150 Datasheet: 'PoE Type: -' (no PoE row value). poe_capable=false, poe_type='none'.",
+    "stacking": "MS150 Datasheet: 'Stacking Ports: 2', 'Stacking Bandwidth: 80Gbps' on every model. stacking_technology='meraki-stack-100g' added to the registry with explicit human sign-off (not a Cisco StackWise technology). stackpower_capable=false (no StackPower row/concept in the datasheet).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS150-48T-4G-PSU-SYN): no PSU part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 49.8W, rounded to the nearest integer (50) for the schema's integer-typed catalog field, used as a conservative proxy per the same approach confirmed for MS130 (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS150 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 104,
+    "stacking_ports": 2,
+    "stacking_bandwidth_gbps": 80,
+    "layer3_routing": "Static Routing",
+    "power_load_watts_idle": 23.1,
+    "power_load_watts_max": 49.8,
+    "power_input": "100-240VAC",
+    "weight_kg": 5.1,
+    "dimensions_hwd_in": "1.72 x 19 x 13.38in",
+    "dimensions_hwd_cm": "4.4 x 48.2 x 34cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms150-48t-4g-psu",
+     "valid_primary": [
+      "MS150-48T-4G-PSU-SYN"
+     ],
+     "default_primary": "MS150-48T-4G-PSU-SYN",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "MS150 Datasheet: single fixed PSU (synthetic), no PoE (data model). Empty matrix; no secondary/redundant PSU option on this model."
+    },
+    "stack_cables": {
+     "group": "ms150-stack-cables",
+     "notes": "Shared MS150 stacking-cable group (MA-CBL-100G-50CM/-1M/-3M); per confirmed user direction all three lengths are usable on every MS150 model."
+    },
+    "license": {
+     "group": "ms150-classic-essentials-48",
+     "additional_groups": [
+      "ms150-classic-advantage-48",
+      "ms150-sub-l-essentials",
+      "ms150-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed Internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS150-48LP-4G",
+   "description": "Cisco Meraki MS150-48LP-4G, native cloud-managed access switch. 48-port class, PoE (802.3bt, 30W/port), fixed internal power, fixed internal fan. Stacking-capable (2x stacking ports, 80Gbps).",
+   "axis_values": {
+    "series": "MS150",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 370,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "meraki-stack-100g",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS150 Datasheet spec table: access = 48x copper [1g] (RJ45), uplink = 4x fiber [1g] (SFP). total_port_count = access sum = 48.",
+    "poe_*": "MS150 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 30W', 'PoE Switch Budget: 370W'. poe_type mapped to registry 'poe+' (level_watts 30W matches the stated port budget exactly, same convention as MS130).",
+    "stacking": "MS150 Datasheet: 'Stacking Ports: 2', 'Stacking Bandwidth: 80Gbps' on every model. stacking_technology='meraki-stack-100g' added to the registry with explicit human sign-off (not a Cisco StackWise technology). stackpower_capable=false (no StackPower row/concept in the datasheet).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS150-48LP-4G-PSU-SYN): no PSU part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 460.6W, rounded to the nearest integer (461) for the schema's integer-typed catalog field, used as a conservative proxy per the same approach confirmed for MS130 (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS150 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 104,
+    "stacking_ports": 2,
+    "stacking_bandwidth_gbps": 80,
+    "layer3_routing": "Static Routing",
+    "power_load_watts_idle": 36.2,
+    "power_load_watts_max": 460.6,
+    "poe_port_budget_watts": 30,
+    "power_input": "100-240VAC",
+    "weight_kg": 5.4,
+    "dimensions_hwd_in": "1.72 x 19 x 13.38in",
+    "dimensions_hwd_cm": "4.4 x 48.2 x 34cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms150-48lp-4g-psu",
+     "valid_primary": [
+      "MS150-48LP-4G-PSU-SYN"
+     ],
+     "default_primary": "MS150-48LP-4G-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS150-48LP-4G-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 370
+      }
+     ],
+     "matrix_provenance": "MS150 Datasheet: single fixed PSU (MS150-48LP-4G-PSU-SYN, synthetic), PoE Switch Budget = 370W. No secondary/redundant PSU option on this model."
+    },
+    "stack_cables": {
+     "group": "ms150-stack-cables",
+     "notes": "Shared MS150 stacking-cable group (MA-CBL-100G-50CM/-1M/-3M); per confirmed user direction all three lengths are usable on every MS150 model."
+    },
+    "license": {
+     "group": "ms150-classic-essentials-48",
+     "additional_groups": [
+      "ms150-classic-advantage-48",
+      "ms150-sub-l-essentials",
+      "ms150-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed Internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS150-48FP-4G",
+   "description": "Cisco Meraki MS150-48FP-4G, native cloud-managed access switch. 48-port class, PoE (802.3bt, 30W/port), fixed internal power, fixed internal fan. Stacking-capable (2x stacking ports, 80Gbps).",
+   "axis_values": {
+    "series": "MS150",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "meraki-stack-100g",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS150 Datasheet spec table: access = 48x copper [1g] (RJ45), uplink = 4x fiber [1g] (SFP). total_port_count = access sum = 48.",
+    "poe_*": "MS150 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 30W', 'PoE Switch Budget: 740W'. poe_type mapped to registry 'poe+' (level_watts 30W matches the stated port budget exactly, same convention as MS130).",
+    "stacking": "MS150 Datasheet: 'Stacking Ports: 2', 'Stacking Bandwidth: 80Gbps' on every model. stacking_technology='meraki-stack-100g' added to the registry with explicit human sign-off (not a Cisco StackWise technology). stackpower_capable=false (no StackPower row/concept in the datasheet).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS150-48FP-4G-PSU-SYN): no PSU part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 891.4W, rounded to the nearest integer (891) for the schema's integer-typed catalog field, used as a conservative proxy per the same approach confirmed for MS130 (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS150 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 104,
+    "stacking_ports": 2,
+    "stacking_bandwidth_gbps": 80,
+    "layer3_routing": "Static Routing",
+    "power_load_watts_idle": 44.6,
+    "power_load_watts_max": 891.4,
+    "poe_port_budget_watts": 30,
+    "power_input": "100-240VAC",
+    "weight_kg": 5.4,
+    "dimensions_hwd_in": "1.72 x 19 x 13.38in",
+    "dimensions_hwd_cm": "4.4 x 48.2 x 34cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms150-48fp-4g-psu",
+     "valid_primary": [
+      "MS150-48FP-4G-PSU-SYN"
+     ],
+     "default_primary": "MS150-48FP-4G-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS150-48FP-4G-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "MS150 Datasheet: single fixed PSU (MS150-48FP-4G-PSU-SYN, synthetic), PoE Switch Budget = 740W. No secondary/redundant PSU option on this model."
+    },
+    "stack_cables": {
+     "group": "ms150-stack-cables",
+     "notes": "Shared MS150 stacking-cable group (MA-CBL-100G-50CM/-1M/-3M); per confirmed user direction all three lengths are usable on every MS150 model."
+    },
+    "license": {
+     "group": "ms150-classic-essentials-48",
+     "additional_groups": [
+      "ms150-classic-advantage-48",
+      "ms150-sub-l-essentials",
+      "ms150-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed Internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS150-48T-4X",
+   "description": "Cisco Meraki MS150-48T-4X, native cloud-managed access switch. 48-port class, non-PoE, fixed internal power, fixed internal fan. Stacking-capable (2x stacking ports, 80Gbps).",
+   "axis_values": {
+    "series": "MS150",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "meraki-stack-100g",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS150 Datasheet spec table: access = 48x copper [1g] (RJ45), uplink = 4x fiber [1g/10g] (SFP+). total_port_count = access sum = 48.",
+    "poe_*": "MS150 Datasheet: 'PoE Type: -' (no PoE row value). poe_capable=false, poe_type='none'.",
+    "stacking": "MS150 Datasheet: 'Stacking Ports: 2', 'Stacking Bandwidth: 80Gbps' on every model. stacking_technology='meraki-stack-100g' added to the registry with explicit human sign-off (not a Cisco StackWise technology). stackpower_capable=false (no StackPower row/concept in the datasheet).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS150-48T-4X-PSU-SYN): no PSU part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 49.8W, rounded to the nearest integer (50) for the schema's integer-typed catalog field, used as a conservative proxy per the same approach confirmed for MS130 (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS150 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 176,
+    "stacking_ports": 2,
+    "stacking_bandwidth_gbps": 80,
+    "layer3_routing": "Static Routing",
+    "power_load_watts_idle": 23.1,
+    "power_load_watts_max": 49.8,
+    "power_input": "100-240VAC",
+    "weight_kg": 5.1,
+    "dimensions_hwd_in": "1.72 x 19 x 13.38in",
+    "dimensions_hwd_cm": "4.4 x 48.2 x 34cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms150-48t-4x-psu",
+     "valid_primary": [
+      "MS150-48T-4X-PSU-SYN"
+     ],
+     "default_primary": "MS150-48T-4X-PSU-SYN",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "MS150 Datasheet: single fixed PSU (synthetic), no PoE (data model). Empty matrix; no secondary/redundant PSU option on this model."
+    },
+    "stack_cables": {
+     "group": "ms150-stack-cables",
+     "notes": "Shared MS150 stacking-cable group (MA-CBL-100G-50CM/-1M/-3M); per confirmed user direction all three lengths are usable on every MS150 model."
+    },
+    "license": {
+     "group": "ms150-classic-essentials-48",
+     "additional_groups": [
+      "ms150-classic-advantage-48",
+      "ms150-sub-l-essentials",
+      "ms150-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed Internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS150-48LP-4X",
+   "description": "Cisco Meraki MS150-48LP-4X, native cloud-managed access switch. 48-port class, PoE (802.3bt, 30W/port), fixed internal power, fixed internal fan. Stacking-capable (2x stacking ports, 80Gbps).",
+   "axis_values": {
+    "series": "MS150",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 370,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "meraki-stack-100g",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS150 Datasheet spec table: access = 48x copper [1g] (RJ45), uplink = 4x fiber [1g/10g] (SFP+). total_port_count = access sum = 48.",
+    "poe_*": "MS150 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 30W', 'PoE Switch Budget: 370W'. poe_type mapped to registry 'poe+' (level_watts 30W matches the stated port budget exactly, same convention as MS130).",
+    "stacking": "MS150 Datasheet: 'Stacking Ports: 2', 'Stacking Bandwidth: 80Gbps' on every model. stacking_technology='meraki-stack-100g' added to the registry with explicit human sign-off (not a Cisco StackWise technology). stackpower_capable=false (no StackPower row/concept in the datasheet).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS150-48LP-4X-PSU-SYN): no PSU part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 460.6W, rounded to the nearest integer (461) for the schema's integer-typed catalog field, used as a conservative proxy per the same approach confirmed for MS130 (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS150 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 176,
+    "stacking_ports": 2,
+    "stacking_bandwidth_gbps": 80,
+    "layer3_routing": "Static Routing",
+    "power_load_watts_idle": 36.2,
+    "power_load_watts_max": 460.6,
+    "poe_port_budget_watts": 30,
+    "power_input": "100-240VAC",
+    "weight_kg": 5.4,
+    "dimensions_hwd_in": "1.72 x 19 x 13.38in",
+    "dimensions_hwd_cm": "4.4 x 48.2 x 34cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms150-48lp-4x-psu",
+     "valid_primary": [
+      "MS150-48LP-4X-PSU-SYN"
+     ],
+     "default_primary": "MS150-48LP-4X-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS150-48LP-4X-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 370
+      }
+     ],
+     "matrix_provenance": "MS150 Datasheet: single fixed PSU (MS150-48LP-4X-PSU-SYN, synthetic), PoE Switch Budget = 370W. No secondary/redundant PSU option on this model."
+    },
+    "stack_cables": {
+     "group": "ms150-stack-cables",
+     "notes": "Shared MS150 stacking-cable group (MA-CBL-100G-50CM/-1M/-3M); per confirmed user direction all three lengths are usable on every MS150 model."
+    },
+    "license": {
+     "group": "ms150-classic-essentials-48",
+     "additional_groups": [
+      "ms150-classic-advantage-48",
+      "ms150-sub-l-essentials",
+      "ms150-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed Internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS150-48FP-4X",
+   "description": "Cisco Meraki MS150-48FP-4X, native cloud-managed access switch. 48-port class, PoE (802.3bt, 30W/port), fixed internal power, fixed internal fan. Stacking-capable (2x stacking ports, 80Gbps).",
+   "axis_values": {
+    "series": "MS150",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 740,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "meraki-stack-100g",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 48,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS150 Datasheet spec table: access = 48x copper [1g] (RJ45), uplink = 4x fiber [1g/10g] (SFP+). total_port_count = access sum = 48.",
+    "poe_*": "MS150 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 30W', 'PoE Switch Budget: 740W'. poe_type mapped to registry 'poe+' (level_watts 30W matches the stated port budget exactly, same convention as MS130).",
+    "stacking": "MS150 Datasheet: 'Stacking Ports: 2', 'Stacking Bandwidth: 80Gbps' on every model. stacking_technology='meraki-stack-100g' added to the registry with explicit human sign-off (not a Cisco StackWise technology). stackpower_capable=false (no StackPower row/concept in the datasheet).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS150-48FP-4X-PSU-SYN): no PSU part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 891.4W, rounded to the nearest integer (891) for the schema's integer-typed catalog field, used as a conservative proxy per the same approach confirmed for MS130 (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS150 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 176,
+    "stacking_ports": 2,
+    "stacking_bandwidth_gbps": 80,
+    "layer3_routing": "Static Routing",
+    "power_load_watts_idle": 44.6,
+    "power_load_watts_max": 891.4,
+    "poe_port_budget_watts": 30,
+    "power_input": "100-240VAC",
+    "weight_kg": 5.4,
+    "dimensions_hwd_in": "1.72 x 19 x 13.38in",
+    "dimensions_hwd_cm": "4.4 x 48.2 x 34cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms150-48fp-4x-psu",
+     "valid_primary": [
+      "MS150-48FP-4X-PSU-SYN"
+     ],
+     "default_primary": "MS150-48FP-4X-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS150-48FP-4X-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "MS150 Datasheet: single fixed PSU (MS150-48FP-4X-PSU-SYN, synthetic), PoE Switch Budget = 740W. No secondary/redundant PSU option on this model."
+    },
+    "stack_cables": {
+     "group": "ms150-stack-cables",
+     "notes": "Shared MS150 stacking-cable group (MA-CBL-100G-50CM/-1M/-3M); per confirmed user direction all three lengths are usable on every MS150 model."
+    },
+    "license": {
+     "group": "ms150-classic-essentials-48",
+     "additional_groups": [
+      "ms150-classic-advantage-48",
+      "ms150-sub-l-essentials",
+      "ms150-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed Internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  },
+  {
+   "id": "MS150-48MP-4X",
+   "description": "Cisco Meraki MS150-48MP-4X, native cloud-managed access switch. 48-port class, PoE (802.3bt, up to 60W on mGig ports), fixed internal power, fixed internal fan. Stacking-capable (2x stacking ports, 80Gbps).",
+   "axis_values": {
+    "series": "MS150",
+    "poe_capable": true,
+    "poe_type": "upoe",
+    "poe_budget_watts": 740,
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "meraki-stack-100g",
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 32,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 16,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "ports": "MS150 Datasheet spec table: access = 32x copper [1g] + 16x copper [1g/2.5g/5g] (RJ45/mGbe RJ45), uplink = 4x fiber [1g/10g] (SFP+). total_port_count = access sum = 48.",
+    "poe_*": "MS150 Datasheet: 'PoE Type: 802.3bt', 'PoE Port Budget: 60W**' (footnote: PoE++ up to 60W on the mGig-capable ports only), 'PoE Switch Budget: 740W'. poe_type mapped to registry 'upoe' (level_watts 60W matches the stated mGig-port ceiling); this is a MIXED-PoE chassis (standard ports vs mGig ports have different ceilings, not separately quantified in the datasheet) — 'upoe' records the switch's maximum deliverable capability, per confirmed user direction. poe_budget_watts = stated PoE Switch Budget (unambiguous, applies switch-wide regardless of the per-port asymmetry).",
+    "stacking": "MS150 Datasheet: 'Stacking Ports: 2', 'Stacking Bandwidth: 80Gbps' on every model. stacking_technology='meraki-stack-100g' added to the registry with explicit human sign-off (not a Cisco StackWise technology). stackpower_capable=false (no StackPower row/concept in the datasheet).",
+    "power_supply_watts": "SYNTHETIC placeholder (MS150-48MP-4X-PSU-SYN): no PSU part number or nameplate wattage is given in the datasheet. watts = this model's own stated Power Load (max) = 933W, rounded to the nearest integer (933) for the schema's integer-typed catalog field, used as a conservative proxy per the same approach confirmed for MS130 (flagged _incomplete; see THINGS-TO-COMPLETE.md).",
+    "weight_kg": "MS150 Datasheet Weight row (kg figure used verbatim, no conversion)."
+   },
+   "attributes": {
+    "switching_capacity_gbps": 304,
+    "stacking_ports": 2,
+    "stacking_bandwidth_gbps": 80,
+    "layer3_routing": "Static Routing",
+    "power_load_watts_idle": 76,
+    "power_load_watts_max": 933,
+    "poe_port_budget_watts": 60,
+    "poe_port_budget_note": "60W PoE++ figure applies specifically to ports 33-48 (the mGig-capable ports), per the datasheet's own footnote; the standard 1G ports (1-32) are not separately quantified in the source table.",
+    "power_input": "100-240VAC",
+    "weight_kg": 5.71,
+    "dimensions_hwd_in": "1.72 x 19 x 13.38in",
+    "dimensions_hwd_cm": "4.4 x 48.2 x 34cm",
+    "operating_temperature_f": "32°F - 113°F",
+    "operating_temperature_c": "0°C - 45°C",
+    "storage_temperature_f": "-4°F - 158°F",
+    "storage_temperature_c": "-20°C - 70°C",
+    "humidity": "5% to 95%",
+    "dedicated_mgmt_interface": true
+   },
+   "configurables": {
+    "power_supplies": {
+     "group": "ms150-48mp-4x-psu",
+     "valid_primary": [
+      "MS150-48MP-4X-PSU-SYN"
+     ],
+     "default_primary": "MS150-48MP-4X-PSU-SYN",
+     "poe_budget_matrix": [
+      {
+       "primary": "MS150-48MP-4X-PSU-SYN",
+       "secondary": null,
+       "poe_budget_watts": 740
+      }
+     ],
+     "matrix_provenance": "MS150 Datasheet: single fixed PSU (MS150-48MP-4X-PSU-SYN, synthetic), PoE Switch Budget = 740W. No secondary/redundant PSU option on this model."
+    },
+    "stack_cables": {
+     "group": "ms150-stack-cables",
+     "notes": "Shared MS150 stacking-cable group (MA-CBL-100G-50CM/-1M/-3M); per confirmed user direction all three lengths are usable on every MS150 model."
+    },
+    "license": {
+     "group": "ms150-classic-essentials-48",
+     "additional_groups": [
+      "ms150-classic-advantage-48",
+      "ms150-sub-l-essentials",
+      "ms150-sub-l-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "fans": "Fixed Internal",
+    "mounting": "Integrated 1U Rack Mount",
+    "power_supply": "Fixed internal (non-removable) power supply; no bay, no redundancy option."
+   },
+   "_incomplete": [
+    "power_supply_watts"
+   ]
+  }
+ ]
+}
