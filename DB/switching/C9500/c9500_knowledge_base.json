@@ -1,0 +1,187 @@
+{
+ "header": {
+  "schema_version": "0.8.0-c9500.1",
+  "registry_version": "0.10.0",
+  "axes_file": "../switching-axes.json",
+  "schema_file": "switch-kb.schema.json",
+  "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9500 Series Switches (C9500 and C9500X). Pass 1 of 2: this file carries the catalog (atomic SKU facts) and groups (named shared compatibility sets) — the reusable scaffolding. Switch models are added in Pass 2; until then 'models' is empty. C9500/C9500X are fixed 1RU switches (no modular chassis/supervisor/line-card concept); only C9500-16X (excluded, see design_notes) ever had a network-module bay, so the live lineup is fixed-uplink only. Structure: catalog + groups + models.",
+  "sources": [
+   {
+    "name": "Cisco Catalyst 9500 Series Switches Data Sheet",
+    "url": "https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9500-series-switches/nb-06-cat9500-ser-data-sheet-cte-en.html",
+    "last_verified": "2026-07-06"
+   },
+   {
+    "name": "Cisco Catalyst 9500 Series Switches Ordering Guide",
+    "url": "https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9500-series-switches/nb-06-cat9500-swit-ser-cte-en.html",
+    "last_verified": "2026-07-06"
+   },
+   {
+    "name": "Cisco End-of-Sale/End-of-Life bulletin for the C9500-16X switch and network modules C9500-NM-8X / C9500-NM-2Q",
+    "url": "operator-provided; not sourced from a locally committed document",
+    "last_verified": "2026-07-06"
+   }
+  ],
+  "design_notes": [
+   "Pass 1 of 2: catalog + groups only. 'models' is empty until Pass 2; the per-model validator checks (valid_primary subset, poe_budget_matrix max, access-port sum == total_port_count) therefore do not yet run. The standalone group-integrity and catalog port-speed checks DO run.",
+   "C9500 is NOT PoE-capable at all (core/aggregation switch line): every Pass-2 model will set poe_capable=false, poe_type='none', and an empty poe_budget_matrix. Simpler than the access-layer families in this respect.",
+   "No modular chassis / supervisor / line-card concept exists anywhere in this family: both the C9500 (UADP 3.0/2.0) and C9500X (Silicon One Q200) lines are fixed 1RU switches. The only model that ever had a network-module bay was C9500-16X, which is excluded (see below) — so the entire live lineup is fixed-uplink (uplink_modular=false); no network_module_groups entries exist.",
+   "EXCLUDED, per explicit ruling — do not model: C9500-12Q / C9500-24Q / C9500-40X (removed per the datasheet's own document history, 'Removed references to C9500-12Q/24Q/40X as the switch models are end of sale', Dec 12, 2024) and C9500-16X plus its two network modules C9500-NM-8X / C9500-NM-2Q (removed per a separate Cisco End-of-Sale/End-of-Life bulletin, operator-provided — not a locally committed document). Also excluded as structurally undocumented in either source: C9500-24X, C9500-48X, C9500-16X-2Q, C9500-40X-2Q — these appear as orderable PIDs in the ordering guide's legacy Table 2 but have ZERO specification data (no port density table entry, no PSU/fan matrix row, no SDM template row) anywhere in the datasheet, so they cannot be modeled without inventing data. Catalog items exclusive to the excluded models are dropped too: PWR-C4-950WAC-R / PWR-C4-950WDC-R (950W PSU pair, datasheet Table 14 shows these as C9500-16X-only) and FAN-T4-R (fan tray, ordering guide Table 3 confirms this is exclusive to C9500-24Q/12Q/40X/16X — all excluded).",
+   "Live lineup modeled going forward (Pass 2): C9500-32C, C9500-32QC, C9500-48Y4C, C9500-24Y4C (UADP 3.0, 'high performance' tier) and C9500X-28C8D, C9500X-60L4D (Silicon One Q200). Each non-X model offers both -E (Essentials) and -A (Advantage) hardware SKUs; C9500X-60L4D is Advantage-only — no C9500X-60L4D-E hardware or license SKU exists in either source document.",
+   "StackWise Virtual (SVL) is Advantage-tier only (datasheet Table 24, 'High availability and resiliency': StackWise Virtual is listed under Network Advantage, absent from Network Essentials). Added registry enum value 'stackwise-virtual' (switching-axes.json) for this. SVL runs over ordinary front-panel uplink ports plus a license — there is no dedicated stacking cable SKU anywhere in either source document, so no stack_cable catalog/group entries exist for this family at all (catalog.stack_cables / groups.stack_cable_groups are empty arrays, and no Pass-2 model will carry a configurables.stack_cables key).",
+   "Licensing regime: only the legacy 'dna-term' regime (C9500-DNA-* SKUs) is modeled, per explicit project ruling. The newer 'unified' Cisco Catalyst Software Subscription (C9500-DNX-* SKUs) is deliberately NOT modeled — do not add C9500-DNX-* catalog/license entries without new sign-off. The legacy dna-term regime itself forks into two SKU buckets (not one per exact model): a 'standard' bucket (C9500-DNA-E/A-<term>Y) covering C9500-32C/32QC/48Y4C, and a 'low port density' bucket (C9500-DNA-L-E/A-<term>Y) covering C9500-24Y4C. C9500X has its own separate SKU family (C9500X-DNA-E/A-<term>Y); only 28C8D offers the Essentials tier, both 28C8D and 60L4D share the Advantage tier SKUs.",
+   "Fan trays are a genuinely new configurable category (no prior series modeled fan trays as selectable) — added to this series' own schema copy only (catalog.fan_trays / groups.fan_tray_groups / configurables.fan_trays). Only C9500X has a real order-time airflow-direction choice (C9500X-FAN-1U-R front-to-back / port-side intake, default; C9500X-FAN-1U-F back-to-front / port-side exhaust; max 6, must not be mixed). Every other C9500 model's fan tray is fixed and non-selectable (recorded on the Pass-2 model as included_by_default_non_selectable.fan_tray, a plain string — not a catalog cross-reference): C9500-32C uses C9K-T2-FANTRAY (max 5); C9500-32QC/48Y4C/24Y4C use C9K-T1-FANTRAY (max 4). All four real fan-tray SKUs are still recorded in catalog.fan_trays for completeness even though only the C9500X pair is referenced through a group.",
+   "PSU groups represent the complete orderable family per sub-line, not what one model's matrix needs (project convention): c9500-psus covers all non-X live PSUs (650W AC, 930W DC, 1600W AC, 1600W DC); c9500x-psus covers the C9500X pair (1500W AC/DC). Per-model valid_primary/default_primary subsets are set in Pass 2 from the datasheet's Table 14 matrix (e.g. C9500-32C takes only the 1600W pair; C9500-32QC/48Y4C/24Y4C take the 650W AC / 930W DC options). Both groups share the same secondary_none_option, C9500-SPS-NONE (the ordering guide's exact CCW SKU for declining a redundant secondary).",
+   "Flag for Pass-2 model authoring, not resolved here: Cisco's own CCW ordering flow for C9500 defaults to a redundant (primary+secondary) PSU pair and requires actively selecting C9500-SPS-NONE to decline it. This differs from the shared config_variables.psu_redundancy policy documented in switching-axes.json (off by default; a secondary is added only when a PoE request exceeds the primary) — C9500 has no PoE demand at all, so under the generic policy a secondary would never be auto-added. This is a cross-series solver-policy question, not a catalog/group question, so it is out of scope for this Pass-1 file.",
+   "Out of scope, same footing as pricing — not modeled: the multi-unit bundle SKU C9500-48Y4C-A-BUN, and the RFID opt-in/out SKUs C9500-RFID / C9500X-RFID / C9500-RFID-NONE."
+  ]
+ },
+
+ "catalog": {
+  "_comment": "Atomic SKU facts. One row per real orderable component. What a thing IS, independent of which switch uses it.",
+
+  "network_modules": [],
+
+  "power_supplies": [
+   { "id": "C9K-PWR-650WAC-R", "watts": 650, "type": "AC", "rating": null, "notes": "650W AC power supply (datasheet Table 12 / ordering guide Table 3). Used by C9500-32QC, C9500-48Y4C, C9500-24Y4C (datasheet Table 14)." },
+   { "id": "C9K-PWR-930WDC-R", "watts": 930, "type": "DC", "rating": null, "notes": "930W DC power supply, -40 to -72VDC (datasheet Table 12 / ordering guide Table 3). Used by C9500-32QC, C9500-48Y4C, C9500-24Y4C (datasheet Table 14)." },
+   { "id": "C9K-PWR-1600WAC-R", "watts": 1600, "type": "AC", "rating": null, "notes": "1600W AC power supply, dual input range 90-140VAC and 180-264VAC (datasheet Table 12 / ordering guide Table 3). Used by C9500-32C only (datasheet Table 14)." },
+   { "id": "C9K-PWR-1600WDC-R", "watts": 1600, "type": "DC", "rating": null, "notes": "1600W DC power supply, -40VDC (datasheet Table 12 / ordering guide Table 3). Used by C9500-32C only (datasheet Table 14)." },
+   { "id": "C9K-PWR-1500WAC", "watts": 1500, "type": "AC", "rating": null, "notes": "Catalyst 9500X 1500W AC power supply, 90-264VAC 47-63Hz (datasheet Table 10 / ordering guide Table 3). Used by both C9500X-28C8D and C9500X-60L4D." },
+   { "id": "C9K-PWR-1500WDC", "watts": 1500, "type": "DC", "rating": null, "notes": "Catalyst 9500X 1500W DC power supply, -40 to -72VDC (datasheet Table 10 / ordering guide Table 3). Used by both C9500X-28C8D and C9500X-60L4D." }
+  ],
+
+  "stack_cables": [],
+
+  "stackpower_cables": [],
+
+  "licenses": [
+   { "id": "C9500-DNA-E-3Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 3, "port_class": null, "notes": "Catalyst 9500 NW and Cisco DNA Essentials license, 3-year. Applies to C9500-32C, C9500-32QC, C9500-48Y4C (datasheet Ordering information / ordering guide Table 2)." },
+   { "id": "C9500-DNA-E-5Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 5, "port_class": null, "notes": "Same family, 5-year term." },
+   { "id": "C9500-DNA-E-7Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 7, "port_class": null, "notes": "Same family, 7-year term." },
+   { "id": "C9500-DNA-A-3Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 3, "port_class": null, "notes": "Catalyst 9500 NW and Cisco DNA Advantage license, 3-year. Applies to C9500-32C, C9500-32QC, C9500-48Y4C." },
+   { "id": "C9500-DNA-A-5Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 5, "port_class": null, "notes": "Same family, 5-year term." },
+   { "id": "C9500-DNA-A-7Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 7, "port_class": null, "notes": "Same family, 7-year term." },
+
+   { "id": "C9500-DNA-L-E-3Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 3, "port_class": 24, "notes": "Catalyst 9500 NW and Cisco DNA Essentials 'low port density' license, 3-year. Applies to C9500-24Y4C only (12Q/16X also listed in source but excluded)." },
+   { "id": "C9500-DNA-L-E-5Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 5, "port_class": 24, "notes": "Same family, 5-year term." },
+   { "id": "C9500-DNA-L-E-7Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 7, "port_class": 24, "notes": "Same family, 7-year term." },
+   { "id": "C9500-DNA-L-A-3Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 3, "port_class": 24, "notes": "Catalyst 9500 NW and Cisco DNA Advantage 'low port density' license, 3-year. Applies to C9500-24Y4C only." },
+   { "id": "C9500-DNA-L-A-5Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 5, "port_class": 24, "notes": "Same family, 5-year term." },
+   { "id": "C9500-DNA-L-A-7Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 7, "port_class": 24, "notes": "Same family, 7-year term." },
+
+   { "id": "C9500X-DNA-E-3Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 3, "port_class": 28, "notes": "Catalyst 9500X Cisco DNA Essentials license, 3-year, for 28C8D SKU only (60L4D has no Essentials hardware variant)." },
+   { "id": "C9500X-DNA-E-5Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 5, "port_class": 28, "notes": "Same family, 5-year term." },
+   { "id": "C9500X-DNA-E-7Y", "regime": "dna-term", "tier": "essentials", "shape": "term-based", "term_years": 7, "port_class": 28, "notes": "Same family, 7-year term." },
+   { "id": "C9500X-DNA-A-3Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 3, "port_class": null, "notes": "Catalyst 9500X Cisco DNA Advantage license, 3-year, for both 28C8D and 60L4D SKUs." },
+   { "id": "C9500X-DNA-A-5Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 5, "port_class": null, "notes": "Same family, 5-year term." },
+   { "id": "C9500X-DNA-A-7Y", "regime": "dna-term", "tier": "advantage", "shape": "term-based", "term_years": 7, "port_class": null, "notes": "Same family, 7-year term." }
+  ],
+
+  "fan_trays": [
+   { "id": "C9K-T1-FANTRAY", "airflow_direction": "front-to-back", "max_fans": 4, "notes": "Fixed, non-selectable on the models that use it: C9500-32QC, C9500-48Y4C, C9500-24Y4C (datasheet Table 9 / ordering guide Table 3)." },
+   { "id": "C9K-T2-FANTRAY", "airflow_direction": "front-to-back", "max_fans": 5, "notes": "Fixed, non-selectable. Used by C9500-32C only (datasheet Table 9 / ordering guide Table 3, 'Catalyst 9500 Type 5 front to back cooling Fan')." },
+   { "id": "C9500X-FAN-1U-R", "airflow_direction": "front-to-back", "max_fans": 6, "notes": "Port-side intake. Default airflow direction for C9500X (datasheet 'Power supplies and fan tray' section). All 6 fans must be the same direction — no mixing." },
+   { "id": "C9500X-FAN-1U-F", "airflow_direction": "back-to-front", "max_fans": 6, "notes": "Port-side exhaust. Alternative selectable airflow direction for C9500X. All 6 fans must be the same direction — no mixing." }
+  ]
+ },
+
+ "groups": {
+  "_comment": "Named shared compatibility SETS. A switch references a group by id and inherits the whole set.",
+
+  "network_module_groups": [],
+
+  "power_supply_groups": [
+   {
+    "id": "c9500-psus",
+    "members": ["C9K-PWR-650WAC-R", "C9K-PWR-930WDC-R", "C9K-PWR-1600WAC-R", "C9K-PWR-1600WDC-R"],
+    "secondary_none_option": "C9500-SPS-NONE",
+    "notes": "Complete live PSU family for non-X C9500 (datasheet Table 12 / Table 14). Per-model valid_primary (C9500-32C: 1600W pair only; C9500-32QC/48Y4C/24Y4C: 650W AC / 930W DC) is set in Pass 2. Excludes PWR-C4-950WAC-R/950WDC-R (C9500-16X-only, excluded model) and C9K-PWR-650WACL-R (dropped per project ruling)."
+   },
+   {
+    "id": "c9500x-psus",
+    "members": ["C9K-PWR-1500WAC", "C9K-PWR-1500WDC"],
+    "secondary_none_option": "C9500-SPS-NONE",
+    "notes": "Complete PSU family for C9500X (datasheet Table 10 / Table 11), shared identically by both C9500X-28C8D and C9500X-60L4D."
+   }
+  ],
+
+  "stack_cable_groups": [],
+
+  "stackpower_cable_groups": [],
+
+  "fan_tray_groups": [
+   {
+    "id": "c9500x-fans",
+    "members": ["C9500X-FAN-1U-R", "C9500X-FAN-1U-F"],
+    "notes": "Airflow-direction pair for C9500X, shared identically by both 28C8D and 60L4D. Default is C9500X-FAN-1U-R (port-side intake), set per-model in Pass 2. No other C9500 model references a fan_tray_group — their fan tray is fixed and recorded under included_by_default_non_selectable instead."
+   }
+  ],
+
+  "license_groups": [
+   {
+    "id": "c9500-dna-essentials-std",
+    "regime": "dna-term",
+    "tier": "essentials",
+    "port_class": null,
+    "applies_to": "C9500-32C-E, C9500-32QC-E, C9500-48Y4C-E.",
+    "perpetual_member": null,
+    "subscription_members": ["C9500-DNA-E-3Y", "C9500-DNA-E-5Y", "C9500-DNA-E-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU." },
+    "notes": "perpetual_member is null: the Network Stack (Essentials/Advantage) license is a perpetual entitlement embedded in the hardware PID, not a separately orderable SKU (ordering guide: 'Network Stack Essential or Advantage comes embedded in the hardware')."
+   },
+   {
+    "id": "c9500-dna-advantage-std",
+    "regime": "dna-term",
+    "tier": "advantage",
+    "port_class": null,
+    "applies_to": "C9500-32C-A, C9500-32QC-A, C9500-48Y4C-A.",
+    "perpetual_member": null,
+    "subscription_members": ["C9500-DNA-A-3Y", "C9500-DNA-A-5Y", "C9500-DNA-A-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU." }
+   },
+   {
+    "id": "c9500-dna-essentials-l",
+    "regime": "dna-term",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "C9500-24Y4C-E.",
+    "perpetual_member": null,
+    "subscription_members": ["C9500-DNA-L-E-3Y", "C9500-DNA-L-E-5Y", "C9500-DNA-L-E-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU." }
+   },
+   {
+    "id": "c9500-dna-advantage-l",
+    "regime": "dna-term",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "C9500-24Y4C-A.",
+    "perpetual_member": null,
+    "subscription_members": ["C9500-DNA-L-A-3Y", "C9500-DNA-L-A-5Y", "C9500-DNA-L-A-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU." }
+   },
+   {
+    "id": "c9500x-dna-essentials",
+    "regime": "dna-term",
+    "tier": "essentials",
+    "port_class": 28,
+    "applies_to": "C9500X-28C8D-E only — 60L4D has no Essentials hardware or license SKU in either source document.",
+    "perpetual_member": null,
+    "subscription_members": ["C9500X-DNA-E-3Y", "C9500X-DNA-E-5Y", "C9500X-DNA-E-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU." }
+   },
+   {
+    "id": "c9500x-dna-advantage",
+    "regime": "dna-term",
+    "tier": "advantage",
+    "port_class": null,
+    "applies_to": "C9500X-28C8D-A, C9500X-60L4D-A.",
+    "perpetual_member": null,
+    "subscription_members": ["C9500X-DNA-A-3Y", "C9500X-DNA-A-5Y", "C9500X-DNA-A-7Y"],
+    "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU." }
+   }
+  ]
+ },
+
+ "models": []
+}

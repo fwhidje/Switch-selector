@@ -52,10 +52,10 @@
       "type": "enum",
       "kind": "discriminating",
       "role": "requirement",
-      "legal_values": ["C9300", "C9300L", "C9300X", "C9300LM", "C9350", "C9200", "C9200L", "C9200CX", "MS130", "MS150"],
+      "legal_values": ["C9300", "C9300L", "C9300X", "C9300LM", "C9350", "C9200", "C9200L", "C9200CX", "MS130", "MS150", "C9500", "C9500X"],
       "accepted_conditions": ["==", "in"],
       "required_on_model": true,
-      "notes": "Series is an ordinary axis, not a privileged root. Sub-families are distinct series values. Legal_values will grow as families are added. Added 'MS130' and 'MS150' (native Meraki cloud-managed switches, DB/switching/MS/) without a registry_version bump, since no other axis KIND/ROLE/shape changed."
+      "notes": "Series is an ordinary axis, not a privileged root. Sub-families are distinct series values. Legal_values will grow as families are added. Added 'MS130' and 'MS150' (native Meraki cloud-managed switches, DB/switching/MS/) without a registry_version bump, since no other axis KIND/ROLE/shape changed. Added 'C9500' and 'C9500X' (Cisco Catalyst 9500 Series, DB/switching/C9500/) on the same precedent: C9500X is a distinct Silicon One Q200-based platform from the UADP-based C9500, mirroring the existing C9300/C9300X split."
     },
     {
       "name": "poe_capable",
@@ -133,10 +133,10 @@
       "type": "enum",
       "kind": "discriminating",
       "role": "requirement",
-      "legal_values": ["stackwise-480", "stackwise-1t", "stackwise-320", "stackwise-1.6t", "stackwise-160", "stackwise-80", "meraki-stack-100g"],
+      "legal_values": ["stackwise-480", "stackwise-1t", "stackwise-320", "stackwise-1.6t", "stackwise-160", "stackwise-80", "meraki-stack-100g", "stackwise-virtual"],
       "accepted_conditions": ["==", "in"],
       "required_on_model": "when_stacking_capable",
-      "notes": "Required and non-blank on a model when stacking_capable is true. May be left unconstrained in a QUERY. v0.10.0 added 'stackwise-160' (C9200 modular, 160 Gbps data stacking) and 'stackwise-80' (C9200L fixed, 80 Gbps). Added 'meraki-stack-100g' with explicit human sign-off for MS150 (native Meraki hardware stacking via 2x dedicated 100G stacking ports / MA-CBL-100G-* cables, 80 Gbps stacking bandwidth — not a Cisco StackWise technology, DB/switching/MS/). No registry_version bump (legal_values grew only, same convention as the 'series' addition)."
+      "notes": "Required and non-blank on a model when stacking_capable is true. May be left unconstrained in a QUERY. v0.10.0 added 'stackwise-160' (C9200 modular, 160 Gbps data stacking) and 'stackwise-80' (C9200L fixed, 80 Gbps). Added 'meraki-stack-100g' with explicit human sign-off for MS150 (native Meraki hardware stacking via 2x dedicated 100G stacking ports / MA-CBL-100G-* cables, 80 Gbps stacking bandwidth — not a Cisco StackWise technology, DB/switching/MS/). Added 'stackwise-virtual' with explicit human sign-off for C9500 (StackWise Virtual, SVL): a licensed, software-defined stack formed over ordinary front-panel uplink ports, not a dedicated physical stack cable — Advantage-tier only (Network Essentials does not include it, per datasheet Table 24 'High availability and resiliency'). C9500 models therefore carry NO configurables.stack_cables / stack_cable_group; the capability is realized entirely via this enum value plus the Advantage license, not an orderable cable SKU. No registry_version bump (legal_values grew only, same convention as the 'series' addition)."
     },
     {
       "name": "stackpower_capable",
