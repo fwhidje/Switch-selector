@@ -5,10 +5,21 @@
   "axes_file": "../switching-axes.json",
   "schema_file": "switch-kb.schema.json",
   "description": "Networking Equipment Selector knowledge base for the Cisco Meraki MS130 and MS150 Series switches (native Meraki cloud-managed access switches — distinct from the Catalyst 9200L-M/9300L-M hybrid Meraki-managed models, which live in their own C9200/C9300 KB files). Carries the catalog (atomic SKU facts), groups (named shared compatibility sets), and switch models for MS130 (compact access) and MS150 (stackable access). Structure: catalog + groups + models.",
-  "sources": [],
+  "sources": [
+   {
+    "name": "Cisco Meraki MS130 Series Data Sheet",
+    "url": "user-provided (pasted content, no URL supplied)",
+    "last_verified": "2026-07-06"
+   }
+  ],
   "design_notes": [
-   "Skeleton only (created ahead of any datasheet data): catalog, groups, and models are all empty. Populated in parts per project convention, from data pasted into the authoring session — never invented or inferred: (1) MS130 catalog + groups, (2) MS130 models, (3) MS150 catalog + groups, (4) MS150 models. header.sources is filled in once the datasheet reference (name/URL/date) is known.",
-   "New legal_values needed on an EXISTING axis (e.g. 'MS130'/'MS150' added to the 'series' enum, or any new stacking_technology/poe_type/license_tier value these native-Meraki models turn out to need) are a STRUCTURAL change per this schema's $authoring.cheap_vs_structural block and switching-axes.json's own change_policy — these are flagged for explicit human sign-off, never made unilaterally."
+   "Pass 1 (this pass): MS130 licensing only — catalog.licenses + groups.license_groups, from MS130 datasheet excerpts pasted into the authoring session. No PSU, stacking, or network-module data has been supplied yet, so those catalog/group arrays stay empty; 'models' stays empty until Pass 2 (MS130 switch models). MS150 (Passes 3-4) is out of scope for this pass.",
+   "'MS130' and 'MS150' were added to the 'series' enum in switching-axes.json with explicit human sign-off (structural change, per this schema's $authoring.cheap_vs_structural). No registry_version bump was made for this addition since no axis KIND/ROLE/shape changed — only its legal_values grew, matching how registry_version is scoped in this project (a bump is for a structural/typed change to the axis SET, not every enum-value addition).",
+   "MS130 classic license structure (regime meraki-classic, shape term-based): the datasheet's classic table prints the LIC-MS130-CMPT(A)/-24(A)/-48(A) base order codes each against ONE representative model row, but the 'compact switch (8/12)' / '24 ports' / '48 ports' wording in the Description column states each SKU applies to the WHOLE port-class family, not just the row it's printed on. Confirmed with the user: 'compact' = MS130-8/-8P/-8P-I/-8X/-12X (both Enterprise and Advanced SKUs available across all five); '24' = MS130-24/-24P/-24X; '48' = MS130-48/-48P/-48X. Per-term SKU strings (-1Y/-3Y/.../-10Y) are synthesized by appending suffixes to the datasheet's base order code (datasheet prints only the base code + a stated term list), mirroring the C9200L-M convention. Enterprise offers 1/3/5/7/10-year terms; Advanced offers 1/3/5-year terms only (no 7/10y) — confirmed uniform across all three port classes.",
+   "MS130 subscription license structure (regime meraki-subscription, shape subscription-based, term_years null): LIC-MS-100-{S,M,L}-{E,A}, tier-split per the C9200L-M LIC-MS-200-{M,L}-{E,A} convention. MS100 Small = compact class (8/12-port models); MS100 Medium = 24-port class; MS100 Large = 48-port class.",
+   "Tier vocabulary: MS130's own tier names are Enterprise/Advanced; mapped to the registry's existing essentials/advantage legal_values (Enterprise->essentials, Advanced->advantage), same mapping convention used for C9200L-M. No new license_tier axis value.",
+   "port_class on the compact-class license catalog entries and groups is recorded as null (not 8), since that class spans two distinct port counts (8-port and 12-port models) and the schema's port_class field is a single integer-or-null.",
+   "A trailing 'MS120' line at the end of the user's pasted subscription table was confirmed to be a paste artifact (not MS130 data) and is not reflected anywhere in this file."
   ]
  },
  "catalog": {
@@ -17,7 +28,278 @@
   "power_supplies": [],
   "stack_cables": [],
   "stackpower_cables": [],
-  "licenses": []
+  "licenses": [
+   {
+    "id": "LIC-MS130-CMPT-1Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": null,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS130-CMPT (MS130 classic license table, Enterprise tier, 'compact switch (8/12)' row) and states Enterprise is offered in 1/3/5/7/10-year terms. Covers MS130-8/-8P/-8P-I/-8X/-12X (shared SKU family spanning both 8- and 12-port compact models; port_class recorded as null)."
+   },
+   {
+    "id": "LIC-MS130-CMPT-3Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": null,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS130-CMPT-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-CMPT-5Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": null,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS130-CMPT-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-CMPT-7Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 7,
+    "port_class": null,
+    "notes": "Term suffix synthesized (7-year); see LIC-MS130-CMPT-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-CMPT-10Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 10,
+    "port_class": null,
+    "notes": "Term suffix synthesized (10-year); see LIC-MS130-CMPT-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-CMPTA-1Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": null,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS130-CMPTA (MS130 classic license table, Advanced tier, 'compact switch (8/12)' row) and states Advanced is offered in 1/3/5-year terms (no 7/10y). Covers MS130-8/-8P/-8P-I/-8X/-12X (shared SKU family spanning both 8- and 12-port compact models; port_class recorded as null)."
+   },
+   {
+    "id": "LIC-MS130-CMPTA-3Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": null,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS130-CMPTA-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-CMPTA-5Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": null,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS130-CMPTA-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-24-1Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS130-24 (MS130 classic license table, Enterprise tier, '24 ports' row) and states Enterprise is offered in 1/3/5/7/10-year terms. Covers MS130-24/-24P/-24X."
+   },
+   {
+    "id": "LIC-MS130-24-3Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS130-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-24-5Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS130-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-24-7Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 7,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (7-year); see LIC-MS130-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-24-10Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 10,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (10-year); see LIC-MS130-24-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-24A-1Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS130-24A (MS130 classic license table, Advanced tier, '24 ports' row) and states Advanced is offered in 1/3/5-year terms (no 7/10y). Covers MS130-24/-24P/-24X."
+   },
+   {
+    "id": "LIC-MS130-24A-3Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS130-24A-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-24A-5Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 24,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS130-24A-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-48-1Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS130-48 (MS130 classic license table, Enterprise tier, '48 ports' row) and states Enterprise is offered in 1/3/5/7/10-year terms. Covers MS130-48/-48P/-48X."
+   },
+   {
+    "id": "LIC-MS130-48-3Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS130-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-48-5Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS130-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-48-7Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 7,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (7-year); see LIC-MS130-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-48-10Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 10,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (10-year); see LIC-MS130-48-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-48A-1Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (1-year); datasheet prints only base order code LIC-MS130-48A (MS130 classic license table, Advanced tier, '48 ports' row) and states Advanced is offered in 1/3/5-year terms (no 7/10y). Covers MS130-48/-48P/-48X."
+   },
+   {
+    "id": "LIC-MS130-48A-3Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (3-year); see LIC-MS130-48A-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS130-48A-5Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": 48,
+    "notes": "Term suffix synthesized (5-year); see LIC-MS130-48A-1Y for base-code and coverage provenance."
+   },
+   {
+    "id": "LIC-MS-100-S-E",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": null,
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only base order code 'MS100 Small' / LIC-MS-100-S covering the compact class (MS130-8/-8P/-8P-I/-8X/-12X), per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "LIC-MS-100-S-A",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": null,
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only base order code 'MS100 Small' / LIC-MS-100-S covering the compact class (MS130-8/-8P/-8P-I/-8X/-12X), per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "LIC-MS-100-M-E",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 24,
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only base order code 'MS100 Medium' / LIC-MS-100-M covering the 24-port class (MS130-24/-24P/-24X), per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "LIC-MS-100-M-A",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 24,
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only base order code 'MS100 Medium' / LIC-MS-100-M covering the 24-port class (MS130-24/-24P/-24X), per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "LIC-MS-100-L-E",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 48,
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only base order code 'MS100 Large' / LIC-MS-100-L covering the 48-port class (MS130-48/-48P/-48X), per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "LIC-MS-100-L-A",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": 48,
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only base order code 'MS100 Large' / LIC-MS-100-L covering the 48-port class (MS130-48/-48P/-48X), per the C9200L-M LIC-MS-200-M-E/-A convention."
+   }
+  ]
  },
  "groups": {
   "_comment": "Named shared compatibility sets referencing catalog SKUs by id.",
@@ -25,7 +307,194 @@
   "power_supply_groups": [],
   "stack_cable_groups": [],
   "stackpower_cable_groups": [],
-  "license_groups": []
+  "license_groups": [
+   {
+    "id": "ms130-classic-essentials-compact",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": null,
+    "applies_to": "MS130-8, MS130-8P, MS130-8P-I, MS130-8X, MS130-12X (compact class, Enterprise tier, LIC-MS130-CMPT) (MS130 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS130-CMPT-1Y",
+     "LIC-MS130-CMPT-3Y",
+     "LIC-MS130-CMPT-5Y",
+     "LIC-MS130-CMPT-7Y",
+     "LIC-MS130-CMPT-10Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [1, 3, 5, 7, 10],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS130-CMPT and states 1/3/5/7/10-year terms are offered for Enterprise)."
+    }
+   },
+   {
+    "id": "ms130-classic-advantage-compact",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": null,
+    "applies_to": "MS130-8, MS130-8P, MS130-8P-I, MS130-8X, MS130-12X (compact class, Advanced tier, LIC-MS130-CMPTA) (MS130 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS130-CMPTA-1Y",
+     "LIC-MS130-CMPTA-3Y",
+     "LIC-MS130-CMPTA-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [1, 3, 5],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS130-CMPTA and states 1/3/5-year terms are offered for Advanced; no 7/10-year option)."
+    }
+   },
+   {
+    "id": "ms130-classic-essentials-24",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "MS130-24, MS130-24P, MS130-24X (24-port class, Enterprise tier, LIC-MS130-24) (MS130 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS130-24-1Y",
+     "LIC-MS130-24-3Y",
+     "LIC-MS130-24-5Y",
+     "LIC-MS130-24-7Y",
+     "LIC-MS130-24-10Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [1, 3, 5, 7, 10],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS130-24 and states 1/3/5/7/10-year terms are offered for Enterprise)."
+    }
+   },
+   {
+    "id": "ms130-classic-advantage-24",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "MS130-24, MS130-24P, MS130-24X (24-port class, Advanced tier, LIC-MS130-24A) (MS130 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS130-24A-1Y",
+     "LIC-MS130-24A-3Y",
+     "LIC-MS130-24A-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [1, 3, 5],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS130-24A and states 1/3/5-year terms are offered for Advanced; no 7/10-year option)."
+    }
+   },
+   {
+    "id": "ms130-classic-essentials-48",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "MS130-48, MS130-48P, MS130-48X (48-port class, Enterprise tier, LIC-MS130-48) (MS130 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS130-48-1Y",
+     "LIC-MS130-48-3Y",
+     "LIC-MS130-48-5Y",
+     "LIC-MS130-48-7Y",
+     "LIC-MS130-48-10Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [1, 3, 5, 7, 10],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS130-48 and states 1/3/5/7/10-year terms are offered for Enterprise)."
+    }
+   },
+   {
+    "id": "ms130-classic-advantage-48",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "MS130-48, MS130-48P, MS130-48X (48-port class, Advanced tier, LIC-MS130-48A) (MS130 Datasheet, classic license table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS130-48A-1Y",
+     "LIC-MS130-48A-3Y",
+     "LIC-MS130-48A-5Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [1, 3, 5],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option. Per-term SKUs synthesized (datasheet prints only the base order code LIC-MS130-48A and states 1/3/5-year terms are offered for Advanced; no 7/10-year option)."
+    }
+   },
+   {
+    "id": "ms130-sub-s-essentials",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "port_class": null,
+    "applies_to": "MS100 Small class — MS130-8, MS130-8P, MS130-8P-I, MS130-8X, MS130-12X (MS130 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-S-E"
+    ],
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only the base order code LIC-MS-100-S / 'MS100 Small' covering the whole compact class, per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "ms130-sub-s-advantage",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "port_class": null,
+    "applies_to": "MS100 Small class — MS130-8, MS130-8P, MS130-8P-I, MS130-8X, MS130-12X (MS130 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-S-A"
+    ],
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only the base order code LIC-MS-100-S / 'MS100 Small' covering the whole compact class, per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "ms130-sub-m-essentials",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "port_class": 24,
+    "applies_to": "MS100 Medium class — MS130-24, MS130-24P, MS130-24X (MS130 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-M-E"
+    ],
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only the base order code LIC-MS-100-M / 'MS100 Medium' covering the whole 24-port class, per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "ms130-sub-m-advantage",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "MS100 Medium class — MS130-24, MS130-24P, MS130-24X (MS130 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-M-A"
+    ],
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only the base order code LIC-MS-100-M / 'MS100 Medium' covering the whole 24-port class, per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "ms130-sub-l-essentials",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "port_class": 48,
+    "applies_to": "MS100 Large class — MS130-48, MS130-48P, MS130-48X (MS130 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-L-E"
+    ],
+    "notes": "Tier suffix synthesized (Essentials); datasheet prints only the base order code LIC-MS-100-L / 'MS100 Large' covering the whole 48-port class, per the C9200L-M LIC-MS-200-M-E/-A convention."
+   },
+   {
+    "id": "ms130-sub-l-advantage",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "MS100 Large class — MS130-48, MS130-48P, MS130-48X (MS130 Datasheet, subscription licensing table).",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-100-L-A"
+    ],
+    "notes": "Tier suffix synthesized (Advantage); datasheet prints only the base order code LIC-MS-100-L / 'MS100 Large' covering the whole 48-port class, per the C9200L-M LIC-MS-200-M-E/-A convention."
+   }
+  ]
  },
  "models": []
 }

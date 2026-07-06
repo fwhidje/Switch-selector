@@ -52,10 +52,10 @@
       "type": "enum",
       "kind": "discriminating",
       "role": "requirement",
-      "legal_values": ["C9300", "C9300L", "C9300X", "C9300LM", "C9350", "C9200", "C9200L", "C9200CX"],
+      "legal_values": ["C9300", "C9300L", "C9300X", "C9300LM", "C9350", "C9200", "C9200L", "C9200CX", "MS130", "MS150"],
       "accepted_conditions": ["==", "in"],
       "required_on_model": true,
-      "notes": "Series is an ordinary axis, not a privileged root. Sub-families are distinct series values. Legal_values will grow as families are added."
+      "notes": "Series is an ordinary axis, not a privileged root. Sub-families are distinct series values. Legal_values will grow as families are added. Added 'MS130' and 'MS150' (native Meraki cloud-managed switches, DB/switching/MS/) without a registry_version bump, since no other axis KIND/ROLE/shape changed."
     },
     {
       "name": "poe_capable",
