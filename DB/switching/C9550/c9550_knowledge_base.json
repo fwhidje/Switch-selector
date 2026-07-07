@@ -4,7 +4,7 @@
   "registry_version": "0.10.0",
   "axes_file": "../switching-axes.json",
   "schema_file": "switch-kb.schema.json",
-  "description": "Networking Equipment Selector knowledge base for the Cisco C9550 Series Smart Switches. Pass 1 of 2: this file carries the catalog (atomic SKU facts) and groups (named shared compatibility sets); switch models are added in Pass 2 (until then 'models' is empty). C9550 are fixed core/aggregation switches on Silicon One E100/E104: C9550-24L4CD and C9550-48L4CD (1RU), C9550-96L4D (2RU). No PoE, no network-module bay (fixed uplinks), StackWise Virtual on all models, unified Advantage-only licensing. Structure: catalog + groups + models.",
+  "description": "Networking Equipment Selector knowledge base for the Cisco C9550 Series Smart Switches. Pass 2 of 2: catalog, groups, and models are all populated. C9550 are fixed core/aggregation switches on Silicon One E100/E104: C9550-24L4CD and C9550-48L4CD (1RU), C9550-96L4D (2RU). No PoE, no network-module bay (fixed uplinks), StackWise Virtual on all models, unified Advantage-only licensing. Structure: catalog + groups + models.",
   "sources": [
    {
     "name": "Cisco C9550 Series Smart Switches Data Sheet",
@@ -23,7 +23,7 @@
    }
   ],
   "design_notes": [
-   "Pass 1 builds catalog + groups only; 'models' is empty until Pass 2. Standalone group-integrity and catalog port-speed checks run now; per-model checks (valid_primary subset, access-port sum, etc.) run once models are added.",
+   "Pass 1 built catalog + groups; Pass 2 (this revision) added the 3 models[] entries. All per-model validator checks now run (valid_primary subset, access-port sum == total_port_count, license/group references, etc.).",
    "Three models total (all fixed 1RU/2RU, no modular chassis/NM bay): C9550-24L4CD (E104, 1RU), C9550-48L4CD (E104, 1RU), C9550-96L4D (E100, 2RU). Single hardware SKU per model — NO -E/-A tier split (unlike C9500); C9550 is Advantage-only (ordering guide: 'Only Advantage Tier available on Cisco C9550 Series Smart Switches').",
    "C9550 is NOT PoE-capable (core/agg switch): every Pass-2 model sets poe_capable=false, poe_type='none', empty poe_budget_matrix.",
    "Combinable uplink bank (NEW mechanism, uplink_pair_block): C9550-24L4CD/48L4CD uplinks are 'four 100/40G OR two 400G' — 2 physical pairs, each pair either 2x(40/100G) or 1x400G (combining a pair to 400G consumes its partner). Modeled as model.uplink_pair_block {pairs:2, low:{2x[40g,100g]}, high:{1x[40g,100g,400g]}}; resolve.js expands it into pairs+1 real simultaneous pools so mixes (e.g. 2x100G + 1x400G) resolve correctly and impossible combos (4x100G AND 2x400G) are rejected. The pair structure is per operator statement (the datasheet gives only the two extreme densities). The combined 400G port carries its fallback speeds [40g,100g,400g] (a 400G QSFP-DD port also runs 100/40G). C9550-96L4D does NOT use a pair block: the E100 drives 4x400G as independent fixed uplinks ('four ports of 400/100/40G as fixed uplinks'), so it carries plain inline role=uplink rows 4x[40g,100g,400g].",
@@ -125,5 +125,204 @@
   ]
  },
 
- "models": []
+ "models": [
+  {
+   "id": "C9550-24L4CD",
+   "description": "Cisco C9550-24L4CD, 24x 1/10/25/50G SFP56 downlinks + combinable QSFP-DD uplink bank (four 100/40G OR two 400G), 1RU, no PoE. Silicon One E104. Unified Advantage licensing, StackWise Virtual.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9550",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-virtual",
+    "stackpower_capable": false,
+    "license_regime": ["unified"],
+    "license_tier": ["advantage"]
+   },
+   "ports": [
+    { "count": 24, "role": "access", "medium": "fiber", "speeds": ["1g", "10g", "25g", "50g"], "notes": "24x SFP56 downlinks (datasheet: '50/25/10/1G downlinks')." }
+   ],
+   "uplink_pair_block": {
+    "pairs": 2,
+    "low": { "ports_per_pair": 2, "medium": "fiber", "speeds": ["40g", "100g"] },
+    "high": { "ports_per_pair": 1, "medium": "fiber", "speeds": ["40g", "100g", "400g"] },
+    "notes": "QSFP-DD uplink bank: 'four 100/40G OR two 400G ports as fixed uplinks' (datasheet C9550-24L4CD highlights). 2 pairs, each 2x(40/100G) OR 1x400G. Pair structure per operator; the combined 400G port also runs 100/40G."
+   },
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet C9550-24L4CD highlights + ordering guide Table 1 ('24x25/50G + 4x100G/2x400G'). Access = 24x SFP56 (1/10/25/50G).",
+    "uplink_pair_block": "Datasheet states the two extreme densities ('four 100/40G OR two 400G'); the per-pair combining structure (2 pairs, 2x-low | 1x-high) is per operator statement. 400G port carries [40g,100g,400g] fallback.",
+    "poe_budget_watts": "n/a (non-PoE core switch).",
+    "default_primary": "AC per default (datasheet Table 8 / ordering guide Table 1: 1RU models ship with C9K-PWR-750WAC).",
+    "stacking_technology": "StackWise Virtual, 'front-side stacking on all ports' (datasheet C9550-24L4CD highlights / Table 10)."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One E104",
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 960,
+    "weight_kg": 9.15,
+    "dimensions_cm_hxwxd_chassis_only": [4.39, 44.45, 46.1],
+    "mtbf_hours": 339040,
+    "port_layout": "24x SFP56 (1/10/25/50G) + QSFP-DD uplink (4x 100/40G | 2x 400G)"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/fan overlay.",
+    "power_supplies": {
+     "group": "c9550-psus",
+     "valid_primary": ["C9K-PWR-750WAC"],
+     "default_primary": "C9K-PWR-750WAC",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9550-unified-advantage-m",
+     "regime_offered": ["unified"],
+     "tier_locked": "advantage"
+    },
+    "fan_trays": {
+     "group": "c9550-fans-1u",
+     "valid_options": ["C9550-FAN-1U-R", "C9550-FAN-1U-F"],
+     "default_option": "C9550-FAN-1U-R"
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Nothing else is bundled beyond the selectable configurables above."
+   }
+  },
+  {
+   "id": "C9550-48L4CD",
+   "description": "Cisco C9550-48L4CD, 48x 1/10/25/50G SFP56 downlinks + combinable QSFP-DD uplink bank (four 100/40G OR two 400G), 1RU, no PoE. Silicon One E104. Unified Advantage licensing, StackWise Virtual.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9550",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-virtual",
+    "stackpower_capable": false,
+    "license_regime": ["unified"],
+    "license_tier": ["advantage"]
+   },
+   "ports": [
+    { "count": 48, "role": "access", "medium": "fiber", "speeds": ["1g", "10g", "25g", "50g"], "notes": "48x SFP56 downlinks (datasheet: '50/25/10/1G downlinks')." }
+   ],
+   "uplink_pair_block": {
+    "pairs": 2,
+    "low": { "ports_per_pair": 2, "medium": "fiber", "speeds": ["40g", "100g"] },
+    "high": { "ports_per_pair": 1, "medium": "fiber", "speeds": ["40g", "100g", "400g"] },
+    "notes": "QSFP-DD uplink bank: 'four 100/40G OR two 400G ports as fixed uplinks' (datasheet C9550-48L4CD highlights). 2 pairs, each 2x(40/100G) OR 1x400G. Pair structure per operator; the combined 400G port also runs 100/40G."
+   },
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet C9550-48L4CD highlights + ordering guide Table 1 ('48x25/50G + 4x100G/2x400G'). Access = 48x SFP56 (1/10/25/50G).",
+    "uplink_pair_block": "Datasheet states the two extreme densities ('four 100/40G OR two 400G'); the per-pair combining structure (2 pairs, 2x-low | 1x-high) is per operator statement. 400G port carries [40g,100g,400g] fallback.",
+    "poe_budget_watts": "n/a (non-PoE core switch).",
+    "default_primary": "AC per default (datasheet Table 8 / ordering guide Table 1: 1RU models ship with C9K-PWR-750WAC).",
+    "stacking_technology": "StackWise Virtual, 'front-side stacking on all ports' (datasheet C9550-48L4CD highlights / Table 10)."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One E104",
+    "dram_gb": 16,
+    "flash_gb": 18,
+    "ssd_max_gb": 960,
+    "weight_kg": 9.45,
+    "dimensions_cm_hxwxd_chassis_only": [4.39, 44.45, 46.1],
+    "mtbf_hours": 325840,
+    "port_layout": "48x SFP56 (1/10/25/50G) + QSFP-DD uplink (4x 100/40G | 2x 400G)"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/fan overlay.",
+    "power_supplies": {
+     "group": "c9550-psus",
+     "valid_primary": ["C9K-PWR-750WAC"],
+     "default_primary": "C9K-PWR-750WAC",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9550-unified-advantage-l",
+     "regime_offered": ["unified"],
+     "tier_locked": "advantage"
+    },
+    "fan_trays": {
+     "group": "c9550-fans-1u",
+     "valid_options": ["C9550-FAN-1U-R", "C9550-FAN-1U-F"],
+     "default_option": "C9550-FAN-1U-R"
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Nothing else is bundled beyond the selectable configurables above."
+   }
+  },
+  {
+   "id": "C9550-96L4D",
+   "description": "Cisco C9550-96L4D, 96x 1/10/25/50G SFP56 downlinks + 4x 400/100/40G QSFP-DD fixed uplinks, 2RU, no PoE. Silicon One E100. Unified Advantage licensing, StackWise Virtual.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9550",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 96,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-virtual",
+    "stackpower_capable": false,
+    "license_regime": ["unified"],
+    "license_tier": ["advantage"]
+   },
+   "ports": [
+    { "count": 96, "role": "access", "medium": "fiber", "speeds": ["1g", "10g", "25g", "50g"], "notes": "96x SFP56 downlinks (datasheet: '96 ports of 50/25/10/1G as downlinks')." },
+    { "count": 4, "role": "uplink", "medium": "fiber", "speeds": ["40g", "100g", "400g"], "notes": "4x QSFP-DD fixed uplinks, each 400/100/40G — independent (NOT a combinable pair bank): datasheet '(96L4D) four ports of 400/100/40G as fixed uplinks' + ordering guide Table 1 '4x400G'. The E100 drives all four at 400G, so no 'OR' mode." }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet C9550-96L4D highlights ('96 ports of 50/25/10/1G downlinks and four ports of 400/100/40G as fixed uplinks') + ordering guide Table 1 ('96x25/50G + 4x400G'). Uplinks are 4 independent ports (no pair block).",
+    "poe_budget_watts": "n/a (non-PoE core switch).",
+    "default_primary": "AC per default (datasheet Table 8 / ordering guide Table 1: the 2RU model ships with C9K-PWR-1100WAC).",
+    "stacking_technology": "StackWise Virtual, 'front-side stacking on all ports' (datasheet C9550-96L4D highlights / Table 10)."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One E100",
+    "dram_gb": 32,
+    "flash_gb": 18,
+    "ssd_max_gb": 960,
+    "weight_kg": 15.25,
+    "dimensions_cm_hxwxd_chassis_only": [8.81, 44.45, 45.32],
+    "mtbf_hours": 250800,
+    "port_layout": "96x SFP56 (1/10/25/50G) + 4x QSFP-DD (400/100/40G) uplink"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/fan overlay.",
+    "power_supplies": {
+     "group": "c9550-psus",
+     "valid_primary": ["C9K-PWR-1100WAC"],
+     "default_primary": "C9K-PWR-1100WAC",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9550-unified-advantage-xl",
+     "regime_offered": ["unified"],
+     "tier_locked": "advantage"
+    },
+    "fan_trays": {
+     "group": "c9550-fans-2u",
+     "valid_options": ["C9550-FAN-2U-R", "C9550-FAN-2U-F"],
+     "default_option": "C9550-FAN-2U-R"
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Nothing else is bundled beyond the selectable configurables above."
+   }
+  }
+ ]
 }
