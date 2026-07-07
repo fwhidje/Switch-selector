@@ -3,7 +3,7 @@
   "$id": "switch-kb.schema.json",
   "title": "Networking Equipment Selector — Switch Knowledge Base Schema",
   "description": "Series-agnostic shape + authoring contract for a switch knowledge base. This schema enforces SHAPE (entries are well-formed); switching-axes.json enforces MEANING (which axes exist, their KIND/ROLE and legal enum values); selector/tools/validate-kb.mjs enforces CROSS-REFERENCE INTEGRITY (group references resolve, valid_primary is a subset of the referenced PSU group, poe_budget_watts equals the matrix max, sum of access-port counts equals total_port_count, enum/speed values are registered). All three must pass. See $authoring for the procedure an agent follows to add a model.",
-  "schema_version": "0.8.0-c9350.1",
+  "schema_version": "0.8.0",
   "registry_version": "0.10.0",
 
   "$authoring": {
@@ -154,12 +154,11 @@
 
     "catalog_network_module": {
       "type": "object",
-      "description": "A network (uplink) module. Carries EXACTLY ONE of: a single fixed `ports` config, a `modes` array of mutually-exclusive WHOLE-BLOCK alternative port configs, or a `pair_block` (a bank of N combinable port PAIRS, each pair independently either low-speed or high-speed — e.g. C9350-NM-8Y: 4 pairs, each 2x25G OR 1x50G). A module is still ONE orderable SKU regardless of shape: the fitted variant selects one option, and the kitlist/BOM shows the real module id with a label. Never a separate SKU per option.",
+      "description": "A network (uplink) module. Carries EITHER a single fixed `ports` config OR a `modes` array of mutually-exclusive alternative port configs (e.g. C9350-NM-8Y: 8x25G OR 4x50G — a re-mode of the same physical ports). A module with `modes` is still ONE orderable SKU: the fitted variant selects exactly one mode, and the kitlist/BOM shows the real module id with a mode label. A mode is NEVER a separate SKU.",
       "required": ["id", "description", "compatible_family"],
       "oneOf": [
-        { "required": ["ports"], "not": { "required": ["modes", "pair_block"] } },
-        { "required": ["modes"], "not": { "required": ["ports", "pair_block"] } },
-        { "required": ["pair_block"], "not": { "required": ["ports", "modes"] } }
+        { "required": ["ports"], "not": { "required": ["modes"] } },
+        { "required": ["modes"], "not": { "required": ["ports"] } }
       ],
       "properties": {
         "id": { "type": "string" },
@@ -168,12 +167,12 @@
           "type": "array",
           "minItems": 1,
           "items": { "$ref": "#/$defs/port_group" },
-          "$comment": "Single fixed config: role=uplink port groups this module provides, combined into a variant's port pool when fitted. Mutually exclusive with `modes`/`pair_block`."
+          "$comment": "Single fixed config: role=uplink port groups this module provides, combined into a variant's port pool when fitted. Mutually exclusive with `modes`."
         },
         "modes": {
           "type": "array",
           "minItems": 2,
-          "$comment": "WHOLE-BLOCK mutually-exclusive alternative port configs (the fitted variant uses exactly one mode in full). CAUTION: only correct when the real hardware truly has no intermediate mix — it captures just the listed configs, not anything between them. If the module is actually N independent combinable pairs (each pair separately low OR high), use `pair_block` instead, which the engine expands into every valid mix. Mutually exclusive with `ports`/`pair_block`. uplinkOptions() expands each mode into a selectable option whose moduleId stays the real SKU.",
+          "$comment": "Mutually-exclusive alternative port configs of ONE module (a re-mode of the same physical ports; the bottom row may go inactive). The fitted variant uses exactly one mode. Mutually exclusive with `ports`. uplinkOptions() expands each mode into a selectable option whose moduleId stays the real SKU.",
           "items": {
             "type": "object",
             "required": ["name", "ports"],
@@ -189,44 +188,10 @@
             }
           }
         },
-        "pair_block": {
-          "$ref": "#/$defs/pair_block",
-          "$comment": "A bank of N combinable port PAIRS on this module (each pair independently low OR high — e.g. C9350-NM-8Y: 4 pairs, each 2x[1g,10g,25g] OR 1x[1g,10g,25g,50g]). resolve.js uplinkOptions() expands this into pairs+1 real simultaneous port pools (k pairs in high mode), fixing the whole-block `modes` gap where intermediate mixes (e.g. 6x25G+1x50G) were previously unrepresentable. Module ports are always role=uplink. Mutually exclusive with `ports`/`modes`."
-        },
         "compatible_family": { "type": "string" },
         "notes": { "type": "string" }
       },
       "additionalProperties": false
-    },
-
-    "pair_block": {
-      "type": "object",
-      "description": "A bank of N combinable port pairs. Each pair operates as EITHER low.ports_per_pair ports at the low speeds OR high.ports_per_pair ports at the high speeds — combining a pair to the high speed consumes the whole pair. Not itself a port_group; the engine materialises the pairs+1 discrete configurations (k = 0..pairs pairs in high mode) at solve time, so every valid mix is a real simultaneous pool and impossible combos are correctly rejected.",
-      "required": ["pairs", "low", "high"],
-      "additionalProperties": false,
-      "properties": {
-        "pairs": { "type": "integer", "minimum": 1 },
-        "low": { "$ref": "#/$defs/pair_side" },
-        "high": { "$ref": "#/$defs/pair_side" },
-        "notes": { "type": "string" }
-      }
-    },
-
-    "pair_side": {
-      "type": "object",
-      "description": "One operating mode of every pair in a pair_block: `ports_per_pair` ports, each able to run the SAME `speeds` set on the given `medium`.",
-      "required": ["ports_per_pair", "medium", "speeds"],
-      "additionalProperties": false,
-      "properties": {
-        "ports_per_pair": { "type": "integer", "minimum": 1 },
-        "medium": { "type": "string", "enum": ["copper", "fiber"] },
-        "speeds": {
-          "type": "array",
-          "minItems": 1,
-          "items": { "type": "string", "enum": ["1g", "2.5g", "5g", "10g", "25g", "40g", "50g", "100g", "200g", "400g"] }
-        },
-        "notes": { "type": "string" }
-      }
     },
 
     "catalog_power_supply": {
