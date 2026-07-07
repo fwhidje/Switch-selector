@@ -75,6 +75,26 @@ MS150 figures are non-integer, e.g. 32.4W).
   explicit human sign-off for this series; fully sourced (2x stacking ports, 80Gbps,
   MA-CBL-100G-* cables), not tracked here.
 
+## C9500 (`DB/switching/C9500/c9500_knowledge_base.json`)
+
+Not an `_incomplete`-flagged gap (nothing here is unsourced) — this is a model
+deliberately **excluded** because the schema can't represent it correctly.
+
+| Model | Why excluded | What would be needed |
+|---|---|---|
+| `C9500-32QC` | Its 32 QSFP+ ports are physically paired into 16 pairs; each pair is EITHER 2x40G OR 1x100G (combining to 100G disables the pair's partner port) — datasheet Table 3. The `port_group` schema (`count` + `speeds[]`) assumes independent ports and has no concept of a combinable/shared-bandwidth pair. Any static representation (e.g. "16 ports @ [40g,100g] + 16 ports @ [40g]") would let a solver query answer "16 ports at 100G AND 16 ports at 40G, simultaneously" as true, which is physically impossible (max active ports drops from 32 toward 16 as more pairs combine to 100G) — an incorrect answer from the primary selection system, not just a documentation gap. | A new schema concept for a combinable/oversubscribed port-pair pool (out of scope for this KB pass). |
+
+### Notes
+- `C9500-32C`'s ports are correctly modeled but needed a new opt-in model
+  flag, `no_uplink_ports: true` (see `DB/switching/C9500/switch-kb.schema.json`
+  and `selector/tools/validate-kb.mjs`), since it's the only C9500 model with
+  no Cisco-labeled uplink port subset despite `uplink_modular: false`.
+- `C9500-12Q`/`24Q`/`40X` (datasheet end-of-sale, Dec 2024), `C9500-16X` +
+  its two network modules (separate Cisco EOL bulletin), and
+  `C9500-24X`/`48X`/`16X-2Q`/`40X-2Q` (orderable PIDs in the ordering guide
+  with zero specification data in the datasheet) are excluded for EOL/
+  no-data reasons, not tracked here — see the KB file's own `design_notes`.
+
 ## How to verify
 `node selector/tools/validate-kb.mjs` — prints an `INCOMPLETE` warning block
 listing every flagged field, then `PASS` (exit 0) when no hard violations remain.

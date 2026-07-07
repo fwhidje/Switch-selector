@@ -158,8 +158,11 @@ function checkPorts(kb, kbFail) {
     const hasNM = !!m.configurables?.network_modules;
     if (modular && !hasNM) kbFail(`${m.id}.configurables`, "uplink_modular=true but no network_modules group");
     if (!modular && hasNM) kbFail(`${m.id}.configurables`, "uplink_modular=false but has a network_modules group");
-    if (!modular && !(m.ports ?? []).some((p) => p.role === "uplink"))
+    const hasUplinkRow = (m.ports ?? []).some((p) => p.role === "uplink");
+    if (!modular && !m.no_uplink_ports && !hasUplinkRow)
       kbFail(`${m.id}.ports`, "fixed-uplink model must carry role=uplink port rows inline");
+    if (m.no_uplink_ports && hasUplinkRow)
+      kbFail(`${m.id}.ports`, "no_uplink_ports=true but model carries role=uplink port rows");
   }
 }
 
