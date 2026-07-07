@@ -3,5 +3,6 @@
   { "series": "C9350", "dir": "C9350", "kbFile": "c9350_knowledge_base.json" },
   { "series": "C9200", "dir": "C9200", "kbFile": "c9200_knowledge_base.json" },
   { "series": "MS", "dir": "MS", "kbFile": "ms_knowledge_base.json" },
-  { "series": "C9500", "dir": "C9500", "kbFile": "c9500_knowledge_base.json" }
+  { "series": "C9500", "dir": "C9500", "kbFile": "c9500_knowledge_base.json" },
+  { "series": "C9550", "dir": "C9550", "kbFile": "c9550_knowledge_base.json" }
 ]

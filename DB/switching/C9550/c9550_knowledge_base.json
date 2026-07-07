@@ -1,0 +1,129 @@
+{
+ "header": {
+  "schema_version": "0.8.0-c9550.1",
+  "registry_version": "0.10.0",
+  "axes_file": "../switching-axes.json",
+  "schema_file": "switch-kb.schema.json",
+  "description": "Networking Equipment Selector knowledge base for the Cisco C9550 Series Smart Switches. Pass 1 of 2: this file carries the catalog (atomic SKU facts) and groups (named shared compatibility sets); switch models are added in Pass 2 (until then 'models' is empty). C9550 are fixed core/aggregation switches on Silicon One E100/E104: C9550-24L4CD and C9550-48L4CD (1RU), C9550-96L4D (2RU). No PoE, no network-module bay (fixed uplinks), StackWise Virtual on all models, unified Advantage-only licensing. Structure: catalog + groups + models.",
+  "sources": [
+   {
+    "name": "Cisco C9550 Series Smart Switches Data Sheet",
+    "url": "https://www.cisco.com/c/en/us/products/collateral/switches/c9550-series-smart-switches/c9550-series-smart-switches-ds.html",
+    "last_verified": "2026-07-07"
+   },
+   {
+    "name": "Cisco C9550 Series Smart Switches Ordering Guide",
+    "url": "https://www.cisco.com/c/en/us/products/collateral/switches/c9550-series-smart-switches/c9550-series-smart-switches-og.html",
+    "last_verified": "2026-07-07"
+   },
+   {
+    "name": "Operator (user) — authoritative statement on the combinable-uplink pair structure (each QSFP-DD uplink pair is 2x low-speed OR 1x high-speed), which the datasheet states only as the two extreme densities ('four 100/40G OR two 400G')",
+    "url": "operator-provided; not a document",
+    "last_verified": "2026-07-07"
+   }
+  ],
+  "design_notes": [
+   "Pass 1 builds catalog + groups only; 'models' is empty until Pass 2. Standalone group-integrity and catalog port-speed checks run now; per-model checks (valid_primary subset, access-port sum, etc.) run once models are added.",
+   "Three models total (all fixed 1RU/2RU, no modular chassis/NM bay): C9550-24L4CD (E104, 1RU), C9550-48L4CD (E104, 1RU), C9550-96L4D (E100, 2RU). Single hardware SKU per model — NO -E/-A tier split (unlike C9500); C9550 is Advantage-only (ordering guide: 'Only Advantage Tier available on Cisco C9550 Series Smart Switches').",
+   "C9550 is NOT PoE-capable (core/agg switch): every Pass-2 model sets poe_capable=false, poe_type='none', empty poe_budget_matrix.",
+   "Combinable uplink bank (NEW mechanism, uplink_pair_block): C9550-24L4CD/48L4CD uplinks are 'four 100/40G OR two 400G' — 2 physical pairs, each pair either 2x(40/100G) or 1x400G (combining a pair to 400G consumes its partner). Modeled as model.uplink_pair_block {pairs:2, low:{2x[40g,100g]}, high:{1x[40g,100g,400g]}}; resolve.js expands it into pairs+1 real simultaneous pools so mixes (e.g. 2x100G + 1x400G) resolve correctly and impossible combos (4x100G AND 2x400G) are rejected. The pair structure is per operator statement (the datasheet gives only the two extreme densities). The combined 400G port carries its fallback speeds [40g,100g,400g] (a 400G QSFP-DD port also runs 100/40G). C9550-96L4D does NOT use a pair block: the E100 drives 4x400G as independent fixed uplinks ('four ports of 400/100/40G as fixed uplinks'), so it carries plain inline role=uplink rows 4x[40g,100g,400g].",
+   "Licensing = 'unified' regime (reused from C9350), Advantage-only. Per-device subscription SKU by size class: LIC-CS-CO-M-A (port_class 24), LIC-CS-CO-L-A (48), LIC-CS-CO-XL-A (96), mapped 24L4CD->M, 48L4CD->L, 96L4D->XL (operator-confirmed). Term is a free variable (>=36 months per ordering guide), so the license groups carry no term_variable; perpetual_member is null (the Network Stack/IOS-XE perpetual entitlement is embedded in the hardware PID, not separately orderable). No dna-term regime, no Essentials tier.",
+   "PSUs: C9K-PWR-750WAC (1RU: 24L4CD, 48L4CD) and C9K-PWR-1100WAC (2RU: 96L4D), AC only (datasheet Table 8 / ordering guide Table 2). No DC PSU exists for C9550 (per operator ruling; the chassis-spec 'DC PSU weight' row in datasheet Table 6 has no corresponding orderable DC SKU in either document). Redundant '/2' and spare '=' variants are ordering variants, not catalog entries. secondary_none_option = C9550-SPS-NONE (operator-confirmed).",
+   "Fan trays are selectable (airflow direction) on ALL three models, default -R (front-to-back / port-side intake): C9550-FAN-1U-R/-F (1RU, max 5 fans) and C9550-FAN-2U-R/-F (2RU, max 3 fans) — datasheet Table 7. All fans in a switch must be the same direction (datasheet note). Groups: c9550-fans-1u (1RU models), c9550-fans-2u (2RU model).",
+   "Out of scope, same footing as pricing — not modeled: the RFID module (included by default, opt-out) and the HSEC license option seen in the CCW ordering flow. No network modules (fixed uplinks), no stack cables (SVL runs over front-panel ports), no StackPower.",
+   "Kept in mind for a FUTURE pass (not touched here): the uplink_pair_block mechanism also fixes the existing C9350-NM-8Y mis-modeling (currently two whole-block modes, which drops intermediate 25G/50G mixes) and enables the previously-dropped C9500-32QC (16 pairs, 2x40G | 1x100G)."
+  ]
+ },
+
+ "catalog": {
+  "_comment": "Atomic SKU facts. One row per real orderable component.",
+
+  "network_modules": [],
+
+  "power_supplies": [
+   { "id": "C9K-PWR-750WAC", "watts": 750, "type": "AC", "rating": null, "notes": "750W AC power supply, 90-264VAC 47-63Hz (datasheet Table 8 / ordering guide Table 2). Default PSU for the 1RU models C9550-24L4CD and C9550-48L4CD." },
+   { "id": "C9K-PWR-1100WAC", "watts": 1100, "type": "AC", "rating": null, "notes": "1100W AC power supply, 90-264VAC 47-63Hz (datasheet Table 8 / ordering guide Table 2). Default PSU for the 2RU model C9550-96L4D." }
+  ],
+
+  "stack_cables": [],
+
+  "stackpower_cables": [],
+
+  "licenses": [
+   { "id": "LIC-CS-CO-M-A", "regime": "unified", "tier": "advantage", "shape": "subscription-based", "term_years": null, "port_class": 24, "notes": "Cisco Switching Advantage Core Fixed License, Medium. Single per-device unified subscription SKU; term is a free variable (>=36 months), not a SKU suffix. For C9550-24L4CD (ordering guide Table 3)." },
+   { "id": "LIC-CS-CO-L-A", "regime": "unified", "tier": "advantage", "shape": "subscription-based", "term_years": null, "port_class": 48, "notes": "Cisco Switching Advantage Core Fixed License, Large. For C9550-48L4CD (ordering guide Table 3)." },
+   { "id": "LIC-CS-CO-XL-A", "regime": "unified", "tier": "advantage", "shape": "subscription-based", "term_years": null, "port_class": 96, "notes": "Cisco Switching Advantage Core Fixed License, XL. For C9550-96L4D (ordering guide Table 3)." }
+  ],
+
+  "fan_trays": [
+   { "id": "C9550-FAN-1U-R", "airflow_direction": "front-to-back", "max_fans": 5, "notes": "1RU front-to-back (port-side intake) cooling fan, max 5 per switch (datasheet Table 7). Default direction. Used by C9550-24L4CD, C9550-48L4CD." },
+   { "id": "C9550-FAN-1U-F", "airflow_direction": "back-to-front", "max_fans": 5, "notes": "1RU back-to-front (port-side exhaust) cooling fan, max 5 per switch (datasheet Table 7). All fans in a switch must match direction." },
+   { "id": "C9550-FAN-2U-R", "airflow_direction": "front-to-back", "max_fans": 3, "notes": "2RU front-to-back (port-side intake) cooling fan, max 3 per switch (datasheet Table 7). Default direction. Used by C9550-96L4D." },
+   { "id": "C9550-FAN-2U-F", "airflow_direction": "back-to-front", "max_fans": 3, "notes": "2RU back-to-front (port-side exhaust) cooling fan, max 3 per switch (datasheet Table 7). All fans in a switch must match direction." }
+  ]
+ },
+
+ "groups": {
+  "_comment": "Named shared compatibility SETS. A switch references a group by id and inherits the whole set.",
+
+  "network_module_groups": [],
+
+  "power_supply_groups": [
+   {
+    "id": "c9550-psus",
+    "members": ["C9K-PWR-750WAC", "C9K-PWR-1100WAC"],
+    "secondary_none_option": "C9550-SPS-NONE",
+    "notes": "Complete orderable AC PSU family for C9550 (datasheet Table 8 / ordering guide Table 2). Per-model valid_primary picks the chassis-appropriate one: 750WAC for the 1RU models, 1100WAC for the 2RU model. No DC PSU exists. secondary_none_option is the CCW SKU to decline a redundant secondary."
+   }
+  ],
+
+  "stack_cable_groups": [],
+
+  "stackpower_cable_groups": [],
+
+  "fan_tray_groups": [
+   {
+    "id": "c9550-fans-1u",
+    "members": ["C9550-FAN-1U-R", "C9550-FAN-1U-F"],
+    "notes": "Airflow-direction pair for the 1RU models (C9550-24L4CD, C9550-48L4CD). Default C9550-FAN-1U-R (front-to-back / port-side intake), set per-model."
+   },
+   {
+    "id": "c9550-fans-2u",
+    "members": ["C9550-FAN-2U-R", "C9550-FAN-2U-F"],
+    "notes": "Airflow-direction pair for the 2RU model (C9550-96L4D). Default C9550-FAN-2U-R (front-to-back / port-side intake)."
+   }
+  ],
+
+  "license_groups": [
+   {
+    "id": "c9550-unified-advantage-m",
+    "regime": "unified",
+    "tier": "advantage",
+    "port_class": 24,
+    "applies_to": "C9550-24L4CD (Medium).",
+    "perpetual_member": null,
+    "subscription_members": ["LIC-CS-CO-M-A"]
+   },
+   {
+    "id": "c9550-unified-advantage-l",
+    "regime": "unified",
+    "tier": "advantage",
+    "port_class": 48,
+    "applies_to": "C9550-48L4CD (Large).",
+    "perpetual_member": null,
+    "subscription_members": ["LIC-CS-CO-L-A"]
+   },
+   {
+    "id": "c9550-unified-advantage-xl",
+    "regime": "unified",
+    "tier": "advantage",
+    "port_class": 96,
+    "applies_to": "C9550-96L4D (XL).",
+    "perpetual_member": null,
+    "subscription_members": ["LIC-CS-CO-XL-A"]
+   }
+  ]
+ },
+
+ "models": []
+}
