@@ -52,10 +52,10 @@
       "type": "enum",
       "kind": "discriminating",
       "role": "requirement",
-      "legal_values": ["C9300", "C9300L", "C9300X", "C9300LM", "C9350", "C9200", "C9200L", "C9200CX", "MS130", "MS150", "C9500", "C9500X"],
+      "legal_values": ["C9300", "C9300L", "C9300X", "C9300LM", "C9350", "C9200", "C9200L", "C9200CX", "MS130", "MS150", "C9500", "C9500X", "C9550"],
       "accepted_conditions": ["==", "in"],
       "required_on_model": true,
-      "notes": "Series is an ordinary axis, not a privileged root. Sub-families are distinct series values. Legal_values will grow as families are added. Added 'MS130' and 'MS150' (native Meraki cloud-managed switches, DB/switching/MS/) without a registry_version bump, since no other axis KIND/ROLE/shape changed. Added 'C9500' and 'C9500X' (Cisco Catalyst 9500 Series, DB/switching/C9500/) on the same precedent: C9500X is a distinct Silicon One Q200-based platform from the UADP-based C9500, mirroring the existing C9300/C9300X split."
+      "notes": "Series is an ordinary axis, not a privileged root. Sub-families are distinct series values. Legal_values will grow as families are added. Added 'MS130' and 'MS150' (native Meraki cloud-managed switches, DB/switching/MS/) without a registry_version bump, since no other axis KIND/ROLE/shape changed. Added 'C9500' and 'C9500X' (Cisco Catalyst 9500 Series, DB/switching/C9500/) on the same precedent: C9500X is a distinct Silicon One Q200-based platform from the UADP-based C9500, mirroring the existing C9300/C9300X split. Added 'C9550' (Cisco C9550 Series Smart Switches, DB/switching/C9550/) — fixed core/agg switches on Silicon One E100/E104, same precedent (legal-value growth only)."
     },
     {
       "name": "poe_capable",

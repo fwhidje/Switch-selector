@@ -25,6 +25,11 @@ export const inlineUplinkGroups = (model) => (model.ports ?? []).filter((p) => p
  * A dual-mode module (catalog `modes`, e.g. C9350-NM-8Y: 8x25G | 4x50G) expands
  * into one option per mode — all sharing the same `moduleId` (the real SKU), so
  * the kitlist/BOM never shows a phantom part number; the mode is only a label.
+ * A fixed-uplink model with a `uplink_pair_block` (a bank of N combinable pairs,
+ * each pair either low.ports_per_pair×low OR high.ports_per_pair×high, e.g. the
+ * C9550 CD uplinks: "4x100/40G OR 2x400G") expands into one option per pair-
+ * assignment k=0..pairs, so every valid mix is a real simultaneous pool and the
+ * solver's max-flow feasibility never over-counts a combined port.
  * @returns {Array<{id:string, moduleId:string|null, mode?:string, ports:object[]}>}
  */
 export function uplinkOptions(model, kb) {
@@ -43,6 +48,22 @@ export function uplinkOptions(model, kb) {
       }
     }
     opts.push({ id: g.none_option, moduleId: null, ports: [] });
+    return opts;
+  }
+  const pb = model.uplink_pair_block;
+  if (pb) {
+    const base = inlineUplinkGroups(model);
+    const opts = [];
+    for (let k = 0; k <= pb.pairs; k++) {
+      const groups = [...base];
+      const lowCount = (pb.pairs - k) * pb.low.ports_per_pair;
+      const highCount = k * pb.high.ports_per_pair;
+      if (lowCount > 0)
+        groups.push({ count: lowCount, role: "uplink", medium: pb.low.medium, speeds: pb.low.speeds });
+      if (highCount > 0)
+        groups.push({ count: highCount, role: "uplink", medium: pb.high.medium, speeds: pb.high.speeds });
+      opts.push({ id: `pairs#${k}`, moduleId: null, mode: `${k}-high`, ports: groups });
+    }
     return opts;
   }
   return [{ id: "fixed", moduleId: null, ports: inlineUplinkGroups(model) }];

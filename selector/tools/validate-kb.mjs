@@ -149,6 +149,21 @@ function checkPorts(kb, kbFail) {
     const allowed = modular ? new Set(["access"]) : new Set(["access", "uplink"]);
     (m.ports ?? []).forEach((p, i) => checkPortGroup(kbFail, `${m.id}.ports[${i}]`, p, allowed));
 
+    // uplink_pair_block: a bank of combinable pairs on a fixed-uplink model
+    // (each pair: low.ports_per_pair×low OR high.ports_per_pair×high). Validate
+    // its two port sides as role=uplink groups (resolve.js expands it at solve time).
+    const pb = m.uplink_pair_block;
+    if (pb) {
+      if (!(Number.isInteger(pb.pairs) && pb.pairs >= 1)) kbFail(`${m.id}.uplink_pair_block.pairs`, `bad pairs ${pb.pairs}`);
+      for (const side of ["low", "high"]) {
+        const s = pb[side];
+        if (!s) { kbFail(`${m.id}.uplink_pair_block.${side}`, "missing"); continue; }
+        if (!(Number.isInteger(s.ports_per_pair) && s.ports_per_pair >= 1))
+          kbFail(`${m.id}.uplink_pair_block.${side}.ports_per_pair`, `bad ${s.ports_per_pair}`);
+        checkPortGroup(kbFail, `${m.id}.uplink_pair_block.${side}`, { count: 1, role: "uplink", medium: s.medium, speeds: s.speeds }, uplinkOnly);
+      }
+    }
+
     // sum of access ports == total_port_count
     const accessSum = (m.ports ?? []).filter((p) => p.role === "access").reduce((s, p) => s + p.count, 0);
     if (accessSum !== av.total_port_count)
@@ -158,9 +173,14 @@ function checkPorts(kb, kbFail) {
     const hasNM = !!m.configurables?.network_modules;
     if (modular && !hasNM) kbFail(`${m.id}.configurables`, "uplink_modular=true but no network_modules group");
     if (!modular && hasNM) kbFail(`${m.id}.configurables`, "uplink_modular=false but has a network_modules group");
+    // a fixed-uplink model must carry exactly one uplink shape: inline role=uplink
+    // rows, OR a uplink_pair_block, OR no_uplink_ports.
     const hasUplinkRow = (m.ports ?? []).some((p) => p.role === "uplink");
-    if (!modular && !m.no_uplink_ports && !hasUplinkRow)
-      kbFail(`${m.id}.ports`, "fixed-uplink model must carry role=uplink port rows inline");
+    if (modular && pb) kbFail(`${m.id}.uplink_pair_block`, "uplink_pair_block only valid on a fixed-uplink model (uplink_modular=false)");
+    if (pb && hasUplinkRow) kbFail(`${m.id}.uplink_pair_block`, "uplink_pair_block and inline role=uplink rows are mutually exclusive");
+    if (pb && m.no_uplink_ports) kbFail(`${m.id}.uplink_pair_block`, "uplink_pair_block and no_uplink_ports are mutually exclusive");
+    if (!modular && !m.no_uplink_ports && !hasUplinkRow && !pb)
+      kbFail(`${m.id}.ports`, "fixed-uplink model must carry role=uplink port rows inline, a uplink_pair_block, or no_uplink_ports");
     if (m.no_uplink_ports && hasUplinkRow)
       kbFail(`${m.id}.ports`, "no_uplink_ports=true but model carries role=uplink port rows");
   }
