@@ -20,16 +20,43 @@ export const accessGroups = (model) => (model.ports ?? []).filter((p) => p.role 
 export const inlineUplinkGroups = (model) => (model.ports ?? []).filter((p) => p.role === "uplink");
 
 /**
+ * Expand a `pair_block` {pairs, low, high, role?} into pairs+1 discrete
+ * port-group configurations (k = 0..pairs pairs assigned to `high`), each a
+ * real simultaneous pool. Shared by BOTH a fixed-uplink model's
+ * `uplink_pair_block` (role defaults to "uplink", or "access" for a
+ * homogeneous model like C9500-32QC) and a catalog network module's
+ * `pair_block` (always role="uplink", modules only ever provide uplinks) —
+ * same combinable-pair shape, just fitted at different points in the pool.
+ * @returns {Array<{k:number, ports:object[]}>}
+ */
+function expandPairBlock(pb, role = "uplink") {
+  const out = [];
+  for (let k = 0; k <= pb.pairs; k++) {
+    const groups = [];
+    const lowCount = (pb.pairs - k) * pb.low.ports_per_pair;
+    const highCount = k * pb.high.ports_per_pair;
+    if (lowCount > 0) groups.push({ count: lowCount, role, medium: pb.low.medium, speeds: pb.low.speeds });
+    if (highCount > 0) groups.push({ count: highCount, role, medium: pb.high.medium, speeds: pb.high.speeds });
+    out.push({ k, ports: groups });
+  }
+  return out;
+}
+
+/**
  * The uplink options for a model. Modular models offer each group member plus a
  * "none" option; fixed-uplink models offer their single soldered configuration.
- * A dual-mode module (catalog `modes`, e.g. C9350-NM-8Y: 8x25G | 4x50G) expands
+ * A dual-mode module (catalog `modes`, e.g. a whole-block "8x25G | 4x50G") expands
  * into one option per mode — all sharing the same `moduleId` (the real SKU), so
  * the kitlist/BOM never shows a phantom part number; the mode is only a label.
- * A fixed-uplink model with a `uplink_pair_block` (a bank of N combinable pairs,
- * each pair either low.ports_per_pair×low OR high.ports_per_pair×high, e.g. the
- * C9550 CD uplinks: "4x100/40G OR 2x400G") expands into one option per pair-
- * assignment k=0..pairs, so every valid mix is a real simultaneous pool and the
- * solver's max-flow feasibility never over-counts a combined port.
+ * `modes` only captures the LISTED configs — nothing intermediate. A module whose
+ * ports are actually N independently-combinable pairs (each pair separately low
+ * OR high, e.g. C9350-NM-8Y: 4 pairs, each 2x25G OR 1x50G) instead carries a
+ * catalog `pair_block`, expanded via expandPairBlock() into pairs+1 options, so
+ * every intermediate mix (e.g. 6x25G+1x50G) is a real option too.
+ * A fixed-uplink model with a `uplink_pair_block` (e.g. the C9550 CD uplinks:
+ * "4x100/40G OR 2x400G") is expanded the same way, inline rather than via a
+ * pluggable module. Either way, the solver's max-flow feasibility never
+ * over-counts a combined port because each option is one real simultaneous pool.
  * @returns {Array<{id:string, moduleId:string|null, mode?:string, ports:object[]}>}
  */
 export function uplinkOptions(model, kb) {
@@ -40,7 +67,10 @@ export function uplinkOptions(model, kb) {
     const opts = [];
     for (const id of g.members ?? []) {
       const mod = getNetworkModule(kb, id);
-      if (mod?.modes?.length) {
+      if (mod?.pair_block) {
+        for (const { k, ports } of expandPairBlock(mod.pair_block))
+          opts.push({ id: `${id}#pairs${k}`, moduleId: id, mode: `${k}-high`, ports });
+      } else if (mod?.modes?.length) {
         for (const mode of mod.modes)
           opts.push({ id: `${id}#${mode.name}`, moduleId: id, mode: mode.name, ports: mode.ports ?? [] });
       } else {
@@ -53,18 +83,9 @@ export function uplinkOptions(model, kb) {
   const pb = model.uplink_pair_block;
   if (pb) {
     const base = inlineUplinkGroups(model);
-    const opts = [];
-    for (let k = 0; k <= pb.pairs; k++) {
-      const groups = [...base];
-      const lowCount = (pb.pairs - k) * pb.low.ports_per_pair;
-      const highCount = k * pb.high.ports_per_pair;
-      if (lowCount > 0)
-        groups.push({ count: lowCount, role: "uplink", medium: pb.low.medium, speeds: pb.low.speeds });
-      if (highCount > 0)
-        groups.push({ count: highCount, role: "uplink", medium: pb.high.medium, speeds: pb.high.speeds });
-      opts.push({ id: `pairs#${k}`, moduleId: null, mode: `${k}-high`, ports: groups });
-    }
-    return opts;
+    return expandPairBlock(pb, pb.role ?? "uplink").map(({ k, ports }) => ({
+      id: `pairs#${k}`, moduleId: null, mode: `${k}-high`, ports: [...base, ...ports],
+    }));
   }
   return [{ id: "fixed", moduleId: null, ports: inlineUplinkGroups(model) }];
 }

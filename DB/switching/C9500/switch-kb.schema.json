@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "switch-kb.schema.json",
   "title": "Networking Equipment Selector — Switch Knowledge Base Schema (C9500)",
-  "description": "Series-agnostic shape + authoring contract for a switch knowledge base. This schema enforces SHAPE (entries are well-formed); switching-axes.json enforces MEANING (which axes exist, their KIND/ROLE and legal enum values); selector/tools/validate-kb.mjs enforces CROSS-REFERENCE INTEGRITY (group references resolve, valid_primary is a subset of the referenced PSU group, poe_budget_watts equals the matrix max, sum of access-port counts equals total_port_count, enum/speed values are registered). All three must pass. See $authoring for the procedure an agent follows to add a model. This copy adds ONE structural extension over the base 0.8.0 shape: a fan_trays configurable (catalog.fan_trays / groups.fan_tray_groups / configurables.fan_trays), needed because Catalyst 9500X airflow direction (front-to-back vs back-to-front) is a real order-time SKU choice — no prior series had a selectable fan category.",
-  "schema_version": "0.8.0-c9500.1",
+  "description": "Series-agnostic shape + authoring contract for a switch knowledge base. This schema enforces SHAPE (entries are well-formed); switching-axes.json enforces MEANING (which axes exist, their KIND/ROLE and legal enum values); selector/tools/validate-kb.mjs enforces CROSS-REFERENCE INTEGRITY (group references resolve, valid_primary is a subset of the referenced PSU group, poe_budget_watts equals the matrix max, sum of access-port counts equals total_port_count, enum/speed values are registered). All three must pass. See $authoring for the procedure an agent follows to add a model. This copy adds TWO structural extensions over the base 0.8.0 shape: (1) a fan_trays configurable (catalog.fan_trays / groups.fan_tray_groups / configurables.fan_trays), needed because Catalyst 9500X airflow direction (front-to-back vs back-to-front) is a real order-time SKU choice — no prior series had a selectable fan category; (2) uplink_pair_block (shared with the C9550 schema), a bank of N combinable port pairs, used here with role='access' for C9500-32QC — a homogeneous model (like 32C) whose entire port count is itself a combinable-pair bank (16 pairs, each 2x40G or 1x100G), which the model.ports minItems was relaxed to 0 to accommodate (validate-kb.mjs requires ports non-empty OR a pair block present).",
+  "schema_version": "0.8.0-c9500.2",
   "registry_version": "0.10.0",
 
   "$authoring": {
@@ -382,9 +382,9 @@
         "axis_values": { "$ref": "#/$defs/axis_values" },
         "ports": {
           "type": "array",
-          "minItems": 1,
+          "minItems": 0,
           "items": { "$ref": "#/$defs/port_group" },
-          "$comment": "Port groups for THIS switch: role=access always; role=uplink only on fixed-uplink models (uplink_modular=false). Modular models carry access only; uplink groups come from the fitted module."
+          "$comment": "Port groups for THIS switch: role=access always; role=uplink only on fixed-uplink models (uplink_modular=false). Modular models carry access only; uplink groups come from the fitted module. May be EMPTY only when uplink_pair_block.role='access' fully describes the port bank instead (validate-kb.mjs requires ports non-empty OR a pair block present)."
         },
         "axis_value_provenance": {
           "type": "object",
@@ -406,8 +406,43 @@
         },
         "no_uplink_ports": {
           "type": "boolean",
-          "$comment": "NEW for C9500. Opt-in escape hatch for a fixed-uplink model (uplink_modular=false) that genuinely has no dedicated uplink ports — e.g. C9500-32C/32QC are homogeneous 32-port switches with no Cisco-labeled 'uplink' subset. When true, validate-kb.mjs skips its usual 'fixed-uplink model must carry role=uplink port rows' check for this model, AND requires that the model carry zero role=uplink rows (catches accidental misuse). Absent/false everywhere else — does not change behavior for any other series or for C9500 models that do have a real uplink split (48Y4C/24Y4C/28C8D/60L4D)."
+          "$comment": "Opt-in escape hatch for a fixed-uplink model (uplink_modular=false) that genuinely has no dedicated uplink ports — e.g. C9500-32C is a homogeneous 32-port switch with no Cisco-labeled 'uplink' subset. When true, validate-kb.mjs skips its usual 'fixed-uplink model must carry role=uplink port rows' check for this model, AND requires that the model carry zero role=uplink rows (catches accidental misuse). Absent/false everywhere else — does not change behavior for any other series or for C9500 models that do have a real uplink split (48Y4C/24Y4C/28C8D/60L4D)."
+        },
+        "uplink_pair_block": {
+          "$ref": "#/$defs/uplink_pair_block",
+          "$comment": "A bank of combinable port pairs on a fixed-uplink model. Default role='uplink' (a genuine uplink bank, see C9550). role='access' is for a homogeneous, no-separate-uplink model whose ACCESS ports themselves are combinable pairs (C9500-32QC: 16 pairs, each 2x40G OR 1x100G — same 'no Cisco-labeled uplink subset' situation as no_uplink_ports/C9500-32C, but with a pairing constraint layered on). resolve.js uplinkOptions() expands it into pairs+1 real simultaneous pools with the DECLARED role, so combined ports are never double-counted regardless of which role they land on."
         }
+      }
+    },
+
+    "uplink_pair_block": {
+      "type": "object",
+      "description": "A bank of N combinable port pairs on a model. Each pair operates as EITHER low.ports_per_pair ports at the low speeds OR high.ports_per_pair ports at the high speeds — combining a pair to the high speed consumes the whole pair. `role` (default 'uplink') declares which port role the generated groups carry: 'uplink' for a genuine combinable uplink bank (C9550 CD ports); 'access' for a homogeneous model whose entire access-port count is the combinable bank (C9500-32QC) — in that case model.ports must NOT also declare static role=access rows (would double-count), and validate-kb.mjs folds the pairs*low.ports_per_pair baseline into the total_port_count check. Not itself a port_group; resolve.js materialises the pairs+1 discrete configurations at solve time.",
+      "required": ["pairs", "low", "high"],
+      "additionalProperties": false,
+      "properties": {
+        "pairs": { "type": "integer", "minimum": 1 },
+        "role": { "type": "string", "enum": ["access", "uplink"] },
+        "low": { "$ref": "#/$defs/pair_side" },
+        "high": { "$ref": "#/$defs/pair_side" },
+        "notes": { "type": "string" }
+      }
+    },
+
+    "pair_side": {
+      "type": "object",
+      "description": "One operating mode of every pair in a uplink_pair_block: `ports_per_pair` ports, each able to run the SAME `speeds` set on the given `medium`.",
+      "required": ["ports_per_pair", "medium", "speeds"],
+      "additionalProperties": false,
+      "properties": {
+        "ports_per_pair": { "type": "integer", "minimum": 1 },
+        "medium": { "type": "string", "enum": ["copper", "fiber"] },
+        "speeds": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "enum": ["1g", "2.5g", "5g", "10g", "25g", "40g", "50g", "100g", "200g", "400g"] }
+        },
+        "notes": { "type": "string" }
       }
     },
 
