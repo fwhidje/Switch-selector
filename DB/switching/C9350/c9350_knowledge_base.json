@@ -1,6 +1,6 @@
 {
  "header": {
-  "schema_version": "0.8.0",
+  "schema_version": "0.8.0-c9350.1",
   "registry_version": "0.10.0",
   "axes_file": "../switching-axes.json",
   "schema_file": "switch-kb.schema.json",
@@ -25,7 +25,7 @@
   "design_notes": [
    "Pass 1 of 2: catalog + groups only. 'models' is empty until Pass 2; the per-model validator checks (valid_primary subset, poe_budget_matrix max, access-port sum == total_port_count) therefore do not yet run. The standalone group-integrity and catalog port-speed checks DO run.",
    "All C9350 models are modular-uplink: uplink ports come from a fitted network module (configurables.network_modules group). There are no fixed-uplink (inline uplink) models in this family.",
-   "C9350-NM-8Y is dual-mode: 8x 1G/10G/25G OR 4x 50G, mutually exclusive (top row to 50G, bottom row inactive). Modeled with the schema v0.7.0 `modes` concept: ONE orderable SKU, two alternative port configs; resolve.js uplinkOptions() expands each mode into a selectable option whose moduleId stays the real SKU.",
+   "C9350-NM-8Y is 4 independently-combinable port pairs: each pair is either 2x 1G/10G/25G SFP28 OR 1x 50G SFP56 (converting a pair disables its partner port). Modeled with pair_block (schema v0.8.0-c9350.1): ONE orderable SKU; resolve.js uplinkOptions() expands it into pairs+1=5 real simultaneous port pools (k pairs converted, k=0..4), so every intermediate mix (e.g. 6x25G+1x50G) resolves correctly. This replaces an earlier whole-block `modes` [8x25G | 4x50G] representation that only captured the two extremes and silently mis-resolved intermediate mixes (e.g. a 7x25G port-count query incorrectly fell through to the 4x50G mode) — corrected as part of the C9550 pair-block work.",
    "Two license regimes apply: unified (LIC-CS-AC1-* — a single per-device subscription SKU; subscription term is variable, >=36 months, chosen at order rather than as a SKU suffix, so the unified license groups carry no term_variable) and meraki-classic (LIC-C9350-*-{3,5,7}Y term SKUs, term_variable choices_years [3,5,7]). There is NO -E/-A hardware split: the unified hardware offers both Essentials and Advantage; tier is a license choice (Pass-2 models will carry license_tier [essentials, advantage]).",
    "Source discipline: hardware facts (modules, ports, PoE, PSU, cables) from the C9350 datasheet; SKU forms (PSU -I port-inlet suffix, unified license SKUs) from the ordering guide; the Meraki-classic license SKUs (LIC-C9350-*) are operator-verified in Cisco Commerce (CCW) and are not printed in the public datasheet or ordering guide.",
    "Series-specific groups (PSU, stack/StackPower cables) are kept as their own named groups per project convention, even where a SKU resembles another series — the C9350 StackWise-1.6T and StackPower+ cables are explicitly NOT interchangeable with C9300 cables (datasheet Table 12)."
@@ -57,24 +57,14 @@
    {
     "id": "C9350-NM-8Y",
     "description": "Cisco C9350 8x 25G/10G/1G SFP28 (convertible to 4x 50G SFP56) network module",
-    "modes": [
-     {
-      "name": "8x25G",
-      "ports": [
-       { "count": 8, "role": "uplink", "medium": "fiber", "speeds": ["1g", "10g", "25g"] }
-      ],
-      "notes": "Default mode: eight 1G/10G/25G SFP28 ports, 200 Gbps total (datasheet p.25)."
-     },
-     {
-      "name": "4x50G",
-      "ports": [
-       { "count": 4, "role": "uplink", "medium": "fiber", "speeds": ["50g"] }
-      ],
-      "notes": "Converted mode: top row becomes four 50G SFP56 ports; bottom row set inactive (datasheet p.25)."
-     }
-    ],
+    "pair_block": {
+     "pairs": 4,
+     "low": { "ports_per_pair": 2, "medium": "fiber", "speeds": ["1g", "10g", "25g"] },
+     "high": { "ports_per_pair": 1, "medium": "fiber", "speeds": ["1g", "10g", "25g", "50g"] },
+     "notes": "4 independently-combinable pairs (datasheet p.25): each pair is either 2x 1G/10G/25G SFP28 OR 1x 50G SFP56 (combining a pair converts its top port to 50G and disables its partner). Corrected from a whole-block 'modes' [8x25G | 4x50G] representation, which only captured the two extremes and silently dropped every intermediate mix (e.g. 6x25G+1x50G, 2x25G+3x50G) — a real bug (querying e.g. 7x25G incorrectly failed over to the 4x50G mode). The 50G side carries its 25G/10G/1G fallback speeds (technically correct: the port still runs those rates)."
+    },
     "compatible_family": "C9350",
-    "notes": "Dual-mode, mutually exclusive (8x25G OR 4x50G). One orderable SKU C9350-NM-8Y; the mode is a configuration, not a separate SKU."
+    "notes": "4 combinable pairs, not 2 whole-block modes (see pair_block.notes). One orderable SKU C9350-NM-8Y; a pair's mode is a configuration, not a separate SKU."
    },
    {
     "id": "C9350-NM-8L",
