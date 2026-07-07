@@ -4,7 +4,7 @@
   "registry_version": "0.10.0",
   "axes_file": "../switching-axes.json",
   "schema_file": "switch-kb.schema.json",
-  "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9500 Series Switches (C9500 and C9500X). Pass 1 of 2: this file carries the catalog (atomic SKU facts) and groups (named shared compatibility sets) — the reusable scaffolding. Switch models are added in Pass 2; until then 'models' is empty. C9500/C9500X are fixed 1RU switches (no modular chassis/supervisor/line-card concept); only C9500-16X (excluded, see design_notes) ever had a network-module bay, so the live lineup is fixed-uplink only. Structure: catalog + groups + models.",
+  "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9500 Series Switches (C9500 and C9500X). Pass 2 of 2: catalog, groups, and models are all populated. C9500/C9500X are fixed 1RU switches (no modular chassis/supervisor/line-card concept); only C9500-16X (excluded, see design_notes) ever had a network-module bay, so the live lineup is fixed-uplink only. Structure: catalog + groups + models.",
   "sources": [
    {
     "name": "Cisco Catalyst 9500 Series Switches Data Sheet",
@@ -23,16 +23,19 @@
    }
   ],
   "design_notes": [
-   "Pass 1 of 2: catalog + groups only. 'models' is empty until Pass 2; the per-model validator checks (valid_primary subset, poe_budget_matrix max, access-port sum == total_port_count) therefore do not yet run. The standalone group-integrity and catalog port-speed checks DO run.",
+   "Pass 1 built catalog + groups only, with 'models' empty; Pass 2 (this revision) added the 9 models[] entries. All per-model validator checks now run (valid_primary subset, poe_budget_matrix max, access-port sum == total_port_count, etc.).",
    "C9500 is NOT PoE-capable at all (core/aggregation switch line): every Pass-2 model will set poe_capable=false, poe_type='none', and an empty poe_budget_matrix. Simpler than the access-layer families in this respect.",
    "No modular chassis / supervisor / line-card concept exists anywhere in this family: both the C9500 (UADP 3.0/2.0) and C9500X (Silicon One Q200) lines are fixed 1RU switches. The only model that ever had a network-module bay was C9500-16X, which is excluded (see below) — so the entire live lineup is fixed-uplink (uplink_modular=false); no network_module_groups entries exist.",
    "EXCLUDED, per explicit ruling — do not model: C9500-12Q / C9500-24Q / C9500-40X (removed per the datasheet's own document history, 'Removed references to C9500-12Q/24Q/40X as the switch models are end of sale', Dec 12, 2024) and C9500-16X plus its two network modules C9500-NM-8X / C9500-NM-2Q (removed per a separate Cisco End-of-Sale/End-of-Life bulletin, operator-provided — not a locally committed document). Also excluded as structurally undocumented in either source: C9500-24X, C9500-48X, C9500-16X-2Q, C9500-40X-2Q — these appear as orderable PIDs in the ordering guide's legacy Table 2 but have ZERO specification data (no port density table entry, no PSU/fan matrix row, no SDM template row) anywhere in the datasheet, so they cannot be modeled without inventing data. Catalog items exclusive to the excluded models are dropped too: PWR-C4-950WAC-R / PWR-C4-950WDC-R (950W PSU pair, datasheet Table 14 shows these as C9500-16X-only) and FAN-T4-R (fan tray, ordering guide Table 3 confirms this is exclusive to C9500-24Q/12Q/40X/16X — all excluded).",
-   "Live lineup modeled going forward (Pass 2): C9500-32C, C9500-32QC, C9500-48Y4C, C9500-24Y4C (UADP 3.0, 'high performance' tier) and C9500X-28C8D, C9500X-60L4D (Silicon One Q200). Each non-X model offers both -E (Essentials) and -A (Advantage) hardware SKUs; C9500X-60L4D is Advantage-only — no C9500X-60L4D-E hardware or license SKU exists in either source document.",
+   "Live lineup modeled in Pass 2: C9500-32C, C9500-48Y4C, C9500-24Y4C (UADP 3.0, 'high performance' tier) and C9500X-28C8D, C9500X-60L4D (Silicon One Q200) — 9 models total. Each non-X model offers both -E (Essentials) and -A (Advantage) hardware SKUs; C9500X-60L4D is Advantage-only — no C9500X-60L4D-E hardware or license SKU exists in either source document.",
+   "EXCLUDED, per explicit ruling — C9500-32QC is NOT modeled, despite being fully documented and not EOL. Its 40G/100G ports are physically paired (16 pairs across the 32 ports); each pair is EITHER 2x40G OR 1x100G (combining to 100G disables the pair's partner port), so the real constraint is a shared/combinable bandwidth pool, not 32 independent ports each freely capable of 40g or 100g. The port_group schema has no concept of a combinable-pair resource pool: any static representation would let a query like 'port_count where speed=100g >= 16 AND port_count where speed=40g >= 16' return true, which is physically impossible (max active ports drops from 32 toward 16 as more pairs combine to 100G). Modeling this correctly needs a genuine new schema concept, out of scope here — dropped rather than encode an incorrect configuration. See also DB/switching/THINGS-TO-COMPLETE.md.",
+   "C9500-32C and C9500-32QC (excluded, see above) are the only C9500 models with no Cisco-labeled 'uplink' port subset — homogeneous 32-port switches. Since uplink_modular=false for every C9500 model (no NM bay survives) and the validator normally requires a fixed-uplink model to carry at least one role=uplink port row, C9500-32C uses a new opt-in model field, no_uplink_ports=true (added to this series' own switch-kb.schema.json and to selector/tools/validate-kb.mjs), which skips that check for this model only and requires zero role=uplink rows to be present. No other family sets this flag.",
+   "Registry addition for Pass 2: switching-axes.json port_speed.order gained '200g' and '400g' (Catalyst 9500X QSFP-DD uplinks on C9500X-28C8D/60L4D need speeds above the previous 100g ceiling) — additive legal-value growth only, no registry_version bump, same convention as the 'series'/'stacking_technology' additions.",
    "StackWise Virtual (SVL) is Advantage-tier only (datasheet Table 24, 'High availability and resiliency': StackWise Virtual is listed under Network Advantage, absent from Network Essentials). Added registry enum value 'stackwise-virtual' (switching-axes.json) for this. SVL runs over ordinary front-panel uplink ports plus a license — there is no dedicated stacking cable SKU anywhere in either source document, so no stack_cable catalog/group entries exist for this family at all (catalog.stack_cables / groups.stack_cable_groups are empty arrays, and no Pass-2 model will carry a configurables.stack_cables key).",
-   "Licensing regime: only the legacy 'dna-term' regime (C9500-DNA-* SKUs) is modeled, per explicit project ruling. The newer 'unified' Cisco Catalyst Software Subscription (C9500-DNX-* SKUs) is deliberately NOT modeled — do not add C9500-DNX-* catalog/license entries without new sign-off. The legacy dna-term regime itself forks into two SKU buckets (not one per exact model): a 'standard' bucket (C9500-DNA-E/A-<term>Y) covering C9500-32C/32QC/48Y4C, and a 'low port density' bucket (C9500-DNA-L-E/A-<term>Y) covering C9500-24Y4C. C9500X has its own separate SKU family (C9500X-DNA-E/A-<term>Y); only 28C8D offers the Essentials tier, both 28C8D and 60L4D share the Advantage tier SKUs.",
-   "Fan trays are a genuinely new configurable category (no prior series modeled fan trays as selectable) — added to this series' own schema copy only (catalog.fan_trays / groups.fan_tray_groups / configurables.fan_trays). Only C9500X has a real order-time airflow-direction choice (C9500X-FAN-1U-R front-to-back / port-side intake, default; C9500X-FAN-1U-F back-to-front / port-side exhaust; max 6, must not be mixed). Every other C9500 model's fan tray is fixed and non-selectable (recorded on the Pass-2 model as included_by_default_non_selectable.fan_tray, a plain string — not a catalog cross-reference): C9500-32C uses C9K-T2-FANTRAY (max 5); C9500-32QC/48Y4C/24Y4C use C9K-T1-FANTRAY (max 4). All four real fan-tray SKUs are still recorded in catalog.fan_trays for completeness even though only the C9500X pair is referenced through a group.",
-   "PSU groups represent the complete orderable family per sub-line, not what one model's matrix needs (project convention): c9500-psus covers all non-X live PSUs (650W AC, 930W DC, 1600W AC, 1600W DC); c9500x-psus covers the C9500X pair (1500W AC/DC). Per-model valid_primary/default_primary subsets are set in Pass 2 from the datasheet's Table 14 matrix (e.g. C9500-32C takes only the 1600W pair; C9500-32QC/48Y4C/24Y4C take the 650W AC / 930W DC options). Both groups share the same secondary_none_option, C9500-SPS-NONE (the ordering guide's exact CCW SKU for declining a redundant secondary).",
-   "Flag for Pass-2 model authoring, not resolved here: Cisco's own CCW ordering flow for C9500 defaults to a redundant (primary+secondary) PSU pair and requires actively selecting C9500-SPS-NONE to decline it. This differs from the shared config_variables.psu_redundancy policy documented in switching-axes.json (off by default; a secondary is added only when a PoE request exceeds the primary) — C9500 has no PoE demand at all, so under the generic policy a secondary would never be auto-added. This is a cross-series solver-policy question, not a catalog/group question, so it is out of scope for this Pass-1 file.",
+   "Licensing regime: only the legacy 'dna-term' regime (C9500-DNA-* SKUs) is modeled, per explicit project ruling. The newer 'unified' Cisco Catalyst Software Subscription (C9500-DNX-* SKUs) is deliberately NOT modeled — do not add C9500-DNX-* catalog/license entries without new sign-off. The legacy dna-term regime itself forks into two SKU buckets (not one per exact model): a 'standard' bucket (C9500-DNA-E/A-<term>Y) covering C9500-32C/48Y4C (32QC excluded, see above), and a 'low port density' bucket (C9500-DNA-L-E/A-<term>Y) covering C9500-24Y4C. C9500X has its own separate SKU family (C9500X-DNA-E/A-<term>Y); only 28C8D offers the Essentials tier, both 28C8D and 60L4D share the Advantage tier SKUs.",
+   "Fan trays are a genuinely new configurable category (no prior series modeled fan trays as selectable) — added to this series' own schema copy only (catalog.fan_trays / groups.fan_tray_groups / configurables.fan_trays). Only C9500X has a real order-time airflow-direction choice (C9500X-FAN-1U-R front-to-back / port-side intake, default; C9500X-FAN-1U-F back-to-front / port-side exhaust; max 6, must not be mixed). Every other C9500 model's fan tray is fixed and non-selectable (recorded on the Pass-2 model as included_by_default_non_selectable.fan_tray, a plain string — not a catalog cross-reference): C9500-32C uses C9K-T2-FANTRAY (max 5); C9500-48Y4C/24Y4C use C9K-T1-FANTRAY (max 4). All four real fan-tray SKUs are still recorded in catalog.fan_trays for completeness even though only the C9500X pair is referenced through a group.",
+   "PSU groups represent the complete orderable family per sub-line, not what one model's matrix needs (project convention): c9500-psus covers all non-X live PSUs (650W AC, 930W DC, 1600W AC, 1600W DC); c9500x-psus covers the C9500X pair (1500W AC/DC). Per-model valid_primary/default_primary subsets are set in Pass 2 from the datasheet's Table 14 matrix (C9500-32C takes only the 1600W pair; C9500-48Y4C/24Y4C take the 650W AC / 930W DC options). Both groups share the same secondary_none_option, C9500-SPS-NONE (the ordering guide's exact CCW SKU for declining a redundant secondary).",
+   "PSU default policy, resolved in Pass 2 per explicit ruling: every model's default_primary is its AC option, and there is NO secondary PSU by default anywhere in this KB — matching every other family's default policy. This is a deliberate departure from Cisco's own CCW ordering flow, which pre-selects a redundant (primary+secondary) pair and requires actively selecting C9500-SPS-NONE to decline it; that CCW behavior is not modeled here.",
    "Out of scope, same footing as pricing — not modeled: the multi-unit bundle SKU C9500-48Y4C-A-BUN, and the RFID opt-in/out SKUs C9500-RFID / C9500X-RFID / C9500-RFID-NONE."
   ]
  },
@@ -124,7 +127,7 @@
     "regime": "dna-term",
     "tier": "essentials",
     "port_class": null,
-    "applies_to": "C9500-32C-E, C9500-32QC-E, C9500-48Y4C-E.",
+    "applies_to": "C9500-32C-E, C9500-48Y4C-E. (C9500-32QC-E also uses this SKU set in reality, but C9500-32QC is not modeled — see header design_notes.)",
     "perpetual_member": null,
     "subscription_members": ["C9500-DNA-E-3Y", "C9500-DNA-E-5Y", "C9500-DNA-E-7Y"],
     "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU." },
@@ -135,7 +138,7 @@
     "regime": "dna-term",
     "tier": "advantage",
     "port_class": null,
-    "applies_to": "C9500-32C-A, C9500-32QC-A, C9500-48Y4C-A.",
+    "applies_to": "C9500-32C-A, C9500-48Y4C-A. (C9500-32QC-A also uses this SKU set in reality, but C9500-32QC is not modeled — see header design_notes.)",
     "perpetual_member": null,
     "subscription_members": ["C9500-DNA-A-3Y", "C9500-DNA-A-5Y", "C9500-DNA-A-7Y"],
     "term_variable": { "axis": "n/a", "choices_years": [3, 5, 7], "notes": "Term length is a downstream config VARIABLE; the pick resolves the concrete -<n>Y subscription SKU." }
@@ -183,5 +186,526 @@
   ]
  },
 
- "models": []
+ "models": [
+  {
+   "id": "C9500-32C-E",
+   "description": "Cisco Catalyst 9500 High Performance 32-port 100G switch (QSFP28), fixed ports, no PoE. Network Essentials tier, DNA-term licensing, no StackWise Virtual.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9500",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 32,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": ["dna-term"],
+    "license_tier": ["essentials"]
+   },
+   "ports": [
+    { "count": 32, "role": "access", "medium": "fiber", "speeds": ["40g", "100g"], "notes": "32x QSFP28 (datasheet Figure 3 / Table 3). Homogeneous — Cisco does not designate any subset as 'uplink'." }
+   ],
+   "no_uplink_ports": true,
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 3 (port density) and Figure 3 caption ('32x 100 Gigabit Ethernet ports').",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "AC per project ruling (Cisco CCW pre-selects AC as primary); datasheet Table 14 confirms C9500-32C's only valid pair is the 1600W AC/DC options."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco UADP 3.0",
+    "dram_gb": 16,
+    "flash_gb": 16,
+    "weight_kg": 11.63,
+    "dimensions_cm_hxwxd_chassis_only": [4.39, 44.45, 53.85],
+    "mtbf_hours": 212820,
+    "port_layout": "32x QSFP28 (40/100G)"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU overlay.",
+    "power_supplies": {
+     "group": "c9500-psus",
+     "valid_primary": ["C9K-PWR-1600WAC-R", "C9K-PWR-1600WDC-R"],
+     "default_primary": "C9K-PWR-1600WAC-R",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9500-dna-essentials-std",
+     "regime_offered": ["dna-term"],
+     "tier_locked": "essentials"
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Fixed inclusions not offered as a configurable choice.",
+    "fan_tray": "C9K-T2-FANTRAY (max 5 fans, front-to-back, fixed — datasheet Table 9)"
+   }
+  },
+  {
+   "id": "C9500-32C-A",
+   "description": "Cisco Catalyst 9500 High Performance 32-port 100G switch (QSFP28), fixed ports, no PoE. Network Advantage tier, DNA-term licensing, StackWise Virtual capable.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9500",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 32,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-virtual",
+    "stackpower_capable": false,
+    "license_regime": ["dna-term"],
+    "license_tier": ["advantage"]
+   },
+   "ports": [
+    { "count": 32, "role": "access", "medium": "fiber", "speeds": ["40g", "100g"], "notes": "32x QSFP28 (datasheet Figure 3 / Table 3). Homogeneous — Cisco does not designate any subset as 'uplink'." }
+   ],
+   "no_uplink_ports": true,
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 3 (port density) and Figure 3 caption ('32x 100 Gigabit Ethernet ports').",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "AC per project ruling (Cisco CCW pre-selects AC as primary); datasheet Table 14 confirms C9500-32C's only valid pair is the 1600W AC/DC options.",
+    "stacking_technology": "StackWise Virtual is Advantage-tier only (datasheet Table 24, 'High availability and resiliency')."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco UADP 3.0",
+    "dram_gb": 16,
+    "flash_gb": 16,
+    "weight_kg": 11.63,
+    "dimensions_cm_hxwxd_chassis_only": [4.39, 44.45, 53.85],
+    "mtbf_hours": 212820,
+    "port_layout": "32x QSFP28 (40/100G)"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU overlay.",
+    "power_supplies": {
+     "group": "c9500-psus",
+     "valid_primary": ["C9K-PWR-1600WAC-R", "C9K-PWR-1600WDC-R"],
+     "default_primary": "C9K-PWR-1600WAC-R",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9500-dna-advantage-std",
+     "regime_offered": ["dna-term"],
+     "tier_locked": "advantage"
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Fixed inclusions not offered as a configurable choice.",
+    "fan_tray": "C9K-T2-FANTRAY (max 5 fans, front-to-back, fixed — datasheet Table 9)"
+   }
+  },
+  {
+   "id": "C9500-48Y4C-E",
+   "description": "Cisco Catalyst 9500 High Performance 48-port 1/10/25G switch (SFP28) + 4x 40/100G uplinks (QSFP28), no PoE. Network Essentials tier, DNA-term licensing, no StackWise Virtual.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9500",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": ["dna-term"],
+    "license_tier": ["essentials"]
+   },
+   "ports": [
+    { "count": 48, "role": "access", "medium": "fiber", "speeds": ["1g", "10g", "25g"] },
+    { "count": 4, "role": "uplink", "medium": "fiber", "speeds": ["40g", "100g"], "notes": "Explicitly labeled 'uplink ports' by Cisco (datasheet Figure 5 caption)." }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 3 (port density) and Figure 5 caption ('48x 1/10/25 Gigabit Ethernet ports + 4x 40/100 Gigabit Ethernet uplink ports').",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "AC per project ruling (Cisco CCW pre-selects AC as primary); datasheet Table 14 lists 650W AC/930W DC as C9500-48Y4C's valid options."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco UADP 3.0",
+    "dram_gb": 16,
+    "flash_gb": 16,
+    "weight_kg": 9.96,
+    "dimensions_cm_hxwxd_chassis_only": [4.39, 44.45, 45.72],
+    "mtbf_hours": 316960,
+    "port_layout": "48x SFP28 (1/10/25G) + 4x QSFP28 (40/100G) uplink"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU overlay.",
+    "power_supplies": {
+     "group": "c9500-psus",
+     "valid_primary": ["C9K-PWR-650WAC-R", "C9K-PWR-930WDC-R"],
+     "default_primary": "C9K-PWR-650WAC-R",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9500-dna-essentials-std",
+     "regime_offered": ["dna-term"],
+     "tier_locked": "essentials"
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Fixed inclusions not offered as a configurable choice.",
+    "fan_tray": "C9K-T1-FANTRAY (max 4 fans, front-to-back, fixed — datasheet Table 9)"
+   }
+  },
+  {
+   "id": "C9500-48Y4C-A",
+   "description": "Cisco Catalyst 9500 High Performance 48-port 1/10/25G switch (SFP28) + 4x 40/100G uplinks (QSFP28), no PoE. Network Advantage tier, DNA-term licensing, StackWise Virtual capable.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9500",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 48,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-virtual",
+    "stackpower_capable": false,
+    "license_regime": ["dna-term"],
+    "license_tier": ["advantage"]
+   },
+   "ports": [
+    { "count": 48, "role": "access", "medium": "fiber", "speeds": ["1g", "10g", "25g"] },
+    { "count": 4, "role": "uplink", "medium": "fiber", "speeds": ["40g", "100g"], "notes": "Explicitly labeled 'uplink ports' by Cisco (datasheet Figure 5 caption)." }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 3 (port density) and Figure 5 caption ('48x 1/10/25 Gigabit Ethernet ports + 4x 40/100 Gigabit Ethernet uplink ports').",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "AC per project ruling (Cisco CCW pre-selects AC as primary); datasheet Table 14 lists 650W AC/930W DC as C9500-48Y4C's valid options.",
+    "stacking_technology": "StackWise Virtual is Advantage-tier only (datasheet Table 24, 'High availability and resiliency')."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco UADP 3.0",
+    "dram_gb": 16,
+    "flash_gb": 16,
+    "weight_kg": 9.96,
+    "dimensions_cm_hxwxd_chassis_only": [4.39, 44.45, 45.72],
+    "mtbf_hours": 316960,
+    "port_layout": "48x SFP28 (1/10/25G) + 4x QSFP28 (40/100G) uplink"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU overlay.",
+    "power_supplies": {
+     "group": "c9500-psus",
+     "valid_primary": ["C9K-PWR-650WAC-R", "C9K-PWR-930WDC-R"],
+     "default_primary": "C9K-PWR-650WAC-R",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9500-dna-advantage-std",
+     "regime_offered": ["dna-term"],
+     "tier_locked": "advantage"
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Fixed inclusions not offered as a configurable choice.",
+    "fan_tray": "C9K-T1-FANTRAY (max 4 fans, front-to-back, fixed — datasheet Table 9)"
+   }
+  },
+  {
+   "id": "C9500-24Y4C-E",
+   "description": "Cisco Catalyst 9500 High Performance 24-port 1/10/25G switch (SFP28) + 4x 40/100G uplinks (QSFP28), no PoE. Network Essentials tier, DNA-term licensing (low port density SKUs), no StackWise Virtual.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9500",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": ["dna-term"],
+    "license_tier": ["essentials"]
+   },
+   "ports": [
+    { "count": 24, "role": "access", "medium": "fiber", "speeds": ["1g", "10g", "25g"] },
+    { "count": 4, "role": "uplink", "medium": "fiber", "speeds": ["40g", "100g"], "notes": "Explicitly labeled 'uplink ports' by Cisco (datasheet Figure 6 caption)." }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 3 (port density) and Figure 6 caption ('24x 1/10/25 Gigabit Ethernet ports + 4x 40/100 Gigabit Ethernet uplink ports').",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "AC per project ruling (Cisco CCW pre-selects AC as primary); datasheet Table 14 lists 650W AC/930W DC as C9500-24Y4C's valid options.",
+    "license": "24Y4C uses the 'low port density' DNA license bucket (C9500-DNA-L-E/A), per ordering guide Table 2."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco UADP 3.0",
+    "dram_gb": 16,
+    "flash_gb": 16,
+    "weight_kg": 9.52,
+    "dimensions_cm_hxwxd_chassis_only": [4.39, 44.45, 45.72],
+    "mtbf_hours": 336780,
+    "port_layout": "24x SFP28 (1/10/25G) + 4x QSFP28 (40/100G) uplink"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU overlay.",
+    "power_supplies": {
+     "group": "c9500-psus",
+     "valid_primary": ["C9K-PWR-650WAC-R", "C9K-PWR-930WDC-R"],
+     "default_primary": "C9K-PWR-650WAC-R",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9500-dna-essentials-l",
+     "regime_offered": ["dna-term"],
+     "tier_locked": "essentials"
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Fixed inclusions not offered as a configurable choice.",
+    "fan_tray": "C9K-T1-FANTRAY (max 4 fans, front-to-back, fixed — datasheet Table 9)"
+   }
+  },
+  {
+   "id": "C9500-24Y4C-A",
+   "description": "Cisco Catalyst 9500 High Performance 24-port 1/10/25G switch (SFP28) + 4x 40/100G uplinks (QSFP28), no PoE. Network Advantage tier, DNA-term licensing (low port density SKUs), StackWise Virtual capable.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9500",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 24,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-virtual",
+    "stackpower_capable": false,
+    "license_regime": ["dna-term"],
+    "license_tier": ["advantage"]
+   },
+   "ports": [
+    { "count": 24, "role": "access", "medium": "fiber", "speeds": ["1g", "10g", "25g"] },
+    { "count": 4, "role": "uplink", "medium": "fiber", "speeds": ["40g", "100g"], "notes": "Explicitly labeled 'uplink ports' by Cisco (datasheet Figure 6 caption)." }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 3 (port density) and Figure 6 caption ('24x 1/10/25 Gigabit Ethernet ports + 4x 40/100 Gigabit Ethernet uplink ports').",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "AC per project ruling (Cisco CCW pre-selects AC as primary); datasheet Table 14 lists 650W AC/930W DC as C9500-24Y4C's valid options.",
+    "license": "24Y4C uses the 'low port density' DNA license bucket (C9500-DNA-L-E/A), per ordering guide Table 2.",
+    "stacking_technology": "StackWise Virtual is Advantage-tier only (datasheet Table 24, 'High availability and resiliency')."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco UADP 3.0",
+    "dram_gb": 16,
+    "flash_gb": 16,
+    "weight_kg": 9.52,
+    "dimensions_cm_hxwxd_chassis_only": [4.39, 44.45, 45.72],
+    "mtbf_hours": 336780,
+    "port_layout": "24x SFP28 (1/10/25G) + 4x QSFP28 (40/100G) uplink"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU overlay.",
+    "power_supplies": {
+     "group": "c9500-psus",
+     "valid_primary": ["C9K-PWR-650WAC-R", "C9K-PWR-930WDC-R"],
+     "default_primary": "C9K-PWR-650WAC-R",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9500-dna-advantage-l",
+     "regime_offered": ["dna-term"],
+     "tier_locked": "advantage"
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Fixed inclusions not offered as a configurable choice.",
+    "fan_tray": "C9K-T1-FANTRAY (max 4 fans, front-to-back, fixed — datasheet Table 9)"
+   }
+  },
+  {
+   "id": "C9500X-28C8D-E",
+   "description": "Cisco Catalyst 9500X 28-port 100G switch (QSFP28) + 8x 40/100/200/400G uplinks (QSFP-DD), no PoE. Network Essentials tier, DNA-term licensing, no StackWise Virtual.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9500X",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 28,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": ["dna-term"],
+    "license_tier": ["essentials"]
+   },
+   "ports": [
+    { "count": 28, "role": "access", "medium": "fiber", "speeds": ["40g", "100g"] },
+    { "count": 8, "role": "uplink", "medium": "fiber", "speeds": ["40g", "100g", "200g", "400g"], "notes": "Figure 1 caption calls this group '8x 40/100/200/400 Gigabit Ethernet ports'; treated as uplink by analogy with the 48Y4C/24Y4C naming convention (28C + 8D), per project ruling." }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 (9500X port density) and Figure 1 caption.",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "AC per project ruling (Cisco CCW pre-selects AC as primary); datasheet Table 10 gives the single AC/DC 1500W pair for C9500X."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One Q200",
+    "dram_gb": 32,
+    "flash_gb": 32,
+    "weight_kg": 13.28,
+    "dimensions_cm_hxwxd_chassis_only": [4.39, 44.45, 55.37],
+    "mtbf_hours": 123950,
+    "port_layout": "28x QSFP28 (40/100G) + 8x QSFP-DD (40/100/200/400G) uplink"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/fan overlay.",
+    "power_supplies": {
+     "group": "c9500x-psus",
+     "valid_primary": ["C9K-PWR-1500WAC", "C9K-PWR-1500WDC"],
+     "default_primary": "C9K-PWR-1500WAC",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9500x-dna-essentials",
+     "regime_offered": ["dna-term"],
+     "tier_locked": "essentials"
+    },
+    "fan_trays": {
+     "group": "c9500x-fans",
+     "valid_options": ["C9500X-FAN-1U-R", "C9500X-FAN-1U-F"],
+     "default_option": "C9500X-FAN-1U-R"
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Nothing else is bundled beyond the selectable configurables above."
+   }
+  },
+  {
+   "id": "C9500X-28C8D-A",
+   "description": "Cisco Catalyst 9500X 28-port 100G switch (QSFP28) + 8x 40/100/200/400G uplinks (QSFP-DD), no PoE. Network Advantage tier, DNA-term licensing, StackWise Virtual capable.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9500X",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 28,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-virtual",
+    "stackpower_capable": false,
+    "license_regime": ["dna-term"],
+    "license_tier": ["advantage"]
+   },
+   "ports": [
+    { "count": 28, "role": "access", "medium": "fiber", "speeds": ["40g", "100g"] },
+    { "count": 8, "role": "uplink", "medium": "fiber", "speeds": ["40g", "100g", "200g", "400g"], "notes": "Figure 1 caption calls this group '8x 40/100/200/400 Gigabit Ethernet ports'; treated as uplink by analogy with the 48Y4C/24Y4C naming convention (28C + 8D), per project ruling." }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 (9500X port density) and Figure 1 caption.",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "AC per project ruling (Cisco CCW pre-selects AC as primary); datasheet Table 10 gives the single AC/DC 1500W pair for C9500X.",
+    "stacking_technology": "StackWise Virtual is Advantage-tier only (datasheet Table 24, 'High availability and resiliency')."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One Q200",
+    "dram_gb": 32,
+    "flash_gb": 32,
+    "weight_kg": 13.28,
+    "dimensions_cm_hxwxd_chassis_only": [4.39, 44.45, 55.37],
+    "mtbf_hours": 123950,
+    "port_layout": "28x QSFP28 (40/100G) + 8x QSFP-DD (40/100/200/400G) uplink"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/fan overlay.",
+    "power_supplies": {
+     "group": "c9500x-psus",
+     "valid_primary": ["C9K-PWR-1500WAC", "C9K-PWR-1500WDC"],
+     "default_primary": "C9K-PWR-1500WAC",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9500x-dna-advantage",
+     "regime_offered": ["dna-term"],
+     "tier_locked": "advantage"
+    },
+    "fan_trays": {
+     "group": "c9500x-fans",
+     "valid_options": ["C9500X-FAN-1U-R", "C9500X-FAN-1U-F"],
+     "default_option": "C9500X-FAN-1U-R"
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Nothing else is bundled beyond the selectable configurables above."
+   }
+  },
+  {
+   "id": "C9500X-60L4D-A",
+   "description": "Cisco Catalyst 9500X 60-port 10/25/50G switch (SFP56) + 4x 40/100/200/400G uplinks (QSFP-DD), no PoE. Advantage-only — no Essentials hardware or license SKU exists for this model. DNA-term licensing, StackWise Virtual capable.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9500X",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 60,
+    "uplink_modular": false,
+    "stacking_capable": true,
+    "stacking_technology": "stackwise-virtual",
+    "stackpower_capable": false,
+    "license_regime": ["dna-term"],
+    "license_tier": ["advantage"]
+   },
+   "ports": [
+    { "count": 60, "role": "access", "medium": "fiber", "speeds": ["10g", "25g", "50g"] },
+    { "count": 4, "role": "uplink", "medium": "fiber", "speeds": ["40g", "100g", "200g", "400g"], "notes": "Figure 2 caption calls this group '4x 40/100/200/400G Gigabit Ethernet ports'; treated as uplink by analogy with the 48Y4C/24Y4C naming convention (60L + 4D), per project ruling." }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "Datasheet Table 2 (9500X port density) and Figure 2 caption.",
+    "poe_budget_watts": "n/a (non-PoE).",
+    "default_primary": "AC per project ruling (Cisco CCW pre-selects AC as primary); datasheet Table 10 gives the single AC/DC 1500W pair for C9500X.",
+    "license": "No C9500X-60L4D-E hardware or license SKU exists in either source document (ordering guide Table 2 lists only C9500X-60L4D-A) — Advantage-only model.",
+    "stacking_technology": "StackWise Virtual is Advantage-tier only (datasheet Table 24, 'High availability and resiliency')."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "asic": "Cisco Silicon One Q200",
+    "dram_gb": 32,
+    "flash_gb": 32,
+    "weight_kg": 12.75,
+    "dimensions_cm_hxwxd_chassis_only": [4.39, 44.45, 55.37],
+    "mtbf_hours": 133260,
+    "port_layout": "60x SFP56 (10/25/50G) + 4x QSFP-DD (40/100/200/400G) uplink"
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/fan overlay.",
+    "power_supplies": {
+     "group": "c9500x-psus",
+     "valid_primary": ["C9K-PWR-1500WAC", "C9K-PWR-1500WDC"],
+     "default_primary": "C9K-PWR-1500WAC",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "Non-PoE model; no PoE budget matrix."
+    },
+    "license": {
+     "group": "c9500x-dna-advantage",
+     "regime_offered": ["dna-term"],
+     "tier_locked": "advantage"
+    },
+    "fan_trays": {
+     "group": "c9500x-fans",
+     "valid_options": ["C9500X-FAN-1U-R", "C9500X-FAN-1U-F"],
+     "default_option": "C9500X-FAN-1U-R"
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Nothing else is bundled beyond the selectable configurables above."
+   }
+  }
+ ]
 }

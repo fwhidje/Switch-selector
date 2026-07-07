@@ -403,6 +403,10 @@
           "type": "array",
           "items": { "type": "string" },
           "$comment": "Names of fields whose values are NOT yet sourced from authoritative docs. validate-kb.mjs downgrades checks on these fields to WARNINGS for this model. Tracked centrally in DB/switching/THINGS-TO-COMPLETE.md. Remove an entry once the field is confirmed."
+        },
+        "no_uplink_ports": {
+          "type": "boolean",
+          "$comment": "NEW for C9500. Opt-in escape hatch for a fixed-uplink model (uplink_modular=false) that genuinely has no dedicated uplink ports — e.g. C9500-32C/32QC are homogeneous 32-port switches with no Cisco-labeled 'uplink' subset. When true, validate-kb.mjs skips its usual 'fixed-uplink model must carry role=uplink port rows' check for this model, AND requires that the model carry zero role=uplink rows (catches accidental misuse). Absent/false everywhere else — does not change behavior for any other series or for C9500 models that do have a real uplink split (48Y4C/24Y4C/28C8D/60L4D)."
         }
       }
     },
