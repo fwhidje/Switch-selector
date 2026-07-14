@@ -12,7 +12,7 @@
 // ranked by soft constraints and returned with their resolved BOM. No per-switch
 // logic; new switches are new JSON. Pure: no DOM, no fetch, no globals.
 
-import { uplinkOptions, variantPool, poolFeasible, resolveBOM } from "./resolve.js";
+import { uplinkOptions, accessConfigs, poolFeasible, resolveBOM } from "./resolve.js";
 import { getModels } from "./kb.js";
 import { getAxis } from "./registry.js";
 
@@ -32,9 +32,14 @@ export function solve(query, kb, registry) {
 
     const modelKb = model._kb ?? kb;
     const options = uplinkOptions(model, modelKb);
+    const aConfigs = accessConfigs(model);
     const demands = hardPort.map((c) => ({ where: c.where, min: c.value }));
+    // A uplink option survives if SOME access configuration makes the whole
+    // port demand jointly feasible (each access-config × uplink-option pool is
+    // one real simultaneous arrangement). Access configs are solver-internal;
+    // only uplink options reach the BOM.
     const validOptions = demands.length
-      ? options.filter((o) => poolFeasible(variantPool(model, o), demands))
+      ? options.filter((o) => aConfigs.some((a) => poolFeasible(a.ports.concat(o.ports ?? []), demands)))
       : options;
 
     if (demands.length && validOptions.length === 0) {
