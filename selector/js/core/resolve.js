@@ -20,6 +20,45 @@ export const accessGroups = (model) => (model.ports ?? []).filter((p) => p.role 
 export const inlineUplinkGroups = (model) => (model.ports ?? []).filter((p) => p.role === "uplink");
 
 /**
+ * The ACCESS-port configurations of a model. Almost every model has exactly ONE
+ * (its static role=access rows). A model with an `access_pair_block` (a bank of
+ * combinable pairs, each configured 2x-low OR 1x-high — e.g. C9500-32QC's 16
+ * QSFP+ pairs, each 2x40G | 1x100G) instead has pairs+1 configurations: k pairs
+ * combined to high, k = 0..pairs. Each configuration is one real simultaneous
+ * arrangement, so the solver checks a port demand against every configuration
+ * and the model survives if ANY satisfies it (max-flow feasibility per config
+ * never over-counts a combined port). This is CAPABILITY only — it never reaches
+ * the BOM (access ports are inherent to the SKU, not separately ordered).
+ * @returns {Array<{ports: object[]}>}
+ */
+export function accessConfigs(model) {
+  const staticAccess = accessGroups(model);
+  const pb = model.access_pair_block;
+  if (!pb) return [{ ports: staticAccess }];
+  return expandPairBlock(pb, "access").map(({ ports }) => ({ ports: staticAccess.concat(ports) }));
+}
+
+/**
+ * Expand a combinable-pair bank {pairs, low, high} into pairs+1 discrete
+ * port-group configurations (k = 0..pairs pairs assigned to `high`), each a
+ * real simultaneous arrangement. `role` is the port role the generated groups
+ * carry (access_pair_block -> "access").
+ * @returns {Array<{k:number, ports:object[]}>}
+ */
+function expandPairBlock(pb, role) {
+  const out = [];
+  for (let k = 0; k <= pb.pairs; k++) {
+    const groups = [];
+    const lowCount = (pb.pairs - k) * pb.low.ports_per_pair;
+    const highCount = k * pb.high.ports_per_pair;
+    if (lowCount > 0) groups.push({ count: lowCount, role, medium: pb.low.medium, speeds: pb.low.speeds });
+    if (highCount > 0) groups.push({ count: highCount, role, medium: pb.high.medium, speeds: pb.high.speeds });
+    out.push({ k, ports: groups });
+  }
+  return out;
+}
+
+/**
  * The uplink options for a model. Modular models offer each group member plus a
  * "none" option; fixed-uplink models offer their single soldered configuration.
  * A dual-mode module (catalog `modes`, e.g. C9350-NM-8Y: 8x25G | 4x50G) expands
@@ -68,9 +107,6 @@ export function uplinkOptions(model, kb) {
   }
   return [{ id: "fixed", moduleId: null, ports: inlineUplinkGroups(model) }];
 }
-
-/** A variant's port pool = model access groups + the fitted option's uplink groups. */
-export const variantPool = (model, option) => accessGroups(model).concat(option.ports ?? []);
 
 // --- port matching + pool feasibility ---------------------------------------
 const groupMatches = (g, where) =>

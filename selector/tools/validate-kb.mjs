@@ -131,6 +131,19 @@ function checkPortGroup(kbFail, where, p, allowedRoles) {
   if (!(Number.isInteger(p.count) && p.count >= 1)) kbFail(`${where}.count`, `bad count ${p.count}`);
 }
 
+// Validate a combinable-pair bank {pairs, low, high}: pairs>=1, both sides
+// present with ports_per_pair>=1 and a legal {medium,speeds} of the given role.
+function checkPairBlock(kbFail, where, pb, role, allowedRoles) {
+  if (!(Number.isInteger(pb.pairs) && pb.pairs >= 1)) kbFail(`${where}.pairs`, `bad pairs ${pb.pairs}`);
+  for (const side of ["low", "high"]) {
+    const s = pb[side];
+    if (!s) { kbFail(`${where}.${side}`, "missing"); continue; }
+    if (!(Number.isInteger(s.ports_per_pair) && s.ports_per_pair >= 1))
+      kbFail(`${where}.${side}.ports_per_pair`, `bad ${s.ports_per_pair}`);
+    checkPortGroup(kbFail, `${where}.${side}`, { count: 1, role, medium: s.medium, speeds: s.speeds }, allowedRoles);
+  }
+}
+
 function checkPorts(kb, kbFail) {
   const uplinkOnly = new Set(["uplink"]);
   // catalog modules: ports are role=uplink only. A module carries EITHER ports
@@ -153,21 +166,25 @@ function checkPorts(kb, kbFail) {
     // (each pair: low.ports_per_pair×low OR high.ports_per_pair×high). Validate
     // its two port sides as role=uplink groups (resolve.js expands it at solve time).
     const pb = m.uplink_pair_block;
-    if (pb) {
-      if (!(Number.isInteger(pb.pairs) && pb.pairs >= 1)) kbFail(`${m.id}.uplink_pair_block.pairs`, `bad pairs ${pb.pairs}`);
-      for (const side of ["low", "high"]) {
-        const s = pb[side];
-        if (!s) { kbFail(`${m.id}.uplink_pair_block.${side}`, "missing"); continue; }
-        if (!(Number.isInteger(s.ports_per_pair) && s.ports_per_pair >= 1))
-          kbFail(`${m.id}.uplink_pair_block.${side}.ports_per_pair`, `bad ${s.ports_per_pair}`);
-        checkPortGroup(kbFail, `${m.id}.uplink_pair_block.${side}`, { count: 1, role: "uplink", medium: s.medium, speeds: s.speeds }, uplinkOnly);
-      }
-    }
+    if (pb) checkPairBlock(kbFail, `${m.id}.uplink_pair_block`, pb, "uplink", uplinkOnly);
 
-    // sum of access ports == total_port_count
-    const accessSum = (m.ports ?? []).filter((p) => p.role === "access").reduce((s, p) => s + p.count, 0);
+    // access_pair_block: a bank of combinable ACCESS pairs on a homogeneous model
+    // (C9500-32QC). Validate its two sides as role=access groups. Feasibility-only:
+    // resolve.js accessConfigs() expands it at solve time; it never reaches the BOM.
+    const accessOnly = new Set(["access"]);
+    const apb = m.access_pair_block;
+    if (apb) checkPairBlock(kbFail, `${m.id}.access_pair_block`, apb, "access", accessOnly);
+
+    // sum of access ports == total_port_count. An access_pair_block contributes
+    // its all-low baseline (the nameplate port count: pairs × low.ports_per_pair).
+    const staticAccessSum = (m.ports ?? []).filter((p) => p.role === "access").reduce((s, p) => s + p.count, 0);
+    const apbBaseline = apb && apb.low?.ports_per_pair ? apb.pairs * apb.low.ports_per_pair : 0;
+    const accessSum = staticAccessSum + apbBaseline;
     if (accessSum !== av.total_port_count)
       kbFail(`${m.id}.ports`, `access port sum ${accessSum} != total_port_count ${av.total_port_count}`);
+    // a model must carry SOME access-port capability: static ports OR a pair block.
+    if ((m.ports ?? []).length === 0 && !apb)
+      kbFail(`${m.id}.ports`, "empty ports array requires an access_pair_block covering the port bank");
 
     // uplink_modular <-> network_modules presence
     const hasNM = !!m.configurables?.network_modules;

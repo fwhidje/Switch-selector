@@ -77,12 +77,15 @@ MS150 figures are non-integer, e.g. 32.4W).
 
 ## C9500 (`DB/switching/C9500/c9500_knowledge_base.json`)
 
-Not an `_incomplete`-flagged gap (nothing here is unsourced) — this is a model
-deliberately **excluded** because the schema can't represent it correctly.
-
-| Model | Why excluded | What would be needed |
-|---|---|---|
-| `C9500-32QC` | Its 32 QSFP+ ports are physically paired into 16 pairs; each pair is EITHER 2x40G OR 1x100G (combining to 100G disables the pair's partner port) — datasheet Table 3. The `port_group` schema (`count` + `speeds[]`) assumes independent ports and has no concept of a combinable/shared-bandwidth pair. Any static representation (e.g. "16 ports @ [40g,100g] + 16 ports @ [40g]") would let a solver query answer "16 ports at 100G AND 16 ports at 40G, simultaneously" as true, which is physically impossible (max active ports drops from 32 toward 16 as more pairs combine to 100G) — an incorrect answer from the primary selection system, not just a documentation gap. | A new schema concept for a combinable/oversubscribed port-pair pool (out of scope for this KB pass). |
+`C9500-32QC` was previously excluded here (its 32 QSFP+ ports are 16
+combinable pairs, each configured to 2x40G OR 1x100G — no static
+`port_group` representation could express that without letting a query claim
+an impossible simultaneous configuration). **Now resolved**: modeled with a
+model-level `access_pair_block` (schema `0.8.0-c9500.2`), a
+capability/feasibility-only field that `resolve.js accessConfigs()` expands
+into every valid pair arrangement at solve time and that never reaches the
+BOM. See the KB file's own `design_notes` for the mechanism detail. Nothing
+here is unsourced.
 
 ### Notes
 - `C9500-32C`'s ports are correctly modeled but needed a new opt-in model
