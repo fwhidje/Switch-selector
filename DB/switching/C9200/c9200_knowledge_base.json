@@ -4,7 +4,7 @@
   "registry_version": "0.10.0",
   "axes_file": "../switching-axes.json",
   "schema_file": "switch-kb.schema.json",
-  "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9200 Series switches. Carries the catalog (atomic SKU facts), groups (named shared compatibility sets), and switch models for C9200 (modular uplink), C9200L (fixed uplink), C9200CX (compact, fanless, fixed uplink), and C9200L-M (Meraki-managed, fixed uplink). C9200L-M model entries (14) are complete. Structure: catalog + groups + models.",
+  "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9200 Series switches. Carries the catalog (atomic SKU facts), groups (named shared compatibility sets), and switch models for C9200 (modular uplink), C9200L (fixed uplink), C9200CX (compact, fanless, fixed uplink), C9200L-M (Meraki-managed, fixed uplink), and C9200CX-M (Meraki-managed, compact). C9200L-M model entries (14) and C9200CX-M model entries (7) are complete. Structure: catalog + groups + models.",
   "sources": [
    {
     "name": "Cisco Catalyst 9200 Series Switches Data Sheet",
@@ -32,7 +32,8 @@
    "Network-module compatibility (OG Table 3 footnotes): C9200-NM-2Y and C9200-NM-2Q are supported only on C9200-24PXG / C9200-48PXG; C9200-NM-4G is not supported on those PXG models. Hence two module groups (c9200-modular-uplink-modules vs c9200-pxg-uplink-modules). Fixed-uplink C9200L models carry their uplinks inline (Pass 2), so they reference no module group.",
    "The *-NONE none-option values (C9200-SPS-NONE, C9200-STACK-NONE, etc.) are configurator constructs (CCW 'remove the category' selections), not catalog SKUs and not validated against the catalog — matching the C9300 convention. C9200-NM-BLANK is the real OG-sourced blank network module.",
    "Series-specific groups (PSU, stack cables) are kept as their own named groups per project convention even where a SKU or cable resembles another sub-family: C9200 (Config-6 PWR-C6-*) and C9200L (Config-5 PWR-C5-*) do not share power supplies, and each uses its own stack kit (C9200-STACK-KIT vs C9200L-STACK-KIT).",
-   "C9200CX (compact) added: fixed internal power (no FRU PSU bay/redundancy) on most SKUs, represented via a synthetic single-member PSU placeholder (clearly flagged, not a Cisco SKU) so the standard configurables.power_supplies shape stays unmodified. C9200CX-12T-2X2G ships with no PSU at all (PD-powered from upstream 802.3bt Class 6/UPOE); its power_supplies group offers the two real external adapter SKUs with the 80W adapter proposed as default_primary so power is not overlooked, while the true PD-only/no-adapter case is documented (not selectable, since every catalog PSU requires watts>=1). C9200CX-8PT-2G ('Pass-through', UPOE+ redundant-uplink powered with an unsourced no-adapter PoE budget) and the datasheet-prose-only 'C9200CX-12PT-2G' (absent from every ordering/spec table, treated as a typo for 8PT-2G) are intentionally excluded from scope. No stacking on any C9200CX model."
+   "C9200CX (compact) added: fixed internal power (no FRU PSU bay/redundancy) on most SKUs, represented via a synthetic single-member PSU placeholder (clearly flagged, not a Cisco SKU) so the standard configurables.power_supplies shape stays unmodified. C9200CX-12T-2X2G ships with no PSU at all (PD-powered from upstream 802.3bt Class 6/UPOE); its power_supplies group offers the two real external adapter SKUs with the 80W adapter proposed as default_primary so power is not overlooked, while the true PD-only/no-adapter case is documented (not selectable, since every catalog PSU requires watts>=1). C9200CX-8PT-2G ('Pass-through', UPOE+ redundant-uplink powered with an unsourced no-adapter PoE budget) and the datasheet-prose-only 'C9200CX-12PT-2G' (absent from every ordering/spec table, treated as a typo for 8PT-2G) are intentionally excluded from scope. No stacking on any C9200CX model.",
+   "C9200CX-M (Meraki compact) added: 7 model entries (C9200CX-12T-2X2G-M, -12P-2X2G-M, -8P-2X2G-M, -8UXG-2X-M, -12P-2XGH-M, -8P-2XGH-M, -8UXG-2XH-M), one per existing non-Meraki C9200CX-E/A hardware variant. C9200CX-8PT-2G-M is intentionally excluded — the non-Meraki C9200CX-8PT-2G base was itself excluded from scope (see above) for lack of sourced PoE budget, so there is no hardware analog to mirror. UNLIKE C9200L-M, no Cisco datasheet exists anywhere for the C9200CX Meraki variant — confirmed by the user, who also confirmed the SKUs exist in CCW. Per explicit user direction: every hardware field (ports, PoE type/budget, switching capacity, forwarding rate, weight, MTBF, PSU group/valid_primary/default_primary/poe_budget_matrix, included_by_default_non_selectable) is copied UNCHANGED from the corresponding non-Meraki C9200CX-<model>-E analog (the -E/-A pair is hardware-identical, differing only in license) on the assumption that Meraki management doesn't change the physical chassis — this is NOT independently datasheet-verified the way the C9200L-M copy was, and is asserted rather than sourced. Per confirmed user direction, this is NOT tracked via _incomplete / THINGS-TO-COMPLETE.md (unlike the MS130/MS150/C9350 gaps, which are). No new PSU/adapter catalog SKUs were created — C9200CX-M reuses the existing synthetic internal-PSU placeholders (C9200CX-PSU-315WAC-INTERNAL / -315WHVDC-INTERNAL) and the existing C9K-80W-ADPT/C9K-ADPT-DC adapters as-is, since (unlike C9200L-M's PSUs/stack cables) there is no evidence Cisco issues distinct -M PSU part numbers for CX, and C9200CX-M has no stacking (same as non-Meraki CX). NOTE: the non-Meraki C9200CX-8UXG-2XH-E/A analog's included_by_default_non_selectable.power_cables.count=1 appears inconsistent with its HVDC siblings (12P-2XGH/8P-2XGH, count=0) in the pre-existing base data; C9200CX-8UXG-2XH-M mirrors it as-is rather than silently correcting base-file data outside this task's scope. Licensing: license SKUs (LIC-C9200CX-{E,A}-{1,3,5,7}Y for meraki-classic, LIC-MS-200-S-{E,A} for meraki-subscription, 'S' = small/compact size class parallel to the existing M=24-port/L=48-port C9200L-M classes) were provided directly by the user, not datasheet-sourced (no datasheet exists). Two deliberate deviations from the C9200L-M license pattern, both confirmed by the user: (1) the classic license has NO port-class split — a single c9200cx-meraki-classic-essentials/-advantage group applies uniformly across all C9200CX-M models regardless of 8- vs 12-port, unlike C9200L-M's per-port-class (24 vs 48) split; (2) the classic term offers 1/3/5/7Y (C9200L-M's classic license only offers 1/3/5Y, no 7Y). Same subscription-license shape as C9200L-M (meraki-subscription, no term_variable, single non-termed SKU per tier). Model-level configurables.license carries no tier_locked (both tiers offered, tier is a customer choice at order time), matching the C9200L-M / project 'the -M variant is a distinct model, not a toggle' convention."
   ]
  },
  "catalog": {
@@ -724,6 +725,96 @@
     "term_years": null,
     "port_class": 48,
     "notes": "Tier suffix synthesized (Advantage); datasheet prints only base order code LIC-MS-200-L covering the MS200 Large class (48-port), per C9300L-M LIC-MS-300-L-E/-A convention. Datasheet subscription-licensing hardware list for MS200 Large also includes legacy MS210/MS225/MS250/MS320-48* hardware and classic (non-M) C9200L-48T-4G*/-48P-4G*/-48PL-4G*/-48T-4X*/-48P-4X*/-48PL-4X*/-48PXG-4X*/-48PXG-2Y* hardware; scope here stays limited to the C9200L-M models being added in Part 2."
+   },
+   {
+    "id": "LIC-C9200CX-E-1Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": null,
+    "notes": "C9200CX-M (Meraki) Enterprise Features tier, 1-year term. No Cisco datasheet exists for the C9200CX Meraki variant; SKU provided by user (confirmed to exist in CCW). Unlike the C9200L-M classic SKUs, no port-class split — applies uniformly to all C9200CX-M models (8- and 12-port alike), per confirmed user direction."
+   },
+   {
+    "id": "LIC-C9200CX-E-3Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": null,
+    "notes": "C9200CX-M (Meraki) Enterprise Features tier, 3-year term. No Cisco datasheet exists for the C9200CX Meraki variant; SKU provided by user (confirmed to exist in CCW). Unlike the C9200L-M classic SKUs, no port-class split — applies uniformly to all C9200CX-M models (8- and 12-port alike), per confirmed user direction."
+   },
+   {
+    "id": "LIC-C9200CX-E-5Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": null,
+    "notes": "C9200CX-M (Meraki) Enterprise Features tier, 5-year term. No Cisco datasheet exists for the C9200CX Meraki variant; SKU provided by user (confirmed to exist in CCW). Unlike the C9200L-M classic SKUs, no port-class split — applies uniformly to all C9200CX-M models (8- and 12-port alike), per confirmed user direction."
+   },
+   {
+    "id": "LIC-C9200CX-E-7Y",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "shape": "term-based",
+    "term_years": 7,
+    "port_class": null,
+    "notes": "C9200CX-M (Meraki) Enterprise Features tier, 7-year term. No Cisco datasheet exists for the C9200CX Meraki variant; SKU provided by user (confirmed to exist in CCW). 7-year term has no equivalent in the C9200L-M classic license (which only offers 1/3/5Y); confirmed by user as correct for C9200CX-M."
+   },
+   {
+    "id": "LIC-C9200CX-A-1Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 1,
+    "port_class": null,
+    "notes": "C9200CX-M (Meraki) Advanced Features tier, 1-year term. No Cisco datasheet exists for the C9200CX Meraki variant; SKU provided by user (confirmed to exist in CCW). Unlike the C9200L-M classic SKUs, no port-class split — applies uniformly to all C9200CX-M models (8- and 12-port alike), per confirmed user direction."
+   },
+   {
+    "id": "LIC-C9200CX-A-3Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 3,
+    "port_class": null,
+    "notes": "C9200CX-M (Meraki) Advanced Features tier, 3-year term. No Cisco datasheet exists for the C9200CX Meraki variant; SKU provided by user (confirmed to exist in CCW). Unlike the C9200L-M classic SKUs, no port-class split — applies uniformly to all C9200CX-M models (8- and 12-port alike), per confirmed user direction."
+   },
+   {
+    "id": "LIC-C9200CX-A-5Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 5,
+    "port_class": null,
+    "notes": "C9200CX-M (Meraki) Advanced Features tier, 5-year term. No Cisco datasheet exists for the C9200CX Meraki variant; SKU provided by user (confirmed to exist in CCW). Unlike the C9200L-M classic SKUs, no port-class split — applies uniformly to all C9200CX-M models (8- and 12-port alike), per confirmed user direction."
+   },
+   {
+    "id": "LIC-C9200CX-A-7Y",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "shape": "term-based",
+    "term_years": 7,
+    "port_class": null,
+    "notes": "C9200CX-M (Meraki) Advanced Features tier, 7-year term. No Cisco datasheet exists for the C9200CX Meraki variant; SKU provided by user (confirmed to exist in CCW). 7-year term has no equivalent in the C9200L-M classic license (which only offers 1/3/5Y); confirmed by user as correct for C9200CX-M."
+   },
+   {
+    "id": "LIC-MS-200-S-E",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": null,
+    "notes": "MS200 Small class subscription license, Essentials tier, covering C9200CX-M (compact) switches. No Cisco datasheet exists for the C9200CX Meraki variant; SKU provided by user (confirmed to exist in CCW), per the C9200L-M LIC-MS-200-{M,L}-E/-A size-class convention (S = small/compact, parallel to M=24-port/L=48-port). No port-class split — applies uniformly to all C9200CX-M models (8- and 12-port alike), per confirmed user direction."
+   },
+   {
+    "id": "LIC-MS-200-S-A",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "shape": "subscription-based",
+    "term_years": null,
+    "port_class": null,
+    "notes": "MS200 Small class subscription license, Advantage tier, covering C9200CX-M (compact) switches. No Cisco datasheet exists for the C9200CX Meraki variant; SKU provided by user (confirmed to exist in CCW), per the C9200L-M LIC-MS-200-{M,L}-E/-A size-class convention (S = small/compact, parallel to M=24-port/L=48-port). No port-class split — applies uniformly to all C9200CX-M models (8- and 12-port alike), per confirmed user direction."
    }
   ]
  },
@@ -1245,6 +1336,78 @@
      "LIC-MS-200-L-A"
     ],
     "notes": "Tier suffix synthesized (Advantage); datasheet prints only the base order code LIC-MS-200-L covering the whole MS200 Large class, per the C9300L-M LIC-MS-300-L-E/-A convention."
+   },
+   {
+    "id": "c9200cx-meraki-classic-essentials",
+    "regime": "meraki-classic",
+    "tier": "essentials",
+    "port_class": null,
+    "applies_to": "All C9200CX-M (Meraki) compact platforms, Enterprise Features tier (LIC-C9200CX-E), regardless of 8- or 12-port variant.",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-C9200CX-E-1Y",
+     "LIC-C9200CX-E-3Y",
+     "LIC-C9200CX-E-5Y",
+     "LIC-C9200CX-E-7Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5,
+      7
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option; no tier lock by hardware suffix — tier is a customer choice at order time, per project convention for Meraki-classic licensing. SKUs provided directly by the user (no Cisco datasheet exists for C9200CX-M); unlike the C9200L-M classic groups, this group is NOT split by port_class (applies to all C9200CX-M models, 8- and 12-port alike) and offers a 7Y term not present on the C9200L-M classic groups — both confirmed by user direction."
+    }
+   },
+   {
+    "id": "c9200cx-meraki-classic-advantage",
+    "regime": "meraki-classic",
+    "tier": "advantage",
+    "port_class": null,
+    "applies_to": "All C9200CX-M (Meraki) compact platforms, Advanced Features tier (LIC-C9200CX-A), regardless of 8- or 12-port variant.",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-C9200CX-A-1Y",
+     "LIC-C9200CX-A-3Y",
+     "LIC-C9200CX-A-5Y",
+     "LIC-C9200CX-A-7Y"
+    ],
+    "term_variable": {
+     "axis": "n/a",
+     "choices_years": [
+      1,
+      3,
+      5,
+      7
+     ],
+     "notes": "Term length is a downstream config VARIABLE (not a registry axis); the pick resolves the concrete -<n>Y subscription SKU. No perpetual option; no tier lock by hardware suffix — tier is a customer choice at order time, per project convention for Meraki-classic licensing. SKUs provided directly by the user (no Cisco datasheet exists for C9200CX-M); unlike the C9200L-M classic groups, this group is NOT split by port_class (applies to all C9200CX-M models, 8- and 12-port alike) and offers a 7Y term not present on the C9200L-M classic groups — both confirmed by user direction."
+    }
+   },
+   {
+    "id": "c9200cx-meraki-sub-s-essentials",
+    "regime": "meraki-subscription",
+    "tier": "essentials",
+    "port_class": null,
+    "applies_to": "MS200 Small class — all C9200CX-M (Meraki) compact switches, 8- and 12-port alike.",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-200-S-E"
+    ],
+    "notes": "Size class 'S' (small/compact) synthesized parallel to the C9200L-M 'M'(24-port)/'L'(48-port) subscription classes; no Cisco datasheet exists for C9200CX-M, SKU provided directly by the user. No port-class split — applies uniformly to all C9200CX-M models, per confirmed user direction."
+   },
+   {
+    "id": "c9200cx-meraki-sub-s-advantage",
+    "regime": "meraki-subscription",
+    "tier": "advantage",
+    "port_class": null,
+    "applies_to": "MS200 Small class — all C9200CX-M (Meraki) compact switches, 8- and 12-port alike.",
+    "perpetual_member": null,
+    "subscription_members": [
+     "LIC-MS-200-S-A"
+    ],
+    "notes": "Size class 'S' (small/compact) synthesized parallel to the C9200L-M 'M'(24-port)/'L'(48-port) subscription classes; no Cisco datasheet exists for C9200CX-M, SKU provided directly by the user. No port-class split — applies uniformly to all C9200CX-M models, per confirmed user direction."
    }
   ]
  },
@@ -9041,6 +9204,744 @@
     "power_cables": {
      "count": 1,
      "note": "Ships with one PSU by default; a second is optional for redundancy or higher PoE budget."
+    }
+   }
+  }
+,
+  {
+   "id": "C9200CX-12T-2X2G-M",
+   "description": "Cisco Catalyst 9200CX-M (Meraki), 12-port 1G data copper, 2x 10G SFP+ fixed uplinks, Meraki-managed. Fanless, no stacking.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200CX",
+    "poe_capable": false,
+    "poe_type": "none",
+    "total_port_count": 12,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 12,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "No Cisco datasheet exists for C9200CX-M; hardware copied unchanged from the non-Meraki C9200CX-12T-2X2G-E/A analog (Datasheet Table 2 access ports; inline 2x 10G SFP+ fixed uplink) - same physical chassis, SKU confirmed to exist in CCW, per confirmed user direction.",
+    "poe_*": "No PoE on the non-Meraki analog (Datasheet Table 2 shows no PoE, no Table 4 row); copied unchanged. poe_capable=false, poe_type='none'.",
+    "stacking": "Stacking not offered on any C9200CX switch (non-Meraki datasheet Table 5/1), copied unchanged.",
+    "power_source": "Ships with NO internal power supply by default, copied unchanged from the non-Meraki analog. Powered as a PD drawing IEEE 802.3bt Class 6 or Cisco UPOE from an upstream switch's uplink; an optional external adapter (AC-DC C9K-80W-ADPT or DC-DC C9K-ADPT-DC, both 80W) may be fitted instead."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 70,
+    "forwarding_rate_mpps": 52.08,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 8,
+    "virtual_networks": 16,
+    "mtbf_hours": 960180,
+    "weight_kg": 1.81,
+    "port_layout": "12x 1G data",
+    "fixed_uplinks": "2x 10G SFP+",
+    "power_source": "Ships with NO internal power supply by default (copied unchanged from the non-Meraki analog). Powered as a PD drawing IEEE 802.3bt Class 6 or Cisco UPOE from an upstream switch's uplink; an optional external adapter (AC-DC C9K-80W-ADPT or DC-DC C9K-ADPT-DC, both 80W) may be fitted instead."
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. No stack_cables (C9200CX does not stack); no network_modules (fixed uplinks, carried inline in model.ports).",
+    "power_supplies": {
+     "group": "c9200cx-12t-power-adapters",
+     "valid_primary": [
+      "C9K-80W-ADPT",
+      "C9K-ADPT-DC"
+     ],
+     "default_primary": "C9K-80W-ADPT",
+     "poe_budget_matrix": [],
+     "matrix_provenance": "No PoE on this model (data-only), copied unchanged from the non-Meraki analog. The adapter pick affects only how the switch itself is powered, not any PoE budget."
+    },
+    "license": {
+     "group": "c9200cx-meraki-classic-essentials",
+     "additional_groups": [
+      "c9200cx-meraki-classic-advantage",
+      "c9200cx-meraki-sub-s-essentials",
+      "c9200cx-meraki-sub-s-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable. C9200CX is fanless.",
+    "fans": "Fanless",
+    "power_cables": {
+     "count": 0,
+     "note": "PD-powered by default (no internal supply); a power cable is only relevant if an external AC-DC adapter is fitted, and would be bundled with that adapter."
+    }
+   }
+  },
+  {
+   "id": "C9200CX-12P-2X2G-M",
+   "description": "Cisco Catalyst 9200CX-M (Meraki), 12-port 1G full PoE+ copper, 2x 10G SFP+ fixed uplinks, Meraki-managed. Fanless, no stacking. 240W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200CX",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 240,
+    "total_port_count": 12,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 12,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "No Cisco datasheet exists for C9200CX-M; hardware copied unchanged from the non-Meraki C9200CX-12P-2X2G-E/A analog (Datasheet Table 2 access ports; inline 2x 10G SFP+ fixed uplink) - same physical chassis, SKU confirmed to exist in CCW, per confirmed user direction.",
+    "poe_budget_watts": "Copied unchanged from the non-Meraki analog (Datasheet Table 4: fixed internal supply -> 240W achievable PoE budget; no redundancy bay).",
+    "stacking": "Stacking not offered on any C9200CX switch (non-Meraki datasheet Table 5/1), copied unchanged.",
+    "power_source": "Fixed, non-field-replaceable 315W AC internal power supply, copied unchanged from the non-Meraki analog. No redundancy bay."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 68,
+    "forwarding_rate_mpps": 50.59,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 8,
+    "virtual_networks": 16,
+    "mtbf_hours": 704430,
+    "weight_kg": 2.99,
+    "port_layout": "12x 1G PoE+",
+    "fixed_uplinks": "2x 10G SFP+",
+    "power_source": "Fixed, non-field-replaceable 315W AC internal power supply (copied unchanged from the non-Meraki analog). No redundancy bay."
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. No stack_cables (C9200CX does not stack); no network_modules (fixed uplinks, carried inline in model.ports).",
+    "power_supplies": {
+     "group": "c9200cx-ac-internal-psus",
+     "valid_primary": [
+      "C9200CX-PSU-315WAC-INTERNAL"
+     ],
+     "default_primary": "C9200CX-PSU-315WAC-INTERNAL",
+     "poe_budget_matrix": [
+      {
+       "primary": "C9200CX-PSU-315WAC-INTERNAL",
+       "secondary": null,
+       "poe_budget_watts": 240
+      }
+     ],
+     "matrix_provenance": "Copied unchanged from the non-Meraki analog: fixed internal supply, single achievable PoE budget of 240W. No secondary/redundancy bay on this chassis."
+    },
+    "license": {
+     "group": "c9200cx-meraki-classic-essentials",
+     "additional_groups": [
+      "c9200cx-meraki-classic-advantage",
+      "c9200cx-meraki-sub-s-essentials",
+      "c9200cx-meraki-sub-s-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable. C9200CX is fanless.",
+    "fans": "Fanless",
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with the fixed internal AC supply; a region-specific AC power cord is selected at order time."
+    }
+   }
+  },
+  {
+   "id": "C9200CX-8P-2X2G-M",
+   "description": "Cisco Catalyst 9200CX-M (Meraki), 8-port 1G full PoE+ copper, 2x 10G SFP+ fixed uplinks, Meraki-managed. Fanless, no stacking. 240W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200CX",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 240,
+    "total_port_count": 8,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "No Cisco datasheet exists for C9200CX-M; hardware copied unchanged from the non-Meraki C9200CX-8P-2X2G-E/A analog (Datasheet Table 2 access ports; inline 2x 10G SFP+ fixed uplink) - same physical chassis, SKU confirmed to exist in CCW, per confirmed user direction.",
+    "poe_budget_watts": "Copied unchanged from the non-Meraki analog (Datasheet Table 4: fixed internal supply -> 240W achievable PoE budget; no redundancy bay).",
+    "stacking": "Stacking not offered on any C9200CX switch (non-Meraki datasheet Table 5/1), copied unchanged.",
+    "power_source": "Fixed, non-field-replaceable 315W AC internal power supply, copied unchanged from the non-Meraki analog. No redundancy bay."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 60,
+    "forwarding_rate_mpps": 44.64,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 8,
+    "virtual_networks": 16,
+    "mtbf_hours": 736000,
+    "weight_kg": 2.99,
+    "port_layout": "8x 1G PoE+",
+    "fixed_uplinks": "2x 10G SFP+",
+    "power_source": "Fixed, non-field-replaceable 315W AC internal power supply (copied unchanged from the non-Meraki analog). No redundancy bay."
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. No stack_cables (C9200CX does not stack); no network_modules (fixed uplinks, carried inline in model.ports).",
+    "power_supplies": {
+     "group": "c9200cx-ac-internal-psus",
+     "valid_primary": [
+      "C9200CX-PSU-315WAC-INTERNAL"
+     ],
+     "default_primary": "C9200CX-PSU-315WAC-INTERNAL",
+     "poe_budget_matrix": [
+      {
+       "primary": "C9200CX-PSU-315WAC-INTERNAL",
+       "secondary": null,
+       "poe_budget_watts": 240
+      }
+     ],
+     "matrix_provenance": "Copied unchanged from the non-Meraki analog: fixed internal supply, single achievable PoE budget of 240W. No secondary/redundancy bay on this chassis."
+    },
+    "license": {
+     "group": "c9200cx-meraki-classic-essentials",
+     "additional_groups": [
+      "c9200cx-meraki-classic-advantage",
+      "c9200cx-meraki-sub-s-essentials",
+      "c9200cx-meraki-sub-s-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable. C9200CX is fanless.",
+    "fans": "Fanless",
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with the fixed internal AC supply; a region-specific AC power cord is selected at order time."
+    }
+   }
+  },
+  {
+   "id": "C9200CX-8UXG-2X-M",
+   "description": "Cisco Catalyst 9200CX-M (Meraki), 8-port UPOE (4x mGig up to 10G + 4x 1G) copper, 2x 10G SFP+ fixed uplinks, Meraki-managed. Fanless, no stacking. 240W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200CX",
+    "poe_capable": true,
+    "poe_type": "upoe",
+    "poe_budget_watts": 240,
+    "total_port_count": 8,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 4,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "No Cisco datasheet exists for C9200CX-M; hardware copied unchanged from the non-Meraki C9200CX-8UXG-2X-E/A analog (Datasheet Table 2 access ports; inline 2x 10G SFP+ fixed uplink) - same physical chassis, SKU confirmed to exist in CCW, per confirmed user direction.",
+    "poe_budget_watts": "Copied unchanged from the non-Meraki analog (Datasheet Table 4: fixed internal supply -> 240W achievable PoE budget; no redundancy bay).",
+    "stacking": "Stacking not offered on any C9200CX switch (non-Meraki datasheet Table 5/1), copied unchanged.",
+    "power_source": "Fixed, non-field-replaceable 315W AC internal power supply, copied unchanged from the non-Meraki analog. No redundancy bay. All 8 access ports are UPOE-capable (4 at mGig speeds up to 10G, 4 at 1G)."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 128,
+    "forwarding_rate_mpps": 95.23,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 8,
+    "virtual_networks": 16,
+    "mtbf_hours": 711500,
+    "weight_kg": 3.18,
+    "port_layout": "4x mGig (1/2.5/5/10G) + 4x 1G, UPOE",
+    "fixed_uplinks": "2x 10G SFP+",
+    "power_source": "Fixed, non-field-replaceable 315W AC internal power supply (copied unchanged from the non-Meraki analog). No redundancy bay. All 8 access ports are UPOE-capable (4 at mGig speeds up to 10G, 4 at 1G)."
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. No stack_cables (C9200CX does not stack); no network_modules (fixed uplinks, carried inline in model.ports).",
+    "power_supplies": {
+     "group": "c9200cx-ac-internal-psus",
+     "valid_primary": [
+      "C9200CX-PSU-315WAC-INTERNAL"
+     ],
+     "default_primary": "C9200CX-PSU-315WAC-INTERNAL",
+     "poe_budget_matrix": [
+      {
+       "primary": "C9200CX-PSU-315WAC-INTERNAL",
+       "secondary": null,
+       "poe_budget_watts": 240
+      }
+     ],
+     "matrix_provenance": "Copied unchanged from the non-Meraki analog: fixed internal supply, single achievable PoE budget of 240W. No secondary/redundancy bay on this chassis."
+    },
+    "license": {
+     "group": "c9200cx-meraki-classic-essentials",
+     "additional_groups": [
+      "c9200cx-meraki-classic-advantage",
+      "c9200cx-meraki-sub-s-essentials",
+      "c9200cx-meraki-sub-s-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable. C9200CX is fanless.",
+    "fans": "Fanless",
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with the fixed internal AC supply; a region-specific AC power cord is selected at order time."
+    }
+   }
+  },
+  {
+   "id": "C9200CX-12P-2XGH-M",
+   "description": "Cisco Catalyst 9200CX-M (Meraki), 12-port 1G full PoE+ copper, 2x 10G SFP+ fixed uplinks, Meraki-managed. Fanless, no stacking. 240W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200CX",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 240,
+    "total_port_count": 12,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 12,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "No Cisco datasheet exists for C9200CX-M; hardware copied unchanged from the non-Meraki C9200CX-12P-2XGH-E/A analog (Datasheet Table 2 access ports; inline 2x 10G SFP+ fixed uplink) - same physical chassis, SKU confirmed to exist in CCW, per confirmed user direction.",
+    "poe_budget_watts": "Copied unchanged from the non-Meraki analog (Datasheet Table 4: fixed internal supply -> 240W achievable PoE budget; no redundancy bay).",
+    "stacking": "Stacking not offered on any C9200CX switch (non-Meraki datasheet Table 5/1), copied unchanged.",
+    "power_source": "Fixed, non-field-replaceable 315W dual-input HVDC/AC internal power supply (120-418VDC or 100-277VAC), copied unchanged from the non-Meraki analog. No redundancy bay."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 68,
+    "forwarding_rate_mpps": 50.59,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 8,
+    "virtual_networks": 16,
+    "mtbf_hours": 702630,
+    "weight_kg": 2.99,
+    "port_layout": "12x 1G PoE+",
+    "fixed_uplinks": "2x 10G SFP+",
+    "power_source": "Fixed, non-field-replaceable 315W dual-input HVDC/AC internal power supply (120-418VDC or 100-277VAC), copied unchanged from the non-Meraki analog. No redundancy bay."
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. No stack_cables (C9200CX does not stack); no network_modules (fixed uplinks, carried inline in model.ports).",
+    "power_supplies": {
+     "group": "c9200cx-hvdc-internal-psus",
+     "valid_primary": [
+      "C9200CX-PSU-315WHVDC-INTERNAL"
+     ],
+     "default_primary": "C9200CX-PSU-315WHVDC-INTERNAL",
+     "poe_budget_matrix": [
+      {
+       "primary": "C9200CX-PSU-315WHVDC-INTERNAL",
+       "secondary": null,
+       "poe_budget_watts": 240
+      }
+     ],
+     "matrix_provenance": "Copied unchanged from the non-Meraki analog: fixed internal supply, single achievable PoE budget of 240W. No secondary/redundancy bay on this chassis."
+    },
+    "license": {
+     "group": "c9200cx-meraki-classic-essentials",
+     "additional_groups": [
+      "c9200cx-meraki-classic-advantage",
+      "c9200cx-meraki-sub-s-essentials",
+      "c9200cx-meraki-sub-s-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable. C9200CX is fanless.",
+    "fans": "Fanless",
+    "power_cables": {
+     "count": 0,
+     "note": "Internal HVDC/AC supply, copied unchanged from the non-Meraki analog: per the ordering guide, no power cable needs to be selected at order time; the customer/system integrator supplies a DC-appropriate cable for HVDC deployments."
+    }
+   }
+  },
+  {
+   "id": "C9200CX-8P-2XGH-M",
+   "description": "Cisco Catalyst 9200CX-M (Meraki), 8-port 1G full PoE+ copper, 2x 10G SFP+ fixed uplinks, Meraki-managed. Fanless, no stacking. 240W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200CX",
+    "poe_capable": true,
+    "poe_type": "poe+",
+    "poe_budget_watts": 240,
+    "total_port_count": 8,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 8,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "No Cisco datasheet exists for C9200CX-M; hardware copied unchanged from the non-Meraki C9200CX-8P-2XGH-E/A analog (Datasheet Table 2 access ports; inline 2x 10G SFP+ fixed uplink) - same physical chassis, SKU confirmed to exist in CCW, per confirmed user direction.",
+    "poe_budget_watts": "Copied unchanged from the non-Meraki analog (Datasheet Table 4: fixed internal supply -> 240W achievable PoE budget; no redundancy bay).",
+    "stacking": "Stacking not offered on any C9200CX switch (non-Meraki datasheet Table 5/1), copied unchanged.",
+    "power_source": "Fixed, non-field-replaceable 315W dual-input HVDC/AC internal power supply, copied unchanged from the non-Meraki analog. No redundancy bay."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 60,
+    "forwarding_rate_mpps": 44.64,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 8,
+    "virtual_networks": 16,
+    "mtbf_hours": 734030,
+    "weight_kg": 2.99,
+    "port_layout": "8x 1G PoE+",
+    "fixed_uplinks": "2x 10G SFP+",
+    "power_source": "Fixed, non-field-replaceable 315W dual-input HVDC/AC internal power supply (copied unchanged from the non-Meraki analog). No redundancy bay."
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. No stack_cables (C9200CX does not stack); no network_modules (fixed uplinks, carried inline in model.ports).",
+    "power_supplies": {
+     "group": "c9200cx-hvdc-internal-psus",
+     "valid_primary": [
+      "C9200CX-PSU-315WHVDC-INTERNAL"
+     ],
+     "default_primary": "C9200CX-PSU-315WHVDC-INTERNAL",
+     "poe_budget_matrix": [
+      {
+       "primary": "C9200CX-PSU-315WHVDC-INTERNAL",
+       "secondary": null,
+       "poe_budget_watts": 240
+      }
+     ],
+     "matrix_provenance": "Copied unchanged from the non-Meraki analog: fixed internal supply, single achievable PoE budget of 240W. No secondary/redundancy bay on this chassis."
+    },
+    "license": {
+     "group": "c9200cx-meraki-classic-essentials",
+     "additional_groups": [
+      "c9200cx-meraki-classic-advantage",
+      "c9200cx-meraki-sub-s-essentials",
+      "c9200cx-meraki-sub-s-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable. C9200CX is fanless.",
+    "fans": "Fanless",
+    "power_cables": {
+     "count": 0,
+     "note": "Internal HVDC/AC supply, copied unchanged from the non-Meraki analog: per the ordering guide, no power cable needs to be selected at order time; the customer/system integrator supplies a DC-appropriate cable for HVDC deployments."
+    }
+   }
+  },
+  {
+   "id": "C9200CX-8UXG-2XH-M",
+   "description": "Cisco Catalyst 9200CX-M (Meraki), 8-port UPOE (4x mGig up to 10G + 4x 1G) copper, 2x 10G SFP+ fixed uplinks, Meraki-managed. Fanless, no stacking. 240W PoE budget.",
+   "axis_values": {
+    "_comment": "Registry-axis values this switch supplies to the solver.",
+    "series": "C9200CX",
+    "poe_capable": true,
+    "poe_type": "upoe",
+    "poe_budget_watts": 240,
+    "total_port_count": 8,
+    "uplink_modular": false,
+    "stacking_capable": false,
+    "stackpower_capable": false,
+    "license_regime": [
+     "meraki-classic",
+     "meraki-subscription"
+    ],
+    "license_tier": [
+     "essentials",
+     "advantage"
+    ]
+   },
+   "ports": [
+    {
+     "count": 4,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g",
+      "2.5g",
+      "5g",
+      "10g"
+     ]
+    },
+    {
+     "count": 4,
+     "role": "access",
+     "medium": "copper",
+     "speeds": [
+      "1g"
+     ]
+    },
+    {
+     "count": 2,
+     "role": "uplink",
+     "medium": "fiber",
+     "speeds": [
+      "1g",
+      "10g"
+     ]
+    }
+   ],
+   "axis_value_provenance": {
+    "_comment": "How resolved values were derived (for re-validation).",
+    "ports": "No Cisco datasheet exists for C9200CX-M; hardware copied unchanged from the non-Meraki C9200CX-8UXG-2XH-E/A analog (Datasheet Table 2 access ports; inline 2x 10G SFP+ fixed uplink) - same physical chassis, SKU confirmed to exist in CCW, per confirmed user direction.",
+    "poe_budget_watts": "Copied unchanged from the non-Meraki analog (Datasheet Table 4: fixed internal supply -> 240W achievable PoE budget; no redundancy bay).",
+    "stacking": "Stacking not offered on any C9200CX switch (non-Meraki datasheet Table 5/1), copied unchanged.",
+    "power_source": "Fixed, non-field-replaceable 315W dual-input HVDC/AC internal power supply, copied unchanged from the non-Meraki analog. No redundancy bay. All 8 access ports are UPOE-capable (4 at mGig speeds up to 10G, 4 at 1G)."
+   },
+   "attributes": {
+    "_comment": "Displayed, never filtered.",
+    "switching_capacity_gbps": 128,
+    "forwarding_rate_mpps": 95.23,
+    "mac_address_scale": 32000,
+    "buffer_mb": 6,
+    "uadp_asic": "UADP 2.0 Mini",
+    "dram_gb": 4,
+    "flash_gb": 8,
+    "virtual_networks": 16,
+    "mtbf_hours": 709660,
+    "weight_kg": 3.18,
+    "port_layout": "4x mGig (1/2.5/5/10G) + 4x 1G, UPOE",
+    "fixed_uplinks": "2x 10G SFP+",
+    "power_source": "Fixed, non-field-replaceable 315W dual-input HVDC/AC internal power supply (copied unchanged from the non-Meraki analog). No redundancy bay. All 8 access ports are UPOE-capable (4 at mGig speeds up to 10G, 4 at 1G)."
+   },
+   "configurables": {
+    "_comment": "Thin references to shared groups + per-model PSU/PoE overlay. No stack_cables (C9200CX does not stack); no network_modules (fixed uplinks, carried inline in model.ports).",
+    "power_supplies": {
+     "group": "c9200cx-hvdc-internal-psus",
+     "valid_primary": [
+      "C9200CX-PSU-315WHVDC-INTERNAL"
+     ],
+     "default_primary": "C9200CX-PSU-315WHVDC-INTERNAL",
+     "poe_budget_matrix": [
+      {
+       "primary": "C9200CX-PSU-315WHVDC-INTERNAL",
+       "secondary": null,
+       "poe_budget_watts": 240
+      }
+     ],
+     "matrix_provenance": "Copied unchanged from the non-Meraki analog: fixed internal supply, single achievable PoE budget of 240W. No secondary/redundancy bay on this chassis."
+    },
+    "license": {
+     "group": "c9200cx-meraki-classic-essentials",
+     "additional_groups": [
+      "c9200cx-meraki-classic-advantage",
+      "c9200cx-meraki-sub-s-essentials",
+      "c9200cx-meraki-sub-s-advantage"
+     ],
+     "regime_offered": [
+      "meraki-classic",
+      "meraki-subscription"
+     ]
+    }
+   },
+   "included_by_default_non_selectable": {
+    "_comment": "Ships with the switch; not user-configurable, not filterable. C9200CX is fanless. NOTE: mirrors the non-Meraki C9200CX-8UXG-2XH-E/A analog's power_cables.count=1, which appears inconsistent with sibling HVDC models (count=0) in the base KB - not corrected here as pre-existing base-file data, out of this task's scope.",
+    "fans": "Fanless",
+    "power_cables": {
+     "count": 1,
+     "note": "Ships with the fixed internal AC supply; a region-specific AC power cord is selected at order time."
     }
    }
   }
