@@ -8,12 +8,10 @@
   "sources": [
    {
     "name": "Cisco Meraki MS130 Series Data Sheet",
-    "url": "user-provided (pasted content, no URL supplied)",
     "last_verified": "2026-07-06"
    },
    {
     "name": "Cisco Meraki MS150 Series Data Sheet",
-    "url": "user-provided (pasted content, no URL supplied)",
     "last_verified": "2026-07-06"
    }
   ],
@@ -812,6 +810,7 @@
      "MA-CBL-100G-1M",
      "MA-CBL-100G-3M"
     ],
+    "none_option": "MS150-STACK-NONE",
     "notes": "MS150 100G stacking cables (MS150 Datasheet, Stacking Cables table). Per confirmed user direction, all three lengths are usable across all 12 MS150 models (MS150-24T-4G/-24P-4G/-24T-4X/-24P-4X/-24MP-4X/-48T-4G/-48LP-4G/-48FP-4G/-48T-4X/-48LP-4X/-48FP-4X/-48MP-4X) — kept as ONE shared group rather than per-model-class subsets, unlike the datasheet table's row grouping (which the user clarified is not a compatibility restriction)."
    }
   ],

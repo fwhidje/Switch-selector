@@ -18,7 +18,6 @@
    },
    {
     "name": "Operator (user) — authoritative statement on the combinable-uplink pair structure (each QSFP-DD uplink pair is 2x low-speed OR 1x high-speed), which the datasheet states only as the two extreme densities ('four 100/40G OR two 400G')",
-    "url": "operator-provided; not a document",
     "last_verified": "2026-07-07"
    }
   ],
