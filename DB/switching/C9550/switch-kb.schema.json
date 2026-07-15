@@ -102,8 +102,8 @@
         "speeds": {
           "type": "array",
           "minItems": 1,
-          "items": { "type": "string", "enum": ["1g", "2.5g", "5g", "10g", "25g", "40g", "50g", "100g"] },
-          "$comment": "Ordered low->high per switching-axes.json port_speed (registry v0.9.0 added 50g). Every speed the port natively supports (subsumption as data). 100M is display-only and not listed."
+          "items": { "type": "string", "enum": ["1g", "2.5g", "5g", "10g", "25g", "40g", "50g", "100g", "200g", "400g"] },
+          "$comment": "Ordered low->high per switching-axes.json port_speed (registry v0.9.0 added 50g; 200g/400g added for C9500X QSFP-DD uplinks). Every speed the port natively supports (subsumption as data). 100M is display-only and not listed."
         },
         "notes": { "type": "string" }
       }
@@ -124,10 +124,10 @@
           "minItems": 1,
           "items": {
             "type": "object",
-            "required": ["name", "url", "last_verified"],
+            "required": ["name", "last_verified"],
             "properties": {
               "name": { "type": "string" },
-              "url": { "type": "string", "format": "uri" },
+              "url": { "type": "string", "format": "uri", "$comment": "Optional. Omitted for non-document sources (operator-provided / pasted content) whose origin is stated in 'name'." },
               "cisco_updated": { "type": "string" },
               "last_verified": { "type": "string" }
             },
@@ -294,11 +294,11 @@
     "power_supply_group": {
       "type": "object",
       "description": "Complete orderable PSU family for a series. Which member is a valid PRIMARY and the PoE budget per pair are switch-specific and live on the model.",
-      "required": ["id", "members", "secondary_none_option"],
+      "required": ["id", "members"],
       "properties": {
         "id": { "type": "string" },
         "members": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
-        "secondary_none_option": { "type": "string" },
+        "secondary_none_option": { "type": "string", "$comment": "Present only for a chassis with a secondary PSU bay; omitted for fixed / single-PSU chassis (e.g. MS, C9200CX)." },
         "notes": { "type": "string" }
       },
       "additionalProperties": false
@@ -472,6 +472,7 @@
       },
       "allOf": [
         {
+          "$comment": "PoE-capable models must declare a budget (poe_budget_watts) and a real PoE type (poe_type != 'none').",
           "if": { "properties": { "poe_capable": { "const": true } } },
           "then": {
             "required": ["poe_budget_watts"],
@@ -479,6 +480,7 @@
           }
         },
         {
+          "$comment": "Non-PoE models must set poe_type = 'none' and must NOT carry poe_budget_watts.",
           "if": { "properties": { "poe_capable": { "const": false } } },
           "then": {
             "properties": { "poe_type": { "const": "none" } },
@@ -486,6 +488,7 @@
           }
         },
         {
+          "$comment": "Stacking-capable models must declare which stacking_technology they use (legal values in switching-axes.json).",
           "if": { "properties": { "stacking_capable": { "const": true } } },
           "then": { "required": ["stacking_technology"] }
         }
