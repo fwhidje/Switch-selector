@@ -1,9 +1,9 @@
 {
  "header": {
-  "schema_version": "0.8.0",
+  "schema_version": "0.9.0",
   "registry_version": "0.10.0",
   "axes_file": "../switching-axes.json",
-  "schema_file": "switch-kb.schema.json",
+  "schema_file": "../switch-kb.schema.json",
   "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9200 Series switches. Carries the catalog (atomic SKU facts), groups (named shared compatibility sets), and switch models for C9200 (modular uplink), C9200L (fixed uplink), C9200CX (compact, fanless, fixed uplink), C9200L-M (Meraki-managed, fixed uplink), and C9200CX-M (Meraki-managed, compact). C9200L-M model entries (14) and C9200CX-M model entries (7) are complete. Structure: catalog + groups + models.",
   "sources": [
    {

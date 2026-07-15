@@ -27,8 +27,11 @@ const readJSON = (fullPath) => JSON.parse(readFileSync(fullPath, "utf8"));
 // have an empty `models` (a series mid-build): the catalog/group checks
 // still run; the per-model checks simply find nothing.
 const families = readJSON(resolvePath(SWITCHING, "families.json"));
-const TARGETS = families.map(({ series, dir, kbFile }) =>
-  ({ label: series, dir, schemaFile: "switch-kb.schema.json", kbFile }));
+const TARGETS = families.map(({ series, dir, kbFile }) => ({ label: series, dir, kbFile }));
+
+// One shared schema for every family (the per-family copies were unified into
+// DB/switching/switch-kb.schema.json).
+const SHARED_SCHEMA = readJSON(resolvePath(SWITCHING, "switch-kb.schema.json"));
 
 const violations = [];
 const warnings = [];
@@ -282,6 +285,38 @@ function checkDerived(kb, kbFail, kbWarn) {
   }
 }
 
+// --- Check: fan-tray coupling (unified-schema optional block) ----------------
+// fan_trays is OPTIONAL at the shape level (only C9500/C9550 use it). Enforce
+// that when a family uses it, the pieces hang together: catalog.fan_trays
+// present <-> groups.fan_tray_groups present; each configurables.fan_trays.group
+// resolves; fan-tray group members + a model's valid_options/default_option all
+// resolve. (This enforces CONSISTENCY, not "family X must have fans".)
+function checkFanTrays(kb, kbFail) {
+  const catFans = kb.catalog?.fan_trays;
+  const fanGroups = kb.groups?.fan_tray_groups;
+  const hasCat = Array.isArray(catFans) && catFans.length > 0;
+  const hasGroups = Array.isArray(fanGroups) && fanGroups.length > 0;
+  if (hasCat !== hasGroups)
+    kbFail("catalog.fan_trays / groups.fan_tray_groups",
+      `fan-tray coupling: catalog.fan_trays ${hasCat ? "present" : "absent"} but groups.fan_tray_groups ${hasGroups ? "present" : "absent"} — both or neither`);
+  const catIds = new Set((catFans ?? []).map((f) => f.id));
+  const groupById = new Map((fanGroups ?? []).map((g) => [g.id, g]));
+  for (const g of fanGroups ?? [])
+    for (const m of g.members ?? [])
+      if (!catIds.has(m)) kbFail(`fan_tray_group ${g.id}.members`, `unknown fan_tray '${m}'`);
+  for (const m of kb.models ?? []) {
+    const ft = m.configurables?.fan_trays;
+    if (!ft) continue;
+    const grp = groupById.get(ft.group);
+    if (!grp) { kbFail(`${m.id}.configurables.fan_trays.group`, `unknown fan_tray_group '${ft.group}'`); continue; }
+    const members = new Set(grp.members ?? []);
+    for (const o of ft.valid_options ?? [])
+      if (!members.has(o)) kbFail(`${m.id}.configurables.fan_trays.valid_options`, `'${o}' not in fan_tray_group '${ft.group}'`);
+    if (ft.default_option && !(ft.valid_options ?? []).includes(ft.default_option))
+      kbFail(`${m.id}.configurables.fan_trays.default_option`, `'${ft.default_option}' not in valid_options`);
+  }
+}
+
 // --- Check 8: incomplete-field flags ----------------------------------------
 // A model may list fields it could not source from authoritative docs. Surface
 // each as a WARNING (not a failure) so the build stays green while the gaps are
@@ -293,9 +328,9 @@ function checkIncomplete(kb, kbWarn) {
 }
 
 // --- per-target driver ------------------------------------------------------
-function validateTarget({ label, dir, schemaFile, kbFile }) {
+function validateTarget({ label, dir, kbFile }) {
   const base = resolvePath(SWITCHING, dir);
-  const schema = readJSON(resolvePath(base, schemaFile));
+  const schema = SHARED_SCHEMA;
   const kb = readJSON(resolvePath(base, kbFile));
   kb._index = buildIndex(kb);
 
@@ -309,6 +344,7 @@ function validateTarget({ label, dir, schemaFile, kbFile }) {
   checkPorts(kb, kbFail);
   checkGroups(kb, kbFail);
   checkReferences(kb, kbFail);
+  checkFanTrays(kb, kbFail);
   checkDerived(kb, kbFail, kbWarn);
   checkIncomplete(kb, kbWarn);
 

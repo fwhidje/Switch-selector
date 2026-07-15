@@ -1,75 +1,52 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "switch-kb.schema.json",
-  "title": "Networking Equipment Selector — Switch Knowledge Base Schema (C9550)",
-  "description": "Series-agnostic shape + authoring contract for a switch knowledge base. This schema enforces SHAPE (entries are well-formed); switching-axes.json enforces MEANING (which axes exist, their KIND/ROLE and legal enum values); selector/tools/validate-kb.mjs enforces CROSS-REFERENCE INTEGRITY (group references resolve, valid_primary is a subset of the referenced PSU group, poe_budget_watts equals the matrix max, sum of access-port counts equals total_port_count, enum/speed values are registered). All three must pass. See $authoring for the procedure an agent follows to add a model. This copy carries the fan_trays configurable (from the C9500 copy) AND adds a second structural extension: uplink_pair_block on a fixed-uplink model — a bank of combinable port pairs (each pair either low.ports_per_pair×low OR high.ports_per_pair×high, e.g. the C9550 CD uplinks 'four 100/40G OR two 400G'), which resolve.js expands at solve time into one real simultaneous pool per pair-assignment so combined ports are never double-counted.",
-  "schema_version": "0.8.0-c9550.1",
+  "title": "Networking Equipment Selector — Switch Knowledge Base Schema",
+  "description": "The SINGLE shared shape + authoring contract for every switch-family knowledge base (C9200, C9300, C9350, C9500, C9550, MS). This schema enforces SHAPE (entries are well-formed); switching-axes.json enforces MEANING (which axes exist, their KIND/ROLE and legal enum values); selector/tools/validate-kb.mjs enforces CROSS-REFERENCE INTEGRITY (group references resolve, valid_primary is a subset of the referenced PSU group, poe_budget_watts equals the matrix max, sum of access-port counts equals total_port_count, enum/speed values are registered). All three must pass. Family-specific constructs (access_pair_block, uplink_pair_block, fan_trays, modes, no_uplink_ports, tertiary) are OPTIONAL; each carries an 'Example: <FAMILY>/<id>' pointer in its $comment to a real instance, so an agent can grep for a matching precedent. See $authoring for the procedure to add a model.",
+  "schema_version": "0.9.0",
   "registry_version": "0.10.0",
 
   "$authoring": {
-    "_comment": "NON-VALIDATING. Procedure + rules for an agent populating new switch models. Read this before touching data.",
-
-    "prime_directive": "Push everything into DATA; keep the solver small and dumb. Never encode a compatibility quirk as logic. If a relationship between specs exists (speed sets, PSU-pair budgets, tier locks), express it as data in this KB, not as code elsewhere.",
-
+    "_comment": "NON-VALIDATING. Procedure + rules for an agent populating switch models. Read before touching data. Concrete per-field precedents live ON the schema fields: grep the $comment values for 'Example: <FAMILY>/<id>' to find a real instance of any exceptional construct.",
+    "prime_directive": "Push everything into DATA; keep the solver small and dumb. Never encode a compatibility quirk as logic. If a relationship between specs exists (speed sets, PSU-pair budgets, tier locks, combinable port pairs), express it as data in this KB, not as code elsewhere.",
     "sourcing_discipline": [
-      "All facts come from authoritative Cisco documentation ONLY — never from memory or inference.",
-      "Derive the fetch targets from the KB header 'sources' block (datasheet URL + ordering guide URL).",
-      "Fetch the datasheet AND the ordering guide before proposing any values for a model.",
+      "All facts come from authoritative Cisco documentation ONLY - never from memory or inference.",
+      "Fetch the datasheet AND the ordering guide (targets in the KB header 'sources') before proposing any values for a model.",
       "Record how each resolved value was derived in the model's axis_value_provenance block, citing the source table."
     ],
-
-    "working_copy_discipline": "Project knowledge files are the source of truth; edit them in lockstep (registry -> schema -> KB) and run validate-kb.mjs before considering a change done. When catalog/group state becomes uncertain mid-session, rebuild deterministically from an explicit list rather than patching incrementally.",
-
-    "cheap_vs_structural": {
-      "cheap_do_freely": [
-        "Add a new model entry.",
-        "Add a new catalog SKU (network module, PSU, cable, license, fan tray).",
-        "Add a new group, even one whose membership duplicates an existing group."
-      ],
-      "structural_STOP_and_ask": [
-        "Adding, renaming, or re-typing an AXIS in switching-axes.json (touches UI + MCP params + maybe solver). Bump registry_version only after human sign-off.",
-        "Adding a new legal enum value to an existing axis (incl. a new port_speed / port_medium / port_role).",
-        "Changing the KIND or ROLE of an axis.",
-        "Changing group topology conventions.",
-        "Any change to this schema's required-field or conditional rules."
-      ]
-    },
-
+    "working_copy_discipline": "Knowledge files are the source of truth; edit them in lockstep (registry -> schema -> KB) and run validate-kb.mjs before considering a change done. When catalog/group state becomes uncertain mid-session, rebuild deterministically from an explicit list rather than patching incrementally.",
+    "structural_STOP_and_ask": [
+      "Adding, renaming, or re-typing an AXIS in switching-axes.json (touches UI + MCP params + maybe solver).",
+      "Adding a new legal enum value to an existing axis (incl. a new port_speed / port_medium / port_role).",
+      "Changing the KIND or ROLE of an axis, or group-topology conventions.",
+      "Any change to this schema's required-field or conditional rules."
+    ],
     "axis_vs_variable_vs_attribute": {
       "rule": "Sort every datasheet property three ways before deciding where it goes.",
-      "axis": "A filterable capability. Declared in switching-axes.json (with KIND + ROLE) and supplied as a value under model.axis_values, OR (for ports) as structured rows under model.ports addressed by the parametrised port_count axis. Example: poe_type, total_port_count, port_count{role,medium,speed}, stacking_capable.",
-      "variable": "The orderable option that REALIZES a capability, picked AFTER a switch survives the filter. Lives inside model.configurables (a group reference or inline block). NOT an axis. Example: the specific PSU pair, the fitted network module, the subscription term length, the C9500X fan airflow direction.",
-      "attribute": "Displayed, never filtered, never picked. Lives loose under model.attributes. Example: switching_capacity_gbps, weight, MTBF."
+      "axis": "A filterable capability. Declared in switching-axes.json (with KIND + ROLE) and supplied under model.axis_values, OR (for ports) as structured rows under model.ports addressed by the parametrised port_count axis. E.g. poe_type, total_port_count, port_count{role,medium,speed}, stacking_capable.",
+      "variable": "The orderable option that REALIZES a capability, picked AFTER a switch survives the filter. Lives in model.configurables (a group reference or inline block). NOT an axis. E.g. the PSU pair, the fitted network module, the subscription term, the fan airflow direction.",
+      "attribute": "Displayed, never filtered, never picked. Lives loose under model.attributes. E.g. switching_capacity_gbps, weight, MTBF."
     },
-
     "capability_resolution": {
-      "ports": "Port capability is the unified DATA model (registry v0.4.0). model.ports is an array of port groups {count, role, medium, speeds[]}: N physical ports each able to run a SET of speeds. ACCESS ports (role=access) live on the model. UPLINK ports come from the fitted network module (catalog network_module.ports, role=uplink) on modular models (uplink_modular=true), or are carried inline on the model as role=uplink rows on fixed-uplink models (uplink_modular=false). A configured VARIANT's port pool = model access groups + the fitted module's uplink groups. The parametrised port_count axis counts ports in matching groups whose speeds[] include the requested speed.",
-      "speed_subsumption": "Subsumption is DATA: a port lists every speed it natively supports (a 25G SFP28 access/uplink port -> [1g,10g,25g]; a 10G mGig copper port -> [1g,2.5g,5g,10g]; a QSFP28 100G port -> [40g,100g]). The solver NEVER infers downshift. QSFP/SFP BREAKOUT (e.g. 40G->4x10G) is deliberately NOT modelled here: it needs a breakout cable SKU and is a future configurable, not a free speed.",
-      "poe_budget": "poe_budget_watts is the MAX across configurables.power_supplies.poe_budget_matrix ({primary, secondary} -> watts). C9550 is not PoE-capable at all: every model sets poe_capable=false, poe_type='none', and an empty poe_budget_matrix.",
-      "totals": "total_port_count = sum of model.ports[role=access] counts (validator-checked). It does NOT count uplinks (inline uplink rows OR uplink_pair_block).",
-      "fan_trays": "Fan trays are selectable (airflow direction) on EVERY C9550 model: carry configurables.fan_trays {group, valid_options, default_option} referencing groups.fan_tray_groups (c9550-fans-1u for 1RU models, c9550-fans-2u for the 2RU model), default_option the -R (front-to-back / port-side intake) member. Same shape as configurable_power_supplies (group + valid subset + default), no capacity matrix — just a direction.",
-      "uplink_pair_block": "For a fixed-uplink model whose uplink bank is described as 'M×low OR N×high' (combinable pairs — C9550-24L4CD/48L4CD 'four 100/40G OR two 400G'), use model.uplink_pair_block {pairs, low, high} INSTEAD of inline role=uplink rows. resolve.js expands it into pairs+1 real simultaneous pools so a combined high-speed port never double-counts against the low-speed ports it replaces. A model whose uplinks are genuinely independent (C9550-96L4D: 4×[40g,100g,400g] fixed, no 'OR') uses plain inline role=uplink rows, not a pair block."
+      "ports": "model.ports is an array of port groups {count, role, medium, speeds[]}: N physical ports each running a SET of speeds. role=access lives on the model; role=uplink comes from the fitted network module on modular models (uplink_modular=true) or inline on fixed-uplink models. A combinable 'M x low OR N x high' bank uses a pair block instead of flat rows (access_pair_block / uplink_pair_block - see their schema Examples).",
+      "speed_subsumption": "A port lists every speed it natively supports (a 25G SFP28 port -> [1g,10g,25g]; a 400G QSFP-DD port -> [40g,100g,400g]). The solver NEVER infers downshift. Breakout (40G->4x10G) is deliberately NOT modelled.",
+      "poe_budget": "poe_budget_watts is the MAX across configurables.power_supplies.poe_budget_matrix. Non-PoE models set poe_capable=false, poe_type='none', empty matrix.",
+      "totals": "total_port_count = sum of model.ports[role=access] counts + an access_pair_block's all-low baseline (validator-checked). It does NOT count uplinks."
     },
-
     "per_model_procedure": [
       "1. Read the KB header 'sources'; fetch datasheet + ordering guide for the target model.",
-      "2. For every property the datasheet exposes, apply axis_vs_variable_vs_attribute. If it implies a NEW axis / enum value / port_speed -> STOP, surface for ruling.",
-      "3. Fill axis_values with the registry scalar axes (omit optional axes that don't apply). Build model.ports as access port groups. For uplinks: inline role=uplink rows for an independent bank, OR uplink_pair_block for a combinable 'M×low OR N×high' bank. Never put port counts in axis_values.",
-      "4. Build configurables: reference existing groups where the set matches; create a new group if the set differs. C9550 has no PoE, so poe_budget_matrix is []. Set configurables.fan_trays on every model (all C9550 models offer the airflow-direction choice).",
+      "2. For every datasheet property, apply axis_vs_variable_vs_attribute. If it implies a NEW axis / enum value / port_speed -> STOP, surface for ruling.",
+      "3. Fill axis_values with the registry scalar axes (omit optional axes that don't apply). Build model.ports (access rows; inline uplink rows OR a pair block for uplinks). Never put port counts in axis_values.",
+      "4. Build configurables: reference existing groups where the set matches; create a new group if it differs. Build poe_budget_matrix from the PSU table (empty for non-PoE).",
       "5. Fill axis_value_provenance for every resolved value, citing the source table.",
       "6. Fill attributes (display) and included_by_default_non_selectable.",
       "7. Validate: this schema (shape) + validate-kb.mjs (cross-reference integrity). Both must pass."
     ],
-
     "conventions": [
-      "C9550 licensing is the 'unified' regime, ADVANTAGE-ONLY — there is no Essentials tier on this series (a single hardware SKU per model, no -E/-A split). License groups are split on port-class (24/48/96 -> M/L/XL) at the advantage tier. The subscription SKU is a single per-device PID (LIC-CS-CO-<M|L|XL>-A); the term is a free variable (>=36 months), so the license group carries NO term_variable.",
-      "PSU groups represent the COMPLETE orderable family for a series. C9550: c9550-psus = {C9K-PWR-750WAC (1RU models), C9K-PWR-1100WAC (2RU model)}; per-model valid_primary picks the chassis-appropriate one. AC only — no DC PSU exists. Redundant (/2) and spare (=) ordering variants are NOT catalog entries.",
-      "Fan tray groups follow the same convention: a group is the complete set of orderable fan-tray SKUs for a chassis size; per-model valid options / default live on the model's configurables.fan_trays.",
-      "Series-specific groups (PSU, fan trays, licenses) are kept as their own named groups even when membership resembles another series, so they can diverge later.",
-      "Ports: declare the real per-port speed SET. A combined high-speed port carries its fallback speeds too (a 400G QSFP-DD port also does 100/40G -> [40g,100g,400g]).",
-      "PSU redundancy is NOT an axis: it is a (primary, secondary) pair with secondary != none. configurables.power_supplies.default_primary is the single PSU the switch ships with; there is no secondary by default. C9550's CCW flow allows adding a redundant secondary (declined via C9550-SPS-NONE), but the default posture here is single-PSU, matching every other family.",
-      "StackWise Virtual (SVL) on C9550: every model is stacking_capable=true, stacking_technology='stackwise-virtual' ('front-side stacking on all ports', datasheet), and carries NO stack_cables (SVL has no cable SKU). No StackPower (stackpower_capable=false).",
-      "The RFID module and HSEC license are out of scope, same footing as pricing — do not model them. No network modules (fixed uplinks), no stack/StackPower cables."
+      "Series-specific groups (PSU, cables, fans, licenses) are kept as their own named groups even when membership resembles another series, so they can diverge later.",
+      "A group's none_option / secondary_none_option is a 'none selected' sentinel (e.g. <FAMILY>-STACK-NONE), NOT a catalog SKU; present only where that 'none' state is orderable (see the field Examples).",
+      "PSU redundancy is NOT an axis: it is a (primary, secondary) pair with secondary != none. default_primary is the single PSU shipped by default; a secondary is added only to meet a higher PoE load or an explicit redundancy request.",
+      "License TERM is a config-variable (term_variable) resolving the concrete subscription SKU; License TIER is a filter axis derived from the model's license groups."
     ]
   },
 
@@ -142,7 +119,7 @@
     "catalog": {
       "type": "object",
       "description": "Atomic SKU facts: one row per real orderable component.",
-      "required": ["network_modules", "power_supplies", "stack_cables", "stackpower_cables", "licenses", "fan_trays"],
+      "required": ["network_modules", "power_supplies", "stack_cables", "stackpower_cables", "licenses"],
       "properties": {
         "_comment": { "type": "string" },
         "network_modules": { "type": "array", "items": { "$ref": "#/$defs/catalog_network_module" } },
@@ -157,7 +134,7 @@
 
     "catalog_network_module": {
       "type": "object",
-      "description": "A network (uplink) module. Carries EITHER a single fixed `ports` config OR a `modes` array of mutually-exclusive alternative port configs. A module with `modes` is still ONE orderable SKU: the fitted variant selects exactly one mode, and the kitlist/BOM shows the real module id with a mode label. A mode is NEVER a separate SKU.",
+      "description": "A network (uplink) module. Carries EITHER a single fixed `ports` config OR a `modes` array of mutually-exclusive alternative port configs. A module with `modes` is still ONE orderable SKU: the fitted variant selects exactly one mode, and the kitlist/BOM shows the real module id with a mode label. A mode is NEVER a separate SKU. Example: C9350/C9350-NM-8Y (8x25G OR 4x50G).",
       "required": ["id", "description", "compatible_family"],
       "oneOf": [
         { "required": ["ports"], "not": { "required": ["modes"] } },
@@ -175,7 +152,7 @@
         "modes": {
           "type": "array",
           "minItems": 2,
-          "$comment": "Mutually-exclusive alternative port configs of ONE module. The fitted variant uses exactly one mode. Mutually exclusive with `ports`.",
+          "$comment": "Mutually-exclusive alternative port configs of ONE module. The fitted variant uses exactly one mode. Mutually exclusive with `ports`. Example: C9350/C9350-NM-8Y.",
           "items": {
             "type": "object",
             "required": ["name", "ports"],
@@ -250,7 +227,7 @@
 
     "catalog_fan_tray": {
       "type": "object",
-      "description": "NEW for C9500. A physical fan tray SKU. Recorded for every real fan-tray part (even where a model treats it as fixed/non-selectable), so the atomic-SKU-fact convention holds; only models with a genuine airflow-direction choice (C9500X) reference one via a configurables.fan_trays group.",
+      "description": "A physical fan tray SKU. Recorded for every real fan-tray part (even where a model treats it as fixed/non-selectable), so the atomic-SKU-fact convention holds; only models with a genuine airflow-direction choice reference one via a configurables.fan_trays group. Example: C9500 / C9550 (fan-tray SKUs; airflow choice on C9500X and all C9550 models).",
       "required": ["id", "airflow_direction", "max_fans"],
       "properties": {
         "id": { "type": "string" },
@@ -264,7 +241,7 @@
     "groups": {
       "type": "object",
       "description": "Named shared compatibility SETS. A switch references a group by name and inherits the whole set.",
-      "required": ["network_module_groups", "power_supply_groups", "stack_cable_groups", "stackpower_cable_groups", "license_groups", "fan_tray_groups"],
+      "required": ["network_module_groups", "power_supply_groups", "stack_cable_groups", "stackpower_cable_groups", "license_groups"],
       "properties": {
         "_comment": { "type": "string" },
         "network_module_groups": { "type": "array", "items": { "$ref": "#/$defs/network_module_group" } },
@@ -298,7 +275,7 @@
       "properties": {
         "id": { "type": "string" },
         "members": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
-        "secondary_none_option": { "type": "string", "$comment": "Present only for a chassis with a secondary PSU bay; omitted for fixed / single-PSU chassis (e.g. MS, C9200CX)." },
+        "secondary_none_option": { "type": "string", "$comment": "'None selected' sentinel for the secondary PSU (NOT a catalog SKU). Present only for a chassis with a secondary PSU bay; omitted for fixed / single-PSU chassis. Example: C9200/C9200CX-* and MS (no secondary bay -> field omitted)." },
         "notes": { "type": "string" }
       },
       "additionalProperties": false
@@ -309,9 +286,9 @@
       "required": ["id", "members", "none_option"],
       "properties": {
         "id": { "type": "string" },
-        "stack_kit": { "type": "string" },
+        "stack_kit": { "type": "string", "$comment": "Optional stacking-kit SKU surfaced in the BOM alongside the cable selection. Example: C9300 (modular stack-cable groups)." },
         "members": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
-        "none_option": { "type": "string" },
+        "none_option": { "type": "string", "$comment": "'None selected' sentinel (NOT a catalog SKU): the standalone / no-cable-ordered state. Convention <FAMILY>-STACK-NONE; the BOM omits the line when default == none_option. Example: MS/MS150-STACK-NONE." },
         "notes": { "type": "string" }
       },
       "additionalProperties": false
@@ -331,7 +308,7 @@
 
     "fan_tray_group": {
       "type": "object",
-      "description": "NEW for C9500. Complete orderable fan-tray family for a sub-line (currently just the C9500X airflow-direction pair). Which options are valid and the default live on the model's configurables.fan_trays. No 'none' option: a fan tray is always present, never removable.",
+      "description": "Complete orderable fan-tray family for a sub-line (an airflow-direction set). Which options are valid and the default live on the model's configurables.fan_trays. No 'none' option: a fan tray is always present, never removable. Example: C9550/c9550-fans-1u.",
       "required": ["id", "members"],
       "properties": {
         "id": { "type": "string" },
@@ -355,6 +332,7 @@
         "subscription_members": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
         "term_variable": {
           "type": "object",
+          "$comment": "Config-variable: the subscription term (years) that resolves the concrete license SKU; present only where term is a SKU-suffix choice. Example: C9200/c9200-dna-essentials-48 (choices_years [3,5,7]).",
           "required": ["choices_years"],
           "properties": {
             "axis": { "type": "string" },
@@ -379,9 +357,9 @@
         "axis_values": { "$ref": "#/$defs/axis_values" },
         "ports": {
           "type": "array",
-          "minItems": 1,
+          "minItems": 0,
           "items": { "$ref": "#/$defs/port_group" },
-          "$comment": "Port groups for THIS switch: role=access always; role=uplink only on fixed-uplink models (uplink_modular=false). Modular models carry access only; uplink groups come from the fitted module."
+          "$comment": "Port groups for THIS switch: role=access always; role=uplink only on fixed-uplink models (uplink_modular=false). Modular models carry access only; uplink groups come from the fitted module. May be EMPTY only when access_pair_block carries the whole port bank instead — enforced by the model-level anyOf(ports non-empty OR access_pair_block) below and by validate-kb.mjs. Example: C9500/C9500-32QC (empty ports + access_pair_block)."
         },
         "axis_value_provenance": {
           "type": "object",
@@ -403,13 +381,21 @@
         },
         "no_uplink_ports": {
           "type": "boolean",
-          "$comment": "Opt-in escape hatch for a fixed-uplink model (uplink_modular=false) that genuinely has no dedicated uplink ports — e.g. C9500-32C is a homogeneous 32-port switch with no Cisco-labeled 'uplink' subset. When true, validate-kb.mjs skips its usual 'fixed-uplink model must carry role=uplink port rows' check for this model, AND requires that the model carry zero role=uplink rows (catches accidental misuse). Absent/false everywhere else."
+          "$comment": "Opt-in escape hatch for a fixed-uplink model (uplink_modular=false) that genuinely has no dedicated uplink ports — e.g. C9500-32C is a homogeneous 32-port switch with no Cisco-labeled 'uplink' subset. When true, validate-kb.mjs skips its usual 'fixed-uplink model must carry role=uplink port rows' check for this model, AND requires that the model carry zero role=uplink rows (catches accidental misuse). Absent/false everywhere else. Example: C9500/C9500-32C (homogeneous 32-port, no uplink subset)."
         },
         "uplink_pair_block": {
           "$ref": "#/$defs/uplink_pair_block",
-          "$comment": "NEW for C9550. A bank of combinable uplink pairs on a fixed-uplink model (uplink_modular=false). Mutually exclusive with inline role=uplink rows in `ports` and with no_uplink_ports (validate-kb.mjs enforces). resolve.js uplinkOptions() expands it into pairs+1 real simultaneous port pools (k pairs in high mode, 0..pairs); the solver survives the model if ANY pool satisfies the port demand, so a combined high-speed port is never double-counted against the two low-speed ports it replaces."
+          "$comment": "A bank of combinable uplink pairs on a fixed-uplink model (uplink_modular=false). Mutually exclusive with inline role=uplink rows in `ports` and with no_uplink_ports (validate-kb.mjs enforces). resolve.js uplinkOptions() expands it into pairs+1 real simultaneous port pools (k pairs in high mode, 0..pairs); the solver survives the model if ANY pool satisfies the port demand, so a combined high-speed port is never double-counted against the two low-speed ports it replaces. Example: C9550/C9550-24L4CD ('four 100/40G OR two 400G')."
+        },
+        "access_pair_block": {
+          "$ref": "#/$defs/access_pair_block",
+          "$comment": "A homogeneous ACCESS bank of combinable pairs. Port-CAPABILITY only: resolved at solve time into pairs+1 real simultaneous access-port configurations (a query survives if any satisfies it) and NEVER in the BOM (access ports are inherent to the SKU). When present, model.ports typically carries no static role=access rows for the same bank; total_port_count = static access sum + pairs*low.ports_per_pair (validator-checked). Orthogonal to no_uplink_ports (a 32QC honestly declares both). Example: C9500/C9500-32QC (16 pairs, each 2x40G OR 1x100G)."
         }
-      }
+      },
+      "anyOf": [
+        { "properties": { "ports": { "minItems": 1 } } },
+        { "required": ["access_pair_block"] }
+      ]
     },
 
     "uplink_pair_block": {
@@ -425,9 +411,22 @@
       }
     },
 
+    "access_pair_block": {
+      "type": "object",
+      "description": "A bank of N combinable ACCESS port pairs. Each pair operates as EITHER low.ports_per_pair ports at the low speeds OR high.ports_per_pair ports at the high speeds — combining a pair to the high speed is a static per-port admin configuration that consumes the whole pair (no dynamic speed negotiation, no fallback). Not itself a port_group; resolve.js accessConfigs() materialises the pairs+1 discrete configurations (k = 0..pairs pairs in high mode) at solve time. Example: C9500/C9500-32QC (32 QSFP+ ports = 16 pairs, low {2x[40g]}, high {1x[100g]}).",
+      "required": ["pairs", "low", "high"],
+      "additionalProperties": false,
+      "properties": {
+        "pairs": { "type": "integer", "minimum": 1 },
+        "low": { "$ref": "#/$defs/pair_side" },
+        "high": { "$ref": "#/$defs/pair_side" },
+        "notes": { "type": "string" }
+      }
+    },
+
     "pair_side": {
       "type": "object",
-      "description": "One operating mode of every pair in a uplink_pair_block: `ports_per_pair` role=uplink ports, each able to run the SAME `speeds` set on the given `medium`.",
+      "description": "One operating mode of every pair in an access_pair_block (role=access) or uplink_pair_block (role=uplink): `ports_per_pair` ports each able to run the SAME `speeds` set on the given `medium`.",
       "required": ["ports_per_pair", "medium", "speeds"],
       "additionalProperties": false,
       "properties": {
@@ -472,7 +471,7 @@
       },
       "allOf": [
         {
-          "$comment": "PoE-capable models must declare a budget (poe_budget_watts) and a real PoE type (poe_type != 'none').",
+          "$comment": "PoE-capable models must declare a budget (poe_budget_watts) and a real PoE type (poe_type != 'none'). Example: C9350/C9350-48HX (PoE).",
           "if": { "properties": { "poe_capable": { "const": true } } },
           "then": {
             "required": ["poe_budget_watts"],
@@ -480,7 +479,7 @@
           }
         },
         {
-          "$comment": "Non-PoE models must set poe_type = 'none' and must NOT carry poe_budget_watts.",
+          "$comment": "Non-PoE models must set poe_type = 'none' and must NOT carry poe_budget_watts. Example: C9550/C9550-24L4CD (non-PoE).",
           "if": { "properties": { "poe_capable": { "const": false } } },
           "then": {
             "properties": { "poe_type": { "const": "none" } },
@@ -488,7 +487,7 @@
           }
         },
         {
-          "$comment": "Stacking-capable models must declare which stacking_technology they use (legal values in switching-axes.json).",
+          "$comment": "Stacking-capable models must declare which stacking_technology they use (legal values in switching-axes.json). Example: C9350 (stackwise-1.6t) / C9500-32QC-A (stackwise-virtual).",
           "if": { "properties": { "stacking_capable": { "const": true } } },
           "then": { "required": ["stacking_technology"] }
         }
@@ -525,6 +524,7 @@
         "fan_trays": { "$ref": "#/$defs/configurable_fan_trays" },
         "ssd_accessory": {
           "type": "object",
+          "$comment": "Optional pluggable SSD accessory kit for models that support one. Example: C9300/C9300LM-48UX-4Y-A (option 9300LM-SSD-ACCKIT=).",
           "required": ["option"],
           "properties": {
             "option": { "type": "string" },
@@ -557,7 +557,7 @@
       "properties": {
         "primary": { "type": "string" },
         "secondary": { "type": ["string", "null"] },
-        "tertiary": { "type": ["string", "null"] },
+        "tertiary": { "type": ["string", "null"], "$comment": "Optional THIRD PSU (chassis with 3 bays); present only on combos needing a third PSU to reach the stated budget. Example: C9350/C9350-48HX (3x1600W -> 4320W)." },
         "poe_budget_watts": { "type": "integer", "minimum": 0 }
       },
       "additionalProperties": false
@@ -570,7 +570,7 @@
         "group": { "type": "string" },
         "additional_groups": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
         "regime_offered": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
-        "tier_locked": { "type": "string", "enum": ["essentials", "advantage"] },
+        "tier_locked": { "type": "string", "enum": ["essentials", "advantage"], "$comment": "Set where the hardware SKU locks the license tier (the -E/-A split); paired with tier_lock_reason. Example: C9500/C9500-32C-E (tier_locked=essentials)." },
         "tier_lock_reason": { "type": "string" }
       },
       "additionalProperties": false
@@ -578,7 +578,7 @@
 
     "configurable_fan_trays": {
       "type": "object",
-      "description": "NEW for C9500. Present only on models with a genuine airflow-direction choice (C9500X). Mirrors configurable_power_supplies' group + valid-subset + default shape, without a capacity matrix (a fan tray has no capacity dimension, just a direction).",
+      "description": "Present only on models with a genuine airflow-direction choice. Mirrors configurable_power_supplies' group + valid-subset + default shape, without a capacity matrix (a fan tray has no capacity dimension, just a direction). Example: C9550/C9550-24L4CD (fan airflow direction).",
       "required": ["group", "valid_options", "default_option"],
       "properties": {
         "group": { "type": "string" },
