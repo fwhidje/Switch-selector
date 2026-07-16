@@ -16,6 +16,8 @@ import { fileURLToPath } from "node:url";
 import { dirname, resolve as resolvePath } from "node:path";
 import { buildIndex } from "../js/core/kb.js";
 import { getAxes, isCountAtLevelAxis, portModel } from "../js/core/registry.js";
+import Ajv2020 from "ajv/dist/2020.js";
+import addFormats from "ajv-formats";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SWITCHING = resolvePath(HERE, "../../DB/switching");
@@ -31,7 +33,15 @@ const TARGETS = families.map(({ series, dir, kbFile }) => ({ label: series, dir,
 
 // One shared schema for every family (the per-family copies were unified into
 // DB/switching/switch-kb.schema.json).
-const SHARED_SCHEMA = readJSON(resolvePath(SWITCHING, "switch-kb.schema.json"));
+const SHARED_SCHEMA_PATH = resolvePath(SWITCHING, "switch-kb.schema.json");
+const SHARED_SCHEMA = readJSON(SHARED_SCHEMA_PATH);
+
+// Formal JSON-Schema SHAPE validation (types, required, enums, oneOf/anyOf,
+// if/then, additionalProperties, format). strict:false because the schema
+// embeds non-vocabulary annotation keywords ($authoring, schema_version, ...).
+const ajv = new Ajv2020({ allErrors: true, strict: false, allowUnionTypes: true });
+addFormats(ajv);
+const validateShape = ajv.compile(SHARED_SCHEMA);
 
 const violations = [];
 const warnings = [];
@@ -48,7 +58,16 @@ const LEGAL_MEDIUM = new Set(pm?.selector_enums?.port_medium ?? []);
 const LEGAL_SPEED = new Set(pm?.selector_enums?.port_speed?.order ?? []);
 const SCALAR_ENUMS = ["series", "poe_type", "stacking_technology"];
 
-// --- Check 1: versions agree ------------------------------------------------
+// --- Check 0: formal JSON-Schema SHAPE (ajv, against the shared schema) ------
+function checkShape(kb, kbFail) {
+  if (validateShape(kb)) return;
+  for (const e of validateShape.errors ?? []) {
+    const params = e.params && Object.keys(e.params).length ? " " + JSON.stringify(e.params) : "";
+    kbFail(`shape ${e.instancePath || "(root)"}`, `${e.message}${params}`);
+  }
+}
+
+// --- Check versions agree ---------------------------------------------------
 function checkVersions(schema, kb, kbFail, schemaFail) {
   if (kb.header?.registry_version !== registry.registry_version)
     kbFail("header.registry_version", `KB ${kb.header?.registry_version} vs registry ${registry.registry_version}`);
@@ -327,17 +346,42 @@ function checkIncomplete(kb, kbWarn) {
       kbWarn(`${m.id}._incomplete`, `field '${f}' is UNCONFIRMED — not sourced from datasheet/OG; see THINGS-TO-COMPLETE.md`);
 }
 
+// --- Check: Example-pointer integrity (schema-level, runs once) -------------
+// Every "Example: <FAMILY>/<id>" in a schema $comment must resolve to a real
+// token in that family's KB, so the greppable pointers can't rot.
+function checkExamplesIntegrity(schemaFail) {
+  const schemaText = readFileSync(SHARED_SCHEMA_PATH, "utf8");
+  const kbText = {};
+  for (const { label, dir, kbFile } of TARGETS)
+    kbText[label] = readFileSync(resolvePath(SWITCHING, dir, kbFile), "utf8");
+  const re = /Example:\s*([A-Z][A-Z0-9]+)\/([A-Za-z0-9][A-Za-z0-9._-]*)/g;
+  const seen = new Set();
+  let m;
+  while ((m = re.exec(schemaText))) {
+    const fam = m[1];
+    const id = m[2].replace(/[._-]+$/, ""); // strip trailing sentence punctuation
+    const key = `${fam}/${id}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    if (!(fam in kbText)) { schemaFail(`Example ${key}`, `unknown family '${fam}'`); continue; }
+    if (!kbText[fam].includes(id)) schemaFail(`Example ${key}`, `id '${id}' not found in ${fam} KB`);
+  }
+}
+
 // --- per-target driver ------------------------------------------------------
 function validateTarget({ label, dir, kbFile }) {
   const base = resolvePath(SWITCHING, dir);
   const schema = SHARED_SCHEMA;
   const kb = readJSON(resolvePath(base, kbFile));
-  kb._index = buildIndex(kb);
-
   const kbFail = (path, message) => fail(`${label}:KB`, path, message);
   const schemaFail = (path, message) => fail(`${label}:schema`, path, message);
   const kbWarn = (path, message) => warn(`${label}:KB`, path, message);
 
+  // SHAPE-check the raw KB first, before we attach the non-schema _index below
+  // (the schema's top-level additionalProperties:false would reject _index).
+  checkShape(kb, kbFail);
+
+  kb._index = buildIndex(kb);
   checkVersions(schema, kb, kbFail, schemaFail);
   checkRegistrySchema(schema, schemaFail);
   checkKbAxisValues(kb, kbFail);
@@ -353,6 +397,7 @@ function validateTarget({ label, dir, kbFile }) {
 }
 
 const summaries = TARGETS.map(validateTarget);
+checkExamplesIntegrity((path, message) => fail("schema:examples", path, message));
 
 if (warnings.length > 0) {
   console.warn(`INCOMPLETE — ${warnings.length} warning(s) (unsourced fields, see THINGS-TO-COMPLETE.md):`);
