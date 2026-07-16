@@ -18,5 +18,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Consistency validator (registry/schema/KB + reference integrity)
+          cache: npm
+          cache-dependency-path: selector/package-lock.json
+      - name: Install validator dev deps (ajv — dev/CI only; runtime stays zero-dep)
+        run: npm ci
+        working-directory: selector
+      - name: Consistency validator (ajv shape + registry/schema/KB + reference integrity)
         run: node selector/tools/validate-kb.mjs

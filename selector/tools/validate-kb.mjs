@@ -16,6 +16,8 @@ import { fileURLToPath } from "node:url";
 import { dirname, resolve as resolvePath } from "node:path";
 import { buildIndex } from "../js/core/kb.js";
 import { getAxes, isCountAtLevelAxis, portModel } from "../js/core/registry.js";
+import Ajv2020 from "ajv/dist/2020.js";
+import addFormats from "ajv-formats";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SWITCHING = resolvePath(HERE, "../../DB/switching");
@@ -27,8 +29,19 @@ const readJSON = (fullPath) => JSON.parse(readFileSync(fullPath, "utf8"));
 // have an empty `models` (a series mid-build): the catalog/group checks
 // still run; the per-model checks simply find nothing.
 const families = readJSON(resolvePath(SWITCHING, "families.json"));
-const TARGETS = families.map(({ series, dir, kbFile }) =>
-  ({ label: series, dir, schemaFile: "switch-kb.schema.json", kbFile }));
+const TARGETS = families.map(({ series, dir, kbFile }) => ({ label: series, dir, kbFile }));
+
+// One shared schema for every family (the per-family copies were unified into
+// DB/switching/switch-kb.schema.json).
+const SHARED_SCHEMA_PATH = resolvePath(SWITCHING, "switch-kb.schema.json");
+const SHARED_SCHEMA = readJSON(SHARED_SCHEMA_PATH);
+
+// Formal JSON-Schema SHAPE validation (types, required, enums, oneOf/anyOf,
+// if/then, additionalProperties, format). strict:false because the schema
+// embeds non-vocabulary annotation keywords ($authoring, schema_version, ...).
+const ajv = new Ajv2020({ allErrors: true, strict: false, allowUnionTypes: true });
+addFormats(ajv);
+const validateShape = ajv.compile(SHARED_SCHEMA);
 
 const violations = [];
 const warnings = [];
@@ -45,7 +58,16 @@ const LEGAL_MEDIUM = new Set(pm?.selector_enums?.port_medium ?? []);
 const LEGAL_SPEED = new Set(pm?.selector_enums?.port_speed?.order ?? []);
 const SCALAR_ENUMS = ["series", "poe_type", "stacking_technology"];
 
-// --- Check 1: versions agree ------------------------------------------------
+// --- Check 0: formal JSON-Schema SHAPE (ajv, against the shared schema) ------
+function checkShape(kb, kbFail) {
+  if (validateShape(kb)) return;
+  for (const e of validateShape.errors ?? []) {
+    const params = e.params && Object.keys(e.params).length ? " " + JSON.stringify(e.params) : "";
+    kbFail(`shape ${e.instancePath || "(root)"}`, `${e.message}${params}`);
+  }
+}
+
+// --- Check versions agree ---------------------------------------------------
 function checkVersions(schema, kb, kbFail, schemaFail) {
   if (kb.header?.registry_version !== registry.registry_version)
     kbFail("header.registry_version", `KB ${kb.header?.registry_version} vs registry ${registry.registry_version}`);
@@ -282,6 +304,38 @@ function checkDerived(kb, kbFail, kbWarn) {
   }
 }
 
+// --- Check: fan-tray coupling (unified-schema optional block) ----------------
+// fan_trays is OPTIONAL at the shape level (only C9500/C9550 use it). Enforce
+// that when a family uses it, the pieces hang together: catalog.fan_trays
+// present <-> groups.fan_tray_groups present; each configurables.fan_trays.group
+// resolves; fan-tray group members + a model's valid_options/default_option all
+// resolve. (This enforces CONSISTENCY, not "family X must have fans".)
+function checkFanTrays(kb, kbFail) {
+  const catFans = kb.catalog?.fan_trays;
+  const fanGroups = kb.groups?.fan_tray_groups;
+  const hasCat = Array.isArray(catFans) && catFans.length > 0;
+  const hasGroups = Array.isArray(fanGroups) && fanGroups.length > 0;
+  if (hasCat !== hasGroups)
+    kbFail("catalog.fan_trays / groups.fan_tray_groups",
+      `fan-tray coupling: catalog.fan_trays ${hasCat ? "present" : "absent"} but groups.fan_tray_groups ${hasGroups ? "present" : "absent"} — both or neither`);
+  const catIds = new Set((catFans ?? []).map((f) => f.id));
+  const groupById = new Map((fanGroups ?? []).map((g) => [g.id, g]));
+  for (const g of fanGroups ?? [])
+    for (const m of g.members ?? [])
+      if (!catIds.has(m)) kbFail(`fan_tray_group ${g.id}.members`, `unknown fan_tray '${m}'`);
+  for (const m of kb.models ?? []) {
+    const ft = m.configurables?.fan_trays;
+    if (!ft) continue;
+    const grp = groupById.get(ft.group);
+    if (!grp) { kbFail(`${m.id}.configurables.fan_trays.group`, `unknown fan_tray_group '${ft.group}'`); continue; }
+    const members = new Set(grp.members ?? []);
+    for (const o of ft.valid_options ?? [])
+      if (!members.has(o)) kbFail(`${m.id}.configurables.fan_trays.valid_options`, `'${o}' not in fan_tray_group '${ft.group}'`);
+    if (ft.default_option && !(ft.valid_options ?? []).includes(ft.default_option))
+      kbFail(`${m.id}.configurables.fan_trays.default_option`, `'${ft.default_option}' not in valid_options`);
+  }
+}
+
 // --- Check 8: incomplete-field flags ----------------------------------------
 // A model may list fields it could not source from authoritative docs. Surface
 // each as a WARNING (not a failure) so the build stays green while the gaps are
@@ -292,23 +346,49 @@ function checkIncomplete(kb, kbWarn) {
       kbWarn(`${m.id}._incomplete`, `field '${f}' is UNCONFIRMED — not sourced from datasheet/OG; see THINGS-TO-COMPLETE.md`);
 }
 
-// --- per-target driver ------------------------------------------------------
-function validateTarget({ label, dir, schemaFile, kbFile }) {
-  const base = resolvePath(SWITCHING, dir);
-  const schema = readJSON(resolvePath(base, schemaFile));
-  const kb = readJSON(resolvePath(base, kbFile));
-  kb._index = buildIndex(kb);
+// --- Check: Example-pointer integrity (schema-level, runs once) -------------
+// Every "Example: <FAMILY>/<id>" in a schema $comment must resolve to a real
+// token in that family's KB, so the greppable pointers can't rot.
+function checkExamplesIntegrity(schemaFail) {
+  const schemaText = readFileSync(SHARED_SCHEMA_PATH, "utf8");
+  const kbText = {};
+  for (const { label, dir, kbFile } of TARGETS)
+    kbText[label] = readFileSync(resolvePath(SWITCHING, dir, kbFile), "utf8");
+  const re = /Example:\s*([A-Z][A-Z0-9]+)\/([A-Za-z0-9][A-Za-z0-9._-]*)/g;
+  const seen = new Set();
+  let m;
+  while ((m = re.exec(schemaText))) {
+    const fam = m[1];
+    const id = m[2].replace(/[._-]+$/, ""); // strip trailing sentence punctuation
+    const key = `${fam}/${id}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    if (!(fam in kbText)) { schemaFail(`Example ${key}`, `unknown family '${fam}'`); continue; }
+    if (!kbText[fam].includes(id)) schemaFail(`Example ${key}`, `id '${id}' not found in ${fam} KB`);
+  }
+}
 
+// --- per-target driver ------------------------------------------------------
+function validateTarget({ label, dir, kbFile }) {
+  const base = resolvePath(SWITCHING, dir);
+  const schema = SHARED_SCHEMA;
+  const kb = readJSON(resolvePath(base, kbFile));
   const kbFail = (path, message) => fail(`${label}:KB`, path, message);
   const schemaFail = (path, message) => fail(`${label}:schema`, path, message);
   const kbWarn = (path, message) => warn(`${label}:KB`, path, message);
 
+  // SHAPE-check the raw KB first, before we attach the non-schema _index below
+  // (the schema's top-level additionalProperties:false would reject _index).
+  checkShape(kb, kbFail);
+
+  kb._index = buildIndex(kb);
   checkVersions(schema, kb, kbFail, schemaFail);
   checkRegistrySchema(schema, schemaFail);
   checkKbAxisValues(kb, kbFail);
   checkPorts(kb, kbFail);
   checkGroups(kb, kbFail);
   checkReferences(kb, kbFail);
+  checkFanTrays(kb, kbFail);
   checkDerived(kb, kbFail, kbWarn);
   checkIncomplete(kb, kbWarn);
 
@@ -317,6 +397,7 @@ function validateTarget({ label, dir, schemaFile, kbFile }) {
 }
 
 const summaries = TARGETS.map(validateTarget);
+checkExamplesIntegrity((path, message) => fail("schema:examples", path, message));
 
 if (warnings.length > 0) {
   console.warn(`INCOMPLETE — ${warnings.length} warning(s) (unsourced fields, see THINGS-TO-COMPLETE.md):`);
