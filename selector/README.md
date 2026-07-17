@@ -1,8 +1,9 @@
-# C9300 Selector
+# Networking Equipment Selector
 
-A pure, generic **constraint solver** plus a **basic facet UI** for the Cisco Catalyst 9300 family.
-Vanilla JavaScript (ES modules), **no build step** — runs as static files and deploys to GitHub
-Pages as-is. The solver core is DOM-free and IO-free so a future MCP server can reuse it unchanged.
+A pure, generic **constraint solver over configurations** plus a **facet UI**, spanning six switch
+families (C9200, C9300, C9350, C9500, C9550, Meraki MS). Vanilla JavaScript (ES modules), **no build
+step** — runs as static files and deploys to GitHub Pages as-is. The core is DOM-free and IO-free so
+the Stage-2 MCP server can reuse it unchanged.
 
 ## Run it
 
@@ -14,8 +15,9 @@ python3 -m http.server
 
 ## Validate the data
 
-The three knowledge files are a projection chain — **registry → schema → KB**. The validator is the
-mechanical guard that keeps them consistent:
+The knowledge files are a projection chain — **registry → schema → KB**. The validator is the
+mechanical guard that keeps them consistent (incl. the v1.0.0 variable metadata: dimensions,
+bindings, defaults, presentation):
 
 ```bash
 cd selector && npm run validate          # node tools/validate-kb.mjs
@@ -23,53 +25,68 @@ cd selector && npm run validate          # node tools/validate-kb.mjs
 
 It runs in CI (`.github/workflows/validate-kb.yml`) on every push/PR.
 
+## The contract (registry v1.0.0)
+
+The center of gravity is the **query/response contract** — every front-end (this UI, the future MCP
+server, the Stage-3 agent) is a renderer of it. See the root guideline §4 for the design rationale.
+
+- **Everything is a decision variable over configurations.** A solve answers with configurations
+  (model + fitted uplink option + PSU set + license SKUs + cables), not bare models. One flat
+  registry list (`../DB/switching/switching-axes.json`) declares every variable: its `dimension`
+  (model-stored vs KB-derived via a `binding`), whether it `eliminates` models, its `default` rule
+  (incl. **`must_resolve`** — no safe default; licensing regime/tier/term), and `presentation`.
+- **The response carries the residual decision space.** `solve(query, kb, registry)` returns
+  `{ candidates, open_variables, eliminated }`: ranked configurations with fully-resolved default
+  BOMs (every default with a `reason`), plus every variable left open with its remaining domain and
+  default. Facet greying, MCP parameter narrowing, and agent follow-up questions are all the same
+  `open_variables` computation. The selector is stateless and never asks questions.
+- **Queries are built in one place** (`js/core/query.js`): builders, the PoE demand translation
+  ("N ports at level L" → derived budget/level/count constraints from the registry's `level_watts`),
+  and `validateQuery()`. Constraints are `{ variable, condition, value, severity }`; port demands
+  add a `where: {role?, medium?, speed}` selector and are **role-agnostic by default** — the
+  solver's max-flow pool feasibility decides whether access ports or an uplink module supplies them.
+
 ## Layout
 
 ```
 js/core/   pure, importable engine (no DOM)
-  registry.js  accessors over ../DB/switching/switching-axes.json (the filterable vocabulary + kind/role)
-  kb.js        load + id-index ../DB/switching/C9300/c9300_knowledge_base.json (catalog, groups, models)
+  registry.js  accessors over ../DB/switching/switching-axes.json (variables, dimensions,
+               bindings, defaults/must_resolve, presentation groups)
+  kb.js        load + id-index the family KBs listed in ../DB/switching/families.json
+  query.js     canonical query construction + demand translations + validation (UI & MCP both call it)
   resolve.js   port pools, configured variants, pool-feasibility (max-flow), and the resolved BOM
-  solver.js    solve(query, kb, registry) -> { candidates, default, eliminated }; availableValues()
+  solver.js    solve() -> { candidates, open_variables, eliminated }; facetDomains()
 tools/
-  validate-kb.mjs   registry/schema/KB consistency validator
+  validate-kb.mjs   registry/schema/KB consistency validator (shape, projections, bindings, references)
 js/ui/
-  app.js       the only DOM module: builds controls from the registry, calls solve(), renders kits
+  app.js       the only DOM module: a thin renderer — panels from registry presentation metadata,
+               controls from variable KIND, must-resolve badges, facets from residual domains,
+               the "still open" strip from open_variables, kitlists from candidate BOMs
 ```
 
-## The model (registry v0.4.0)
+## Engine notes
 
 - **One narrowing engine over _configured variants_.** A variant = a model with one fitted uplink
   option. Filtering and configuring are the same narrowing; survivors carry a resolved kitlist.
+  Pinning `uplink_module` narrows the variant domain (and eliminates models whose module group lacks
+  it); pinning `model_id` turns a solve into an exact-model lookup whose BOM blocks are the option
+  summary (uplink modules, PSUs, licenses, cables).
 - **Unified ports.** Capability is data: `model.ports` (role=access) + the fitted module's `ports`
   (role=uplink) form a variant's pool. Each port group is `{count, role, medium, speeds[]}`;
-  subsumption is the speed set (a 25G SFP28 port lists `[1g,10g,25g]`). The parametrised
-  **`port_count`** axis counts ports whose `speeds[]` include a requested speed, and simultaneous
-  multi-speed demand is checked for **pool feasibility** against the shared physical ports (so "2×25
-  and 2×10" on an 8-port module passes, but "8×25 and 8×10" — 16 ports — fails).
-- **Axis metadata.** Every axis declares a `kind` (`ordered` | `count-at-level` |
-  `monotonic-capability` | `discriminating` | `numeric` | `boolean`) and a `role` (`requirement` |
-  `config-variable`). The UI builds controls from this: ordered `poe_type` gets an *at-least / exactly*
-  toggle; numerics get min/max; monotonic capabilities get *required / any*; enums get value pickers
-  with **dead options disabled** (and single-value axes collapsed) via `availableValues()`.
-- **License tier is a filter; term is a config-variable.** `license_tier` is a stored enum-set of the
-  tiers a model offers (mirrors `license_regime`): choosing *advantage* drops DNA `-E`, keeps `-A` and
-  Meraki `-M`, and the kitlist resolves the advantage SKU. `license_term` and `psu_redundancy` are
-  `config_variables` — they refine the kitlist without eliminating models.
-- **Configurator defaults.** Each model ships a single `default_primary` PSU (from Cisco's default-PSU
-  table; `-M` uses its sole valid primary). To meet a higher PoE load the configurator **adds a
-  secondary** and upsizes the primary only when no secondary covers it; `psu_redundancy` forces a pair.
-  Stack/stackpower cables default to the group `none_option` (shortest cable if one is taken). These
-  default/preference rules live in the configurator (`resolve.js`), not in the KB or the agent.
-- **PoE demand input.** PoE need is entered as a dynamic list of *N ports at level L* rows (a filled
-  row spawns a fresh blank one). The UI translates it — using `poe_type.level_watts` from the registry
-  (the single source) — into `poe_budget_watts ≥ Σ N×watts`, `poe_type ≥ max level`, and
-  `total_port_count ≥ Σ N`, so mixed needs like "24 PoE+ + 8 UPoE" size the PSU correctly. Multiple
-  constraints on one axis intersect (most-restrictive wins).
+  subsumption is the speed set. Simultaneous multi-speed demand is checked for **pool feasibility**
+  against the shared physical ports (so "2×25 and 2×10" on an 8-port module passes, but "8×25 and
+  8×10" — 16 ports — fails).
+- **Defaulting policy is code, but named and visible.** The `psu-default` policy (ship
+  `default_primary`; add a secondary to meet a PoE load; upsize only when no secondary covers it;
+  redundancy forces a matched pair; triple forces a tertiary row) and the cable defaults
+  (`none_option`, shortest when stacking/stackpower is required) live in `resolve.js`. Every
+  resolved default carries its `reason` in the response — an agent doesn't read the policy, it reads
+  the outcome, the alternatives, and the rationale.
 - **No per-switch logic.** A new switch is new JSON.
 
 ## Out of scope (deferred)
 
-QSFP/SFP breakout (a future configurable with its own cable SKU); pricing and price-based ranking
-(the default order is a deterministic stub); the MCP server; the natural-language guided agent;
-non-C9300 families.
+The MCP server itself (the contract is designed for it); pricing and price-based ranking (the
+default order is a deterministic minimal-first stub); multi-switch quantity sizing (a future layer
+*on top of* the contract); UI modes (guided run, richer lookup view) — three renderings of the same
+response, deliberately after the contract; QSFP/SFP breakout.

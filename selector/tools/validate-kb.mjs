@@ -15,7 +15,10 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve as resolvePath } from "node:path";
 import { buildIndex } from "../js/core/kb.js";
-import { getAxes, isCountAtLevelAxis, portModel } from "../js/core/registry.js";
+import {
+  getVariables, isCountAtLevel, portModel, isModelDimension, isConfigurationDimension,
+  storageOf, binding, defaultRule, legalValues,
+} from "../js/core/registry.js";
 import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 
@@ -50,8 +53,10 @@ const warn = (file, path, message) => warnings.push({ file, path, message });
 
 // --- shared registry (one vocabulary for every series) ----------------------
 const registry = readJSON(resolvePath(SWITCHING, "switching-axes.json"));
-const axes = getAxes(registry);
-const axisByName = new Map(axes.map((a) => [a.name, a]));
+const variables = getVariables(registry);
+const axisByName = new Map(variables.map((a) => [a.name, a]));
+// Model-dimension variables stored under axis_values (what the schema projects).
+const storedAxes = variables.filter((v) => isModelDimension(v) && storageOf(v) === "axis_values");
 const pm = portModel(registry);
 const LEGAL_ROLE = new Set(pm?.selector_enums?.port_role ?? []);
 const LEGAL_MEDIUM = new Set(pm?.selector_enums?.port_medium ?? []);
@@ -77,19 +82,55 @@ function checkVersions(schema, kb, kbFail, schemaFail) {
     schemaFail("registry_version", `schema ${schema.registry_version} vs registry ${registry.registry_version}`);
 }
 
+// --- Check 1: registry internal integrity (v1.0.0 variable metadata) --------
+// The unified variable list carries structural metadata the consumers rely on;
+// keep it well-formed so the UI/solver/MCP never read a half-declared variable.
+const BINDING_SOURCES = new Set([
+  "network_module_group", "license_group_terms", "power_supply_group",
+  "stack_cable_group", "stackpower_cable_group",
+]);
+const DEFAULT_KINDS = new Set(["fixed", "none_option", "kb_ref", "policy", "must_resolve"]);
+function checkRegistryIntegrity(regFail) {
+  const groups = new Set(registry.presentation_groups ?? []);
+  for (const v of variables) {
+    if (!isModelDimension(v) && !isConfigurationDimension(v))
+      regFail(`${v.name}.dimension`, `'${v.dimension}' is not model|configuration`);
+    const pg = v.presentation?.group;
+    if (pg == null) regFail(`${v.name}.presentation`, "missing presentation.group");
+    else if (!groups.has(pg)) regFail(`${v.name}.presentation.group`, `'${pg}' not in presentation_groups`);
+    const d = defaultRule(v);
+    if (d && !DEFAULT_KINDS.has(d.kind))
+      regFail(`${v.name}.default.kind`, `'${d.kind}' not one of ${[...DEFAULT_KINDS].join("|")}`);
+    if (d?.kind === "fixed" && !("value" in d))
+      regFail(`${v.name}.default`, "kind 'fixed' requires a value");
+    if (d?.kind === "must_resolve" && ("value" in d || "ref" in d))
+      regFail(`${v.name}.default`, "must_resolve means NO safe default — it cannot also carry one");
+    if (isConfigurationDimension(v)) {
+      const b = binding(v);
+      if (!b && legalValues(v).length === 0)
+        regFail(`${v.name}`, "configuration variable needs a binding or closed legal_values");
+      if (b && !BINDING_SOURCES.has(b.source))
+        regFail(`${v.name}.binding.source`, `'${b.source}' not a known binding source`);
+      if (v.required_on_model)
+        regFail(`${v.name}.required_on_model`, "only model-dimension variables are stored on models");
+    }
+  }
+}
+
 // --- Check 2: registry <-> schema axis_values projection --------------------
-// Scalar axes (kind != count-at-level) must project to a schema axis_values
-// property. Parametrised port axes must NOT (they resolve against model.ports).
+// Stored model-dimension variables must project to a schema axis_values
+// property. Parametrised port variables (storage "ports") and identity
+// variables (model_id) must NOT; configuration variables have no projection.
 function checkRegistrySchema(schema, schemaFail) {
   const props = schema?.$defs?.axis_values?.properties ?? {};
-  for (const axis of axes) {
-    if (isCountAtLevelAxis(axis)) {
-      if (axis.name in props)
-        schemaFail(`axis_values.${axis.name}`, "parametrised port axis must not be a stored axis_values field");
-      continue;
+  const storedNames = new Set(storedAxes.map((a) => a.name));
+  for (const v of variables) {
+    if (storedNames.has(v.name)) {
+      if (!(v.name in props))
+        schemaFail("axis_values.properties", `registry variable '${v.name}' has no schema projection`);
+    } else if (v.name in props) {
+      schemaFail(`axis_values.${v.name}`, "non-stored variable must not be a stored axis_values field");
     }
-    if (!(axis.name in props))
-      schemaFail("axis_values.properties", `registry axis '${axis.name}' has no schema projection`);
   }
   for (const p of Object.keys(props)) {
     if (p === "_comment") continue;
@@ -110,14 +151,16 @@ function checkKbAxisValues(kb, kbFail) {
     const av = m.axis_values ?? {};
     for (const key of Object.keys(av)) {
       if (key === "_comment") continue;
-      const axis = axisByName.get(key);
-      if (!axis) { kbFail(`${m.id}.axis_values.${key}`, "not a registered axis"); continue; }
-      if (isCountAtLevelAxis(axis))
-        kbFail(`${m.id}.axis_values.${key}`, "parametrised port axis must not be stored (resolves via model.ports)");
+      const variable = axisByName.get(key);
+      if (!variable) { kbFail(`${m.id}.axis_values.${key}`, "not a registered variable"); continue; }
+      if (isCountAtLevel(variable))
+        kbFail(`${m.id}.axis_values.${key}`, "parametrised port variable must not be stored (resolves via model.ports)");
+      if (!isModelDimension(variable) || storageOf(variable) !== "axis_values")
+        kbFail(`${m.id}.axis_values.${key}`, "only stored model-dimension variables live in axis_values");
     }
-    for (const axis of axes)
+    for (const axis of storedAxes)
       if (axis.required_on_model === true && !(axis.name in av))
-        kbFail(`${m.id}.axis_values`, `missing required axis '${axis.name}'`);
+        kbFail(`${m.id}.axis_values`, `missing required variable '${axis.name}'`);
     if (av.stacking_capable === true && !("stacking_technology" in av))
       kbFail(`${m.id}.axis_values`, "stacking_capable=true requires stacking_technology");
     if (av.poe_capable === true && !("poe_budget_watts" in av))
@@ -282,6 +325,37 @@ function checkReferences(kb, kbFail) {
   }
 }
 
+// --- Check 6b: configuration-variable bindings ------------------------------
+// Each configuration variable's domain is DERIVED from the KB via its declared
+// binding. Where a model carries the corresponding configurable, the bound
+// group must support the variable's declared default (none_option present when
+// the default is none_option; default_primary present for the psu-default
+// policy). Group-reference resolution itself is covered by checks 5/6.
+function checkBindings(kb, kbFail) {
+  const idx = kb._index;
+  const noneNeeded = new Map(); // binding source -> variable name defaulting to none_option
+  for (const v of variables) {
+    if (!isConfigurationDimension(v)) continue;
+    const b = binding(v);
+    if (b && defaultRule(v)?.kind === "none_option") noneNeeded.set(b.source, v.name);
+  }
+  const seen = new Set();
+  const needNone = (source, grp) => {
+    if (!noneNeeded.has(source) || !grp || seen.has(`${source}:${grp.id}`)) return;
+    seen.add(`${source}:${grp.id}`);
+    if (grp.none_option == null)
+      kbFail(`${source} ${grp.id}`, `variable '${noneNeeded.get(source)}' defaults to none_option but the group declares none`);
+  };
+  for (const m of kb.models ?? []) {
+    const cfg = m.configurables ?? {};
+    if (cfg.network_modules?.group) needNone("network_module_group", idx.network_module_groups.get(cfg.network_modules.group));
+    if (cfg.stack_cables?.group) needNone("stack_cable_group", idx.stack_cable_groups.get(cfg.stack_cables.group));
+    if (cfg.stackpower_cables?.group) needNone("stackpower_cable_group", idx.stackpower_cable_groups.get(cfg.stackpower_cables.group));
+    if (cfg.power_supplies && !cfg.power_supplies.default_primary)
+      kbFail(`${m.id}.configurables.power_supplies`, "the psu-default policy requires default_primary");
+  }
+}
+
 // --- Check 7: derived-value coherence ---------------------------------------
 function checkDerived(kb, kbFail, kbWarn) {
   for (const m of kb.models ?? []) {
@@ -388,6 +462,7 @@ function validateTarget({ label, dir, kbFile }) {
   checkPorts(kb, kbFail);
   checkGroups(kb, kbFail);
   checkReferences(kb, kbFail);
+  checkBindings(kb, kbFail);
   checkFanTrays(kb, kbFail);
   checkDerived(kb, kbFail, kbWarn);
   checkIncomplete(kb, kbWarn);
@@ -396,6 +471,7 @@ function validateTarget({ label, dir, kbFile }) {
   return { label, schemaVersion: schema.schema_version, models: (kb.models ?? []).length, incomplete };
 }
 
+checkRegistryIntegrity((path, message) => fail("registry", path, message));
 const summaries = TARGETS.map(validateTarget);
 checkExamplesIntegrity((path, message) => fail("schema:examples", path, message));
 

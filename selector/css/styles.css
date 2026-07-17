@@ -113,3 +113,25 @@ details summary { cursor: pointer; font-size: 12.5px; color: #2f7bd6; }
 #eliminated { margin-top: 8px; }
 #eliminated ul { margin: 8px 0 0; padding-left: 18px; font-size: 12px; color: #4a5a72; }
 #eliminated li { font-family: ui-monospace, Menlo, monospace; }
+
+/* --- residual decision space (open variables) + must-resolve badge -------- */
+.must-resolve {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0 0.35rem;
+  border-radius: 3px;
+  background: #b3541e;
+  color: #fff;
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  vertical-align: middle;
+}
+.open-variables {
+  margin: 0.5rem 0 1rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px dashed #8884;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+.open-variables ul { margin: 0.25rem 0 0; padding-left: 1.1rem; }
+.open-variables li { margin: 0.1rem 0; }

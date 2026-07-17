@@ -1,15 +1,25 @@
 {
   "$id": "switching-axes.json",
-  "title": "Switching Axis Registry",
-  "registry_version": "0.10.0",
-  "role": "Authoritative vocabulary for the Networking Equipment Selector. The registry enforces MEANING (what can be constrained, how, and which values are legal). It is the SOURCE; the KB schema is a projection of it. Nothing is filterable unless declared here. Each axis declares KIND (ordered | count-at-level | monotonic-capability | discriminating | numeric | boolean) and ROLE (requirement). CONFIG-VARIABLES (config_variables block) are not filter axes: they do not eliminate models, they refine the resolved kitlist (BOM) and are surfaced at the configuration stage. validate-kb.mjs checks model values against this file.",
+  "title": "Switching Decision-Variable Registry",
+  "registry_version": "1.0.0",
+  "role": "Authoritative vocabulary for the Networking Equipment Selector. The registry enforces MEANING (what can be constrained, how, and which values are legal). It is the SOURCE; the KB schema is a projection of it. Nothing is constrainable unless declared here. v1.0.0 unifies the former axes + config_variables split into ONE flat list of DECISION VARIABLES over configurations: a solve answers with configurations (model + uplink option + PSU set + license SKUs + cables), and whether a variable filters models or refines the kitlist is declared per variable (`eliminates`), not a structural class. validate-kb.mjs checks model values and bindings against this file.",
   "consumers": [
-    "Web UI builds form controls from this registry (KIND drives the control; ROLE drives WHEN it surfaces).",
+    "Web UI builds form controls and panel layout from this registry (KIND drives the control; presentation drives WHERE it surfaces).",
     "MCP server (Stage 2) builds tool parameters from this registry.",
-    "Reasoning agent (Stage 3) reasons over this registry (via the MCP server).",
-    "The KB JSON schema projects typed fields from these axes."
+    "Reasoning agent (Stage 3) reasons over this registry (via the MCP server); `default.kind = must_resolve` marks the variables it must settle with the user before a BOM is final.",
+    "The KB JSON schema projects typed fields from the model-dimension variables."
   ],
-  "change_policy": "Adding a switch model is CHEAP (more data the solver already handles). Adding or changing an AXIS is EXPENSIVE and STRUCTURAL: it touches the UI, the MCP parameters, possibly a new solver condition type. An agent populating models must NEVER add, rename, or re-type an axis on its own — surface it for human ruling. Bump registry_version when the axis set changes.",
+  "change_policy": "Adding a switch model is CHEAP (more data the solver already handles). Adding or changing a VARIABLE is EXPENSIVE and STRUCTURAL: it touches the UI, the MCP parameters, possibly a new solver condition type. An agent populating models must NEVER add, rename, or re-type a variable on its own — surface it for human ruling. Bump registry_version when the variable set changes.",
+
+  "contract": {
+    "_comment": "The query/response contract every front-end (UI, MCP server, agent) renders. A QUERY is a list of constraints {variable, condition, value, severity(hard|soft)}; port demands use {variable:'port_count', where:{role?,medium?,speed}, ...}. The selector is STATELESS and never asks questions — it answers with resolved defaults plus honest residual choice, and dialogue is the caller's job.",
+    "response": {
+      "candidates": "Surviving configurations, ranked. Each carries the model plus a resolved `bom` (default SKU choices, each with a `reason`) and the per-candidate domains of its configuration variables (uplink options, PSU matrix, license groups/terms, cables).",
+      "open_variables": "Every variable the query left unconstrained (or partially bounded), with its REMAINING domain across the survivors, its default (if any), and `must_resolve` where no safe default exists. This is the caller's 'what is still open / what should I ask next' — and the UI's facet source.",
+      "eliminated": "Models removed by the query, each with the first violated constraint as reason."
+    },
+    "defaults": "A variable without a `default` field is a pure requirement: leaving it open means 'don't care'. A `default` of kind fixed/none_option/kb_ref/policy is a safe silent default the BOM resolves (policy stays code, but it is NAMED here and every resolved default carries its reason in the response). Kind must_resolve means NO safe default exists — a caller must settle it (agent: ask the user) before the BOM is orderable."
+  },
 
   "port_model": {
     "_comment": "v0.4.0 unified port model (encoding B). Replaces the former multigig_*_port_count, access_*_fiber, and uplink_* axes with ONE parametrised axis 'port_count' plus the selector enums below. Port capability is DATA: a model carries model.ports (role=access) and each network module carries ports (role=uplink); a configured variant's port pool = model.ports + the fitted module's ports. Subsumption is the per-port speed SET (a 25G SFP28 port lists [1g,10g,25g]); the solver never infers speed downshift.",
@@ -24,147 +34,250 @@
     }
   },
 
-  "config_variables": {
-    "_comment": "Dimensions a user PICKS to finalise an orderable kitlist, AFTER the requirement axes have narrowed the model set. They do NOT filter/eliminate models; they resolve which concrete SKUs the BOM shows. Source values live in the KB (license groups). The UI surfaces these at the configuration stage; an MCP server would expose them as kitlist parameters, not filters.",
-    "psu_redundancy": {
-      "type": "boolean",
-      "legal_values": [false, true],
-      "source": "configurator default policy",
-      "notes": "Off by default: the kitlist ships a single PSU (configurables.power_supplies.default_primary), and a secondary is added only when a PoE request exceeds what the default primary alone delivers. When ON, the configurator forces a redundant (primary, secondary) pair. Never eliminates a model."
-    },
-    "license_term": {
-      "type": "integer",
-      "legal_values": [1, 3, 5, 7, 10],
-      "source": "license_group.term_variable.choices_years",
-      "notes": "Subscription term length in years. Available choices vary per license group (some groups carry no term_variable). The pick resolves the concrete subscription SKU (matched on the '-<n>Y' suffix). Never eliminates a model."
-    },
-    "psu_triple": {
-      "type": "boolean",
-      "legal_values": [false, true],
-      "source": "configurator default policy",
-      "notes": "Off by default. When ON, forces a triple-PSU (primary+secondary+tertiary) configuration on models whose poe_budget_matrix has a tertiary-capable row; has no effect on models without one (e.g. two-bay chassis). Never eliminates a model."
-    }
-  },
+  "presentation_groups": ["Series", "Interfaces", "PoE", "Stacking / PSU", "Licensing"],
 
-  "axes": [
+  "variables": [
+    {
+      "name": "model_id",
+      "type": "enum",
+      "kind": "discriminating",
+      "dimension": "model",
+      "storage": "identity",
+      "accepted_conditions": ["==", "in"],
+      "eliminates": true,
+      "presentation": { "group": "Series", "ask_priority": 11 },
+      "notes": "The exact orderable base SKU (model.id). An open enum: legal values are the model ids present in the loaded KBs, not enumerated here. Pinning it turns a solve into an exact-model lookup — the response's per-candidate domains then serve as the datasheet summary (uplink options, PSUs, licenses, cables). Not reported in open_variables (its open domain IS the candidate list)."
+    },
     {
       "name": "series",
       "type": "enum",
       "kind": "discriminating",
-      "role": "requirement",
+      "dimension": "model",
       "legal_values": ["C9300", "C9300L", "C9300X", "C9300LM", "C9350", "C9200", "C9200L", "C9200CX", "MS130", "MS150", "C9500", "C9500X", "C9550"],
       "accepted_conditions": ["==", "in"],
       "required_on_model": true,
-      "notes": "Series is an ordinary axis, not a privileged root. Sub-families are distinct series values. Legal_values will grow as families are added. Added 'MS130' and 'MS150' (native Meraki cloud-managed switches, DB/switching/MS/) without a registry_version bump, since no other axis KIND/ROLE/shape changed. Added 'C9500' and 'C9500X' (Cisco Catalyst 9500 Series, DB/switching/C9500/) on the same precedent: C9500X is a distinct Silicon One Q200-based platform from the UADP-based C9500, mirroring the existing C9300/C9300X split. Added 'C9550' (Cisco C9550 Series Smart Switches, DB/switching/C9550/) — fixed core/agg switches on Silicon One E100/E104, same precedent (legal-value growth only)."
-    },
-    {
-      "name": "poe_capable",
-      "type": "boolean",
-      "kind": "discriminating",
-      "role": "requirement",
-      "accepted_conditions": ["=="],
-      "required_on_model": true,
-      "notes": "Discriminating, not monotonic: a non-PoE model is a deliberate (cheaper) choice, so both true and false are meaningful filters. Derivable from poe_type != none; kept explicit for the schema's PoE present-ness conditionals."
-    },
-    {
-      "name": "poe_type",
-      "type": "enum",
-      "kind": "ordered",
-      "role": "requirement",
-      "legal_values": ["none", "poe", "poe+", "upoe", "upoe+"],
-      "order": ["none", "poe", "poe+", "upoe", "upoe+"],
-      "level_watts": { "poe": 15.4, "poe+": 30, "upoe": 60, "upoe+": 90 },
-      "accepted_conditions": ["==", ">=", "in"],
-      "required_on_model": true,
-      "notes": "ORDERED level (none<poe<poe+<upoe<upoe+). '>=' means 'this level or better' (a UPOE switch satisfies a poe+ request by downshift); '==' means 'exactly this level' (cost-conscious, don't upsell). level_watts is the per-port standard (the SINGLE SOURCE for the UI/MCP PoE-demand translation: a 'N ports at level L' demand contributes N x level_watts[L] to poe_budget_watts, and max(level) to a poe_type>= constraint). Not a model field."
-    },
-    {
-      "name": "poe_budget_watts",
-      "type": "integer",
-      "kind": "numeric",
-      "role": "requirement",
-      "accepted_conditions": [">=", "<="],
-      "required_on_model": false,
-      "notes": "Present only when poe_capable is true. Value = max achievable across the switch's poe_budget_matrix (the PSU-pair delivering a requested wattage is resolved from that matrix at solve time). A UI may gather this as ports x per-level watts instead of a raw total."
+      "eliminates": true,
+      "presentation": { "group": "Series", "ask_priority": 10 },
+      "notes": "Series is an ordinary variable, not a privileged root. Sub-families are distinct series values. Legal_values will grow as families are added. Added 'MS130' and 'MS150' (native Meraki cloud-managed switches, DB/switching/MS/) without a registry_version bump, since no other axis KIND/ROLE/shape changed. Added 'C9500' and 'C9500X' (Cisco Catalyst 9500 Series, DB/switching/C9500/) on the same precedent: C9500X is a distinct Silicon One Q200-based platform from the UADP-based C9500, mirroring the existing C9300/C9300X split. Added 'C9550' (Cisco C9550 Series Smart Switches, DB/switching/C9550/) — fixed core/agg switches on Silicon One E100/E104, same precedent (legal-value growth only)."
     },
     {
       "name": "total_port_count",
       "type": "integer",
       "kind": "numeric",
-      "role": "requirement",
+      "dimension": "model",
       "accepted_conditions": [">=", "<="],
       "required_on_model": true,
+      "eliminates": true,
+      "presentation": { "group": "Interfaces", "ask_priority": 30 },
       "notes": "Physical ACCESS port count. Equals the sum of model.ports[role=access] group counts (validator-checked). Uplinks are NOT included (they come from the fitted module)."
     },
     {
       "name": "port_count",
       "type": "integer",
       "kind": "count-at-level",
-      "role": "requirement",
+      "dimension": "model",
+      "storage": "ports",
       "accepted_conditions": [">=", "<=", "=="],
       "required_on_model": false,
+      "eliminates": true,
+      "presentation": { "group": "Interfaces", "ask_priority": 31 },
       "selector": {
         "role":   { "type": "enum", "legal_values": ["access", "uplink"], "required": false },
         "medium": { "type": "enum", "legal_values": ["copper", "fiber"], "required": false },
         "speed":  { "type": "ordered-enum", "order": ["1g", "2.5g", "5g", "10g", "25g", "40g", "100g"], "required": true }
       },
-      "notes": "PARAMETRISED. A query is {axis:'port_count', where:{role?,medium?,speed}, condition, value}. Resolves against a variant's port pool (model.ports access groups + the fitted module's uplink groups). port_count = number of ports in matching groups whose speeds[] include the requested speed; omitted facets are wildcards. Multiple port_count constraints at different speeds are checked TOGETHER for pool feasibility (shared physical ports), not independently. 'medium:fiber == 0' excludes fiber-access models."
+      "notes": "PARAMETRISED. A query is {variable:'port_count', where:{role?,medium?,speed}, condition, value}. Resolves against a variant's port pool (model.ports access groups + the fitted module's uplink groups). port_count = number of ports in matching groups whose speeds[] include the requested speed; omitted facets are wildcards — role/medium are OPTIONAL refinements, and the role-agnostic form ('N ports able to run speed S', any role) is the default ask. Multiple port_count constraints at different speeds are checked TOGETHER for pool feasibility (shared physical ports), not independently. 'medium:fiber == 0' excludes fiber-access models."
     },
     {
       "name": "uplink_modular",
       "type": "boolean",
       "kind": "discriminating",
-      "role": "requirement",
+      "dimension": "model",
       "accepted_conditions": ["=="],
       "required_on_model": true,
+      "eliminates": true,
+      "presentation": { "group": "Interfaces", "ask_priority": 40 },
       "notes": "true: uplinks come from a network module (configurables.network_modules group; the fitted member contributes role=uplink ports to a variant). false: fixed uplinks, carried inline in model.ports as role=uplink rows."
+    },
+    {
+      "name": "uplink_module",
+      "type": "enum",
+      "kind": "discriminating",
+      "dimension": "configuration",
+      "binding": { "source": "network_module_group", "via": "configurables.network_modules.group -> members" },
+      "accepted_conditions": ["==", "in"],
+      "eliminates": true,
+      "default": { "kind": "none_option" },
+      "presentation": { "group": "Interfaces", "ask_priority": 41 },
+      "notes": "The fitted uplink network module — the configured variant the solver searches over. An open enum: legal values are the module SKUs in the model's referenced network-module group. Pinning it eliminates models whose group lacks that module (and pins the variant); leaving it open lets a port demand select it. DEFAULT RULING (recorded, revisitable): a standalone switch ships with NO module (group none_option); a port demand that requires a module overrides this with the first feasible option. Whether an agent-facing default should instead be 'cheapest module' or must_resolve is an open per-variable ruling this field exists to carry."
+    },
+    {
+      "name": "poe_capable",
+      "type": "boolean",
+      "kind": "discriminating",
+      "dimension": "model",
+      "accepted_conditions": ["=="],
+      "required_on_model": true,
+      "eliminates": true,
+      "presentation": { "group": "PoE", "ask_priority": 20 },
+      "notes": "Discriminating, not monotonic: a non-PoE model is a deliberate (cheaper) choice, so both true and false are meaningful filters. Derivable from poe_type != none; kept explicit for the schema's PoE present-ness conditionals."
+    },
+    {
+      "name": "poe_type",
+      "type": "enum",
+      "kind": "ordered",
+      "dimension": "model",
+      "legal_values": ["none", "poe", "poe+", "upoe", "upoe+"],
+      "order": ["none", "poe", "poe+", "upoe", "upoe+"],
+      "level_watts": { "poe": 15.4, "poe+": 30, "upoe": 60, "upoe+": 90 },
+      "accepted_conditions": ["==", ">=", "in"],
+      "required_on_model": true,
+      "eliminates": true,
+      "presentation": { "group": "PoE", "ask_priority": 21 },
+      "notes": "ORDERED level (none<poe<poe+<upoe<upoe+). '>=' means 'this level or better' (a UPOE switch satisfies a poe+ request by downshift); '==' means 'exactly this level' (cost-conscious, don't upsell). level_watts is the per-port standard (the SINGLE SOURCE for the UI/MCP PoE-demand translation: a 'N ports at level L' demand contributes N x level_watts[L] to poe_budget_watts, and max(level) to a poe_type>= constraint). Not a model field."
+    },
+    {
+      "name": "poe_budget_watts",
+      "type": "integer",
+      "kind": "numeric",
+      "dimension": "model",
+      "accepted_conditions": [">=", "<="],
+      "required_on_model": false,
+      "eliminates": true,
+      "presentation": { "group": "PoE", "ask_priority": 22 },
+      "notes": "Present only when poe_capable is true. Value = max achievable across the switch's poe_budget_matrix (the PSU-pair delivering a requested wattage is resolved from that matrix at solve time). A UI may gather this as ports x per-level watts instead of a raw total."
     },
     {
       "name": "stacking_capable",
       "type": "boolean",
       "kind": "monotonic-capability",
-      "role": "requirement",
+      "dimension": "model",
       "accepted_conditions": ["=="],
       "required_on_model": true,
+      "eliminates": true,
+      "presentation": { "group": "Stacking / PSU", "ask_priority": 50 },
       "notes": "Monotonic: presence never hurts. Sensible queries are 'require' (==true) or 'don't care' (omit); '==false' is rarely meaningful and the UI should treat 'not required' as omit, not as ==false."
     },
     {
       "name": "stacking_technology",
       "type": "enum",
       "kind": "discriminating",
-      "role": "requirement",
+      "dimension": "model",
       "legal_values": ["stackwise-480", "stackwise-1t", "stackwise-320", "stackwise-1.6t", "stackwise-160", "stackwise-80", "meraki-stack-100g", "stackwise-virtual"],
       "accepted_conditions": ["==", "in"],
       "required_on_model": "when_stacking_capable",
+      "eliminates": true,
+      "presentation": { "group": "Stacking / PSU", "ask_priority": 51 },
       "notes": "Required and non-blank on a model when stacking_capable is true. May be left unconstrained in a QUERY. v0.10.0 added 'stackwise-160' (C9200 modular, 160 Gbps data stacking) and 'stackwise-80' (C9200L fixed, 80 Gbps). Added 'meraki-stack-100g' with explicit human sign-off for MS150 (native Meraki hardware stacking via 2x dedicated 100G stacking ports / MA-CBL-100G-* cables, 80 Gbps stacking bandwidth — not a Cisco StackWise technology, DB/switching/MS/). Added 'stackwise-virtual' with explicit human sign-off for C9500 (StackWise Virtual, SVL): a licensed, software-defined stack formed over ordinary front-panel uplink ports, not a dedicated physical stack cable — Advantage-tier only (Network Essentials does not include it, per datasheet Table 24 'High availability and resiliency'). C9500 models therefore carry NO configurables.stack_cables / stack_cable_group; the capability is realized entirely via this enum value plus the Advantage license, not an orderable cable SKU. No registry_version bump (legal_values grew only, same convention as the 'series' addition)."
     },
     {
       "name": "stackpower_capable",
       "type": "boolean",
       "kind": "monotonic-capability",
-      "role": "requirement",
+      "dimension": "model",
       "accepted_conditions": ["=="],
-      "required_on_model": true
+      "required_on_model": true,
+      "eliminates": true,
+      "presentation": { "group": "Stacking / PSU", "ask_priority": 52 }
+    },
+    {
+      "name": "stack_cable",
+      "type": "enum",
+      "kind": "discriminating",
+      "dimension": "configuration",
+      "binding": { "source": "stack_cable_group", "via": "configurables.stack_cables.group -> members" },
+      "accepted_conditions": ["=="],
+      "eliminates": false,
+      "default": { "kind": "none_option", "policy": "shortest-when-stacking-required" },
+      "presentation": { "group": "Stacking / PSU", "ask_priority": 80 },
+      "notes": "The stack cable fitted in the kitlist. An open enum: legal values are the model's stack-cable group members. Never eliminates a model — a pick only refines the BOM. Default: the group's none_option (a standalone switch needs no cable); when stacking_capable is a hard requirement the named policy substitutes the shortest cable. Absent entirely on models without a stack_cables configurable (e.g. C9500 StackWise Virtual — see stacking_technology notes)."
+    },
+    {
+      "name": "stackpower_cable",
+      "type": "enum",
+      "kind": "discriminating",
+      "dimension": "configuration",
+      "binding": { "source": "stackpower_cable_group", "via": "configurables.stackpower_cables.group -> members" },
+      "accepted_conditions": ["=="],
+      "eliminates": false,
+      "default": { "kind": "none_option", "policy": "shortest-when-stackpower-required" },
+      "presentation": { "group": "Stacking / PSU", "ask_priority": 81 },
+      "notes": "Same pattern as stack_cable, for StackPower. Never eliminates; default none_option, shortest when stackpower_capable is required."
+    },
+    {
+      "name": "psu_config",
+      "type": "enum",
+      "kind": "discriminating",
+      "dimension": "configuration",
+      "binding": { "source": "power_supply_group", "via": "configurables.power_supplies (group, valid_primary, poe_budget_matrix)" },
+      "accepted_conditions": [],
+      "eliminates": false,
+      "default": { "kind": "policy", "policy": "psu-default" },
+      "presentation": { "group": "Stacking / PSU", "ask_priority": 70 },
+      "notes": "The resolved PSU set (primary [, secondary [, tertiary]]). NOT directly constrainable (accepted_conditions is empty) — it is steered indirectly through poe_budget_watts, psu_redundancy, and psu_triple, and resolved by the named 'psu-default' policy (code, with every choice carrying a reason in the response): ship the model's default_primary; ADD a secondary to meet a higher PoE load; upsize the primary only when no secondary covers it; redundancy forces a matched pair; triple forces a tertiary-capable row. Declared here so the PSU choice is an honest, visible part of the residual decision space (its domain = the model's valid_primary + poe_budget_matrix rows)."
+    },
+    {
+      "name": "psu_redundancy",
+      "type": "boolean",
+      "kind": "discriminating",
+      "dimension": "configuration",
+      "legal_values": [false, true],
+      "accepted_conditions": ["=="],
+      "eliminates": false,
+      "default": { "kind": "fixed", "value": false },
+      "presentation": { "group": "Stacking / PSU", "ask_priority": 71 },
+      "notes": "Off by default: the kitlist ships a single PSU (configurables.power_supplies.default_primary), and a secondary is added only when a PoE request exceeds what the default primary alone delivers. When ON, the configurator forces a redundant (primary, secondary) pair. Never eliminates a model."
+    },
+    {
+      "name": "psu_triple",
+      "type": "boolean",
+      "kind": "discriminating",
+      "dimension": "configuration",
+      "legal_values": [false, true],
+      "accepted_conditions": ["=="],
+      "eliminates": false,
+      "default": { "kind": "fixed", "value": false },
+      "presentation": { "group": "Stacking / PSU", "ask_priority": 72 },
+      "notes": "Off by default. When ON, forces a triple-PSU (primary+secondary+tertiary) configuration on models whose poe_budget_matrix has a tertiary-capable row; has no effect on models without one (e.g. two-bay chassis). Never eliminates a model."
     },
     {
       "name": "license_regime",
       "type": "enum",
       "kind": "discriminating",
-      "role": "requirement",
+      "dimension": "model",
       "legal_values": ["dna-term", "meraki-classic", "meraki-subscription", "unified"],
       "accepted_conditions": ["==", "in"],
       "required_on_model": true,
-      "notes": "Set of regimes a model OFFERS (enum-set). First-class user-selectable input. Couples to switch selection as an ordinary hard constraint (e.g. meraki-subscription -> -M models only). License TERM is a config-variable resolved at the kitlist stage, NOT a filter axis."
+      "eliminates": true,
+      "default": { "kind": "must_resolve" },
+      "presentation": { "group": "Licensing", "ask_priority": 60 },
+      "notes": "Set of regimes a model OFFERS (enum-set). First-class user-selectable input. Couples to switch selection as an ordinary hard constraint (e.g. meraki-subscription -> -M models only). MUST_RESOLVE: there is no safe silent default — the right regime depends on customer context (existing dashboard, existing estate) the tool cannot infer, and a wrong guess produces a confidently wrong quote. A caller (agent) must settle it before the BOM is final. License TERM is its own configuration variable resolved at the kitlist stage."
     },
     {
       "name": "license_tier",
       "type": "enum",
       "kind": "discriminating",
-      "role": "requirement",
+      "dimension": "model",
       "legal_values": ["essentials", "advantage"],
       "accepted_conditions": ["==", "in"],
       "required_on_model": true,
-      "notes": "Set of tiers a model OFFERS (enum-set), derived from its license groups: DNA -E -> [essentials], -A -> [advantage], Meraki -M -> [essentials, advantage]. A FILTER on offered-tier capability (parallel to license_regime): choosing 'advantage' drops -E hardware, keeps -A and -M. The essentials-vs-advantage PICK on a model that offers both (Meraki -M) is still a config choice the BOM resolves; this axis only removes models that cannot provide the chosen tier. Stored on the model (mirrors license_regime); validator checks it equals the union of the model's license-group tiers."
+      "eliminates": true,
+      "default": { "kind": "must_resolve" },
+      "presentation": { "group": "Licensing", "ask_priority": 61 },
+      "notes": "Set of tiers a model OFFERS (enum-set), derived from its license groups: DNA -E -> [essentials], -A -> [advantage], Meraki -M -> [essentials, advantage]. A FILTER on offered-tier capability (parallel to license_regime): choosing 'advantage' drops -E hardware, keeps -A and -M. The essentials-vs-advantage PICK on a model that offers both (Meraki -M) is still a config choice the BOM resolves; this variable only removes models that cannot provide the chosen tier. MUST_RESOLVE: tier determines the license SKU and feature set — no safe silent default. Stored on the model (mirrors license_regime); validator checks it equals the union of the model's license-group tiers."
+    },
+    {
+      "name": "license_term",
+      "type": "integer",
+      "kind": "discriminating",
+      "dimension": "configuration",
+      "legal_values": [1, 3, 5, 7, 10],
+      "binding": { "source": "license_group_terms", "via": "configurables.license.group -> term_variable.choices_years" },
+      "accepted_conditions": ["=="],
+      "eliminates": false,
+      "default": { "kind": "must_resolve" },
+      "presentation": { "group": "Licensing", "ask_priority": 62 },
+      "notes": "Subscription term length in years. legal_values is the universe; the per-model domain is the license group's choices_years (some groups carry no term_variable — the pick then resolves to the group's single device-tied SKU, flagged not_applicable). The pick resolves the concrete subscription SKU (matched on the '-<n>Y' suffix). Never eliminates a model. MUST_RESOLVE: an orderable subscription needs a term; there is no safe default length."
     }
   ]
 }

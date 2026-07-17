@@ -16,7 +16,7 @@ These hold across all stages. They are the durable commitments; everything else 
 
 1. **Data is interface-agnostic.** The knowledge base (switches, compatibility, constraints) is the durable asset. The web UI, the MCP server, and the agent are all *consumers* of the same data and the same query logic. No interface concern leaks into the data layer.
 
-2. **One solver, flat constraint space, no privileged axis.** Every requirement — series, port density, PoE, uplink capability, stacking, licensing regime — is a constraint of the form **`{axis, condition, severity}`** (severity: *hard* eliminates candidates, *soft* ranks survivors). The engine filters on all hard constraints, ranks survivors by soft constraints, and returns a set with a default. "Pick a C9300, then configure it" and "here are my requirements, what fits" are **not two modes** — they are the same query with different axes constrained. Series is just an axis: when the user pins it, it is a hard constraint like any other; when they don't, the surviving switch falls out of the solve. No axis is the root; none is privileged.
+2. **One solver, flat constraint space, no privileged axis.** *(v1.0.0 note: the constraint space now spans the whole configuration — see §4; "axis" survives as the model-dimension case, and constraints are keyed `{variable, condition, severity}`.)* Every requirement — series, port density, PoE, uplink capability, stacking, licensing regime — is a constraint of the form **`{axis, condition, severity}`** (severity: *hard* eliminates candidates, *soft* ranks survivors). The engine filters on all hard constraints, ranks survivors by soft constraints, and returns a set with a default. "Pick a C9300, then configure it" and "here are my requirements, what fits" are **not two modes** — they are the same query with different axes constrained. Series is just an axis: when the user pins it, it is a hard constraint like any other; when they don't, the surviving switch falls out of the solve. No axis is the root; none is privileged.
 
 3. **Build for update-ability.** Every datasheet-derived fact carries provenance (source link, last-checked date, version). Schema choices favor low-effort updates when Cisco revises a datasheet.
 
@@ -41,7 +41,61 @@ The discipline: **push everything possible into the data, keep the solver small,
 
 ---
 
-## 4. The Axis Registry
+## 4. The Decision-Variable Registry & the Query/Response Contract *(current design — registry v1.0.0)*
+
+> Decided 2026-07-17, after the first full KB pass (six families) proved the data model. Supersedes the **Axis Registry** section below (kept as legacy) and re-centres the selector on one contract. The KB files themselves were untouched by this shift — their `configurables`/`groups`/`catalog` blocks already carried the domains and defaults; what changed is how the registry declares them and how the solver answers.
+
+### Everything is a decision variable over configurations
+
+The solver's answer is not a model — it is a **configuration**: model + fitted uplink option + PSU set + license SKUs + cables. Every requirement and every kitlist choice is a **decision variable** in one flat registry list (`DB/switching/switching-axes.json`). The old axis-vs-config-variable wall is gone; whether something "filters models" or "refines the kitlist" is an observed property declared per variable, not a structural class. Per variable the registry declares:
+
+- **dimension** — `model` (value stored on the model entry: the old "axes") or `configuration` (domain **derived** from the KB via a declared **binding**, e.g. `license_term` ← the license group's `choices_years`, `uplink_module` ← the module group's members).
+- **eliminates** — whether a hard constraint on it can remove models (`uplink_module` can — a model whose group lacks the pinned module dies; `license_term` never does — it only resolves the SKU).
+- **default** — the defaulting rule: `fixed` / `none_option` / `kb_ref` / `policy:<name>` (policy stays code, but it is *named* here and every resolved default carries a `reason` in the response) — or **`must_resolve`: no safe default exists**, a caller must settle it before the BOM is orderable. **License regime, tier, and term are the must_resolve set** — a wrong silent guess is a confidently wrong quote.
+- **presentation** — panel group + ask priority: UI layout is registry data, not code.
+
+### The contract (the actual product)
+
+`solve(query, kb, registry) → { candidates, open_variables, eliminated }`. The selector is **stateless and never asks questions** — it answers with *resolved defaults plus honest residual choice*; dialogue is the caller's job:
+
+- **candidates** — ranked surviving configurations; each carries a resolved default BOM (every default with its reason) whose blocks double as the per-candidate choice domains (uplink options, PSU matrix, license groups/terms, cables).
+- **open_variables** — the residual decision space: every variable the query left open, with its remaining domain across the survivors, its default, and its `must_resolve` flag. The UI's greyed facets, the MCP server's "remaining parameters", and the agent's "what should I ask next" are all *this one list*.
+- **eliminated** — removed models, each with the violated constraint as reason.
+
+Queries are built in one place (`selector/js/core/query.js`): constraint builders, demand translations (PoE "N ports at level L" rows → derived budget/level/count constraints, from the registry's `level_watts`), and validation. The web UI and the future MCP server are equal callers — neither owns query semantics.
+
+### Worked examples (v1 query language)
+
+*"24 PoE+ ports and at least 2×25G, Meraki-driven" — the agent use case:*
+```
+{ variable: "poe_budget_watts", condition: ">=", value: 720 }        # derived from 24×poe+
+{ variable: "poe_type",         condition: ">=", value: "poe+" }     # derived
+{ variable: "total_port_count", condition: ">=", value: 24 }         # derived
+{ variable: "port_count", where: { speed: "25g" }, condition: ">=", value: 2 }
+{ variable: "license_regime",   condition: "in", value: ["meraki-classic", "meraki-subscription"] }
+```
+→ candidates with resolved BOMs; `open_variables` reports `license_regime` **must_resolve** with domain `{meraki-classic, meraki-subscription}` — the agent's next question, supplied by the response, not hardcoded anywhere.
+
+*Exact-model lookup (datasheet-summary use case):*
+```
+{ variable: "model_id", condition: "==", value: "C9300-48UXM-E" }
+```
+→ one candidate; its BOM blocks *are* the option summary (uplink modules, PSUs, licenses, cables).
+
+*Ports are role-agnostic by default:* `where: {speed}` alone means "N ports able to run this speed, any role" — the solver's pool feasibility decides whether access ports or an uplink module supplies them; `role`/`medium` are optional refinements for when the distinction *is* the requirement.
+
+### Consequences
+
+- **One engine feature = three front-end features.** Residual domains power facet greying, MCP parameter narrowing, and agent follow-up questions — the same computation.
+- **Cheap vs. expensive change still holds,** now for variables: adding a model is cheap; adding or changing a registry variable is expensive and deliberate (UI + MCP + maybe solver).
+- **Single-switch scope.** The contract answers "what is one valid unit". Multi-switch sizing (96 ports → 2×48 + stack) is a future layer *on top of* this contract, never inside it.
+- **UX modes come later, cheaply.** "All the buttons", "query a model", and "guided run" are three renderings of the same response — the contract had to come first.
+
+---
+
+## Legacy: The Axis Registry *(superseded by §4 above — registry ≤ 0.10.0)*
+
+> **Legacy.** Kept for history. The axis registry became the decision-variable registry: "axes" survive as the model-dimension variables, the separate `config_variables` block was folded into the same list, and the three-roles split (registry = meaning, schema = shape, models = values) carries over unchanged. The strictness argument below still applies word-for-word — it now covers configuration variables too, which under this legacy design were half-declared and invisible to automated callers (the flaw that motivated v1.0.0).
 
 If every requirement is `{axis, condition, severity}`, then the set of legal **axes** must itself be defined and maintained. A user or agent can only constrain on axes the system knows about. The axis registry is the authoritative list of what is filterable, what each constraint means, and what values are legal — and **nothing becomes filterable without being declared here first.**
 
@@ -72,7 +126,7 @@ This is the practical payoff of the registry. **Adding a new switch is cheap** �
 ## 5. Stages
 
 ### Stage 1 — Selector *(current focus)*
-Web interface; user selects requirements, the tool proposes a switch with the correct SKU, licensing, and accessories. Optional guided questionnaire. **Pass 1 scope: a single switch family — the C9300**, chosen first because it is the most complex on the hardware side (stacking, network modules, uplink options, dual licensing tracks). If the schema survives the C9300, simpler families follow with little extra work.
+Web interface; user selects requirements, the tool proposes a switch with the correct SKU, licensing, and accessories. Optional guided questionnaire. **Pass 1 scope: a single switch family — the C9300**, chosen first because it is the most complex on the hardware side (stacking, network modules, uplink options, dual licensing tracks). If the schema survives the C9300, simpler families follow with little extra work. *(Status 2026-07: exceeded — six families are in the KB (C9200, C9300, C9350, C9500, C9550, Meraki MS) and the schema survived the expansion; pass 1's validation goal is met.)*
 
 ### Stage 2 — MCP server
 Expose the same selection/validation logic as an MCP tool so an agent can resolve known requirements (e.g. "C9300, 48 PoE, stacking") into exact SKUs. Primarily a **new interface over Stage 1's data and logic**, not a rebuild. Licensing regime and other axes become query parameters the server accepts.
@@ -107,7 +161,7 @@ A working web selector for the C9300 family that returns a complete, valid, orde
 
 **Constraint model baseline is flat `{axis, condition, severity}`.** A *possible* extension — **conditional constraints**, where one axis's value changes another axis's valid domain (e.g. a stacking choice narrowing the offered uplink modules) — is explicitly deferred to the model-building phase. Do **not** pre-build it, and do **not** hack around it in code. If the C9300 data surfaces a real coupling, express it as data (the relevant entities declare the shared resource, e.g. a slot, that the generic solver already reconciles) and, if needed, extend the constraint record to reference another axis's value. Decide from real datasheet evidence.
 
-### `{axis, condition, severity}` — worked examples
+### `{axis, condition, severity}` — worked examples *(legacy syntax — `axis:` became `variable:` in v1.0.0, see §4; the semantics below still hold)*
 
 *"I need 48 PoE ports and 8×10G uplinks":*
 ```
