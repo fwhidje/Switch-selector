@@ -1,7 +1,7 @@
 {
  "header": {
-  "schema_version": "0.9.0",
-  "registry_version": "0.10.0",
+  "schema_version": "1.0.0",
+  "registry_version": "1.0.0",
   "axes_file": "../switching-axes.json",
   "schema_file": "../switch-kb.schema.json",
   "description": "Networking Equipment Selector knowledge base for the Cisco Meraki MS130 and MS150 Series switches (native Meraki cloud-managed access switches — distinct from the Catalyst 9200L-M/9300L-M hybrid Meraki-managed models, which live in their own C9200/C9300 KB files). Carries the catalog (atomic SKU facts), groups (named shared compatibility sets), and switch models for MS130 (compact access) and MS150 (stackable access). MS130 (11 models: 8/8P/8P-I/8X/12X/24/24P/24X/48/48P/48X) and MS150 (12 models: 24T-4G/24P-4G/24T-4X/24P-4X/24MP-4X/48T-4G/48LP-4G/48FP-4G/48T-4X/48LP-4X/48FP-4X/48MP-4X) are both fully complete: licensing catalog/groups, stacking cables (MS150 only), and switch models. Structure: catalog + groups + models.",

@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "switch-kb.schema.json",
   "title": "Networking Equipment Selector — Switch Knowledge Base Schema",
-  "description": "The SINGLE shared shape + authoring contract for every switch-family knowledge base (C9200, C9300, C9350, C9500, C9550, MS). This schema enforces SHAPE (entries are well-formed); switching-axes.json enforces MEANING (which axes exist, their KIND/ROLE and legal enum values); selector/tools/validate-kb.mjs enforces CROSS-REFERENCE INTEGRITY (group references resolve, valid_primary is a subset of the referenced PSU group, poe_budget_watts equals the matrix max, sum of access-port counts equals total_port_count, enum/speed values are registered). All three must pass. Family-specific constructs (access_pair_block, uplink_pair_block, fan_trays, modes, no_uplink_ports, tertiary) are OPTIONAL; each carries an 'Example: <FAMILY>/<id>' pointer in its $comment to a real instance, so an agent can grep for a matching precedent. See $authoring for the procedure to add a model.",
-  "schema_version": "0.9.0",
-  "registry_version": "0.10.0",
+  "description": "The SINGLE shared shape + authoring contract for every switch-family knowledge base (C9200, C9300, C9350, C9500, C9550, MS). This schema enforces SHAPE (entries are well-formed); switching-axes.json enforces MEANING (which decision variables exist, their KIND/DIMENSION, legal enum values, defaults, and KB bindings); selector/tools/validate-kb.mjs enforces CROSS-REFERENCE INTEGRITY (group references resolve, valid_primary is a subset of the referenced PSU group, poe_budget_watts equals the matrix max, sum of access-port counts equals total_port_count, enum/speed values are registered). All three must pass. Family-specific constructs (access_pair_block, uplink_pair_block, fan_trays, modes, no_uplink_ports, tertiary) are OPTIONAL; each carries an 'Example: <FAMILY>/<id>' pointer in its $comment to a real instance, so an agent can grep for a matching precedent. See $authoring for the procedure to add a model.",
+  "schema_version": "1.0.0",
+  "registry_version": "1.0.0",
 
   "$authoring": {
     "_comment": "NON-VALIDATING. Procedure + rules for an agent populating switch models. Read before touching data. Concrete per-field precedents live ON the schema fields: grep the $comment values for 'Example: <FAMILY>/<id>' to find a real instance of any exceptional construct.",
@@ -16,16 +16,16 @@
     ],
     "working_copy_discipline": "Knowledge files are the source of truth; edit them in lockstep (registry -> schema -> KB) and run validate-kb.mjs before considering a change done. When catalog/group state becomes uncertain mid-session, rebuild deterministically from an explicit list rather than patching incrementally.",
     "structural_STOP_and_ask": [
-      "Adding, renaming, or re-typing an AXIS in switching-axes.json (touches UI + MCP params + maybe solver).",
-      "Adding a new legal enum value to an existing axis (incl. a new port_speed / port_medium / port_role).",
-      "Changing the KIND or ROLE of an axis, or group-topology conventions.",
+      "Adding, renaming, or re-typing a VARIABLE in switching-axes.json (touches UI + MCP params + maybe solver).",
+      "Adding a new legal enum value to an existing variable (incl. a new port_speed / port_medium / port_role).",
+      "Changing the KIND, DIMENSION, default rule, or binding of a variable, or group-topology conventions.",
       "Any change to this schema's required-field or conditional rules."
     ],
     "axis_vs_variable_vs_attribute": {
-      "rule": "Sort every datasheet property three ways before deciding where it goes.",
-      "axis": "A filterable capability. Declared in switching-axes.json (with KIND + ROLE) and supplied under model.axis_values, OR (for ports) as structured rows under model.ports addressed by the parametrised port_count axis. E.g. poe_type, total_port_count, port_count{role,medium,speed}, stacking_capable.",
-      "variable": "The orderable option that REALIZES a capability, picked AFTER a switch survives the filter. Lives in model.configurables (a group reference or inline block). NOT an axis. E.g. the PSU pair, the fitted network module, the subscription term, the fan airflow direction.",
-      "attribute": "Displayed, never filtered, never picked. Lives loose under model.attributes. E.g. switching_capacity_gbps, weight, MTBF."
+      "rule": "Sort every datasheet property three ways before deciding where it goes. Since registry v1.0.0 all three-way outcomes that are decision variables (the first two) live in ONE registry list, distinguished by DIMENSION.",
+      "axis": "A model-dimension variable: a filterable capability the model itself supplies. Declared in switching-axes.json (dimension 'model') and supplied under model.axis_values, OR (for ports) as structured rows under model.ports addressed by the parametrised port_count variable. E.g. poe_type, total_port_count, port_count{role,medium,speed}, stacking_capable.",
+      "variable": "A configuration-dimension variable: the orderable option that REALIZES a capability. Also declared in switching-axes.json (dimension 'configuration', with a BINDING to where its domain lives and a DEFAULT rule — incl. must_resolve where no safe default exists). Its per-model DOMAIN lives in model.configurables (a group reference or inline block). E.g. the PSU config, the fitted network module, the subscription term, stack cables.",
+      "attribute": "Displayed, never filtered, never picked. Lives loose under model.attributes. E.g. switching_capacity_gbps, weight, MTBF. NOT declared in the registry."
     },
     "capability_resolution": {
       "ports": "model.ports is an array of port groups {count, role, medium, speeds[]}: N physical ports each running a SET of speeds. role=access lives on the model; role=uplink comes from the fitted network module on modular models (uplink_modular=true) or inline on fixed-uplink models. A combinable 'M x low OR N x high' bank uses a pair block instead of flat rows (access_pair_block / uplink_pair_block - see their schema Examples).",
@@ -45,8 +45,8 @@
     "conventions": [
       "Series-specific groups (PSU, cables, fans, licenses) are kept as their own named groups even when membership resembles another series, so they can diverge later.",
       "A group's none_option / secondary_none_option is a 'none selected' sentinel (e.g. <FAMILY>-STACK-NONE), NOT a catalog SKU; present only where that 'none' state is orderable (see the field Examples).",
-      "PSU redundancy is NOT an axis: it is a (primary, secondary) pair with secondary != none. default_primary is the single PSU shipped by default; a secondary is added only to meet a higher PoE load or an explicit redundancy request.",
-      "License TERM is a config-variable (term_variable) resolving the concrete subscription SKU; License TIER is a filter axis derived from the model's license groups."
+      "PSU redundancy is NOT a stored model field: it is a configuration variable (registry 'psu_redundancy') realized as a (primary, secondary) pair with secondary != none. default_primary is the single PSU shipped by default; a secondary is added only to meet a higher PoE load or an explicit redundancy request.",
+      "License TERM is a configuration variable (binding: term_variable.choices_years; must_resolve) resolving the concrete subscription SKU; License TIER is a model-dimension variable (must_resolve) derived from the model's license groups."
     ]
   },
 
