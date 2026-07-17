@@ -202,8 +202,8 @@ function resolvePower(model, query, kb) {
   if (!ps) return null;
   const group = getPowerSupplyGroup(kb, ps.group);
   const need = numericMin(query, "poe_budget_watts");
-  const redundancy = configValue(query, "psu_redundancy") === true;
-  const triple = configValue(query, "psu_triple") === true;
+  const redundancy = pickValue(query, "psu_redundancy") === true;
+  const triple = pickValue(query, "psu_triple") === true;
   const matrix = ps.poe_budget_matrix ?? [];
   const rows = need == null ? matrix : matrix.filter((r) => r.poe_budget_watts >= need);
   const poe = matrix.length > 0;
@@ -303,14 +303,15 @@ function chooseDefaultPsu(ps, kb, need, redundancy, triple) {
   return null; // load not satisfiable by this model's PSU options
 }
 
-// License tier + term are CONFIG-VARIABLES: tier is locked on DNA -E/-A models and
-// selectable on Meraki -M models; term resolves the concrete subscription SKU.
+// License tier is locked on DNA -E/-A models and selectable on Meraki -M
+// models; term (a must_resolve configuration variable) resolves the concrete
+// subscription SKU.
 function resolveLicense(model, query, kb) {
   const lic = model.configurables?.license;
   if (!lic) return null;
-  const wantRegime = enumEq(query, "license_regime");
-  const wantTier = enumEq(query, "license_tier"); // now a hard filter axis, not a config-variable
-  const wantTerm = configValue(query, "license_term");
+  const wantRegime = pickValue(query, "license_regime");
+  const wantTier = pickValue(query, "license_tier");
+  const wantTerm = pickValue(query, "license_term");
 
   const groups = [lic.group, ...(lic.additional_groups ?? [])]
     .map((id) => getLicenseGroup(kb, id))
@@ -366,8 +367,8 @@ function resolveAccessories(model, query, kb) {
   return out;
 }
 
-function hardBoolTrue(query, axis) {
-  return (query ?? []).some((c) => c.axis === axis && c.condition === "==" && c.value === true && (c.severity ?? "hard") === "hard");
+function hardBoolTrue(query, name) {
+  return (query ?? []).some((c) => c.variable === name && c.condition === "==" && c.value === true && (c.severity ?? "hard") === "hard");
 }
 
 // A standalone switch needs no cable: default to the group's none_option. If
@@ -393,18 +394,16 @@ function stripComment(obj) {
   const { _comment, ...rest } = obj;
   return rest;
 }
-// Most-restrictive >= bound across ALL constraints on an axis (an explicit control
-// and a demand-derived constraint intersect — the highest wins).
-function numericMin(query, axis) {
-  const vals = (query ?? []).filter((c) => c.axis === axis && c.condition === ">=").map((c) => c.value);
+// Most-restrictive >= bound across ALL constraints on a variable (an explicit
+// control and a demand-derived constraint intersect — the highest wins).
+function numericMin(query, name) {
+  const vals = (query ?? []).filter((c) => c.variable === name && c.condition === ">=").map((c) => c.value);
   return vals.length ? Math.max(...vals) : null;
 }
-function enumEq(query, axis) {
-  const c = (query ?? []).find((c) => c.axis === axis && c.condition === "==");
-  return c ? c.value : null;
-}
-/** Value of a config-variable entry (severity:"config"), or null. */
-function configValue(query, name) {
-  const c = (query ?? []).find((c) => c.axis === name && c.severity === "config");
+/** The pinned (==) value of a variable in the query, or null. Whether a pin
+ *  filters models or only refines this BOM is the registry's `eliminates`
+ *  declaration — by the time we are here, filtering already happened. */
+function pickValue(query, name) {
+  const c = (query ?? []).find((c) => c.variable === name && c.condition === "==");
   return c ? c.value : null;
 }
