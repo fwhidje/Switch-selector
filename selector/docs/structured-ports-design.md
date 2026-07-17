@@ -1,5 +1,12 @@
 # Structured ports + kind/role — design note (Stage 1)
 
+> **Historical note (pre-v1.0.0 registry).** Option B below was adopted and is live. The
+> `role: requirement | config-variable` vocabulary this note introduced was later unified into the
+> decision-variable registry (`DB/switching/switching-axes.json` v1.0.0): "axes" became
+> model-dimension variables, config-variables became configuration-dimension variables with
+> bindings and default rules. See the root guideline §4. Kept unchanged as the design record for
+> the port model itself, which still holds.
+
 Concrete shape for the Root-B fix, shown on real models before the 57-model migration.
 
 ## Problem, in the current data
