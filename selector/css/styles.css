@@ -22,11 +22,12 @@ header h1 { margin: 0 0 4px; font-size: 20px; }
 
 main {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 1fr;
   gap: 16px;
   padding: 16px 20px;
   align-items: start;
 }
+main.mode-full { grid-template-columns: 300px 1fr; }
 
 section {
   background: #fff;
@@ -135,3 +136,95 @@ details summary { cursor: pointer; font-size: 12.5px; color: #2f7bd6; }
 }
 .open-variables ul { margin: 0.25rem 0 0; padding-left: 1.1rem; }
 .open-variables li { margin: 0.1rem 0; }
+
+/* --- mode shell: header tabs + landing cards ------------------------------ */
+.header-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.mode-tabs { display: flex; gap: 6px; }
+.mode-tab {
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 13px;
+  color: #c4d2e6;
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+.mode-tab:hover { color: #fff; border-color: #3a557e; }
+.mode-tab.active { background: #234066; color: #fff; }
+.mode-tab.home { font-size: 15px; padding: 4px 8px; }
+
+.landing { max-width: 920px; margin: 24px auto; }
+.mode-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 12px; }
+.mode-card {
+  display: block;
+  border: 1px solid #dbe2ec;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+.mode-card:hover { border-color: #2b6cb0; box-shadow: 0 2px 10px #11243f22; }
+.mode-card h3 { margin: 0 0 6px; font-size: 15px; color: #11243f; }
+.mode-card p { margin: 0; font-size: 12.5px; color: #55617a; }
+
+/* --- structured kitlist (candidate cards) --------------------------------- */
+.card-buttons { display: flex; gap: 8px; margin: 4px 0 8px; }
+.raw-btn, .show-more-btn, .step-nav button, .linklike {
+  font-size: 12px; padding: 3px 10px;
+  border: 1px solid #c6d0de; border-radius: 5px;
+  background: #f4f7fb; cursor: pointer;
+}
+.raw-btn:hover, .show-more-btn:hover, .step-nav button:hover { background: #e8eef6; }
+.show-more-btn { display: block; margin: 10px auto; }
+.kitlist { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.kit-line { border-left: 3px solid #dbe2ec; padding: 2px 0 2px 10px; }
+.kit-line-head { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.kit-part {
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  color: #7686a0; min-width: 110px;
+}
+.kit-choice { font-size: 13px; font-weight: 600; color: #1c2330; }
+.kit-why { font-size: 11.5px; color: #55617a; font-style: italic; margin-top: 1px; }
+.kit-alts { display: flex; gap: 5px; flex-wrap: wrap; align-items: baseline; margin-top: 3px; }
+.kit-alts-label { font-size: 10.5px; color: #7686a0; }
+.kit-alt {
+  font-size: 11px; padding: 1px 7px;
+  background: #eef3f9; border: 1px solid #dbe2ec; border-radius: 10px;
+  color: #33405a; white-space: nowrap;
+}
+
+/* --- lookup mode ----------------------------------------------------------- */
+.lookup-bar { margin-bottom: 14px; }
+.lookup-input { width: 100%; max-width: 420px; font-size: 15px; padding: 8px 10px; border: 1px solid #c6d0de; border-radius: 6px; }
+.lookup-head h2 { font-size: 18px; margin-bottom: 4px; }
+.spec-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+.spec-chip {
+  font-size: 11.5px; padding: 2px 9px;
+  background: #eef3f9; border: 1px solid #c9d6e8; border-radius: 10px; color: #23324d;
+}
+.lookup-section { margin-top: 14px; padding: 12px 14px; }
+.lookup-section h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: #33405a; }
+.lookup-note { font-size: 12px; color: #55617a; margin: 0 0 8px; }
+.lookup-miss { color: #8a4b1d; }
+.lookup-suggestions { list-style: none; padding: 0; display: flex; gap: 6px; flex-wrap: wrap; }
+.linklike { color: #2b6cb0; }
+.option-table { border-collapse: collapse; font-size: 12.5px; width: 100%; }
+.option-table th, .option-table td { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid #edf1f7; vertical-align: top; }
+.option-table th { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: #7686a0; }
+
+/* --- guided mode ----------------------------------------------------------- */
+.guided-mode { max-width: 700px; margin: 0 auto; width: 100%; }
+.step-panel { display: flex; flex-direction: column; gap: 10px; }
+.step-progress { font-size: 11px; color: #7686a0; text-transform: uppercase; letter-spacing: 0.05em; }
+.step-head h2 { margin: 2px 0 0; font-size: 17px; }
+.step-answers { display: flex; gap: 5px; flex-wrap: wrap; align-items: baseline; }
+.step-body { display: flex; flex-direction: column; gap: 8px; }
+.step-notes { font-size: 12px; color: #55617a; margin: 0; }
+.step-notes.determined { color: #1d6b3a; font-weight: 600; }
+.step-status { font-size: 13px; font-weight: 600; color: #1d6b3a; margin: 0; }
+.step-status.dead-end { color: #a33a3a; }
+.step-nav { display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px; }
+.step-nav button.primary, .guided-mode button.primary { background: #234066; color: #fff; border-color: #234066; }
+.step-nav button.primary:hover, .guided-mode button.primary:hover { background: #2b528a; }
+.step-nav button:disabled { opacity: 0.45; cursor: default; }

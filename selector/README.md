@@ -46,6 +46,26 @@ server, the Stage-3 agent) is a renderer of it. See the root guideline §4 for t
   add a `where: {role?, medium?, speed}` selector and are **role-agnostic by default** — the
   solver's max-flow pool feasibility decides whether access ports or an uplink module supplies them.
 
+## Modes
+
+The UI opens on a mode chooser; the mode lives in the URL hash and switching never refetches data.
+All three are thin renderings of the same `solve()` response:
+
+- **`#lookup` — model lookup.** One text field (type-ahead over the known SKUs). An exact model
+  renders its option tables — uplink modules with port capabilities, PSU configurations with the
+  PoE-budget matrix, license groups/terms, cables/kits, included-by-default — the datasheet
+  summary without the datasheet. Near-misses offer clickable suggestions.
+- **`#full` — full options.** Every requirement control at once (panels from the registry's
+  presentation metadata), results re-solving on each change with facet greying. Candidate cards
+  are structured kitlists: default parts as line items with the policy's `reason`, remaining
+  alternatives as compact rows; the raw solver response only behind a *show raw result* button.
+  Rendering is capped at 20 cards with *show all*.
+- **`#guided` — guided run.** Steps through the decision variables in the registry's
+  `ask_priority` order (PoE demand rows and a Ports step replace their variables), each step with
+  a live match count and residual-domain greying; singleton domains auto-fill; every step is
+  skippable. Ends in a summary (with the outstanding must-resolve variables) that opens the full
+  view pre-filled with the accumulated draft.
+
 ## Layout
 
 ```
@@ -58,10 +78,14 @@ js/core/   pure, importable engine (no DOM)
   solver.js    solve() -> { candidates, open_variables, eliminated }; facetDomains()
 tools/
   validate-kb.mjs   registry/schema/KB consistency validator (shape, projections, bindings, references)
-js/ui/
-  app.js       the only DOM module: a thin renderer — panels from registry presentation metadata,
-               controls from variable KIND, must-resolve badges, facets from residual domains,
-               the "still open" strip from open_variables, kitlists from candidate BOMs
+js/ui/       DOM only — three renderings of the one contract
+  app.js         boot + hash router: loads data once, mounts a mode, landing chooser, header tabs
+  shared.js      the DRAFT (UI requirement state) -> toQuery() via core/query.js; registry-driven
+                 control builders; structured kit-card renderers; PoE demand section
+  modes/full.js    facet mode (panels from registry presentation metadata, facet greying,
+                   render cap, guided-handoff intake)
+  modes/lookup.js  exact-model lookup (text field -> option tables)
+  modes/guided.js  step engine over ask_priority -> summary -> handoff to full
 ```
 
 ## Engine notes

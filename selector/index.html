@@ -3,37 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Networking Equipment Selector — test UI</title>
+    <title>Networking Equipment Selector</title>
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
     <header>
-      <h1>Networking Equipment Selector</h1>
+      <div class="header-row">
+        <h1>Networking Equipment Selector</h1>
+        <nav id="mode-tabs" class="mode-tabs"></nav>
+      </div>
       <p id="status" class="status">Loading…</p>
-      <p class="note">
-        Facet test surface over the query/response contract. Controls and panel layout are
-        generated from the decision-variable registry; every change re-solves, and the
-        response reports the residual choice (open variables, defaults, must-resolve).
-      </p>
     </header>
 
-    <main>
-      <section id="panel-left">
-        <h2>Constraints</h2>
-        <form id="controls" autocomplete="off"></form>
-      </section>
-
-      <section id="panel-right">
-        <div class="results-head">
-          <h2>Results</h2>
-          <span id="summary" class="summary"></span>
-        </div>
-        <p class="query-line"><strong>query:</strong> <span id="query"></span></p>
-        <div id="open-variables" class="open-variables"></div>
-        <div id="candidates"></div>
-        <details id="eliminated"></details>
-      </section>
-    </main>
+    <main id="mode-root" class="mode-landing"></main>
 
     <script type="module" src="js/ui/app.js"></script>
   </body>

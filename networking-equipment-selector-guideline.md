@@ -89,7 +89,7 @@ Queries are built in one place (`selector/js/core/query.js`): constraint builder
 - **One engine feature = three front-end features.** Residual domains power facet greying, MCP parameter narrowing, and agent follow-up questions — the same computation.
 - **Cheap vs. expensive change still holds,** now for variables: adding a model is cheap; adding or changing a registry variable is expensive and deliberate (UI + MCP + maybe solver).
 - **Single-switch scope.** The contract answers "what is one valid unit". Multi-switch sizing (96 ports → 2×48 + stack) is a future layer *on top of* this contract, never inside it.
-- **UX modes come later, cheaply.** "All the buttons", "query a model", and "guided run" are three renderings of the same response — the contract had to come first.
+- **UX modes are three renderings of the same response** — the contract came first, then the modes cost little. *(Done 2026-07: the web UI ships a mode-choice landing plus `#lookup` (exact-model option tables), `#full` (all facet controls, structured kitlists, raw JSON only behind a button), and `#guided` (step-by-step in the registry's `ask_priority` order, skippable, ending in the pre-filled full view). A question-based conversational mode is deliberately NOT a fourth UI — that is the Stage-3 agent through MCP.)*
 
 ---
 
