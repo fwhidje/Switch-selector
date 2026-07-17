@@ -138,14 +138,33 @@ export function mount(root, ctx) {
     // power
     if (bom.power) {
       const dc = bom.power.default_config;
-      const note = el("p", "lookup-note",
-        `valid primary: ${bom.power.valid_primary.join(", ") || "—"} · default: ${bom.power.default_primary}` +
-        (dc ? ` — ships as ${[dc.primary, dc.secondary, dc.tertiary].filter(Boolean).join(" + ")} (${dc.reason})` : ""));
-      const rows = (bom.power.poe_budget_matrix ?? []).map((m) =>
-        [m.primary, m.secondary ?? "—", m.tertiary ?? "—", `${m.poe_budget_watts}W`]);
-      out.appendChild(rows.length
-        ? section("PSU configurations (PoE budget)", note, table(["primary", "secondary", "tertiary", "PoE budget"], rows))
-        : section("PSU", note));
+      const matrix = bom.power.poe_budget_matrix ?? [];
+      const primaries = bom.power.valid_primary ?? [];
+      if (matrix.length) {
+        // PoE model: each row is one orderable (primary[,secondary[,tertiary]]) arrangement.
+        const note = el("p", "lookup-note",
+          `valid primary: ${primaries.join(", ") || "—"} · default: ${bom.power.default_primary}` +
+          (dc ? ` — ships as ${[dc.primary, dc.secondary, dc.tertiary].filter(Boolean).join(" + ")} (${dc.reason})` : ""));
+        const rows = matrix.map((m) => [m.primary, m.secondary ?? "—", m.tertiary ?? "—", `${m.poe_budget_watts}W`]);
+        out.appendChild(section("PSU configurations (PoE budget)", note, table(["primary", "secondary", "tertiary", "PoE budget"], rows)));
+      } else if (bom.power.secondary_none_option != null) {
+        // Non-PoE but dual-bay: no PoE budget to tabulate, but a second PSU can
+        // be fitted for redundancy (a matched pair). Show both slots by role.
+        const note = el("p", "lookup-note",
+          `Ships as a single ${bom.power.default_primary}. A second PSU may be added for redundancy (matched pair); default is a single supply.`);
+        const primaryOpts = primaries.map((p) => p === bom.power.default_primary ? `${p} (default)` : p).join(", ") || "—";
+        const secondaryOpts = `none — single (default) · matched pair: ${primaries.join(" / ") || "—"}`;
+        out.appendChild(section("PSU options",
+          note,
+          table(["slot", "options"], [
+            ["primary", primaryOpts],
+            ["secondary (redundancy)", secondaryOpts],
+          ])));
+      } else {
+        // True single-bay / fixed supply: no secondary to offer.
+        out.appendChild(section("PSU",
+          el("p", "lookup-note", `${bom.power.default_primary} — single fixed supply (no redundancy bay).`)));
+      }
     }
 
     // license

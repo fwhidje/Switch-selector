@@ -231,10 +231,16 @@ export function kitList(bom) {
     } else {
       const label = [dc.primary, dc.secondary, dc.tertiary].filter(Boolean).join(" + ")
         + (dc.watts != null ? ` → ${dc.watts}W PoE` : "");
-      const chosen = psuComboText({ ...dc, poe_budget_watts: dc.watts });
-      const alts = (bom.power.poe_budget_matrix ?? [])
-        .map(psuComboText)
-        .filter((t) => t !== chosen);
+      const matrix = bom.power.poe_budget_matrix ?? [];
+      let alts;
+      if (matrix.length) {
+        // PoE model: alternatives are the other orderable (primary,secondary,…) arrangements.
+        const chosen = psuComboText({ ...dc, poe_budget_watts: dc.watts });
+        alts = matrix.map(psuComboText).filter((t) => t !== chosen);
+      } else if (bom.power.secondary_none_option != null && !dc.secondary) {
+        // Non-PoE dual-bay: no matrix, but a matched second PSU is available for redundancy.
+        alts = ["+ matched redundant PSU (optional)"];
+      }
       kit.appendChild(kitLine("power", label, dc.reason, alts));
     }
   }
