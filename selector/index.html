@@ -3,16 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>C9300 Selector — test UI</title>
+    <title>Networking Equipment Selector — test UI</title>
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
     <header>
-      <h1>C9300 Selector</h1>
+      <h1>Networking Equipment Selector</h1>
       <p id="status" class="status">Loading…</p>
       <p class="note">
-        Basic facet test surface over the pure solver. Controls are generated from the
-        axis registry; results re-solve on every change.
+        Facet test surface over the query/response contract. Controls and panel layout are
+        generated from the decision-variable registry; every change re-solves, and the
+        response reports the residual choice (open variables, defaults, must-resolve).
       </p>
     </header>
 
@@ -28,6 +29,7 @@
           <span id="summary" class="summary"></span>
         </div>
         <p class="query-line"><strong>query:</strong> <span id="query"></span></p>
+        <div id="open-variables" class="open-variables"></div>
         <div id="candidates"></div>
         <details id="eliminated"></details>
       </section>

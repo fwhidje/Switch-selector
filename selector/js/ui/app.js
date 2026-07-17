@@ -1,14 +1,19 @@
-// app.js — basic facet UI over the variant solver. The only DOM module.
+// app.js — facet UI over the query/response contract. The only DOM module.
 //
-// Controls are generated from the registry by axis KIND (ordered enums get an
-// at-least/exactly toggle; numerics get min/max; monotonic capabilities get
-// required/any; discriminating get full choices). The parametrised port_count
-// axis becomes a "Ports" grid of min inputs over the (role,medium,speed) combos
-// present in the data. Every change re-solves; dead facet values are disabled.
+// A thin RENDERER of the solver contract: controls are generated from the
+// registry (panel layout from presentation metadata, control type from KIND;
+// must_resolve variables carry a badge), every change re-solves, facet values
+// are greyed from the residual domains, and the response's open_variables are
+// rendered as the "still open" strip. Query construction (incl. the PoE
+// demand translation) lives in core/query.js — this file only reads the form.
 
-import { loadRegistry, getAxes, legalValues, portModel, configVariables, poeLevelWatts } from "../core/registry.js";
+import {
+  loadRegistry, getVariable, legalValues, variablesByGroup, mustResolve,
+  isConfigurationDimension, binding, storageOf, isCountAtLevel, acceptedConditions,
+} from "../core/registry.js";
 import { loadKBs, getModels } from "../core/kb.js";
-import { solve, availableValues } from "../core/solver.js";
+import { solve, facetDomains } from "../core/solver.js";
+import { constraint, portConstraint, translatePoeDemand } from "../core/query.js";
 
 const REGISTRY_URL = "../DB/switching/switching-axes.json";
 const FAMILIES_URL = "../DB/switching/families.json";
@@ -16,26 +21,14 @@ const FAMILIES_URL = "../DB/switching/families.json";
 let registry = null;
 let kb = null;
 let speedOrder = [];
-let portCombos = []; // [{role, medium, speed}]
-let levelWatts = {}; // { poe: 15.4, "poe+": 30, ... }
+let portCombos = []; // [{role, medium, speed}] present in the data (advanced grid)
+let portSpeeds = []; // distinct speeds present (role-agnostic default rows)
 let poeLevels = []; // ordered PoE levels excluding 'none'
 
-const GROUPS = [
-  { id: "series",    label: "Series",
-    axes: ["series"] },
-  { id: "interfaces", label: "Interfaces",
-    axes: ["total_port_count", "uplink_modular"],
-    ports: true },
-  { id: "poe",       label: "PoE",
-    axes: ["poe_capable", "poe_type", "poe_budget_watts"],
-    poeDemand: true },
-  { id: "stacking",  label: "Stacking / StackPower / PSU",
-    axes: ["stacking_capable", "stacking_technology", "stackpower_capable"],
-    configVars: ["psu_redundancy", "psu_triple"] },
-  { id: "licensing", label: "Licensing",
-    axes: ["license_regime", "license_tier"],
-    configVars: ["license_term"] },
-];
+// Special demand sections keyed by the registry's presentation group: the
+// ports grid and the PoE demand rows are UI-side GATHERING for constraints
+// core/query.js derives — they belong with their group but are not variables.
+const GROUP_SECTIONS = { "Interfaces": ["ports"], "PoE": ["poeDemand"] };
 
 async function init() {
   const status = document.getElementById("status");
@@ -45,10 +38,11 @@ async function init() {
     const families = await familiesRes.json();
     const kbUrls = families.map((f) => `../DB/switching/${f.dir}/${f.kbFile}`);
     [registry, kb] = await Promise.all([loadRegistry(REGISTRY_URL), loadKBs(kbUrls)]);
-    speedOrder = portModel(registry)?.selector_enums?.port_speed?.order ?? [];
+    speedOrder = registry.port_model?.selector_enums?.port_speed?.order ?? [];
     portCombos = enumeratePortCombos(kb);
-    levelWatts = poeLevelWatts(registry);
-    poeLevels = (getAxes(registry).find((a) => a.name === "poe_type")?.order ?? []).filter((l) => l !== "none");
+    portSpeeds = [...new Set(portCombos.map((c) => c.speed))]
+      .sort((a, b) => speedOrder.indexOf(a) - speedOrder.indexOf(b));
+    poeLevels = (getVariable(registry, "poe_type")?.order ?? []).filter((l) => l !== "none");
     status.textContent = `Loaded ${kb.models.length} models · registry v${registry.registry_version}`;
     buildControls();
     run();
@@ -71,53 +65,46 @@ function enumeratePortCombos(kb) {
     (speedOrder.indexOf(a.speed) - speedOrder.indexOf(b.speed)));
 }
 
+// open-enum domains gathered from the data (datalist suggestions)
+function knownValues(variable) {
+  if (storageOf(variable) === "identity") return getModels(kb).map((m) => m.id);
+  const src = binding(variable)?.source;
+  const out = new Set();
+  for (const s of kb._sources ?? []) {
+    if (src === "network_module_group") for (const nm of s.catalog?.network_modules ?? []) out.add(nm.id);
+    if (src === "stack_cable_group") for (const c of s.catalog?.stack_cables ?? []) out.add(c.id);
+    if (src === "stackpower_cable_group") for (const c of s.catalog?.stackpower_cables ?? []) out.add(c.id);
+  }
+  return [...out].sort();
+}
+
 // --- build controls ---------------------------------------------------------
 function buildControls() {
   const form = document.getElementById("controls");
   form.innerHTML = "";
-  const axesByName = new Map(getAxes(registry).map((a) => [a.name, a]));
-  const cvs = configVariables(registry);
 
-  for (const group of GROUPS) {
+  for (const { group, variables } of variablesByGroup(registry)) {
     const details = document.createElement("details");
     details.open = true;
     details.className = "filter-group";
 
     const summary = document.createElement("summary");
     summary.className = "filter-group-head";
-    summary.textContent = group.label;
+    summary.textContent = group;
     details.appendChild(summary);
 
     const body = document.createElement("div");
     body.className = "filter-group-body";
 
-    for (const axisName of group.axes) {
-      const axis = axesByName.get(axisName);
-      if (axis) body.appendChild(controlFor(axis));
+    for (const v of variables) {
+      if (isCountAtLevel(v)) continue; // gathered by the ports section below
+      if (acceptedConditions(v).length === 0) continue; // psu_config: response-only
+      const control = controlFor(v);
+      if (control) body.appendChild(control);
     }
-    if (group.ports) body.appendChild(portsSection());
-    if (group.poeDemand) body.appendChild(poeDemandSection());
-    if (group.configVars?.length) {
-      let subHead = null;
-      for (const cvName of group.configVars) {
-        const def = cvs[cvName];
-        if (!def) continue;
-        if (!subHead) {
-          subHead = document.createElement("div");
-          subHead.className = "section-head";
-          subHead.textContent = "configuration";
-          body.appendChild(subHead);
-        }
-        let kind, opts;
-        if (def.type === "boolean") {
-          kind = "config-bool"; opts = [["", "any"], ["true", "required"]];
-        } else if (def.type === "integer") {
-          kind = "config-int"; opts = [["", "any"], ...(def.legal_values ?? []).map((v) => [String(v), String(v)])];
-        } else {
-          kind = "config-enum"; opts = [["", "any"], ...(def.legal_values ?? []).map((v) => [String(v), String(v)])];
-        }
-        body.appendChild(row(cvName, def.notes, select(cvName, kind, opts)));
-      }
+    for (const section of GROUP_SECTIONS[group] ?? []) {
+      if (section === "ports") body.appendChild(portsSection());
+      if (section === "poeDemand") body.appendChild(poeDemandSection());
     }
 
     details.appendChild(body);
@@ -128,13 +115,20 @@ function buildControls() {
   form.addEventListener("change", run);
 }
 
-function row(labelText, title, ...controls) {
+function row(labelText, title, badge, ...controls) {
   const wrap = document.createElement("label");
   wrap.className = "control";
   const name = document.createElement("span");
   name.className = "axis-name";
   name.textContent = labelText;
   if (title) name.title = title;
+  if (badge) {
+    const b = document.createElement("span");
+    b.className = "must-resolve";
+    b.textContent = "must resolve";
+    b.title = "No safe default exists — settle this before the BOM is orderable.";
+    name.appendChild(b);
+  }
   wrap.appendChild(name);
   const box = document.createElement("span");
   box.className = "control-inputs";
@@ -143,49 +137,89 @@ function row(labelText, title, ...controls) {
   return wrap;
 }
 
-function controlFor(axis) {
+function controlFor(v) {
+  const badge = mustResolve(v);
   // ordered enum (poe_type): value select + at-least/exactly toggle
-  if (axis.kind === "ordered") {
-    const sel = select(axis.name, "ordered", [["", "any"], ...legalValues(axis).map((v) => [v, v])]);
+  if (v.kind === "ordered") {
+    const sel = select(v.name, "ordered", [["", "any"], ...legalValues(v).map((x) => [x, x])]);
     const cond = document.createElement("select");
-    cond.dataset.condFor = axis.name;
+    cond.dataset.condFor = v.name;
     cond.className = "cond";
-    for (const [v, t] of [[">=", "at least"], ["==", "exactly"]]) {
-      const o = document.createElement("option"); o.value = v; o.textContent = t; cond.appendChild(o);
+    for (const [val, t] of [[">=", "at least"], ["==", "exactly"]]) {
+      const o = document.createElement("option"); o.value = val; o.textContent = t; cond.appendChild(o);
     }
-    return row(axis.name, axis.notes, sel, cond);
+    return row(v.name, v.notes, badge, sel, cond);
   }
-  if (axis.type === "integer") {
-    return row(axis.name, axis.notes, numInput(axis.name, "min", "min"), numInput(axis.name, "max", "max"));
+  if (v.type === "integer" && legalValues(v).length === 0) {
+    return row(v.name, v.notes, badge, numInput(v.name, "min", "min"), numInput(v.name, "max", "max"));
   }
-  if (axis.type === "boolean") {
-    const opts = axis.kind === "monotonic-capability"
+  if (v.type === "integer") { // closed integer choice (license_term)
+    return row(v.name, v.notes, badge,
+      select(v.name, "int-enum", [["", "any"], ...legalValues(v).map((x) => [String(x), String(x)])]));
+  }
+  if (v.type === "boolean") {
+    const opts = v.kind === "monotonic-capability" || isConfigurationDimension(v)
       ? [["", "any"], ["true", "required"]]
       : [["", "any"], ["true", "yes"], ["false", "no"]];
-    return row(axis.name, axis.notes, select(axis.name, "boolean", opts));
+    return row(v.name, v.notes, badge, select(v.name, "boolean", opts));
   }
-  // discriminating enum (series, stacking_technology, license_regime)
-  return row(axis.name, axis.notes, select(axis.name, "enum", [["", "any"], ...legalValues(axis).map((v) => [v, v])]));
+  // open enum (model_id, uplink_module, cables): free input + datalist of known SKUs
+  if (legalValues(v).length === 0) {
+    return row(v.name, v.notes, badge, skuInput(v));
+  }
+  // discriminating closed enum (series, stacking_technology, license_regime, license_tier)
+  return row(v.name, v.notes, badge, select(v.name, "enum", [["", "any"], ...legalValues(v).map((x) => [x, x])]));
 }
 
+function skuInput(v) {
+  const el = document.createElement("input");
+  el.type = "text";
+  el.placeholder = "any";
+  el.dataset.variable = v.name;
+  el.dataset.kind = "sku";
+  const listId = `known-${v.name}`;
+  el.setAttribute("list", listId);
+  const dl = document.createElement("datalist");
+  dl.id = listId;
+  for (const x of knownValues(v)) {
+    const o = document.createElement("option"); o.value = x; dl.appendChild(o);
+  }
+  const wrap = document.createElement("span");
+  wrap.appendChild(el); wrap.appendChild(dl);
+  return wrap;
+}
+
+// Ports: role-agnostic by default ("N ports able to run speed S", any role) —
+// the solver's pool feasibility decides access vs uplink. The advanced grid
+// pins role/medium for the cases where the distinction is the requirement.
 function portsSection() {
   const wrap = document.createElement("div");
   wrap.className = "ports-section";
   const h = document.createElement("div");
   h.className = "section-head";
-  h.textContent = "ports — minimum count at speed";
+  h.textContent = "ports — minimum count at speed (any role)";
   wrap.appendChild(h);
+  for (const speed of portSpeeds) {
+    const el = numInput("port_count", "min", "0");
+    el.dataset.portSpeed = speed;
+    wrap.appendChild(row(speed, "minimum ports able to run this speed — access or uplink; the solver decides", false, el));
+  }
+  const adv = document.createElement("details");
+  const s = document.createElement("summary");
+  s.className = "section-head";
+  s.textContent = "advanced: pin role / medium";
+  adv.appendChild(s);
   for (const c of portCombos) {
     const el = numInput("port_count", "min", "0");
     el.dataset.portRole = c.role; el.dataset.portMedium = c.medium; el.dataset.portSpeed = c.speed;
-    wrap.appendChild(row(`${c.role}/${c.medium}/${c.speed}`, "minimum ports able to run this speed", el));
+    adv.appendChild(row(`${c.role}/${c.medium}/${c.speed}`, "minimum ports of this role/medium able to run this speed", false, el));
   }
+  wrap.appendChild(adv);
   return wrap;
 }
 
-// PoE demand: a dynamic list of {count, level} rows. Translates to derived
-// hard constraints (budget = Σ count×watts, poe_type ≥ max level, total_port_count
-// ≥ Σ count). Filling the last row spawns a fresh blank one.
+// PoE demand: a dynamic list of {count, level} rows. core/query.js translates
+// them to derived hard constraints. Filling the last row spawns a blank one.
 function poeDemandSection() {
   const wrap = document.createElement("div");
   wrap.className = "demand-section";
@@ -230,16 +264,15 @@ function syncDemandRows() {
   if (cnt > 0 && lvl) list.appendChild(demandRow());
 }
 
-
-function numInput(axis, bound, placeholder) {
+function numInput(variable, bound, placeholder) {
   const el = document.createElement("input");
   el.type = "number"; el.min = "0"; el.placeholder = placeholder;
-  el.dataset.axis = axis; el.dataset.kind = "integer"; el.dataset.bound = bound;
+  el.dataset.variable = variable; el.dataset.kind = "integer"; el.dataset.bound = bound;
   return el;
 }
-function select(axis, kind, optionPairs) {
+function select(variable, kind, optionPairs) {
   const el = document.createElement("select");
-  el.dataset.axis = axis; el.dataset.kind = kind;
+  el.dataset.variable = variable; el.dataset.kind = kind;
   for (const [value, label] of optionPairs) {
     const o = document.createElement("option"); o.value = value; o.textContent = label; el.appendChild(o);
   }
@@ -250,53 +283,40 @@ function select(axis, kind, optionPairs) {
 function readQuery() {
   const q = [];
   // scalar controls
-  for (const el of document.querySelectorAll('#controls [data-axis]:not([data-port-speed])')) {
+  for (const el of document.querySelectorAll('#controls [data-variable]:not([data-port-speed])')) {
     const raw = el.value;
     if (raw === "" || raw == null) continue;
-    const axis = el.dataset.axis;
+    const name = el.dataset.variable;
     if (el.dataset.kind === "integer") {
-      q.push({ axis, condition: el.dataset.bound === "max" ? "<=" : ">=", value: Number(raw), severity: "hard" });
+      q.push(constraint(name, el.dataset.bound === "max" ? "<=" : ">=", Number(raw)));
+    } else if (el.dataset.kind === "int-enum") {
+      q.push(constraint(name, "==", Number(raw)));
     } else if (el.dataset.kind === "boolean") {
-      q.push({ axis, condition: "==", value: raw === "true", severity: "hard" });
+      q.push(constraint(name, "==", raw === "true"));
     } else if (el.dataset.kind === "ordered") {
-      const cond = document.querySelector(`#controls [data-cond-for="${axis}"]`)?.value ?? ">=";
-      q.push({ axis, condition: cond, value: raw, severity: "hard" });
-    } else if (el.dataset.kind === "config-int") {
-      q.push({ axis, condition: "==", value: Number(raw), severity: "config" }); // never filters
-    } else if (el.dataset.kind === "config-bool") {
-      q.push({ axis, condition: "==", value: true, severity: "config" }); // never filters
-    } else if (el.dataset.kind === "config-enum") {
-      q.push({ axis, condition: "==", value: raw, severity: "config" }); // never filters
-    } else {
-      q.push({ axis, condition: "==", value: raw, severity: "hard" });
+      const cond = document.querySelector(`#controls [data-cond-for="${name}"]`)?.value ?? ">=";
+      q.push(constraint(name, cond, raw));
+    } else { // enum + sku
+      q.push(constraint(name, "==", raw));
     }
   }
-  // port controls
+  // port controls (role-agnostic rows carry only data-port-speed)
   for (const el of document.querySelectorAll("#controls [data-port-speed]")) {
     const v = Number(el.value);
     if (!el.value || v <= 0) continue;
-    q.push({
-      axis: "port_count",
-      where: { role: el.dataset.portRole, medium: el.dataset.portMedium, speed: el.dataset.portSpeed },
-      condition: ">=", value: v, severity: "hard",
-    });
+    const where = { speed: el.dataset.portSpeed };
+    if (el.dataset.portRole) where.role = el.dataset.portRole;
+    if (el.dataset.portMedium) where.medium = el.dataset.portMedium;
+    q.push(portConstraint(where, ">=", v));
   }
   // PoE demand rows -> derived hard constraints (budget, level, port count)
   const demand = [];
   for (const r of document.querySelectorAll("#poe-demand .demand-row")) {
-    const c = Number(r.querySelector("[data-demand-count]").value) || 0;
-    const l = r.querySelector("[data-demand-level]").value;
-    if (c > 0 && l) demand.push({ count: c, level: l });
+    const count = Number(r.querySelector("[data-demand-count]").value) || 0;
+    const level = r.querySelector("[data-demand-level]").value;
+    if (count > 0 && level) demand.push({ count, level });
   }
-  if (demand.length) {
-    const watts = demand.reduce((s, d) => s + d.count * (levelWatts[d.level] ?? 0), 0);
-    const totalPorts = demand.reduce((s, d) => s + d.count, 0);
-    const maxLevel = demand.map((d) => d.level).sort((a, b) => poeLevels.indexOf(b) - poeLevels.indexOf(a))[0];
-    q.push({ axis: "poe_budget_watts", condition: ">=", value: Math.ceil(watts), severity: "hard" });
-    q.push({ axis: "poe_type", condition: ">=", value: maxLevel, severity: "hard" });
-    // every PoE port is an access port, so PoE-port demand maps to total_port_count
-    q.push({ axis: "total_port_count", condition: ">=", value: totalPorts, severity: "hard" });
-  }
+  q.push(...translatePoeDemand(demand, registry));
   return q;
 }
 
@@ -308,23 +328,53 @@ function run() {
   const result = solve(query, kb, registry);
   renderQuery(query);
   renderResults(result);
-  updateFacets(query);
+  renderOpenVariables(result);
+  updateFacets(query, result);
 }
 
 function renderQuery(query) {
   const el = document.getElementById("query");
   el.textContent = query.length
-    ? query.map((c) => c.axis === "port_count"
+    ? query.map((c) => c.variable === "port_count"
         ? `ports{${[c.where.role, c.where.medium, c.where.speed].filter(Boolean).join("/")}} >= ${c.value}`
-        : `${c.axis} ${c.condition} ${c.value}`).join("  ·  ")
+        : `${c.variable} ${c.condition} ${c.value}`).join("  ·  ")
     : "(no constraints — all models)";
 }
 
-// disable enum values that would dead-end given the rest of the query
-function updateFacets(query) {
+// The contract's residual decision space, rendered as the "still open" strip.
+function renderOpenVariables(result) {
+  const el = document.getElementById("open-variables");
+  if (!el) return;
+  el.innerHTML = "";
+  const head = document.createElement("div");
+  head.className = "section-head";
+  head.textContent = "still open (residual choice)";
+  el.appendChild(head);
+  const ul = document.createElement("ul");
+  for (const ov of result.open_variables) {
+    const li = document.createElement("li");
+    const domain = Array.isArray(ov.domain)
+      ? (ov.domain.length > 8 ? `${ov.domain.slice(0, 8).join(", ")}, … (${ov.domain.length})` : ov.domain.join(", "))
+      : ov.domain ? `${ov.domain.min}–${ov.domain.max}` : "—";
+    const dflt = ov.must_resolve ? "" : ov.default
+      ? `  · default: ${ov.default.kind === "fixed" ? ov.default.value : ov.default.policy ?? ov.default.kind}` : "";
+    li.textContent = `${ov.name}: {${domain}}${dflt}`;
+    if (ov.must_resolve) {
+      const b = document.createElement("span");
+      b.className = "must-resolve";
+      b.textContent = "must resolve";
+      li.appendChild(b);
+    }
+    ul.appendChild(li);
+  }
+  el.appendChild(ul);
+}
+
+// grey enum values whose residual domain is empty given the rest of the query
+function updateFacets(query, result) {
+  const domains = facetDomains(query, kb, registry, result);
   for (const sel of document.querySelectorAll('#controls select[data-kind="enum"], #controls select[data-kind="ordered"]')) {
-    const axis = sel.dataset.axis;
-    const live = availableValues(query, axis, kb, registry);
+    const live = domains.get(sel.dataset.variable);
     if (!live) continue;
     let liveCount = 0;
     for (const opt of sel.options) {
@@ -360,7 +410,7 @@ function renderResults(result) {
 }
 
 function renderCandidate(cand, isDefault) {
-  const r = cand.resolved;
+  const r = cand.bom;
   const card = document.createElement("article");
   card.className = "candidate" + (isDefault ? " default" : "");
 
