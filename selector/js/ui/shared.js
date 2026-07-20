@@ -206,8 +206,18 @@ const psuComboText = (row) =>
  * items, remaining alternatives as compact rows. No JSON — the raw response
  * is the caller's "show raw result" concern.
  */
-export function kitList(bom) {
+export function kitList(bom, model) {
   const kit = el("div", "kitlist");
+
+  // access ports — inherent capability, shown for reading, never ordered
+  if (model?.ports?.length || model?.access_pair_block) {
+    const label = summarisePorts(model?.ports);
+    const pb = model?.access_pair_block;
+    const why = pb
+      ? `+ combinable bank: ${pb.pairs} pairs, each ${pb.low.ports_per_pair}× ${pb.low.speeds.join("/")} or ${pb.high.ports_per_pair}× ${pb.high.speeds.join("/")}`
+      : null;
+    kit.appendChild(kitLine("access ports", label, why));
+  }
 
   // uplinks
   const upOpt = bom.uplinks.options.find((o) => o.id === bom.uplinks.default);
@@ -219,6 +229,13 @@ export function kitList(bom) {
       .filter((o) => o.id !== bom.uplinks.default && o.moduleId)
       .map((o) => `${o.moduleId}${o.mode ? ` (${o.mode})` : ""} — ${summarisePorts(o.ports)}`);
     kit.appendChild(kitLine("uplink module", label, null, alts));
+  } else if (bom.uplinks.options.length > 1) {
+    // fixed-uplink pair bank: the other valid pair arrangements are real alternatives
+    const label = `${upOpt?.mode ?? ""} — ${summarisePorts(upOpt?.ports)}`;
+    const alts = bom.uplinks.options
+      .filter((o) => o.id !== bom.uplinks.default)
+      .map((o) => `${o.mode ?? o.id}: ${summarisePorts(o.ports)}`);
+    kit.appendChild(kitLine("fixed uplinks", label, "combinable uplink bank — one configuration at a time", alts));
   } else {
     kit.appendChild(kitLine("fixed uplinks", summarisePorts(upOpt?.ports ?? bom.uplinks.options[0]?.ports)));
   }
@@ -354,7 +371,7 @@ export function candidateCard(cand, isDefault) {
   card.appendChild(btns);
 
   card.appendChild(el("p", "desc", cand.model.description));
-  card.appendChild(kitList(cand.bom));
+  card.appendChild(kitList(cand.bom, cand.model));
   return card;
 }
 

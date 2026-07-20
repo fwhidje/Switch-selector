@@ -66,6 +66,11 @@ export const mustResolve = (v) => v?.default?.kind === "must_resolve";
 /** A configuration variable's KB binding ({source, via}) or null. */
 export const binding = (v) => v?.binding ?? null;
 
+/** Presentation dependency ({variable, value|"any"}) for sequential front-ends
+ *  (guided UI, agent question ordering): ask this variable only after its
+ *  dependency is answered accordingly. Never affects the solver. */
+export const dependsOn = (v) => v?.presentation?.depends_on ?? null;
+
 /**
  * Parametrised port variable: kind "count-at-level". It is NOT stored as a
  * scalar field in axis_values — it resolves against a variant's port pool
