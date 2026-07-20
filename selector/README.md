@@ -113,7 +113,8 @@ js/ui/       DOM only — three renderings of the one contract
 
 ## Out of scope (deferred)
 
-The MCP server itself (the contract is designed for it); pricing and price-based ranking (the
+~~The MCP server itself~~ *(done: `../mcp/` — a stateless Cloudflare Worker over this core,
+unchanged; `docs/mcp-solver-contract.md` is the normative boundary)*; pricing and price-based ranking (the
 default order is a deterministic minimal-first stub); multi-switch quantity sizing (a future layer
 *on top of* the contract); UI modes (guided run, richer lookup view) — three renderings of the same
 response, deliberately after the contract; QSFP/SFP breakout.

@@ -22,7 +22,10 @@ export async function loadKB(url) {
 }
 
 /**
- * Load and merge several family KBs into one pool for the solver.
+ * Merge several already-parsed family KBs into one pool for the solver.
+ * Pure (no IO) — the entry point for hosts that bundle the KB JSON instead of
+ * fetching it (the MCP server; see selector/docs/mcp-solver-contract.md §3).
+ * Attaches each KB's `_index` if not already present.
  *
  * Catalog/group ids are only unique WITHIN a family (a future family could
  * reuse a real Cisco SKU another family already uses), so this does not
@@ -30,19 +33,31 @@ export async function loadKB(url) {
  * back-reference to its own family's KB (with its own `_index`), and callers
  * that dereference a model's modules/PSUs/cables/licenses must look them up
  * via that model's `_kb`, not the merged object.
- * @param {string[]} urls
- * @returns {Promise<object>} { models, _sources } — models is flat and tagged
+ * @param {object[]} parsedKbs
+ * @returns {object} { models, _sources } — models is flat and tagged
  */
-export async function loadKBs(urls) {
-  const sources = await Promise.all(urls.map(loadKB));
+export function mergeKBs(parsedKbs) {
+  const sources = [];
   const models = [];
-  for (const kb of sources) {
+  for (const kb of parsedKbs) {
+    if (!kb._index)
+      Object.defineProperty(kb, "_index", { value: buildIndex(kb), enumerable: false });
+    sources.push(kb);
     for (const m of getModels(kb)) {
       Object.defineProperty(m, "_kb", { value: kb, enumerable: false });
       models.push(m);
     }
   }
   return { models, _sources: sources };
+}
+
+/**
+ * Fetch + merge several family KBs (browser convenience over mergeKBs).
+ * @param {string[]} urls
+ * @returns {Promise<object>} { models, _sources }
+ */
+export async function loadKBs(urls) {
+  return mergeKBs(await Promise.all(urls.map(loadKB)));
 }
 
 function indexById(arr) {

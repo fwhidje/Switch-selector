@@ -1,0 +1,19 @@
+{
+  "name": "switch-selector-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Stage-2 MCP server: remote, authless, streamable-HTTP tool surface over the selector core (see selector/docs/mcp-solver-contract.md).",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "agents": "^0.17.4",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "wrangler": "^4.112.0"
+  }
+}

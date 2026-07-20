@@ -1,0 +1,10 @@
+// Stage-2 MCP server — stateless Worker (createMcpHandler, no bindings, free-plan clean).
+// Deploys from CI after validate-kb passes; a deploy is a KB snapshot (JSON is bundled).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "switch-selector-mcp",
+  "main": "src/index.js",
+  "compatibility_date": "2026-07-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true }
+}
