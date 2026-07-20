@@ -88,7 +88,7 @@ export function solve(query, kb, registry) {
   rank(survivors, soft);
 
   const candidates = survivors.map((s) => ({
-    model: { id: s.model.id, description: s.model.description },
+    model: modelSummary(s.model),
     bom: resolveBOM(s.model, cons, s.model._kb ?? kb, s.validOptions),
   }));
 
@@ -98,6 +98,17 @@ export function solve(query, kb, registry) {
     open_variables: openVariables(cons, survivors, registry),
     eliminated,
   };
+}
+
+/** Candidate model summary: identity plus the switch's own (access) port
+ *  capability, so renderers can show "what the box is" without a KB re-lookup.
+ *  Access ports are inherent to the SKU — capability, not an orderable part. */
+function modelSummary(m) {
+  const out = { id: m.id, description: m.description };
+  const access = (m.ports ?? []).filter((p) => p.role === "access");
+  if (access.length) out.ports = access;
+  if (m.access_pair_block) out.access_pair_block = m.access_pair_block;
+  return out;
 }
 
 /** Does a variant option satisfy an uplink_module pick? Matches the real

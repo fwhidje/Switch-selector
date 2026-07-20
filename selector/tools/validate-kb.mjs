@@ -98,6 +98,14 @@ function checkRegistryIntegrity(regFail) {
     const pg = v.presentation?.group;
     if (pg == null) regFail(`${v.name}.presentation`, "missing presentation.group");
     else if (!groups.has(pg)) regFail(`${v.name}.presentation.group`, `'${pg}' not in presentation_groups`);
+    const dep = v.presentation?.depends_on;
+    if (dep) {
+      const target = variables.find((t) => t.name === dep.variable);
+      if (!target) regFail(`${v.name}.presentation.depends_on`, `unknown variable '${dep.variable}'`);
+      else if (dep.value !== "any" && typeof dep.value !== "boolean" &&
+               (target.legal_values ?? []).length && !(target.legal_values ?? []).includes(dep.value))
+        regFail(`${v.name}.presentation.depends_on`, `'${dep.value}' not a legal value of '${dep.variable}'`);
+    }
     const d = defaultRule(v);
     if (d && !DEFAULT_KINDS.has(d.kind))
       regFail(`${v.name}.default.kind`, `'${d.kind}' not one of ${[...DEFAULT_KINDS].join("|")}`);

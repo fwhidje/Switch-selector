@@ -123,6 +123,18 @@ export function mount(root, ctx) {
     head.appendChild(copy);
     out.appendChild(head);
 
+    // access ports — the switch's own downlink capability (inherent to the SKU)
+    {
+      const access = cand.model.ports ?? [];
+      const rows = access.map((p) => [`${p.count}×`, p.medium, p.speeds.join(" / ")]);
+      const pieces = [];
+      if (rows.length) pieces.push(table(["count", "medium", "speeds"], rows));
+      const pb = cand.model.access_pair_block;
+      if (pb) pieces.push(el("p", "lookup-note",
+        `combinable bank: ${pb.pairs} pairs — each ${pb.low.ports_per_pair}× ${pb.low.medium} ${pb.low.speeds.join("/")} OR ${pb.high.ports_per_pair}× ${pb.high.medium} ${pb.high.speeds.join("/")}`));
+      if (pieces.length) out.appendChild(section("Access ports", ...pieces));
+    }
+
     // uplinks
     if (bom.uplinks.modular) {
       const rows = bom.uplinks.options
@@ -130,6 +142,12 @@ export function mount(root, ctx) {
         .map((o) => [o.moduleId, o.mode ?? "—", summarisePorts(o.ports), o.id === bom.uplinks.default ? "default" : ""]);
       rows.push(["(none fitted)", "—", "—", bom.uplinks.options.find((o) => o.id === bom.uplinks.default)?.moduleId ? "" : "default"]);
       out.appendChild(section("Uplink module options", table(["module", "mode", "ports", ""], rows)));
+    } else if (bom.uplinks.options.length > 1) {
+      // fixed-uplink pair bank (e.g. C9550 CD uplinks): every valid pair
+      // arrangement is one real simultaneous configuration — list them all
+      const rows = bom.uplinks.options.map((o) =>
+        [o.mode ?? o.id, summarisePorts(o.ports), o.id === bom.uplinks.default ? "default" : ""]);
+      out.appendChild(section("Fixed uplink configurations", table(["configuration", "ports", ""], rows)));
     } else {
       out.appendChild(section("Fixed uplinks",
         el("p", null, summarisePorts(bom.uplinks.options[0]?.ports))));

@@ -60,11 +60,14 @@ All three are thin renderings of the same `solve()` response:
   are structured kitlists: default parts as line items with the policy's `reason`, remaining
   alternatives as compact rows; the raw solver response only behind a *show raw result* button.
   Rendering is capped at 20 cards with *show all*.
-- **`#guided` — guided run.** Steps through the decision variables in the registry's
-  `ask_priority` order (PoE demand rows and a Ports step replace their variables), each step with
-  a live match count and residual-domain greying; singleton domains auto-fill; every step is
-  skippable. Ends in a summary (with the outstanding must-resolve variables) that opens the full
-  view pre-filled with the accumulated draft.
+- **`#guided` — guided run.** Tile-based steps through the decision variables in the registry's
+  `ask_priority` order: single-choice tiles advance on click; the composite PoE and Ports steps
+  use level/category tiles with preset count menus (PoE has an explicit *None*). Dependent steps
+  (uplink module, stacking technology → stack cable, PSU triple, stackpower cable) only appear
+  when the registry's `presentation.depends_on` is satisfied, and the uplink-module tiles are the
+  live residual domain. Every step has a *don't care* tile and a live match count. Ends with the
+  kitlist rendered inline (top candidates + outstanding must-resolves) and a button to open the
+  full view pre-filled with the accumulated draft.
 
 ## Layout
 

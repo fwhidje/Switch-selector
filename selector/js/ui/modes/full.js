@@ -33,14 +33,17 @@ export function enumeratePortCombos(kb, speedOrder) {
     (speedOrder.indexOf(a.speed) - speedOrder.indexOf(b.speed)));
 }
 
-/** Role-agnostic per-speed rows + an advanced role/medium grid (shared with guided). */
-export function portsSection(portSpeeds, portCombos) {
+/** Role-agnostic per-(medium, speed) rows + an advanced role-pinning grid.
+ *  Medium is part of the default ask (matches the guided mode's tiles: copper
+ *  vs fiber is a real requirement, access vs uplink falls out of the solve). */
+export function portsSection(mediumSpeeds, portCombos) {
   const wrap = el("div", "ports-section");
   wrap.appendChild(el("div", "section-head", "ports — minimum count at speed (any role)"));
-  for (const speed of portSpeeds) {
+  for (const { medium, speed } of mediumSpeeds) {
     const input = numInput("port_count", "min", "0");
+    input.dataset.portMedium = medium;
     input.dataset.portSpeed = speed;
-    wrap.appendChild(row(speed, "minimum ports able to run this speed — access or uplink; the solver decides", false, input));
+    wrap.appendChild(row(`${medium}/${speed}`, "minimum ports of this medium able to run this speed — access or uplink; the solver decides", false, input));
   }
   const adv = el("details");
   adv.appendChild(el("summary", "section-head", "advanced: pin role / medium"));
@@ -57,8 +60,8 @@ export function mount(root, ctx) {
   const { registry, kb } = ctx;
   const speedOrder = portModel(registry)?.selector_enums?.port_speed?.order ?? [];
   const portCombos = enumeratePortCombos(kb, speedOrder);
-  const portSpeeds = [...new Set(portCombos.map((c) => c.speed))]
-    .sort((a, b) => speedOrder.indexOf(a) - speedOrder.indexOf(b));
+  const mediumSpeeds = [...new Map(portCombos.map((c) => [`${c.medium}|${c.speed}`, { medium: c.medium, speed: c.speed }])).values()]
+    .sort((a, b) => a.medium.localeCompare(b.medium) || (speedOrder.indexOf(a.speed) - speedOrder.indexOf(b.speed)));
   const poeLevels = (getVariable(registry, "poe_type")?.order ?? []).filter((l) => l !== "none");
   let showAll = false;
 
@@ -112,7 +115,7 @@ export function mount(root, ctx) {
       body.appendChild(controlFor(v, kb));
     }
     for (const section of GROUP_SECTIONS[group] ?? []) {
-      if (section === "ports") body.appendChild(portsSection(portSpeeds, portCombos));
+      if (section === "ports") body.appendChild(portsSection(mediumSpeeds, portCombos));
       if (section === "poeDemand") body.appendChild(poeDemandSection(poeLevels));
     }
     details.appendChild(body);
@@ -153,7 +156,7 @@ export function mount(root, ctx) {
     for (const p of draft.ports) {
       const sel = p.role
         ? `[data-port-speed="${p.speed}"][data-port-role="${p.role}"][data-port-medium="${p.medium}"]`
-        : `[data-port-speed="${p.speed}"]:not([data-port-role])`;
+        : `[data-port-speed="${p.speed}"][data-port-medium="${p.medium}"]:not([data-port-role])`;
       const elm = form.querySelector(sel);
       if (elm) elm.value = String(p.min);
     }
