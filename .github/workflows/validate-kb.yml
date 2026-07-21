@@ -7,6 +7,7 @@ on:
     paths:
       - "DB/switching/**"
       - "selector/**"
+      - "mcp/**"
       - ".github/workflows/validate-kb.yml"
   pull_request:
 
@@ -25,3 +26,36 @@ jobs:
         working-directory: selector
       - name: Consistency validator (ajv shape + registry/schema/KB + reference integrity)
         run: node selector/tools/validate-kb.mjs
+
+  # Stage-2 MCP server: a deploy is a KB snapshot, so it only ships from main and
+  # only after the validator passed (selector/docs/mcp-solver-contract.md §6).
+  # Skips gracefully until the Cloudflare secrets exist:
+  #   CLOUDFLARE_API_TOKEN  (API token, "Edit Cloudflare Workers" template)
+  #   CLOUDFLARE_ACCOUNT_ID (dash.cloudflare.com -> Workers & Pages -> account id)
+  deploy-mcp:
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip notice when Cloudflare secrets are not configured
+        if: ${{ secrets.CLOUDFLARE_API_TOKEN == '' }}
+        run: echo "CLOUDFLARE_API_TOKEN secret not set — skipping deploy."
+      - uses: actions/checkout@v4
+        if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+      - uses: actions/setup-node@v4
+        if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: mcp/package-lock.json
+      - name: Install MCP server deps
+        if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+        run: npm ci
+        working-directory: mcp
+      - name: Deploy Worker (wrangler)
+        if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: mcp
