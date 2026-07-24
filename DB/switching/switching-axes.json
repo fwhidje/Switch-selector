@@ -1,7 +1,7 @@
 {
   "$id": "switching-axes.json",
   "title": "Switching Decision-Variable Registry",
-  "registry_version": "1.0.0",
+  "registry_version": "2.0.0",
   "role": "Authoritative vocabulary for the Networking Equipment Selector. The registry enforces MEANING (what can be constrained, how, and which values are legal). It is the SOURCE; the KB schema is a projection of it. Nothing is constrainable unless declared here. v1.0.0 unifies the former axes + config_variables split into ONE flat list of DECISION VARIABLES over configurations: a solve answers with configurations (model + uplink option + PSU set + license SKUs + cables), and whether a variable filters models or refines the kitlist is declared per variable (`eliminates`), not a structural class. validate-kb.mjs checks model values and bindings against this file.",
   "consumers": [
     "Web UI builds form controls and panel layout from this registry (KIND drives the control; presentation drives WHERE it surfaces).",
@@ -159,18 +159,6 @@
       "notes": "Monotonic: presence never hurts. Sensible queries are 'require' (==true) or 'don't care' (omit); '==false' is rarely meaningful and the UI should treat 'not required' as omit, not as ==false."
     },
     {
-      "name": "stacking_technology",
-      "type": "enum",
-      "kind": "discriminating",
-      "dimension": "model",
-      "legal_values": ["stackwise-480", "stackwise-1t", "stackwise-320", "stackwise-1.6t", "stackwise-160", "stackwise-80", "meraki-stack-100g", "stackwise-virtual"],
-      "accepted_conditions": ["==", "in"],
-      "required_on_model": "when_stacking_capable",
-      "eliminates": true,
-      "presentation": { "group": "Stacking / PSU", "ask_priority": 51, "depends_on": { "variable": "stacking_capable", "value": true } },
-      "notes": "Required and non-blank on a model when stacking_capable is true. May be left unconstrained in a QUERY. v0.10.0 added 'stackwise-160' (C9200 modular, 160 Gbps data stacking) and 'stackwise-80' (C9200L fixed, 80 Gbps). Added 'meraki-stack-100g' with explicit human sign-off for MS150 (native Meraki hardware stacking via 2x dedicated 100G stacking ports / MA-CBL-100G-* cables, 80 Gbps stacking bandwidth — not a Cisco StackWise technology, DB/switching/MS/). Added 'stackwise-virtual' with explicit human sign-off for C9500 (StackWise Virtual, SVL): a licensed, software-defined stack formed over ordinary front-panel uplink ports, not a dedicated physical stack cable — Advantage-tier only (Network Essentials does not include it, per datasheet Table 24 'High availability and resiliency'). C9500 models therefore carry NO configurables.stack_cables / stack_cable_group; the capability is realized entirely via this enum value plus the Advantage license, not an orderable cable SKU. No registry_version bump (legal_values grew only, same convention as the 'series' addition)."
-    },
-    {
       "name": "stackpower_capable",
       "type": "boolean",
       "kind": "monotonic-capability",
@@ -189,8 +177,8 @@
       "accepted_conditions": ["=="],
       "eliminates": false,
       "default": { "kind": "none_option", "policy": "shortest-when-stacking-required" },
-      "presentation": { "group": "Stacking / PSU", "ask_priority": 52, "depends_on": { "variable": "stacking_technology", "value": "any" } },
-      "notes": "The stack cable fitted in the kitlist. An open enum: legal values are the model's stack-cable group members. Never eliminates a model — a pick only refines the BOM. Default: the group's none_option (a standalone switch needs no cable); when stacking_capable is a hard requirement the named policy substitutes the shortest cable. Absent entirely on models without a stack_cables configurable (e.g. C9500 StackWise Virtual — see stacking_technology notes)."
+      "presentation": { "group": "Stacking / PSU", "ask_priority": 52, "depends_on": { "variable": "stacking_capable", "value": true } },
+      "notes": "The stack cable fitted in the kitlist. An open enum: legal values are the model's stack-cable group members. Never eliminates a model — a pick only refines the BOM. Default: the group's none_option (a standalone switch needs no cable); when stacking_capable is a hard requirement the named policy resolves a real default — the adapter kit's bundled cable on adapter-kit series (stack group carries a stack_kit), otherwise the shortest cable. Absent entirely on models without a stack_cables configurable (e.g. C9500 StackWise Virtual, whose stacking is realized via the Advantage license over front-panel ports, not an orderable cable SKU). Depends on stacking_capable (a stack cable is relevant whenever the switch is stackable); the physical StackWise generation is carried as the display-only attribute stacking_technology, not a filter."
     },
     {
       "name": "stackpower_cable",

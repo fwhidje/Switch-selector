@@ -3,8 +3,8 @@
   "$id": "switch-kb.schema.json",
   "title": "Networking Equipment Selector — Switch Knowledge Base Schema",
   "description": "The SINGLE shared shape + authoring contract for every switch-family knowledge base (C9200, C9300, C9350, C9500, C9550, MS). This schema enforces SHAPE (entries are well-formed); switching-axes.json enforces MEANING (which decision variables exist, their KIND/DIMENSION, legal enum values, defaults, and KB bindings); selector/tools/validate-kb.mjs enforces CROSS-REFERENCE INTEGRITY (group references resolve, valid_primary is a subset of the referenced PSU group, poe_budget_watts equals the matrix max, sum of access-port counts equals total_port_count, enum/speed values are registered). All three must pass. Family-specific constructs (access_pair_block, uplink_pair_block, fan_trays, modes, no_uplink_ports, tertiary) are OPTIONAL; each carries an 'Example: <FAMILY>/<id>' pointer in its $comment to a real instance, so an agent can grep for a matching precedent. See $authoring for the procedure to add a model.",
-  "schema_version": "1.0.0",
-  "registry_version": "1.0.0",
+  "schema_version": "2.0.0",
+  "registry_version": "2.0.0",
 
   "$authoring": {
     "_comment": "NON-VALIDATING. Procedure + rules for an agent populating switch models. Read before touching data. Concrete per-field precedents live ON the schema fields: grep the $comment values for 'Example: <FAMILY>/<id>' to find a real instance of any exceptional construct.",
@@ -125,6 +125,7 @@
         "network_modules": { "type": "array", "items": { "$ref": "#/$defs/catalog_network_module" } },
         "power_supplies": { "type": "array", "items": { "$ref": "#/$defs/catalog_power_supply" } },
         "stack_cables": { "type": "array", "items": { "$ref": "#/$defs/catalog_stack_cable" } },
+        "stack_kits": { "type": "array", "items": { "$ref": "#/$defs/catalog_stack_kit" }, "$comment": "OPTIONAL. Stacking adapter-kit SKUs — the prerequisite that enables stacking on adapter-kit series (C9200/C9200L, C9300L/LM). A kit ships with a bundled cable (included_cable). Present only on families that have kit-based stacking; backplane-native families (C9300 modular/X/M, C9350, MS150) and virtual-stacking families (C9500, C9550) omit it. Example: C9300/C9300L-STACK-KIT2." },
         "stackpower_cables": { "type": "array", "items": { "$ref": "#/$defs/catalog_stackpower_cable" } },
         "licenses": { "type": "array", "items": { "$ref": "#/$defs/catalog_license" } },
         "fan_trays": { "type": "array", "items": { "$ref": "#/$defs/catalog_fan_tray" } }
@@ -194,6 +195,18 @@
         "id": { "type": "string" },
         "length_cm": { "type": "integer", "minimum": 1 },
         "type": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "catalog_stack_kit": {
+      "type": "object",
+      "description": "A stacking adapter-kit SKU: the orderable prerequisite that enables data stacking on an adapter-kit series (the kit is two stack adapters plus one bundled cable). Referenced by a stack_cable_group.stack_kit; its presence on the group marks that series as adapter-kit (vs backplane-native). Example: C9300/C9300L-STACK-KIT2 (bundles STACK-T3A-50CM).",
+      "required": ["id", "included_cable"],
+      "properties": {
+        "id": { "type": "string" },
+        "included_cable": { "type": "string", "$comment": "The catalog.stack_cables id the kit ships with (typically the shortest / 50cm cable). validate-kb.mjs checks it resolves to a real cable AND is a member of the referencing group, so the BOM never double-orders the bundled cable." },
         "notes": { "type": "string" }
       },
       "additionalProperties": false
@@ -286,7 +299,7 @@
       "required": ["id", "members", "none_option"],
       "properties": {
         "id": { "type": "string" },
-        "stack_kit": { "type": "string", "$comment": "Optional stacking-kit SKU surfaced in the BOM alongside the cable selection. Example: C9300 (modular stack-cable groups)." },
+        "stack_kit": { "type": "string", "$comment": "Optional reference into catalog.stack_kits. Its PRESENCE is the adapter-kit-vs-backplane discriminator: when set, this series realizes stacking via a prerequisite adapter kit (the kit bundles the default cable, so the resolver leads the BOM with the kit rather than a bare cable); when absent, stacking is backplane-native and only a cable is ordered. validate-kb.mjs checks it resolves to a catalog.stack_kits id. Example: C9300/c9300l-stack-cables (kit) vs C9300/c9300-modular-stack-cables (no kit)." },
         "members": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
         "none_option": { "type": "string", "$comment": "'None selected' sentinel (NOT a catalog SKU): the standalone / no-cable-ordered state. Convention <FAMILY>-STACK-NONE; the BOM omits the line when default == none_option. Example: MS/MS150-STACK-NONE." },
         "notes": { "type": "string" }
@@ -367,7 +380,14 @@
         },
         "attributes": {
           "type": "object",
-          "properties": { "_comment": { "type": "string" } }
+          "properties": {
+            "_comment": { "type": "string" },
+            "stacking_technology": {
+              "type": "string",
+              "enum": ["stackwise-480", "stackwise-1t", "stackwise-320", "stackwise-1.6t", "stackwise-160", "stackwise-80", "meraki-stack-100g", "stackwise-virtual"],
+              "$comment": "Display-only. The physical StackWise generation / stacking realization. Demoted from a model axis to an attribute in schema/registry v2.0.0: it is fully determined by the series and nobody selects a switch by StackWise generation, so it never belongs on the query/filter surface (a stackable switch is found via stacking_capable). Kept here as an info datum and a future cross-stack compatibility key. validate-kb.mjs requires it present when axis_values.stacking_capable is true. Legal values grow additively (new hardware) without a registry bump — same convention as before. 'meraki-stack-100g' = native Meraki 100G stacking (MS150); 'stackwise-virtual' = software SVL over front-panel ports (C9500/C9550), no cable/kit SKU."
+            }
+          }
         },
         "configurables": { "$ref": "#/$defs/configurables" },
         "included_by_default_non_selectable": {
@@ -455,7 +475,6 @@
         "total_port_count": { "type": "integer", "minimum": 1 },
         "uplink_modular": { "type": "boolean" },
         "stacking_capable": { "type": "boolean" },
-        "stacking_technology": { "type": "string" },
         "stackpower_capable": { "type": "boolean" },
         "license_regime": {
           "type": "array",
@@ -485,11 +504,6 @@
             "properties": { "poe_type": { "const": "none" } },
             "not": { "required": ["poe_budget_watts"] }
           }
-        },
-        {
-          "$comment": "Stacking-capable models must declare which stacking_technology they use (legal values in switching-axes.json). Example: C9350 (stackwise-1.6t) / C9500-32QC-A (stackwise-virtual).",
-          "if": { "properties": { "stacking_capable": { "const": true } } },
-          "then": { "required": ["stacking_technology"] }
         }
       ]
     },

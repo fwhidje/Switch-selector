@@ -1,7 +1,7 @@
 {
  "header": {
-  "schema_version": "1.0.0",
-  "registry_version": "1.0.0",
+  "schema_version": "2.0.0",
+  "registry_version": "2.0.0",
   "axes_file": "../switching-axes.json",
   "schema_file": "../switch-kb.schema.json",
   "description": "Networking Equipment Selector knowledge base for the Cisco C9550 Series Smart Switches. Pass 2 of 2: catalog, groups, and models are all populated. C9550 are fixed core/aggregation switches on Silicon One E100/E104: C9550-24L4CD and C9550-48L4CD (1RU), C9550-96L4D (2RU). No PoE, no network-module bay (fixed uplinks), StackWise Virtual on all models, unified Advantage-only licensing. Structure: catalog + groups + models.",
@@ -136,7 +136,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-virtual",
     "stackpower_capable": false,
     "license_regime": ["unified"],
     "license_tier": ["advantage"]
@@ -159,6 +158,7 @@
     "stacking_technology": "StackWise Virtual, 'front-side stacking on all ports' (datasheet C9550-24L4CD highlights / Table 10)."
    },
    "attributes": {
+    "stacking_technology": "stackwise-virtual",
     "_comment": "Displayed, never filtered.",
     "asic": "Cisco Silicon One E104",
     "dram_gb": 16,
@@ -204,7 +204,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-virtual",
     "stackpower_capable": false,
     "license_regime": ["unified"],
     "license_tier": ["advantage"]
@@ -227,6 +226,7 @@
     "stacking_technology": "StackWise Virtual, 'front-side stacking on all ports' (datasheet C9550-48L4CD highlights / Table 10)."
    },
    "attributes": {
+    "stacking_technology": "stackwise-virtual",
     "_comment": "Displayed, never filtered.",
     "asic": "Cisco Silicon One E104",
     "dram_gb": 16,
@@ -272,7 +272,6 @@
     "total_port_count": 96,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-virtual",
     "stackpower_capable": false,
     "license_regime": ["unified"],
     "license_tier": ["advantage"]
@@ -289,6 +288,7 @@
     "stacking_technology": "StackWise Virtual, 'front-side stacking on all ports' (datasheet C9550-96L4D highlights / Table 10)."
    },
    "attributes": {
+    "stacking_technology": "stackwise-virtual",
     "_comment": "Displayed, never filtered.",
     "asic": "Cisco Silicon One E100",
     "dram_gb": 32,

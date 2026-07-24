@@ -75,6 +75,7 @@ export function buildIndex(kb) {
     network_modules: indexById(c.network_modules),
     power_supplies: indexById(c.power_supplies),
     stack_cables: indexById(c.stack_cables),
+    stack_kits: indexById(c.stack_kits),
     stackpower_cables: indexById(c.stackpower_cables),
     licenses: indexById(c.licenses),
     // groups
@@ -92,6 +93,7 @@ export const getPowerSupply = (kb, id) => kb._index.power_supplies.get(id);
 export const getLicense = (kb, id) => kb._index.licenses.get(id);
 export const getNetworkModuleGroup = (kb, id) => kb._index.network_module_groups.get(id);
 export const getPowerSupplyGroup = (kb, id) => kb._index.power_supply_groups.get(id);
+export const getStackKit = (kb, id) => kb._index.stack_kits.get(id);
 export const getStackCableGroup = (kb, id) => kb._index.stack_cable_groups.get(id);
 export const getStackpowerCableGroup = (kb, id) => kb._index.stackpower_cable_groups.get(id);
 export const getLicenseGroup = (kb, id) => kb._index.license_groups.get(id);

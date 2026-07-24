@@ -12,6 +12,7 @@ import {
   getPowerSupply,
   getStackCableGroup,
   getStackpowerCableGroup,
+  getStackKit,
   getLicenseGroup,
 } from "./kb.js";
 
@@ -360,9 +361,9 @@ function resolveAccessories(model, query, kb) {
   const cfg = model.configurables ?? {};
   const out = {};
   const stack = getStackCableGroup(kb, cfg.stack_cables?.group);
-  if (stack) out.stack_cables = cableInfo(stack, kb._index.stack_cables, hardBoolTrue(query, "stacking_capable"));
+  if (stack) out.stack_cables = cableInfo(stack, kb._index.stack_cables, kb, hardBoolTrue(query, "stacking_capable"));
   const sp = getStackpowerCableGroup(kb, cfg.stackpower_cables?.group);
-  if (sp) out.stackpower_cables = cableInfo(sp, kb._index.stackpower_cables, hardBoolTrue(query, "stackpower_capable"));
+  if (sp) out.stackpower_cables = cableInfo(sp, kb._index.stackpower_cables, kb, hardBoolTrue(query, "stackpower_capable"));
   if (cfg.ssd_accessory) out.ssd_accessory = cfg.ssd_accessory;
   return out;
 }
@@ -372,18 +373,32 @@ function hardBoolTrue(query, name) {
 }
 
 // A standalone switch needs no cable: default to the group's none_option. If
-// the matching stacking/stackpower capability is a hard requirement, default
-// to the shortest cable available instead.
-function cableInfo(group, catIndex, preferShortest) {
+// the matching stacking/stackpower capability is a hard requirement, the model
+// must actually stack, so resolve a real default:
+//   - adapter-kit series (group.stack_kit set): the kit is the prerequisite and
+//     ships with a bundled cable — lead with the kit and default the cable to the
+//     kit's included_cable (never a bare cable that would not stack without the kit).
+//   - backplane-native series (no kit): default to the shortest cable.
+// `prerequisite` is the first-class kit (or null); renderers surface it as the
+// primary BOM line, with `members` as the cable-length options / upgrades.
+function cableInfo(group, catIndex, kb, required) {
   const withLen = (group.members ?? []).map((id) => ({ id, len: catIndex.get(id)?.length_cm ?? Infinity }))
     .sort((a, b) => a.len - b.len);
   const shortest = withLen[0]?.id ?? null;
+  const kit = group.stack_kit ? getStackKit(kb, group.stack_kit) : null;
+  const prerequisite = kit ? { id: kit.id, included_cable: kit.included_cable ?? null } : null;
+  const defaultCable = required
+    ? (prerequisite ? (prerequisite.included_cable ?? shortest) : shortest) ?? group.none_option
+    : group.none_option;
   return {
     group: group.id,
-    default: preferShortest ? (shortest ?? group.none_option) : group.none_option,
+    prerequisite,
+    default: defaultCable,
     none_option: group.none_option,
     shortest,
     members: group.members ?? [],
+    // Retained for back-compat with any consumer reading the flat id; renderers
+    // should prefer `prerequisite`.
     stack_kit: group.stack_kit,
   };
 }
