@@ -26,8 +26,17 @@
 import { uplinkOptions, accessConfigs, poolFeasible, resolveBOM } from "./resolve.js";
 import { getModels } from "./kb.js";
 import {
-  getVariables, getVariable, isModelDimension, eliminates, storageOf,
-  defaultRule, mustResolve, binding, legalValues, acceptedConditions, isCountAtLevel,
+  getVariables,
+  getVariable,
+  isModelDimension,
+  eliminates,
+  storageOf,
+  defaultRule,
+  mustResolve,
+  binding,
+  legalValues,
+  acceptedConditions,
+  isCountAtLevel,
 } from "./registry.js";
 
 export function solve(query, kb, registry) {
@@ -40,7 +49,10 @@ export function solve(query, kb, registry) {
   const variantPicks = [];
   for (const c of cons) {
     if (!isHard(c)) continue;
-    if (c.variable === "port_count") { hardPort.push(c); continue; }
+    if (c.variable === "port_count") {
+      hardPort.push(c);
+      continue;
+    }
     const v = getVariable(registry, c.variable);
     if (!v) continue; // unknown variable: a validateQuery() problem, never a silent filter
     if (isModelDimension(v)) hardScalar.push(c);
@@ -53,7 +65,10 @@ export function solve(query, kb, registry) {
 
   for (const model of getModels(kb)) {
     const fail = firstFailingScalar(model, hardScalar, registry);
-    if (fail) { eliminated.push({ id: model.id, reason: describe(fail) }); continue; }
+    if (fail) {
+      eliminated.push({ id: model.id, reason: describe(fail) });
+      continue;
+    }
 
     const modelKb = model._kb ?? kb;
     let options = uplinkOptions(model, modelKb);
@@ -66,7 +81,10 @@ export function solve(query, kb, registry) {
       options = next;
       return false;
     });
-    if (pickFail) { eliminated.push({ id: model.id, reason: describe(pickFail) }); continue; }
+    if (pickFail) {
+      eliminated.push({ id: model.id, reason: describe(pickFail) });
+      continue;
+    }
 
     const aConfigs = accessConfigs(model);
     const demands = hardPort.map((c) => ({ where: c.where, min: c.value }));
@@ -75,7 +93,9 @@ export function solve(query, kb, registry) {
     // one real simultaneous arrangement). Access configs are solver-internal;
     // only uplink options reach the BOM.
     const validOptions = demands.length
-      ? options.filter((o) => aConfigs.some((a) => poolFeasible(a.ports.concat(o.ports ?? []), demands)))
+      ? options.filter((o) =>
+          aConfigs.some((a) => poolFeasible(a.ports.concat(o.ports ?? []), demands)),
+        )
       : options;
 
     if (demands.length && validOptions.length === 0) {
@@ -172,7 +192,8 @@ export function openVariables(query, survivors, registry) {
     if (storageOf(v) === "identity" || isCountAtLevel(v)) continue;
     if (acceptedConditions(v).length === 0) continue;
     const pinned = (query ?? []).some(
-      (c) => c.variable === v.name && c.condition === "==" && (c.severity ?? "hard") === "hard");
+      (c) => c.variable === v.name && c.condition === "==" && (c.severity ?? "hard") === "hard",
+    );
     if (pinned) continue;
     out.push({
       name: v.name,
@@ -191,10 +212,13 @@ export function openVariables(query, survivors, registry) {
  *  Enums/booleans return a value array (registry order where declared);
  *  numerics return {min, max}. */
 function domainOf(v, query, survivors) {
-  const own = (query ?? []).filter((c) => c.variable === v.name && (c.severity ?? "hard") === "hard");
+  const own = (query ?? []).filter(
+    (c) => c.variable === v.name && (c.severity ?? "hard") === "hard",
+  );
 
   if (v.type === "integer" && v.kind === "numeric") {
-    let min = null, max = null;
+    let min = null,
+      max = null;
     for (const s of survivors) {
       const val = s.model.axis_values?.[v.name];
       if (typeof val !== "number") continue;
@@ -226,7 +250,8 @@ function domainOf(v, query, survivors) {
 /** Union a configuration variable's per-survivor domain via its KB binding. */
 function collectConfigurationDomain(v, query, survivors, values) {
   const source = binding(v)?.source;
-  if (!source) { // closed-domain configuration variable (booleans)
+  if (!source) {
+    // closed-domain configuration variable (booleans)
     for (const x of legalValues(v)) values.add(x);
     return;
   }
@@ -243,7 +268,9 @@ function collectConfigurationDomain(v, query, survivors, values) {
         break;
       }
       case "stackpower_cable_group": {
-        const g = kb?._index.stackpower_cable_groups.get(s.model.configurables?.stackpower_cables?.group);
+        const g = kb?._index.stackpower_cable_groups.get(
+          s.model.configurables?.stackpower_cables?.group,
+        );
         for (const m of g?.members ?? []) values.add(m);
         break;
       }
@@ -274,7 +301,8 @@ function sortDomain(v, values) {
   const order = v.order ?? v.legal_values ?? [];
   const arr = [...values];
   arr.sort((a, b) => {
-    const ia = order.indexOf(a), ib = order.indexOf(b);
+    const ia = order.indexOf(a),
+      ib = order.indexOf(b);
     if (ia !== -1 && ib !== -1) return ia - ib;
     if (typeof a === "number" && typeof b === "number") return a - b;
     return String(a).localeCompare(String(b));
@@ -332,6 +360,9 @@ function describe(c) {
 }
 function portDemandText(portCons) {
   return portCons
-    .map((c) => `ports{${[c.where.role, c.where.medium, c.where.speed].filter(Boolean).join("/")}} ${c.condition} ${c.value}`)
+    .map(
+      (c) =>
+        `ports{${[c.where.role, c.where.medium, c.where.speed].filter(Boolean).join("/")}} ${c.condition} ${c.value}`,
+    )
     .join(" & ");
 }

@@ -53,7 +53,21 @@
       "type": "enum",
       "kind": "discriminating",
       "dimension": "model",
-      "legal_values": ["C9300", "C9300L", "C9300X", "C9300LM", "C9350", "C9200", "C9200L", "C9200CX", "MS130", "MS150", "C9500", "C9500X", "C9550"],
+      "legal_values": [
+        "C9300",
+        "C9300L",
+        "C9300X",
+        "C9300LM",
+        "C9350",
+        "C9200",
+        "C9200L",
+        "C9200CX",
+        "MS130",
+        "MS150",
+        "C9500",
+        "C9500X",
+        "C9550"
+      ],
       "accepted_conditions": ["==", "in"],
       "required_on_model": true,
       "eliminates": true,
@@ -82,9 +96,13 @@
       "eliminates": true,
       "presentation": { "group": "Interfaces", "ask_priority": 31 },
       "selector": {
-        "role":   { "type": "enum", "legal_values": ["access", "uplink"], "required": false },
+        "role": { "type": "enum", "legal_values": ["access", "uplink"], "required": false },
         "medium": { "type": "enum", "legal_values": ["copper", "fiber"], "required": false },
-        "speed":  { "type": "ordered-enum", "order": ["1g", "2.5g", "5g", "10g", "25g", "40g", "100g"], "required": true }
+        "speed": {
+          "type": "ordered-enum",
+          "order": ["1g", "2.5g", "5g", "10g", "25g", "40g", "100g"],
+          "required": true
+        }
       },
       "notes": "PARAMETRISED. A query is {variable:'port_count', where:{role?,medium?,speed}, condition, value}. Resolves against a variant's port pool (model.ports access groups + the fitted module's uplink groups). port_count = number of ports in matching groups whose speeds[] include the requested speed; omitted facets are wildcards — role/medium are OPTIONAL refinements, and the role-agnostic form ('N ports able to run speed S', any role) is the default ask. Multiple port_count constraints at different speeds are checked TOGETHER for pool feasibility (shared physical ports), not independently. 'medium:fiber == 0' excludes fiber-access models."
     },
@@ -104,11 +122,18 @@
       "type": "enum",
       "kind": "discriminating",
       "dimension": "configuration",
-      "binding": { "source": "network_module_group", "via": "configurables.network_modules.group -> members" },
+      "binding": {
+        "source": "network_module_group",
+        "via": "configurables.network_modules.group -> members"
+      },
       "accepted_conditions": ["==", "in"],
       "eliminates": true,
       "default": { "kind": "none_option" },
-      "presentation": { "group": "Interfaces", "ask_priority": 41, "depends_on": { "variable": "uplink_modular", "value": true } },
+      "presentation": {
+        "group": "Interfaces",
+        "ask_priority": 41,
+        "depends_on": { "variable": "uplink_modular", "value": true }
+      },
       "notes": "The fitted uplink network module — the configured variant the solver searches over. An open enum: legal values are the module SKUs in the model's referenced network-module group. Pinning it eliminates models whose group lacks that module (and pins the variant); leaving it open lets a port demand select it. DEFAULT RULING (recorded, revisitable): a standalone switch ships with NO module (group none_option); a port demand that requires a module overrides this with the first feasible option. Whether an agent-facing default should instead be 'cheapest module' or must_resolve is an open per-variable ruling this field exists to carry."
     },
     {
@@ -173,11 +198,18 @@
       "type": "enum",
       "kind": "discriminating",
       "dimension": "configuration",
-      "binding": { "source": "stack_cable_group", "via": "configurables.stack_cables.group -> members" },
+      "binding": {
+        "source": "stack_cable_group",
+        "via": "configurables.stack_cables.group -> members"
+      },
       "accepted_conditions": ["=="],
       "eliminates": false,
       "default": { "kind": "none_option", "policy": "shortest-when-stacking-required" },
-      "presentation": { "group": "Stacking / PSU", "ask_priority": 52, "depends_on": { "variable": "stacking_capable", "value": true } },
+      "presentation": {
+        "group": "Stacking / PSU",
+        "ask_priority": 52,
+        "depends_on": { "variable": "stacking_capable", "value": true }
+      },
       "notes": "The stack cable fitted in the kitlist. An open enum: legal values are the model's stack-cable group members. Never eliminates a model — a pick only refines the BOM. Default: the group's none_option (a standalone switch needs no cable); when stacking_capable is a hard requirement the named policy resolves a real default — the adapter kit's bundled cable on adapter-kit series (stack group carries a stack_kit), otherwise the shortest cable. Absent entirely on models without a stack_cables configurable (e.g. C9500 StackWise Virtual, whose stacking is realized via the Advantage license over front-panel ports, not an orderable cable SKU). Depends on stacking_capable (a stack cable is relevant whenever the switch is stackable); the physical StackWise generation is carried as the display-only attribute stacking_technology, not a filter."
     },
     {
@@ -185,11 +217,18 @@
       "type": "enum",
       "kind": "discriminating",
       "dimension": "configuration",
-      "binding": { "source": "stackpower_cable_group", "via": "configurables.stackpower_cables.group -> members" },
+      "binding": {
+        "source": "stackpower_cable_group",
+        "via": "configurables.stackpower_cables.group -> members"
+      },
       "accepted_conditions": ["=="],
       "eliminates": false,
       "default": { "kind": "none_option", "policy": "shortest-when-stackpower-required" },
-      "presentation": { "group": "Stacking / PSU", "ask_priority": 56, "depends_on": { "variable": "stackpower_capable", "value": true } },
+      "presentation": {
+        "group": "Stacking / PSU",
+        "ask_priority": 56,
+        "depends_on": { "variable": "stackpower_capable", "value": true }
+      },
       "notes": "Same pattern as stack_cable, for StackPower. Never eliminates; default none_option, shortest when stackpower_capable is required."
     },
     {
@@ -197,7 +236,10 @@
       "type": "enum",
       "kind": "discriminating",
       "dimension": "configuration",
-      "binding": { "source": "power_supply_group", "via": "configurables.power_supplies (group, valid_primary, poe_budget_matrix)" },
+      "binding": {
+        "source": "power_supply_group",
+        "via": "configurables.power_supplies (group, valid_primary, poe_budget_matrix)"
+      },
       "accepted_conditions": [],
       "eliminates": false,
       "default": { "kind": "policy", "policy": "psu-default" },
@@ -225,7 +267,11 @@
       "accepted_conditions": ["=="],
       "eliminates": false,
       "default": { "kind": "fixed", "value": false },
-      "presentation": { "group": "Stacking / PSU", "ask_priority": 46, "depends_on": { "variable": "psu_redundancy", "value": true } },
+      "presentation": {
+        "group": "Stacking / PSU",
+        "ask_priority": 46,
+        "depends_on": { "variable": "psu_redundancy", "value": true }
+      },
       "notes": "Off by default. When ON, forces a triple-PSU (primary+secondary+tertiary) configuration on models whose poe_budget_matrix has a tertiary-capable row; has no effect on models without one (e.g. two-bay chassis). Never eliminates a model."
     },
     {
@@ -260,7 +306,10 @@
       "kind": "discriminating",
       "dimension": "configuration",
       "legal_values": [1, 3, 5, 7, 10],
-      "binding": { "source": "license_group_terms", "via": "configurables.license.group -> term_variable.choices_years" },
+      "binding": {
+        "source": "license_group_terms",
+        "via": "configurables.license.group -> term_variable.choices_years"
+      },
       "accepted_conditions": ["=="],
       "eliminates": false,
       "default": { "kind": "must_resolve" },

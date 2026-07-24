@@ -21,7 +21,9 @@ const bundled = { C9300: c9300, C9350: c9350, C9200: c9200, MS: ms, C9500: c9500
 
 const missing = familiesJson.map((f) => f.series).filter((s) => !(s in bundled));
 if (missing.length)
-  throw new Error(`families.json lists ${missing.join(", ")} but mcp/src/data.js does not import them — add the import(s)`);
+  throw new Error(
+    `families.json lists ${missing.join(", ")} but mcp/src/data.js does not import them — add the import(s)`,
+  );
 
 export const registry = registryJson;
 export const kb = mergeKBs(familiesJson.map((f) => bundled[f.series]));

@@ -66,7 +66,6 @@
   },
 
   "$defs": {
-
     "port_group": {
       "type": "object",
       "description": "A homogeneous group of N physical ports, each able to run the SAME set of speeds. The unit of the v0.4.0 port model. role=access groups live on a model; role=uplink groups live on a catalog network_module (modular) or inline on a fixed-uplink model.",
@@ -79,7 +78,10 @@
         "speeds": {
           "type": "array",
           "minItems": 1,
-          "items": { "type": "string", "enum": ["1g", "2.5g", "5g", "10g", "25g", "40g", "50g", "100g", "200g", "400g"] },
+          "items": {
+            "type": "string",
+            "enum": ["1g", "2.5g", "5g", "10g", "25g", "40g", "50g", "100g", "200g", "400g"]
+          },
           "$comment": "Ordered low->high per switching-axes.json port_speed (registry v0.9.0 added 50g; 200g/400g added for C9500X QSFP-DD uplinks). Every speed the port natively supports (subsumption as data). 100M is display-only and not listed."
         },
         "notes": { "type": "string" }
@@ -104,7 +106,11 @@
             "required": ["name", "last_verified"],
             "properties": {
               "name": { "type": "string" },
-              "url": { "type": "string", "format": "uri", "$comment": "Optional. Omitted for non-document sources (operator-provided / pasted content) whose origin is stated in 'name'." },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "$comment": "Optional. Omitted for non-document sources (operator-provided / pasted content) whose origin is stated in 'name'."
+              },
               "cisco_updated": { "type": "string" },
               "last_verified": { "type": "string" }
             },
@@ -119,14 +125,30 @@
     "catalog": {
       "type": "object",
       "description": "Atomic SKU facts: one row per real orderable component.",
-      "required": ["network_modules", "power_supplies", "stack_cables", "stackpower_cables", "licenses"],
+      "required": [
+        "network_modules",
+        "power_supplies",
+        "stack_cables",
+        "stackpower_cables",
+        "licenses"
+      ],
       "properties": {
         "_comment": { "type": "string" },
-        "network_modules": { "type": "array", "items": { "$ref": "#/$defs/catalog_network_module" } },
+        "network_modules": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/catalog_network_module" }
+        },
         "power_supplies": { "type": "array", "items": { "$ref": "#/$defs/catalog_power_supply" } },
         "stack_cables": { "type": "array", "items": { "$ref": "#/$defs/catalog_stack_cable" } },
-        "stack_kits": { "type": "array", "items": { "$ref": "#/$defs/catalog_stack_kit" }, "$comment": "OPTIONAL. Stacking adapter-kit SKUs — the prerequisite that enables stacking on adapter-kit series (C9200/C9200L, C9300L/LM). A kit ships with a bundled cable (included_cable). Present only on families that have kit-based stacking; backplane-native families (C9300 modular/X/M, C9350, MS150) and virtual-stacking families (C9500, C9550) omit it. Example: C9300/C9300L-STACK-KIT2." },
-        "stackpower_cables": { "type": "array", "items": { "$ref": "#/$defs/catalog_stackpower_cable" } },
+        "stack_kits": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/catalog_stack_kit" },
+          "$comment": "OPTIONAL. Stacking adapter-kit SKUs — the prerequisite that enables stacking on adapter-kit series (C9200/C9200L, C9300L/LM). A kit ships with a bundled cable (included_cable). Present only on families that have kit-based stacking; backplane-native families (C9300 modular/X/M, C9350, MS150) and virtual-stacking families (C9500, C9550) omit it. Example: C9300/C9300L-STACK-KIT2."
+        },
+        "stackpower_cables": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/catalog_stackpower_cable" }
+        },
         "licenses": { "type": "array", "items": { "$ref": "#/$defs/catalog_license" } },
         "fan_trays": { "type": "array", "items": { "$ref": "#/$defs/catalog_fan_tray" } }
       },
@@ -206,7 +228,10 @@
       "required": ["id", "included_cable"],
       "properties": {
         "id": { "type": "string" },
-        "included_cable": { "type": "string", "$comment": "The catalog.stack_cables id the kit ships with (typically the shortest / 50cm cable). validate-kb.mjs checks it resolves to a real cable AND is a member of the referencing group, so the BOM never double-orders the bundled cable." },
+        "included_cable": {
+          "type": "string",
+          "$comment": "The catalog.stack_cables id the kit ships with (typically the shortest / 50cm cable). validate-kb.mjs checks it resolves to a real cable AND is a member of the referencing group, so the BOM never double-orders the bundled cable."
+        },
         "notes": { "type": "string" }
       },
       "additionalProperties": false
@@ -254,13 +279,28 @@
     "groups": {
       "type": "object",
       "description": "Named shared compatibility SETS. A switch references a group by name and inherits the whole set.",
-      "required": ["network_module_groups", "power_supply_groups", "stack_cable_groups", "stackpower_cable_groups", "license_groups"],
+      "required": [
+        "network_module_groups",
+        "power_supply_groups",
+        "stack_cable_groups",
+        "stackpower_cable_groups",
+        "license_groups"
+      ],
       "properties": {
         "_comment": { "type": "string" },
-        "network_module_groups": { "type": "array", "items": { "$ref": "#/$defs/network_module_group" } },
-        "power_supply_groups": { "type": "array", "items": { "$ref": "#/$defs/power_supply_group" } },
+        "network_module_groups": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/network_module_group" }
+        },
+        "power_supply_groups": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/power_supply_group" }
+        },
         "stack_cable_groups": { "type": "array", "items": { "$ref": "#/$defs/stack_cable_group" } },
-        "stackpower_cable_groups": { "type": "array", "items": { "$ref": "#/$defs/stackpower_cable_group" } },
+        "stackpower_cable_groups": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/stackpower_cable_group" }
+        },
         "license_groups": { "type": "array", "items": { "$ref": "#/$defs/license_group" } },
         "fan_tray_groups": { "type": "array", "items": { "$ref": "#/$defs/fan_tray_group" } }
       },
@@ -288,7 +328,10 @@
       "properties": {
         "id": { "type": "string" },
         "members": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
-        "secondary_none_option": { "type": "string", "$comment": "'None selected' sentinel for the secondary PSU (NOT a catalog SKU). Present only for a chassis with a secondary PSU bay; omitted for fixed / single-PSU chassis. Example: C9200/C9200CX-* and MS (no secondary bay -> field omitted)." },
+        "secondary_none_option": {
+          "type": "string",
+          "$comment": "'None selected' sentinel for the secondary PSU (NOT a catalog SKU). Present only for a chassis with a secondary PSU bay; omitted for fixed / single-PSU chassis. Example: C9200/C9200CX-* and MS (no secondary bay -> field omitted)."
+        },
         "notes": { "type": "string" }
       },
       "additionalProperties": false
@@ -299,9 +342,15 @@
       "required": ["id", "members", "none_option"],
       "properties": {
         "id": { "type": "string" },
-        "stack_kit": { "type": "string", "$comment": "Optional reference into catalog.stack_kits. Its PRESENCE is the adapter-kit-vs-backplane discriminator: when set, this series realizes stacking via a prerequisite adapter kit (the kit bundles the default cable, so the resolver leads the BOM with the kit rather than a bare cable); when absent, stacking is backplane-native and only a cable is ordered. validate-kb.mjs checks it resolves to a catalog.stack_kits id. Example: C9300/c9300l-stack-cables (kit) vs C9300/c9300-modular-stack-cables (no kit)." },
+        "stack_kit": {
+          "type": "string",
+          "$comment": "Optional reference into catalog.stack_kits. Its PRESENCE is the adapter-kit-vs-backplane discriminator: when set, this series realizes stacking via a prerequisite adapter kit (the kit bundles the default cable, so the resolver leads the BOM with the kit rather than a bare cable); when absent, stacking is backplane-native and only a cable is ordered. validate-kb.mjs checks it resolves to a catalog.stack_kits id. Example: C9300/c9300l-stack-cables (kit) vs C9300/c9300-modular-stack-cables (no kit)."
+        },
         "members": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
-        "none_option": { "type": "string", "$comment": "'None selected' sentinel (NOT a catalog SKU): the standalone / no-cable-ordered state. Convention <FAMILY>-STACK-NONE; the BOM omits the line when default == none_option. Example: MS/MS150-STACK-NONE." },
+        "none_option": {
+          "type": "string",
+          "$comment": "'None selected' sentinel (NOT a catalog SKU): the standalone / no-cable-ordered state. Convention <FAMILY>-STACK-NONE; the BOM omits the line when default == none_option. Example: MS/MS150-STACK-NONE."
+        },
         "notes": { "type": "string" }
       },
       "additionalProperties": false
@@ -334,7 +383,14 @@
     "license_group": {
       "type": "object",
       "description": "A license SET keyed on regime + tier + port_class. A model links to the set, not a single license.",
-      "required": ["id", "regime", "tier", "port_class", "perpetual_member", "subscription_members"],
+      "required": [
+        "id",
+        "regime",
+        "tier",
+        "port_class",
+        "perpetual_member",
+        "subscription_members"
+      ],
       "properties": {
         "id": { "type": "string" },
         "regime": { "type": "string" },
@@ -362,7 +418,16 @@
     "model": {
       "type": "object",
       "description": "One switch SKU. Flat and self-contained.",
-      "required": ["id", "description", "axis_values", "ports", "axis_value_provenance", "attributes", "configurables", "included_by_default_non_selectable"],
+      "required": [
+        "id",
+        "description",
+        "axis_values",
+        "ports",
+        "axis_value_provenance",
+        "attributes",
+        "configurables",
+        "included_by_default_non_selectable"
+      ],
       "additionalProperties": false,
       "properties": {
         "id": { "type": "string" },
@@ -384,7 +449,16 @@
             "_comment": { "type": "string" },
             "stacking_technology": {
               "type": "string",
-              "enum": ["stackwise-480", "stackwise-1t", "stackwise-320", "stackwise-1.6t", "stackwise-160", "stackwise-80", "meraki-stack-100g", "stackwise-virtual"],
+              "enum": [
+                "stackwise-480",
+                "stackwise-1t",
+                "stackwise-320",
+                "stackwise-1.6t",
+                "stackwise-160",
+                "stackwise-80",
+                "meraki-stack-100g",
+                "stackwise-virtual"
+              ],
               "$comment": "Display-only. The physical StackWise generation / stacking realization. Demoted from a model axis to an attribute in schema/registry v2.0.0: it is fully determined by the series and nobody selects a switch by StackWise generation, so it never belongs on the query/filter surface (a stackable switch is found via stacking_capable). Kept here as an info datum and a future cross-stack compatibility key. validate-kb.mjs requires it present when axis_values.stacking_capable is true. Legal values grow additively (new hardware) without a registry bump — same convention as before. 'meraki-stack-100g' = native Meraki 100G stacking (MS150); 'stackwise-virtual' = software SVL over front-panel ports (C9500/C9550), no cable/kit SKU."
             }
           }
@@ -455,7 +529,10 @@
         "speeds": {
           "type": "array",
           "minItems": 1,
-          "items": { "type": "string", "enum": ["1g", "2.5g", "5g", "10g", "25g", "40g", "50g", "100g", "200g", "400g"] }
+          "items": {
+            "type": "string",
+            "enum": ["1g", "2.5g", "5g", "10g", "25g", "40g", "50g", "100g", "200g", "400g"]
+          }
         },
         "notes": { "type": "string" }
       }
@@ -464,7 +541,17 @@
     "axis_values": {
       "type": "object",
       "description": "Scalar registry-axis values for this switch. additionalProperties is FALSE: only declared scalar axes may appear. Port counts are NOT here (they live in model.ports, addressed by the parametrised port_count axis). Optional axes are omitted when they do not apply.",
-      "required": ["series", "poe_capable", "poe_type", "total_port_count", "uplink_modular", "stacking_capable", "stackpower_capable", "license_regime", "license_tier"],
+      "required": [
+        "series",
+        "poe_capable",
+        "poe_type",
+        "total_port_count",
+        "uplink_modular",
+        "stacking_capable",
+        "stackpower_capable",
+        "license_regime",
+        "license_tier"
+      ],
       "additionalProperties": false,
       "properties": {
         "_comment": { "type": "string" },
@@ -551,11 +638,20 @@
 
     "configurable_power_supplies": {
       "type": "object",
-      "required": ["group", "valid_primary", "default_primary", "poe_budget_matrix", "matrix_provenance"],
+      "required": [
+        "group",
+        "valid_primary",
+        "default_primary",
+        "poe_budget_matrix",
+        "matrix_provenance"
+      ],
       "properties": {
         "group": { "type": "string" },
         "valid_primary": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
-        "default_primary": { "type": "string", "$comment": "The single PSU the switch ships with by default. Must be a member of valid_primary (validator-checked)." },
+        "default_primary": {
+          "type": "string",
+          "$comment": "The single PSU the switch ships with by default. Must be a member of valid_primary (validator-checked)."
+        },
         "poe_budget_matrix": {
           "type": "array",
           "items": { "$ref": "#/$defs/poe_matrix_row" }
@@ -571,7 +667,10 @@
       "properties": {
         "primary": { "type": "string" },
         "secondary": { "type": ["string", "null"] },
-        "tertiary": { "type": ["string", "null"], "$comment": "Optional THIRD PSU (chassis with 3 bays); present only on combos needing a third PSU to reach the stated budget. Example: C9350/C9350-48HX (3x1600W -> 4320W)." },
+        "tertiary": {
+          "type": ["string", "null"],
+          "$comment": "Optional THIRD PSU (chassis with 3 bays); present only on combos needing a third PSU to reach the stated budget. Example: C9350/C9350-48HX (3x1600W -> 4320W)."
+        },
         "poe_budget_watts": { "type": "integer", "minimum": 0 }
       },
       "additionalProperties": false
@@ -584,7 +683,11 @@
         "group": { "type": "string" },
         "additional_groups": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
         "regime_offered": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
-        "tier_locked": { "type": "string", "enum": ["essentials", "advantage"], "$comment": "Set where the hardware SKU locks the license tier (the -E/-A split); paired with tier_lock_reason. Example: C9500/C9500-32C-E (tier_locked=essentials)." },
+        "tier_locked": {
+          "type": "string",
+          "enum": ["essentials", "advantage"],
+          "$comment": "Set where the hardware SKU locks the license tier (the -E/-A split); paired with tier_lock_reason. Example: C9500/C9500-32C-E (tier_locked=essentials)."
+        },
         "tier_lock_reason": { "type": "string" }
       },
       "additionalProperties": false
@@ -597,7 +700,10 @@
       "properties": {
         "group": { "type": "string" },
         "valid_options": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
-        "default_option": { "type": "string", "$comment": "Must be a member of valid_options (validator-checked convention, mirrors default_primary)." },
+        "default_option": {
+          "type": "string",
+          "$comment": "Must be a member of valid_options (validator-checked convention, mirrors default_primary)."
+        },
         "notes": { "type": "string" }
       },
       "additionalProperties": false

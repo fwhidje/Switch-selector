@@ -21,17 +21,20 @@ const FAMILIES_URL = "../DB/switching/families.json";
 const MODES = {
   lookup: {
     title: "Model lookup",
-    blurb: "You know the exact model. Get its uplink, PSU, license, and accessory options — the datasheet summary, without the datasheet.",
+    blurb:
+      "You know the exact model. Get its uplink, PSU, license, and accessory options — the datasheet summary, without the datasheet.",
     mount: mountLookup,
   },
   full: {
     title: "Full options",
-    blurb: "Every requirement control at once. Results re-solve on each change; dead choices grey out; each candidate shows its default kit and the open alternatives.",
+    blurb:
+      "Every requirement control at once. Results re-solve on each change; dead choices grey out; each candidate shows its default kit and the open alternatives.",
     mount: mountFull,
   },
   guided: {
     title: "Guided run",
-    blurb: "Step through the requirements one at a time in a sensible order — skip what you don't care about — and land in the full view with everything filled in.",
+    blurb:
+      "Step through the requirements one at a time in a sensible order — skip what you don't care about — and land in the full view with everything filled in.",
     mount: mountGuided,
   },
 };
@@ -42,7 +45,8 @@ async function init() {
   const status = document.getElementById("status");
   try {
     const familiesRes = await fetch(FAMILIES_URL);
-    if (!familiesRes.ok) throw new Error(`families fetch failed: ${familiesRes.status} ${FAMILIES_URL}`);
+    if (!familiesRes.ok)
+      throw new Error(`families fetch failed: ${familiesRes.status} ${FAMILIES_URL}`);
     const families = await familiesRes.json();
     const kbUrls = families.map((f) => `../DB/switching/${f.dir}/${f.kbFile}`);
     [ctx.registry, ctx.kb] = await Promise.all([loadRegistry(REGISTRY_URL), loadKBs(kbUrls)]);
@@ -82,7 +86,10 @@ function route() {
   for (const a of document.querySelectorAll("#mode-tabs .mode-tab"))
     a.classList.toggle("active", a.dataset.mode === mode);
   root.className = mode ? `mode-${mode}` : "mode-landing";
-  if (!mode) { renderLanding(root); return; }
+  if (!mode) {
+    renderLanding(root);
+    return;
+  }
   MODES[mode].mount(root, ctx);
 }
 

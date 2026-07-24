@@ -1,0 +1,14 @@
+# Generated / vendored — never format these.
+node_modules/
+.wrangler/
+**/package-lock.json
+
+# Binary / non-source.
+*.pdf
+.nojekyll
+
+# Local, untracked tool config.
+.claude/
+
+# Markdown is hand-controlled (scope decision): not formatted.
+*.md

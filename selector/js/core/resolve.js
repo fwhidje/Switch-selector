@@ -52,8 +52,10 @@ function expandPairBlock(pb, role) {
     const groups = [];
     const lowCount = (pb.pairs - k) * pb.low.ports_per_pair;
     const highCount = k * pb.high.ports_per_pair;
-    if (lowCount > 0) groups.push({ count: lowCount, role, medium: pb.low.medium, speeds: pb.low.speeds });
-    if (highCount > 0) groups.push({ count: highCount, role, medium: pb.high.medium, speeds: pb.high.speeds });
+    if (lowCount > 0)
+      groups.push({ count: lowCount, role, medium: pb.low.medium, speeds: pb.low.speeds });
+    if (highCount > 0)
+      groups.push({ count: highCount, role, medium: pb.high.medium, speeds: pb.high.speeds });
     out.push({ k, ports: groups });
   }
   return out;
@@ -82,7 +84,12 @@ export function uplinkOptions(model, kb) {
       const mod = getNetworkModule(kb, id);
       if (mod?.modes?.length) {
         for (const mode of mod.modes)
-          opts.push({ id: `${id}#${mode.name}`, moduleId: id, mode: mode.name, ports: mode.ports ?? [] });
+          opts.push({
+            id: `${id}#${mode.name}`,
+            moduleId: id,
+            mode: mode.name,
+            ports: mode.ports ?? [],
+          });
       } else {
         opts.push({ id, moduleId: id, ports: mod?.ports ?? [] });
       }
@@ -99,9 +106,19 @@ export function uplinkOptions(model, kb) {
       const lowCount = (pb.pairs - k) * pb.low.ports_per_pair;
       const highCount = k * pb.high.ports_per_pair;
       if (lowCount > 0)
-        groups.push({ count: lowCount, role: "uplink", medium: pb.low.medium, speeds: pb.low.speeds });
+        groups.push({
+          count: lowCount,
+          role: "uplink",
+          medium: pb.low.medium,
+          speeds: pb.low.speeds,
+        });
       if (highCount > 0)
-        groups.push({ count: highCount, role: "uplink", medium: pb.high.medium, speeds: pb.high.speeds });
+        groups.push({
+          count: highCount,
+          role: "uplink",
+          medium: pb.high.medium,
+          speeds: pb.high.speeds,
+        });
       opts.push({ id: `pairs#${k}`, moduleId: null, mode: `${k}-high`, ports: groups });
     }
     return opts;
@@ -141,13 +158,21 @@ export function poolFeasible(pool, demands) {
     return { role: role === "*" ? null : role, medium: medium === "*" ? null : medium, speed, min };
   });
 
-  const S = 0, dBase = 1, gBase = 1 + D.length, T = gBase + pool.length, N = T + 1;
+  const S = 0,
+    dBase = 1,
+    gBase = 1 + D.length,
+    T = gBase + pool.length,
+    N = T + 1;
   const cap = Array.from({ length: N }, () => ({}));
-  const add = (u, v, c) => { cap[u][v] = (cap[u][v] ?? 0) + c; cap[v][u] = cap[v][u] ?? 0; };
+  const add = (u, v, c) => {
+    cap[u][v] = (cap[u][v] ?? 0) + c;
+    cap[v][u] = cap[v][u] ?? 0;
+  };
 
   let need = 0;
   D.forEach((d, i) => {
-    add(S, dBase + i, d.min); need += d.min;
+    add(S, dBase + i, d.min);
+    need += d.min;
     pool.forEach((g, j) => {
       if (groupMatches(g, { role: d.role, medium: d.medium }) && groupHasSpeed(g, d.speed))
         add(dBase + i, gBase + j, Infinity);
@@ -162,12 +187,19 @@ export function poolFeasible(pool, demands) {
     const q = [S];
     while (q.length) {
       const u = q.shift();
-      for (let v = 0; v < N; v++) if (prev[v] === -1 && (cap[u][v] ?? 0) > 0) { prev[v] = u; q.push(v); }
+      for (let v = 0; v < N; v++)
+        if (prev[v] === -1 && (cap[u][v] ?? 0) > 0) {
+          prev[v] = u;
+          q.push(v);
+        }
     }
     if (prev[T] === -1) break;
     let b = Infinity;
     for (let v = T; v !== S; v = prev[v]) b = Math.min(b, cap[prev[v]][v]);
-    for (let v = T; v !== S; v = prev[v]) { cap[prev[v]][v] -= b; cap[v][prev[v]] = (cap[v][prev[v]] ?? 0) + b; }
+    for (let v = T; v !== S; v = prev[v]) {
+      cap[prev[v]][v] -= b;
+      cap[v][prev[v]] = (cap[v][prev[v]] ?? 0) + b;
+    }
     flow += b;
   }
   return flow >= need;
@@ -187,7 +219,12 @@ export function resolveBOM(model, query, kb, validOptions) {
 
 function resolveUplinkBOM(model, validOptions) {
   const modular = !!model.axis_values?.uplink_modular;
-  const opts = (validOptions ?? []).map((o) => ({ id: o.id, moduleId: o.moduleId, mode: o.mode, ports: o.ports }));
+  const opts = (validOptions ?? []).map((o) => ({
+    id: o.id,
+    moduleId: o.moduleId,
+    mode: o.mode,
+    ports: o.ports,
+  }));
   // none_option has moduleId === null; prefer it as default (standalone switch, no uplink module fitted).
   // When a port demand excluded the none_option, fall back to the first valid real module.
   const noneOpt = opts.find((o) => o.moduleId === null);
@@ -234,46 +271,87 @@ function resolvePower(model, query, kb) {
 function chooseDefaultPsu(ps, kb, need, redundancy, triple) {
   const dp = ps.default_primary;
   const matrix = ps.poe_budget_matrix ?? [];
-  const w = (id) => (id == null ? 0 : getPowerSupply(kb, id)?.watts ?? 0);
+  const w = (id) => (id == null ? 0 : (getPowerSupply(kb, id)?.watts ?? 0));
   const meets = (r) => need == null || r.poe_budget_watts >= need;
-  const singleCapacity = (id) => matrix.find((m) => m.primary === id && m.secondary == null)?.poe_budget_watts ?? w(id);
+  const singleCapacity = (id) =>
+    matrix.find((m) => m.primary === id && m.secondary == null)?.poe_budget_watts ?? w(id);
 
   if (triple) {
     const cand = matrix.filter((r) => r.tertiary != null && meets(r));
     if (!cand.length) return null;
-    cand.sort((a, b) =>
-      ((a.primary === dp ? 0 : 1) - (b.primary === dp ? 0 : 1)) ||
-      (w(a.primary) - w(b.primary)) || (w(a.secondary) - w(b.secondary)) || (w(a.tertiary) - w(b.tertiary)));
+    cand.sort(
+      (a, b) =>
+        (a.primary === dp ? 0 : 1) - (b.primary === dp ? 0 : 1) ||
+        w(a.primary) - w(b.primary) ||
+        w(a.secondary) - w(b.secondary) ||
+        w(a.tertiary) - w(b.tertiary),
+    );
     const r = cand[0];
-    return { primary: r.primary, secondary: r.secondary, tertiary: r.tertiary, watts: r.poe_budget_watts,
-             reason: "triple PSU required" };
+    return {
+      primary: r.primary,
+      secondary: r.secondary,
+      tertiary: r.tertiary,
+      watts: r.poe_budget_watts,
+      reason: "triple PSU required",
+    };
   }
 
   if (redundancy) {
     if (matrix.length === 0)
-      return { primary: dp, secondary: dp, tertiary: null, watts: null, reason: "redundant matched pair (no PoE data)" };
+      return {
+        primary: dp,
+        secondary: dp,
+        tertiary: null,
+        watts: null,
+        reason: "redundant matched pair (no PoE data)",
+      };
     // secondary must be at least as large as the primary (real N+1); prefer a 2-PSU
     // matched pair, then keeping the default primary, then the smallest such pair.
-    const cand = matrix.filter((r) => r.secondary != null && w(r.secondary) >= w(r.primary) && meets(r));
+    const cand = matrix.filter(
+      (r) => r.secondary != null && w(r.secondary) >= w(r.primary) && meets(r),
+    );
     if (!cand.length) return null;
-    cand.sort((a, b) =>
-      ((a.tertiary ? 1 : 0) - (b.tertiary ? 1 : 0)) ||
-      ((a.secondary === a.primary ? 0 : 1) - (b.secondary === b.primary ? 0 : 1)) ||
-      ((a.primary === dp ? 0 : 1) - (b.primary === dp ? 0 : 1)) ||
-      (w(a.primary) - w(b.primary)) || (w(a.secondary) - w(b.secondary)));
+    cand.sort(
+      (a, b) =>
+        (a.tertiary ? 1 : 0) - (b.tertiary ? 1 : 0) ||
+        (a.secondary === a.primary ? 0 : 1) - (b.secondary === b.primary ? 0 : 1) ||
+        (a.primary === dp ? 0 : 1) - (b.primary === dp ? 0 : 1) ||
+        w(a.primary) - w(b.primary) ||
+        w(a.secondary) - w(b.secondary),
+    );
     const pair = cand[0];
 
     const tolerant = need == null || singleCapacity(pair.primary) >= need;
     if (!tolerant) {
       const upgrade = matrix
-        .filter((r) => r.tertiary != null && r.primary === pair.primary && r.secondary === pair.secondary && meets(r))
+        .filter(
+          (r) =>
+            r.tertiary != null &&
+            r.primary === pair.primary &&
+            r.secondary === pair.secondary &&
+            meets(r),
+        )
         .sort((a, b) => w(a.tertiary) - w(b.tertiary))[0];
       if (upgrade)
-        return { primary: upgrade.primary, secondary: upgrade.secondary, tertiary: upgrade.tertiary, watts: upgrade.poe_budget_watts,
-                 reason: "upgraded to triple PSU — a matched pair alone would not survive a PSU failure at this load" };
+        return {
+          primary: upgrade.primary,
+          secondary: upgrade.secondary,
+          tertiary: upgrade.tertiary,
+          watts: upgrade.poe_budget_watts,
+          reason:
+            "upgraded to triple PSU — a matched pair alone would not survive a PSU failure at this load",
+        };
     }
-    return { primary: pair.primary, secondary: pair.secondary, tertiary: pair.tertiary ?? null, watts: pair.poe_budget_watts,
-             reason: pair.secondary === pair.primary ? "redundant matched pair" : "redundant pair (secondary ≥ primary)" };
+    return {
+      primary: pair.primary,
+      secondary: pair.secondary,
+      tertiary: pair.tertiary ?? null,
+      watts: pair.poe_budget_watts,
+      reason:
+        pair.secondary === pair.primary
+          ? "redundant matched pair"
+          : "redundant pair (secondary ≥ primary)",
+    };
   }
 
   if (matrix.length === 0)
@@ -281,25 +359,52 @@ function chooseDefaultPsu(ps, kb, need, redundancy, triple) {
   const dpRows = matrix.filter((r) => r.primary === dp);
   const dpSingle = dpRows.find((r) => r.secondary == null);
   if (dpSingle && meets(dpSingle))
-    return { primary: dp, secondary: null, tertiary: null, watts: dpSingle.poe_budget_watts,
-             reason: need == null ? "base default (no PoE budget specified)" : "default single meets load" };
+    return {
+      primary: dp,
+      secondary: null,
+      tertiary: null,
+      watts: dpSingle.poe_budget_watts,
+      reason: need == null ? "base default (no PoE budget specified)" : "default single meets load",
+    };
   // keep the default primary; add the fewest/smallest extra PSUs that meet the load
   // (prefer a 2-PSU pair over a 3-PSU combo, then the smallest secondary/tertiary).
-  const dpPairs = dpRows.filter((r) => r.secondary != null && meets(r)).sort((a, b) =>
-    ((a.tertiary ? 1 : 0) - (b.tertiary ? 1 : 0)) || (w(a.secondary) - w(b.secondary)) || (w(a.tertiary) - w(b.tertiary)));
+  const dpPairs = dpRows
+    .filter((r) => r.secondary != null && meets(r))
+    .sort(
+      (a, b) =>
+        (a.tertiary ? 1 : 0) - (b.tertiary ? 1 : 0) ||
+        w(a.secondary) - w(b.secondary) ||
+        w(a.tertiary) - w(b.tertiary),
+    );
   if (dpPairs.length) {
     const r = dpPairs[0];
-    return { primary: dp, secondary: r.secondary, tertiary: r.tertiary ?? null, watts: r.poe_budget_watts,
-             reason: r.tertiary ? "added secondary+tertiary to meet load" : "added secondary to meet load" };
+    return {
+      primary: dp,
+      secondary: r.secondary,
+      tertiary: r.tertiary ?? null,
+      watts: r.poe_budget_watts,
+      reason: r.tertiary ? "added secondary+tertiary to meet load" : "added secondary to meet load",
+    };
   }
   // upsize: fewest PSUs, then smallest primary/secondary/tertiary, that meets the load
-  const feasible = matrix.filter(meets).sort((a, b) =>
-    ((a.tertiary ? 1 : 0) - (b.tertiary ? 1 : 0)) || (w(a.primary) - w(b.primary)) ||
-    (w(a.secondary) - w(b.secondary)) || (w(a.tertiary) - w(b.tertiary)));
+  const feasible = matrix
+    .filter(meets)
+    .sort(
+      (a, b) =>
+        (a.tertiary ? 1 : 0) - (b.tertiary ? 1 : 0) ||
+        w(a.primary) - w(b.primary) ||
+        w(a.secondary) - w(b.secondary) ||
+        w(a.tertiary) - w(b.tertiary),
+    );
   if (feasible.length) {
     const r = feasible[0];
-    return { primary: r.primary, secondary: r.secondary, tertiary: r.tertiary ?? null, watts: r.poe_budget_watts,
-             reason: "upsized primary (no secondary covered the load)" };
+    return {
+      primary: r.primary,
+      secondary: r.secondary,
+      tertiary: r.tertiary ?? null,
+      watts: r.poe_budget_watts,
+      reason: "upsized primary (no secondary covered the load)",
+    };
   }
   return null; // load not satisfiable by this model's PSU options
 }
@@ -321,9 +426,10 @@ function resolveLicense(model, query, kb) {
 
   const offeredTiers = [...new Set(groups.map((g) => g.tier))];
   // apply a tier pick only where the model actually offers it (never eliminates)
-  const shown = wantTier != null && offeredTiers.includes(wantTier)
-    ? groups.filter((g) => g.tier === wantTier)
-    : groups;
+  const shown =
+    wantTier != null && offeredTiers.includes(wantTier)
+      ? groups.filter((g) => g.tier === wantTier)
+      : groups;
 
   const out = shown.map((g) => {
     const terms = g.term_variable?.choices_years ?? [];
@@ -331,9 +437,15 @@ function resolveLicense(model, query, kb) {
     if (wantTerm != null) {
       if (terms.length === 0) {
         // term not applicable (e.g. Meraki subscription-L: one device-tied SKU)
-        chosen_term = { term_years: null, not_applicable: true, subscription_sku: (g.subscription_members ?? [])[0] ?? null };
+        chosen_term = {
+          term_years: null,
+          not_applicable: true,
+          subscription_sku: (g.subscription_members ?? [])[0] ?? null,
+        };
       } else {
-        const sku = (g.subscription_members ?? []).find((s) => new RegExp(`-${wantTerm}Y$`).test(s));
+        const sku = (g.subscription_members ?? []).find((s) =>
+          new RegExp(`-${wantTerm}Y$`).test(s),
+        );
         chosen_term = { term_years: wantTerm, subscription_sku: sku ?? null, available: !!sku };
       }
     }
@@ -361,15 +473,33 @@ function resolveAccessories(model, query, kb) {
   const cfg = model.configurables ?? {};
   const out = {};
   const stack = getStackCableGroup(kb, cfg.stack_cables?.group);
-  if (stack) out.stack_cables = cableInfo(stack, kb._index.stack_cables, kb, hardBoolTrue(query, "stacking_capable"));
+  if (stack)
+    out.stack_cables = cableInfo(
+      stack,
+      kb._index.stack_cables,
+      kb,
+      hardBoolTrue(query, "stacking_capable"),
+    );
   const sp = getStackpowerCableGroup(kb, cfg.stackpower_cables?.group);
-  if (sp) out.stackpower_cables = cableInfo(sp, kb._index.stackpower_cables, kb, hardBoolTrue(query, "stackpower_capable"));
+  if (sp)
+    out.stackpower_cables = cableInfo(
+      sp,
+      kb._index.stackpower_cables,
+      kb,
+      hardBoolTrue(query, "stackpower_capable"),
+    );
   if (cfg.ssd_accessory) out.ssd_accessory = cfg.ssd_accessory;
   return out;
 }
 
 function hardBoolTrue(query, name) {
-  return (query ?? []).some((c) => c.variable === name && c.condition === "==" && c.value === true && (c.severity ?? "hard") === "hard");
+  return (query ?? []).some(
+    (c) =>
+      c.variable === name &&
+      c.condition === "==" &&
+      c.value === true &&
+      (c.severity ?? "hard") === "hard",
+  );
 }
 
 // A standalone switch needs no cable: default to the group's none_option. If
@@ -382,13 +512,14 @@ function hardBoolTrue(query, name) {
 // `prerequisite` is the first-class kit (or null); renderers surface it as the
 // primary BOM line, with `members` as the cable-length options / upgrades.
 function cableInfo(group, catIndex, kb, required) {
-  const withLen = (group.members ?? []).map((id) => ({ id, len: catIndex.get(id)?.length_cm ?? Infinity }))
+  const withLen = (group.members ?? [])
+    .map((id) => ({ id, len: catIndex.get(id)?.length_cm ?? Infinity }))
     .sort((a, b) => a.len - b.len);
   const shortest = withLen[0]?.id ?? null;
   const kit = group.stack_kit ? getStackKit(kb, group.stack_kit) : null;
   const prerequisite = kit ? { id: kit.id, included_cable: kit.included_cable ?? null } : null;
   const defaultCable = required
-    ? (prerequisite ? (prerequisite.included_cable ?? shortest) : shortest) ?? group.none_option
+    ? ((prerequisite ? (prerequisite.included_cable ?? shortest) : shortest) ?? group.none_option)
     : group.none_option;
   return {
     group: group.id,
@@ -412,7 +543,9 @@ function stripComment(obj) {
 // Most-restrictive >= bound across ALL constraints on a variable (an explicit
 // control and a demand-derived constraint intersect — the highest wins).
 function numericMin(query, name) {
-  const vals = (query ?? []).filter((c) => c.variable === name && c.condition === ">=").map((c) => c.value);
+  const vals = (query ?? [])
+    .filter((c) => c.variable === name && c.condition === ">=")
+    .map((c) => c.value);
   return vals.length ? Math.max(...vals) : null;
 }
 /** The pinned (==) value of a variable in the query, or null. Whether a pin

@@ -1,0 +1,13 @@
+{
+  "name": "switch-selector-tooling",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Repo-wide dev tooling (formatting). Not shipped; the selector runtime stays zero-dependency and the mcp package manages its own deps.",
+  "scripts": {
+    "format": "prettier --write \"**/*.{json,jsonc,js,mjs,css,html,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{json,jsonc,js,mjs,css,html,yml,yaml}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2"
+  }
+}
