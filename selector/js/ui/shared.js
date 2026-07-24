@@ -285,8 +285,16 @@ export function kitList(bom, model) {
   for (const [part, block] of [["stack cable", a.stack_cables], ["stackpower cable", a.stackpower_cables]]) {
     if (!block) continue;
     const isNone = block.default === block.none_option;
+    // Adapter-kit series: the kit is the prerequisite that enables stacking —
+    // surface it as its own primary line ahead of the cable.
+    if (block.prerequisite && !isNone) {
+      const inc = block.prerequisite.included_cable;
+      kit.appendChild(kitLine("stacking kit", block.prerequisite.id,
+        inc ? `prerequisite — includes ${inc}` : "prerequisite"));
+    }
+    const includedByKit = block.prerequisite && block.default === block.prerequisite.included_cable;
     const label = isNone ? "(none — standalone)" : block.default;
-    const why = isNone ? null : `shortest available; kit: ${block.stack_kit ?? "—"}`;
+    const why = isNone ? null : (includedByKit ? "included with kit" : "shortest available");
     const alts = (block.members ?? []).filter((m) => m !== block.default);
     kit.appendChild(kitLine(part, label, why, alts.length ? alts : null));
   }
@@ -321,8 +329,14 @@ export function buildCopyBOM(r) {
   }
   const a = r.accessories ?? {};
   if (a.stack_cables && a.stack_cables.default !== a.stack_cables.none_option) {
-    if (a.stack_cables.stack_kit) lines.push(a.stack_cables.stack_kit);
-    lines.push(a.stack_cables.default);
+    const b = a.stack_cables;
+    if (b.prerequisite) {
+      lines.push(b.prerequisite.id);
+      // The kit ships with its included_cable; only add a cable line for an upgrade.
+      if (b.default !== b.prerequisite.included_cable) lines.push(b.default);
+    } else {
+      lines.push(b.default);
+    }
   }
   if (a.stackpower_cables && a.stackpower_cables.default !== a.stackpower_cables.none_option)
     lines.push(a.stackpower_cables.default);

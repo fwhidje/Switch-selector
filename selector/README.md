@@ -63,7 +63,7 @@ All three are thin renderings of the same `solve()` response:
 - **`#guided` — guided run.** Tile-based steps through the decision variables in the registry's
   `ask_priority` order: single-choice tiles advance on click; the composite PoE and Ports steps
   use level/category tiles with preset count menus (PoE has an explicit *None*). Dependent steps
-  (uplink module, stacking technology → stack cable, PSU triple, stackpower cable) only appear
+  (uplink module, stack cable — gated on `stacking_capable`, PSU triple, stackpower cable) only appear
   when the registry's `presentation.depends_on` is satisfied, and the uplink-module tiles are the
   live residual domain. Every step has a *don't care* tile and a live match count. Ends with the
   kitlist rendered inline (top candidates + outstanding must-resolves) and a button to open the
@@ -106,7 +106,9 @@ js/ui/       DOM only — three renderings of the one contract
 - **Defaulting policy is code, but named and visible.** The `psu-default` policy (ship
   `default_primary`; add a secondary to meet a PoE load; upsize only when no secondary covers it;
   redundancy forces a matched pair; triple forces a tertiary row) and the cable defaults
-  (`none_option`, shortest when stacking/stackpower is required) live in `resolve.js`. Every
+  (`none_option` when optional; when stacking/stackpower is required, the adapter kit's bundled
+  cable on kit series — the kit is surfaced as the prerequisite — else the shortest cable) live in
+  `resolve.js`. Every
   resolved default carries its `reason` in the response — an agent doesn't read the policy, it reads
   the outcome, the alternatives, and the rationale.
 - **No per-switch logic.** A new switch is new JSON.

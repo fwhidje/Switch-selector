@@ -1,7 +1,7 @@
 {
   "header": {
-    "schema_version": "1.0.0",
-    "registry_version": "1.0.0",
+    "schema_version": "2.0.0",
+    "registry_version": "2.0.0",
     "axes_file": "../switching-axes.json",
     "schema_file": "../switch-kb.schema.json",
     "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9300 family, spanning the C9300 (modular uplink), C9300LM, and C9300L (fixed uplink) sub-families. Structure: axis_registry (filterable vocabulary) + catalog (atomic SKU facts) + groups (named shared compatibility sets) + models (switch entries that supply axis values, reference groups, and on fixed-uplink models carry an inline uplink_capacity block in place of a module-group reference).",
@@ -434,6 +434,18 @@
         "id": "STACK-T3A-3M-M",
         "length_cm": 300,
         "type": "type-3a"
+      }
+    ],
+    "stack_kits": [
+      {
+        "id": "C9300L-STACK-KIT2",
+        "included_cable": "STACK-T3A-50CM",
+        "notes": "StackWise-320 data-stack adapter kit for C9300L / C9300LM fixed-uplink models (two stack adapters + one 50cm cable). Prerequisite for stacking; ships with STACK-T3A-50CM. The original C9300L-STACK-KIT/Type-3 is no longer sold; only KIT2/Type-3A is proposed."
+      },
+      {
+        "id": "C9300L-STAK-KIT2-M",
+        "included_cable": "STACK-T3A-50CM-M",
+        "notes": "StackWise-320 data-stack adapter kit for C9300L-M (Meraki) fixed-uplink models (two adapters + one 50cm cable). Prerequisite for stacking; ships with STACK-T3A-50CM-M. Note the 'STAK' spelling in the SKU."
       }
     ],
     "stackpower_cables": [
@@ -1751,7 +1763,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -1787,6 +1798,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "energy_star_certified": true,
         "switching_capacity_gbps": 580,
@@ -1900,7 +1912,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -1948,6 +1959,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 440,
         "switching_capacity_stacked_gbps": 760,
@@ -2040,7 +2052,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -2075,6 +2086,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 56,
         "switching_capacity_stacked_gbps": 376,
@@ -2137,7 +2149,6 @@
         "total_port_count": 12,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -2167,6 +2178,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 1000,
         "switching_capacity_stacked_gbps": 2000,
@@ -2240,7 +2252,6 @@
         "total_port_count": 12,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -2270,6 +2281,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 1000,
         "switching_capacity_stacked_gbps": 2000,
@@ -2344,7 +2356,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -2376,6 +2387,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 1760,
         "switching_capacity_stacked_gbps": 2760,
@@ -2502,7 +2514,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -2534,6 +2545,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "_comment": "Displayed, never filtered. Identical hardware to C9300X-48HX-E.",
         "switching_capacity_gbps": 1760,
         "switching_capacity_stacked_gbps": 2760,
@@ -2659,7 +2671,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -2690,6 +2701,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 1760,
         "switching_capacity_stacked_gbps": 2760,
@@ -2763,7 +2775,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -2794,6 +2805,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "_comment": "Displayed, never filtered. Identical hardware to C9300X-48TX-E.",
         "switching_capacity_gbps": 1760,
         "switching_capacity_stacked_gbps": 2760,
@@ -2868,7 +2880,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -2911,6 +2922,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 960,
         "switching_capacity_stacked_gbps": 1960,
@@ -3038,7 +3050,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -3081,6 +3092,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "_comment": "Displayed, never filtered. Identical hardware to C9300X-48HXN-E.",
         "switching_capacity_gbps": 960,
         "switching_capacity_stacked_gbps": 1960,
@@ -3208,7 +3220,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -3240,6 +3251,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 800,
         "switching_capacity_stacked_gbps": 1880,
@@ -3366,7 +3378,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -3398,6 +3409,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "_comment": "Displayed, never filtered. Identical hardware to C9300X-24HX-E.",
         "switching_capacity_gbps": 800,
         "switching_capacity_stacked_gbps": 1880,
@@ -3523,7 +3535,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -3553,6 +3564,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 2000,
         "switching_capacity_stacked_gbps": 3000,
@@ -3626,7 +3638,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -3656,6 +3667,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "_comment": "Displayed, never filtered. Identical hardware to C9300X-24Y-E.",
         "switching_capacity_gbps": 2000,
         "switching_capacity_stacked_gbps": 3000,
@@ -3730,7 +3742,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -3767,6 +3778,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "energy_star_certified": true,
         "switching_capacity_gbps": 580,
@@ -3890,7 +3902,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -3914,6 +3925,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 208,
         "switching_capacity_stacked_gbps": 688,
@@ -3986,7 +3998,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -4010,6 +4021,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 208,
         "switching_capacity_stacked_gbps": 688,
@@ -4082,7 +4094,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -4106,6 +4117,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 256,
         "switching_capacity_stacked_gbps": 736,
@@ -4178,7 +4190,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -4202,6 +4213,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 256,
         "switching_capacity_stacked_gbps": 736,
@@ -4275,7 +4287,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -4300,6 +4311,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 208,
         "switching_capacity_stacked_gbps": 688,
@@ -4423,7 +4435,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -4448,6 +4459,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 208,
         "switching_capacity_stacked_gbps": 688,
@@ -4571,7 +4583,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -4596,6 +4607,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "energy_star_certified": true,
         "switching_capacity_gbps": 256,
@@ -4720,7 +4732,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -4745,6 +4756,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "energy_star_certified": true,
         "switching_capacity_gbps": 256,
@@ -4869,7 +4881,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -4894,6 +4905,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 208,
         "switching_capacity_stacked_gbps": 688,
@@ -5017,7 +5029,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -5042,6 +5053,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 208,
         "switching_capacity_stacked_gbps": 688,
@@ -5165,7 +5177,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -5190,6 +5201,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 256,
         "switching_capacity_stacked_gbps": 736,
@@ -5313,7 +5325,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -5338,6 +5349,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 256,
         "switching_capacity_stacked_gbps": 736,
@@ -5461,7 +5473,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -5490,6 +5501,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 640,
         "switching_capacity_stacked_gbps": 1120,
@@ -5613,7 +5625,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -5642,6 +5653,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 640,
         "switching_capacity_stacked_gbps": 1120,
@@ -5765,7 +5777,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -5793,6 +5804,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 640,
         "switching_capacity_stacked_gbps": 1120,
@@ -5916,7 +5928,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -5944,6 +5955,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 640,
         "switching_capacity_stacked_gbps": 1120,
@@ -6067,7 +6079,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -6092,6 +6103,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 208,
         "switching_capacity_stacked_gbps": 688,
@@ -6190,7 +6202,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -6215,6 +6226,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 208,
         "switching_capacity_stacked_gbps": 688,
@@ -6313,7 +6325,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -6342,6 +6353,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 640,
         "switching_capacity_stacked_gbps": 1120,
@@ -6440,7 +6452,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -6469,6 +6480,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 640,
         "switching_capacity_stacked_gbps": 1120,
@@ -6567,7 +6579,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -6592,6 +6603,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 256,
         "switching_capacity_stacked_gbps": 736,
@@ -6690,7 +6702,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -6715,6 +6726,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 256,
         "switching_capacity_stacked_gbps": 736,
@@ -6813,7 +6825,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -6838,6 +6849,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 208,
         "switching_capacity_stacked_gbps": 688,
@@ -6961,7 +6973,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -6986,6 +6997,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 208,
         "switching_capacity_stacked_gbps": 688,
@@ -7109,7 +7121,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -7134,6 +7145,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 256,
         "switching_capacity_stacked_gbps": 736,
@@ -7257,7 +7269,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -7282,6 +7293,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 256,
         "switching_capacity_stacked_gbps": 736,
@@ -7404,7 +7416,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -7428,6 +7439,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 208,
         "switching_capacity_stacked_gbps": 688,
@@ -7498,7 +7510,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -7522,6 +7533,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 208,
         "switching_capacity_stacked_gbps": 688,
@@ -7592,7 +7604,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -7616,6 +7627,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 256,
         "switching_capacity_stacked_gbps": 736,
@@ -7686,7 +7698,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "dna-term"
@@ -7710,6 +7721,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Displayed, never filtered. Kept for reference; not axes.",
         "switching_capacity_gbps": 256,
         "switching_capacity_stacked_gbps": 736,
@@ -7780,7 +7792,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -7810,6 +7821,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Display facts. Performance specs (switching capacity, forwarding rate, scale) pending full datasheet read.",
         "port_layout": "24 ports 1G SFP",
         "default_psu": "PWR-C1-715WAC-P-M",
@@ -7869,7 +7881,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -7899,6 +7910,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Performance specs pending full datasheet read.",
         "port_layout": "24 ports 1GbE RJ-45",
         "default_psu": "PWR-C1-350WAC-P-M",
@@ -7959,7 +7971,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -7989,6 +8000,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Performance specs pending full datasheet read.",
         "port_layout": "24 ports 1GbE RJ-45 PoE+",
         "default_psu": "PWR-C1-715WAC-P-M",
@@ -8070,7 +8082,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -8100,6 +8111,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Performance specs pending full datasheet read.",
         "port_layout": "24 ports 1GbE RJ-45 Cisco UPOE",
         "default_psu": "PWR-C1-1100WAC-P-M",
@@ -8181,7 +8193,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -8215,6 +8226,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Performance specs pending full datasheet read.",
         "port_layout": "24 ports Multigigabit (10G/5G/2.5G/1G/100M) RJ-45 Cisco UPOE",
         "default_psu": "PWR-C1-1100WAC-P-M",
@@ -8295,7 +8307,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -8325,6 +8336,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Performance specs pending full datasheet read.",
         "port_layout": "48 ports 1G SFP",
         "default_psu": "PWR-C1-715WAC-P-M",
@@ -8384,7 +8396,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -8414,6 +8425,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Performance specs pending full datasheet read.",
         "port_layout": "48 ports 1GbE RJ-45",
         "default_psu": "PWR-C1-350WAC-P-M",
@@ -8474,7 +8486,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -8504,6 +8515,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Performance specs pending full datasheet read.",
         "port_layout": "48 ports 1GbE RJ-45 PoE+",
         "default_psu": "PWR-C1-715WAC-P-M",
@@ -8585,7 +8597,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -8615,6 +8626,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Performance specs pending full datasheet read.",
         "port_layout": "48 ports 1GbE RJ-45 Cisco UPOE",
         "default_psu": "PWR-C1-1100WAC-P-M",
@@ -8696,7 +8708,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -8741,6 +8752,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Performance specs pending full datasheet read.",
         "port_layout": "36 ports Multigigabit (2.5G/1G/100M) + 12 ports Multigigabit (10G/5G/2.5G/1G/100M), all RJ-45 Cisco UPOE",
         "default_psu": "PWR-C1-1100WAC-P-M",
@@ -8822,7 +8834,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-480",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -8855,6 +8866,7 @@
         "ports": "Per-port speed SET reconstructed from the datasheet port table (subsumption as data). Access on model; uplinks from the fitted module (modular) or inline (fixed)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-480",
         "_comment": "Performance specs pending full datasheet read.",
         "port_layout": "48 ports Multigigabit (5G/2.5G/1G/100M) RJ-45 Cisco UPOE",
         "default_psu": "PWR-C1-1100WAC-P-M",
@@ -8935,7 +8947,6 @@
         "total_port_count": 12,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -8966,6 +8977,7 @@
         "ports": "12x 1/10/25G SFP28 fiber per Interfaces table."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "switching_capacity_gbps": 1000,
         "switching_capacity_stacked_note": "1 Tbps (1T stack) / 480 Gbps (480G stack)",
         "forwarding_rate_mpps": 744.04,
@@ -9033,7 +9045,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -9064,6 +9075,7 @@
         "ports": "24x 1/10/25G SFP28 fiber per Interfaces table."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "switching_capacity_gbps": 2000,
         "switching_capacity_stacked_note": "1 Tbps (1T stack) / 480 Gbps (480G stack)",
         "forwarding_rate_mpps": 1488,
@@ -9132,7 +9144,6 @@
         "total_port_count": 24,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -9165,6 +9176,7 @@
         "ports": "24x 10G mGig RJ45 per Interfaces table (10G/5G/2.5G/1G)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "switching_capacity_gbps": 880,
         "switching_capacity_stacked_note": "1 Tbps (1T stack) / 480 Gbps (480G stack)",
         "forwarding_rate_mpps": 327.38,
@@ -9248,7 +9260,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -9280,6 +9291,7 @@
         "ports": "48x 10G mGig RJ45 per Interfaces table (10G/5G/2.5G/1G)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "switching_capacity_gbps": 2000,
         "switching_capacity_stacked_note": "1 Tbps (1T stack) / 480 Gbps (480G stack)",
         "forwarding_rate_mpps": 1488,
@@ -9348,7 +9360,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -9381,6 +9392,7 @@
         "ports": "48x 10G mGig RJ45 per Interfaces table (10G/5G/2.5G/1G)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "switching_capacity_gbps": 2000,
         "switching_capacity_stacked_note": "1 Tbps (1T stack) / 480 Gbps (480G stack)",
         "forwarding_rate_mpps": 1488,
@@ -9465,7 +9477,6 @@
         "total_port_count": 48,
         "uplink_modular": true,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-1t",
         "stackpower_capable": true,
         "license_regime": [
           "meraki-classic",
@@ -9508,6 +9519,7 @@
         "ports": "8x 10G mGig + 40x 5G mGig RJ45 per Interfaces table (datasheet: 8x 10G mGig + 40x 5G mGig)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-1t",
         "switching_capacity_gbps": 2000,
         "switching_capacity_stacked_note": "1 Tbps (1T stack) / 480 Gbps (480G stack)",
         "forwarding_rate_mpps": 1488,
@@ -9592,7 +9604,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "meraki-classic",
@@ -9632,6 +9643,7 @@
         "ports": "Per-port speed SET from datasheet. Access copper 1G; fixed uplinks 10G/1G SFP+ (inline, uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "port_layout": "24 ports 1G RJ-45, 4x 10G/1G SFP+ fixed uplinks",
         "default_psu": "PWR-C1-350WAC-P-M",
@@ -9692,7 +9704,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "meraki-classic",
@@ -9732,6 +9743,7 @@
         "ports": "Per-port speed SET from datasheet. Access copper 1G PoE+; fixed uplinks 10G/1G SFP+ (inline, uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "port_layout": "24 ports 1G RJ-45 PoE+, 4x 10G/1G SFP+ fixed uplinks",
         "default_psu": "PWR-C1-715WAC-P-M",
@@ -9808,7 +9820,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "meraki-classic",
@@ -9860,6 +9871,7 @@
         "ports": "Per-port speed SET from datasheet. 8 mGig ports [1g,2.5g,5g,10g] UPoE, 16 GbE ports [1g] UPoE; fixed uplinks 10G/1G SFP+ (inline, uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "port_layout": "8 ports 1/2.5/5/10G RJ-45 UPoE, 16 ports 1G RJ-45 UPoE, 4x 10G/1G SFP+ fixed uplinks",
         "default_psu": "PWR-C1-1100WAC-P-M",
@@ -9930,7 +9942,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "meraki-classic",
@@ -9970,6 +9981,7 @@
         "ports": "Per-port speed SET from datasheet. Access copper 1G; fixed uplinks 10G/1G SFP+ (inline, uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "port_layout": "48 ports 1G RJ-45, 4x 10G/1G SFP+ fixed uplinks",
         "default_psu": "PWR-C1-350WAC-P-M",
@@ -10030,7 +10042,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "meraki-classic",
@@ -10070,6 +10081,7 @@
         "ports": "Per-port speed SET from datasheet. Access copper 1G PoE+; fixed uplinks 10G/1G SFP+ (inline, uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "port_layout": "48 ports 1G RJ-45 PoE+, 4x 10G/1G SFP+ fixed uplinks",
         "default_psu": "PWR-C1-715WAC-P-M",
@@ -10146,7 +10158,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "meraki-classic",
@@ -10186,6 +10197,7 @@
         "ports": "Per-port speed SET from datasheet. Access copper 1G PoE+; fixed uplinks 10G/1G SFP+ (inline, uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "port_layout": "48 ports 1G RJ-45 PoE+, 4x 10G/1G SFP+ fixed uplinks",
         "default_psu": "PWR-C1-1100WAC-P-M",
@@ -10257,7 +10269,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "meraki-classic",
@@ -10309,6 +10320,7 @@
         "ports": "Per-port speed SET from datasheet. 12 mGig ports [1g,2.5g,5g,10g] UPoE, 36 GbE ports [1g] UPoE; fixed uplinks 10G/1G SFP+ (inline, uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "port_layout": "12 ports 1/2.5/5/10G RJ-45 UPoE, 36 ports 1G RJ-45 UPoE, 4x 10G/1G SFP+ fixed uplinks",
         "default_psu": "PWR-C1-1100WAC-P-M",
@@ -10379,7 +10391,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -10414,6 +10425,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 56,
         "switching_capacity_stacked_gbps": 376,
@@ -10476,7 +10488,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -10512,6 +10523,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 128,
         "switching_capacity_stacked_gbps": 448,
@@ -10574,7 +10586,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -10610,6 +10621,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 128,
         "switching_capacity_stacked_gbps": 448,
@@ -10672,7 +10684,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -10707,6 +10718,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 104,
         "switching_capacity_stacked_gbps": 424,
@@ -10769,7 +10781,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -10804,6 +10815,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 104,
         "switching_capacity_stacked_gbps": 424,
@@ -10866,7 +10878,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -10902,6 +10913,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 176,
         "switching_capacity_stacked_gbps": 496,
@@ -10964,7 +10976,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -11000,6 +11011,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 176,
         "switching_capacity_stacked_gbps": 496,
@@ -11063,7 +11075,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -11098,6 +11109,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 56,
         "switching_capacity_stacked_gbps": 376,
@@ -11182,7 +11194,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -11217,6 +11228,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 56,
         "switching_capacity_stacked_gbps": 376,
@@ -11301,7 +11313,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -11337,6 +11348,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 128,
         "switching_capacity_stacked_gbps": 448,
@@ -11421,7 +11433,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -11457,6 +11468,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 128,
         "switching_capacity_stacked_gbps": 448,
@@ -11541,7 +11553,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -11576,6 +11587,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 104,
         "switching_capacity_stacked_gbps": 424,
@@ -11660,7 +11672,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -11695,6 +11706,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 104,
         "switching_capacity_stacked_gbps": 424,
@@ -11779,7 +11791,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -11815,6 +11826,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 176,
         "switching_capacity_stacked_gbps": 496,
@@ -11899,7 +11911,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -11935,6 +11946,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 176,
         "switching_capacity_stacked_gbps": 496,
@@ -12019,7 +12031,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -12054,6 +12065,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 104,
         "switching_capacity_stacked_gbps": 424,
@@ -12138,7 +12150,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -12173,6 +12184,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 104,
         "switching_capacity_stacked_gbps": 424,
@@ -12257,7 +12269,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -12293,6 +12304,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 176,
         "switching_capacity_stacked_gbps": 496,
@@ -12377,7 +12389,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -12413,6 +12424,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 176,
         "switching_capacity_stacked_gbps": 496,
@@ -12497,7 +12509,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -12544,6 +12555,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 272,
         "switching_capacity_stacked_gbps": 592,
@@ -12628,7 +12640,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -12675,6 +12686,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 272,
         "switching_capacity_stacked_gbps": 592,
@@ -12759,7 +12771,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -12805,6 +12816,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 352,
         "switching_capacity_stacked_gbps": 672,
@@ -12889,7 +12901,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -12935,6 +12946,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 352,
         "switching_capacity_stacked_gbps": 672,
@@ -13019,7 +13031,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -13066,6 +13077,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 392,
         "switching_capacity_stacked_gbps": 712,
@@ -13150,7 +13162,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -13197,6 +13208,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 392,
         "switching_capacity_stacked_gbps": 712,
@@ -13281,7 +13293,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -13327,6 +13338,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 472,
         "switching_capacity_stacked_gbps": 792,
@@ -13411,7 +13423,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -13457,6 +13468,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 472,
         "switching_capacity_stacked_gbps": 792,
@@ -13541,7 +13553,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -13589,6 +13600,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 440,
         "switching_capacity_stacked_gbps": 760,
@@ -13677,7 +13689,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -13714,6 +13725,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 296,
         "switching_capacity_stacked_gbps": 616,
@@ -13802,7 +13814,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -13839,6 +13850,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 296,
         "switching_capacity_stacked_gbps": 616,
@@ -13927,7 +13939,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -13964,6 +13975,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 248,
         "switching_capacity_stacked_gbps": 568,
@@ -14073,7 +14085,6 @@
         "total_port_count": 24,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -14110,6 +14121,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 248,
         "switching_capacity_stacked_gbps": 568,
@@ -14218,7 +14230,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -14255,6 +14266,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 296,
         "switching_capacity_stacked_gbps": 616,
@@ -14321,7 +14333,6 @@
         "total_port_count": 48,
         "uplink_modular": false,
         "stacking_capable": true,
-        "stacking_technology": "stackwise-320",
         "stackpower_capable": false,
         "license_regime": [
           "dna-term"
@@ -14358,6 +14369,7 @@
         "ports": "Speed sets from datasheet Table 2 (subsumption encoding B). Access on model; uplinks inline (uplink_modular=false)."
       },
       "attributes": {
+        "stacking_technology": "stackwise-320",
         "_comment": "Displayed, never filtered.",
         "switching_capacity_gbps": 296,
         "switching_capacity_stacked_gbps": 616,

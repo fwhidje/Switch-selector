@@ -1,7 +1,7 @@
 {
  "header": {
-  "schema_version": "1.0.0",
-  "registry_version": "1.0.0",
+  "schema_version": "2.0.0",
+  "registry_version": "2.0.0",
   "axes_file": "../switching-axes.json",
   "schema_file": "../switch-kb.schema.json",
   "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9500 Series Switches (C9500 and C9500X). Pass 2 of 2: catalog, groups, and models are all populated. C9500/C9500X are fixed 1RU switches (no modular chassis/supervisor/line-card concept); only C9500-16X (excluded, see design_notes) ever had a network-module bay, so the live lineup is fixed-uplink only. Structure: catalog + groups + models.",
@@ -252,7 +252,6 @@
     "total_port_count": 32,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-virtual",
     "stackpower_capable": false,
     "license_regime": ["dna-term"],
     "license_tier": ["advantage"]
@@ -269,6 +268,7 @@
     "stacking_technology": "StackWise Virtual is Advantage-tier only (datasheet Table 24, 'High availability and resiliency')."
    },
    "attributes": {
+    "stacking_technology": "stackwise-virtual",
     "_comment": "Displayed, never filtered.",
     "asic": "Cisco UADP 3.0",
     "dram_gb": 16,
@@ -368,7 +368,6 @@
     "total_port_count": 32,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-virtual",
     "stackpower_capable": false,
     "license_regime": ["dna-term"],
     "license_tier": ["advantage"]
@@ -389,6 +388,7 @@
     "stacking_technology": "StackWise Virtual is Advantage-tier only (datasheet Table 24, 'High availability and resiliency')."
    },
    "attributes": {
+    "stacking_technology": "stackwise-virtual",
     "_comment": "Displayed, never filtered.",
     "asic": "Cisco UADP 3.0",
     "dram_gb": 16,
@@ -484,7 +484,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-virtual",
     "stackpower_capable": false,
     "license_regime": ["dna-term"],
     "license_tier": ["advantage"]
@@ -501,6 +500,7 @@
     "stacking_technology": "StackWise Virtual is Advantage-tier only (datasheet Table 24, 'High availability and resiliency')."
    },
    "attributes": {
+    "stacking_technology": "stackwise-virtual",
     "_comment": "Displayed, never filtered.",
     "asic": "Cisco UADP 3.0",
     "dram_gb": 16,
@@ -597,7 +597,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-virtual",
     "stackpower_capable": false,
     "license_regime": ["dna-term"],
     "license_tier": ["advantage"]
@@ -615,6 +614,7 @@
     "stacking_technology": "StackWise Virtual is Advantage-tier only (datasheet Table 24, 'High availability and resiliency')."
    },
    "attributes": {
+    "stacking_technology": "stackwise-virtual",
     "_comment": "Displayed, never filtered.",
     "asic": "Cisco UADP 3.0",
     "dram_gb": 16,
@@ -714,7 +714,6 @@
     "total_port_count": 28,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-virtual",
     "stackpower_capable": false,
     "license_regime": ["dna-term"],
     "license_tier": ["advantage"]
@@ -731,6 +730,7 @@
     "stacking_technology": "StackWise Virtual is Advantage-tier only (datasheet Table 24, 'High availability and resiliency')."
    },
    "attributes": {
+    "stacking_technology": "stackwise-virtual",
     "_comment": "Displayed, never filtered.",
     "asic": "Cisco Silicon One Q200",
     "dram_gb": 32,
@@ -775,7 +775,6 @@
     "total_port_count": 60,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-virtual",
     "stackpower_capable": false,
     "license_regime": ["dna-term"],
     "license_tier": ["advantage"]
@@ -793,6 +792,7 @@
     "stacking_technology": "StackWise Virtual is Advantage-tier only (datasheet Table 24, 'High availability and resiliency')."
    },
    "attributes": {
+    "stacking_technology": "stackwise-virtual",
     "_comment": "Displayed, never filtered.",
     "asic": "Cisco Silicon One Q200",
     "dram_gb": 32,

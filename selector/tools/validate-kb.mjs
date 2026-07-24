@@ -61,7 +61,9 @@ const pm = portModel(registry);
 const LEGAL_ROLE = new Set(pm?.selector_enums?.port_role ?? []);
 const LEGAL_MEDIUM = new Set(pm?.selector_enums?.port_medium ?? []);
 const LEGAL_SPEED = new Set(pm?.selector_enums?.port_speed?.order ?? []);
-const SCALAR_ENUMS = ["series", "poe_type", "stacking_technology"];
+// stacking_technology is no longer an axis_values scalar (v2.0.0 demoted it to a
+// display-only attribute); its enum is validated by the schema on model.attributes.
+const SCALAR_ENUMS = ["series", "poe_type"];
 
 // --- Check 0: formal JSON-Schema SHAPE (ajv, against the shared schema) ------
 function checkShape(kb, kbFail) {
@@ -169,8 +171,8 @@ function checkKbAxisValues(kb, kbFail) {
     for (const axis of storedAxes)
       if (axis.required_on_model === true && !(axis.name in av))
         kbFail(`${m.id}.axis_values`, `missing required variable '${axis.name}'`);
-    if (av.stacking_capable === true && !("stacking_technology" in av))
-      kbFail(`${m.id}.axis_values`, "stacking_capable=true requires stacking_technology");
+    if (av.stacking_capable === true && !(m.attributes && "stacking_technology" in m.attributes))
+      kbFail(`${m.id}.attributes`, "stacking_capable=true requires attributes.stacking_technology (display-only since v2.0.0)");
     if (av.poe_capable === true && !("poe_budget_watts" in av))
       kbFail(`${m.id}.axis_values`, "poe_capable=true requires poe_budget_watts");
     for (const ea of SCALAR_ENUMS)
@@ -292,6 +294,18 @@ function checkGroups(kb, kbFail) {
   memberCheck(g.power_supply_groups, idx.power_supplies, "power_supply");
   memberCheck(g.stack_cable_groups, idx.stack_cables, "stack_cable");
   memberCheck(g.stackpower_cable_groups, idx.stackpower_cables, "stackpower_cable");
+  // Adapter-kit stacking: a group's stack_kit must resolve to a catalog stack_kit,
+  // and that kit's included_cable must be a real cable AND a member of the group
+  // (so the BOM never double-orders the bundled cable).
+  for (const grp of g.stack_cable_groups ?? []) {
+    if (grp.stack_kit == null) continue;
+    const kit = idx.stack_kits.get(grp.stack_kit);
+    if (!kit) { kbFail(`stack_cable_group ${grp.id}.stack_kit`, `unknown stack_kit '${grp.stack_kit}'`); continue; }
+    if (!has(idx.stack_cables, kit.included_cable))
+      kbFail(`stack_kit ${kit.id}.included_cable`, `unknown stack_cable '${kit.included_cable}'`);
+    else if (!(grp.members ?? []).includes(kit.included_cable))
+      kbFail(`stack_kit ${kit.id}.included_cable`, `'${kit.included_cable}' not a member of group '${grp.id}'`);
+  }
   for (const grp of g.license_groups ?? []) {
     for (const m of grp.subscription_members ?? [])
       if (!has(idx.licenses, m)) kbFail(`license_group ${grp.id}.subscription_members`, `unknown license '${m}'`);

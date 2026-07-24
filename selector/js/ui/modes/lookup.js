@@ -202,8 +202,15 @@ export function mount(root, ctx) {
     // accessories
     const a = bom.accessories ?? {};
     const accRows = [];
-    if (a.stack_cables) accRows.push(["stack cable", (a.stack_cables.members ?? []).join(", "), a.stack_cables.stack_kit ?? "—",
-      a.stack_cables.default === a.stack_cables.none_option ? "(none — standalone)" : a.stack_cables.default]);
+    if (a.stack_cables) {
+      const b = a.stack_cables;
+      // Adapter-kit series: the kit is the prerequisite — give it its own row.
+      if (b.prerequisite)
+        accRows.push(["stacking kit", b.prerequisite.id, "prerequisite",
+          b.prerequisite.included_cable ? `includes ${b.prerequisite.included_cable}` : "—"]);
+      accRows.push(["stack cable", (b.members ?? []).join(", "), b.prerequisite ? "via kit" : "—",
+        b.default === b.none_option ? "(none — standalone)" : b.default]);
+    }
     if (a.stackpower_cables) accRows.push(["stackpower cable", (a.stackpower_cables.members ?? []).join(", "), "—",
       a.stackpower_cables.default === a.stackpower_cables.none_option ? "(none — standalone)" : a.stackpower_cables.default]);
     if (a.ssd_accessory) accRows.push(["ssd", a.ssd_accessory, "—", "—"]);

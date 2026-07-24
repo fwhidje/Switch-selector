@@ -1,7 +1,7 @@
 {
  "header": {
-  "schema_version": "1.0.0",
-  "registry_version": "1.0.0",
+  "schema_version": "2.0.0",
+  "registry_version": "2.0.0",
   "axes_file": "../switching-axes.json",
   "schema_file": "../switch-kb.schema.json",
   "description": "Networking Equipment Selector knowledge base for the Cisco Catalyst 9200 Series switches. Carries the catalog (atomic SKU facts), groups (named shared compatibility sets), and switch models for C9200 (modular uplink), C9200L (fixed uplink), C9200CX (compact, fanless, fixed uplink), C9200L-M (Meraki-managed, fixed uplink), and C9200CX-M (Meraki-managed, compact). C9200L-M model entries (14) and C9200CX-M model entries (7) are complete. Structure: catalog + groups + models.",
@@ -235,6 +235,23 @@
     "length_cm": 300,
     "type": "type-4",
     "notes": "Data stack 3 m cable for C9200L-M (Meraki), Optional Accessories table, C9200L-M Datasheet."
+   }
+  ],
+  "stack_kits": [
+   {
+    "id": "C9200-STACK-KIT",
+    "included_cable": "STACK-T4-50CM",
+    "notes": "StackWise-160 data-stack adapter kit for C9200 modular models (two data stack adapters + one 50 cm cable). Prerequisite for stacking; ships with STACK-T4-50CM (datasheet Tables 5-6)."
+   },
+   {
+    "id": "C9200L-STACK-KIT",
+    "included_cable": "STACK-T4-50CM",
+    "notes": "StackWise-80 data-stack adapter kit for C9200L fixed-uplink models (two adapters + one 50 cm cable). Prerequisite for stacking; ships with STACK-T4-50CM (datasheet Tables 5-6)."
+   },
+   {
+    "id": "C9200L-STAK-KIT-M",
+    "included_cable": "STACK-T4-50CM-M",
+    "notes": "StackWise-80 data-stack adapter kit for C9200L-M (Meraki) models (two adapters + one 50 cm cable). Prerequisite for stacking; ships with STACK-T4-50CM-M (Optional Accessories table, C9200L-M Datasheet). Note the 'STAK' spelling in the SKU."
    }
   ],
   "stackpower_cables": [],
@@ -1419,7 +1436,6 @@
     "total_port_count": 24,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -1446,6 +1462,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-125WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 128,
     "switching_capacity_stacked_gbps": 288,
@@ -1510,7 +1527,6 @@
     "total_port_count": 24,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -1537,6 +1553,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-125WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 128,
     "switching_capacity_stacked_gbps": 288,
@@ -1602,7 +1619,6 @@
     "total_port_count": 24,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -1629,6 +1645,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 128,
     "switching_capacity_stacked_gbps": 288,
@@ -1705,7 +1722,6 @@
     "total_port_count": 24,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -1732,6 +1748,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 128,
     "switching_capacity_stacked_gbps": 288,
@@ -1808,7 +1825,6 @@
     "total_port_count": 24,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -1835,6 +1851,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 128,
     "switching_capacity_stacked_gbps": 288,
@@ -1913,7 +1930,6 @@
     "total_port_count": 24,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -1940,6 +1956,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 128,
     "switching_capacity_stacked_gbps": 288,
@@ -2018,7 +2035,6 @@
     "total_port_count": 24,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -2056,6 +2072,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 352,
     "switching_capacity_stacked_gbps": 532,
@@ -2132,7 +2149,6 @@
     "total_port_count": 24,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -2170,6 +2186,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 352,
     "switching_capacity_stacked_gbps": 532,
@@ -2245,7 +2262,6 @@
     "total_port_count": 48,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -2272,6 +2288,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-125WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 336,
@@ -2336,7 +2353,6 @@
     "total_port_count": 48,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -2363,6 +2379,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-125WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 336,
@@ -2428,7 +2445,6 @@
     "total_port_count": 48,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -2455,6 +2471,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-1KWAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 336,
@@ -2531,7 +2548,6 @@
     "total_port_count": 48,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -2558,6 +2574,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-1KWAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 336,
@@ -2634,7 +2651,6 @@
     "total_port_count": 48,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -2661,6 +2677,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 336,
@@ -2737,7 +2754,6 @@
     "total_port_count": 48,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -2764,6 +2780,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 336,
@@ -2840,7 +2857,6 @@
     "total_port_count": 48,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -2867,6 +2883,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-1KWAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 336,
@@ -2945,7 +2962,6 @@
     "total_port_count": 48,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -2972,6 +2988,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-1KWAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 336,
@@ -3050,7 +3067,6 @@
     "total_port_count": 48,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -3088,6 +3104,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-1KWAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 400,
     "switching_capacity_stacked_gbps": 580,
@@ -3164,7 +3181,6 @@
     "total_port_count": 48,
     "uplink_modular": true,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-160",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -3202,6 +3218,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C6-1KWAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-160",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 400,
     "switching_capacity_stacked_gbps": 580,
@@ -3277,7 +3294,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -3312,6 +3328,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 56,
     "switching_capacity_stacked_gbps": 136,
@@ -3374,7 +3391,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -3409,6 +3425,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 56,
     "switching_capacity_stacked_gbps": 136,
@@ -3472,7 +3489,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -3507,6 +3523,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 56,
     "switching_capacity_stacked_gbps": 136,
@@ -3581,7 +3598,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -3616,6 +3632,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 56,
     "switching_capacity_stacked_gbps": 136,
@@ -3689,7 +3706,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -3724,6 +3740,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 104,
     "switching_capacity_stacked_gbps": 184,
@@ -3786,7 +3803,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -3821,6 +3837,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 104,
     "switching_capacity_stacked_gbps": 184,
@@ -3884,7 +3901,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -3919,6 +3935,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-1KWAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 104,
     "switching_capacity_stacked_gbps": 184,
@@ -3993,7 +4010,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -4028,6 +4044,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-1KWAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 104,
     "switching_capacity_stacked_gbps": 184,
@@ -4102,7 +4119,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -4137,6 +4153,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 104,
     "switching_capacity_stacked_gbps": 184,
@@ -4211,7 +4228,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -4246,6 +4262,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 104,
     "switching_capacity_stacked_gbps": 184,
@@ -4319,7 +4336,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -4355,6 +4371,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 128,
     "switching_capacity_stacked_gbps": 208,
@@ -4417,7 +4434,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -4453,6 +4469,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 128,
     "switching_capacity_stacked_gbps": 208,
@@ -4516,7 +4533,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -4552,6 +4568,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 128,
     "switching_capacity_stacked_gbps": 208,
@@ -4626,7 +4643,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -4662,6 +4678,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 128,
     "switching_capacity_stacked_gbps": 208,
@@ -4735,7 +4752,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -4771,6 +4787,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 256,
@@ -4833,7 +4850,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -4869,6 +4885,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-125WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 256,
@@ -4932,7 +4949,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -4969,6 +4985,7 @@
     "energy_star": "Datasheet Table 2 marks C9200L-48P-4X ENERGY STAR certified."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 256,
@@ -5044,7 +5061,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -5081,6 +5097,7 @@
     "energy_star": "Datasheet Table 2 marks C9200L-48P-4X ENERGY STAR certified."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 256,
@@ -5156,7 +5173,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -5192,6 +5208,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 256,
@@ -5266,7 +5283,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -5302,6 +5318,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 256,
@@ -5376,7 +5393,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -5423,6 +5439,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 272,
     "switching_capacity_stacked_gbps": 352,
@@ -5497,7 +5514,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -5544,6 +5560,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 272,
     "switching_capacity_stacked_gbps": 352,
@@ -5618,7 +5635,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -5665,6 +5681,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-1KWAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 392,
     "switching_capacity_stacked_gbps": 472,
@@ -5739,7 +5756,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -5786,6 +5802,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-1KWAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 392,
     "switching_capacity_stacked_gbps": 472,
@@ -5860,7 +5877,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -5908,6 +5924,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 292,
     "switching_capacity_stacked_gbps": 372,
@@ -5982,7 +5999,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -6030,6 +6046,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-600WAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 292,
     "switching_capacity_stacked_gbps": 372,
@@ -6104,7 +6121,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -6152,6 +6168,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-1KWAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 340,
     "switching_capacity_stacked_gbps": 420,
@@ -6226,7 +6243,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "dna-term"
@@ -6274,6 +6290,7 @@
     "default_primary": "Datasheet Table 2 default primary power supply = PWR-C5-1KWAC."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "_comment": "Displayed, never filtered.",
     "switching_capacity_gbps": 340,
     "switching_capacity_stacked_gbps": 420,
@@ -7736,7 +7753,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "meraki-classic",
@@ -7773,6 +7789,7 @@
     "weight_kg": "C9200L-M Datasheet Physical Specifications table."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "switching_capacity_gbps": 56,
     "switching_capacity_stacked_gbps": 136,
     "forwarding_rate_mpps": 41.67,
@@ -7830,7 +7847,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "meraki-classic",
@@ -7867,6 +7883,7 @@
     "weight_kg": "C9200L-M Datasheet Physical Specifications table."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "switching_capacity_gbps": 56,
     "switching_capacity_stacked_gbps": 136,
     "forwarding_rate_mpps": 41.67,
@@ -7934,7 +7951,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "meraki-classic",
@@ -7971,6 +7987,7 @@
     "weight_kg": "C9200L-M Datasheet Physical Specifications table."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "switching_capacity_gbps": 104,
     "switching_capacity_stacked_gbps": 184,
     "forwarding_rate_mpps": 77.38,
@@ -8028,7 +8045,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "meraki-classic",
@@ -8065,6 +8081,7 @@
     "weight_kg": "C9200L-M Datasheet Physical Specifications table."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "switching_capacity_gbps": 104,
     "switching_capacity_stacked_gbps": 184,
     "forwarding_rate_mpps": 77.38,
@@ -8133,7 +8150,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "meraki-classic",
@@ -8170,6 +8186,7 @@
     "weight_kg": "C9200L-M Datasheet Physical Specifications table."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "switching_capacity_gbps": 104,
     "switching_capacity_stacked_gbps": 184,
     "forwarding_rate_mpps": 77.38,
@@ -8237,7 +8254,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "meraki-classic",
@@ -8275,6 +8291,7 @@
     "weight_kg": "C9200L-M Datasheet Physical Specifications table."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "switching_capacity_gbps": 128,
     "switching_capacity_stacked_gbps": 208,
     "forwarding_rate_mpps": 95.23,
@@ -8332,7 +8349,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "meraki-classic",
@@ -8370,6 +8386,7 @@
     "weight_kg": "C9200L-M Datasheet Physical Specifications table."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "switching_capacity_gbps": 128,
     "switching_capacity_stacked_gbps": 208,
     "forwarding_rate_mpps": 95.23,
@@ -8437,7 +8454,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "meraki-classic",
@@ -8475,6 +8491,7 @@
     "weight_kg": "C9200L-M Datasheet Physical Specifications table."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 256,
     "forwarding_rate_mpps": 130.95,
@@ -8532,7 +8549,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "meraki-classic",
@@ -8570,6 +8586,7 @@
     "weight_kg": "C9200L-M Datasheet Physical Specifications table."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 256,
     "forwarding_rate_mpps": 130.95,
@@ -8638,7 +8655,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "meraki-classic",
@@ -8676,6 +8692,7 @@
     "weight_kg": "C9200L-M Datasheet Physical Specifications table."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "switching_capacity_gbps": 176,
     "switching_capacity_stacked_gbps": 256,
     "forwarding_rate_mpps": 130.95,
@@ -8744,7 +8761,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "meraki-classic",
@@ -8793,6 +8809,7 @@
     "weight_kg": "C9200L-M Datasheet Physical Specifications table."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "switching_capacity_gbps": 272,
     "switching_capacity_stacked_gbps": 352,
     "forwarding_rate_mpps": 214.28,
@@ -8861,7 +8878,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "meraki-classic",
@@ -8910,6 +8926,7 @@
     "weight_kg": "C9200L-M Datasheet Physical Specifications table."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "switching_capacity_gbps": 392,
     "switching_capacity_stacked_gbps": 472,
     "forwarding_rate_mpps": 291.66,
@@ -8978,7 +8995,6 @@
     "total_port_count": 24,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "meraki-classic",
@@ -9028,6 +9044,7 @@
     "weight_kg": "C9200L-M Datasheet Physical Specifications table."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "switching_capacity_gbps": 292,
     "switching_capacity_stacked_gbps": 372,
     "forwarding_rate_mpps": 229.16,
@@ -9096,7 +9113,6 @@
     "total_port_count": 48,
     "uplink_modular": false,
     "stacking_capable": true,
-    "stacking_technology": "stackwise-80",
     "stackpower_capable": false,
     "license_regime": [
      "meraki-classic",
@@ -9146,6 +9162,7 @@
     "weight_kg": "C9200L-M Datasheet Physical Specifications table."
    },
    "attributes": {
+    "stacking_technology": "stackwise-80",
     "switching_capacity_gbps": 340,
     "switching_capacity_stacked_gbps": 420,
     "forwarding_rate_mpps": 252.97,
