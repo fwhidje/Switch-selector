@@ -8,8 +8,15 @@
 // rendered inline (top candidates) plus a button to the full-option view.
 
 import {
-  getVariables, getVariable, storageOf, isCountAtLevel, acceptedConditions,
-  mustResolve, dependsOn, legalValues, portModel,
+  getVariables,
+  getVariable,
+  storageOf,
+  isCountAtLevel,
+  acceptedConditions,
+  mustResolve,
+  dependsOn,
+  legalValues,
+  portModel,
 } from "../../core/registry.js";
 import { solve, facetDomains } from "../../core/solver.js";
 import { el, badge, toQuery, emptyDraft, candidateCard } from "../shared.js";
@@ -27,8 +34,12 @@ export function mount(root, ctx) {
   const speedOrder = portModel(registry)?.selector_enums?.port_speed?.order ?? [];
   const bySpeed = (a, b) => speedOrder.indexOf(a) - speedOrder.indexOf(b);
   const combos = enumeratePortCombos(kb, speedOrder);
-  const copperSpeeds = [...new Set(combos.filter((c) => c.medium === "copper").map((c) => c.speed))].sort(bySpeed);
-  const fiberSpeeds = [...new Set(combos.filter((c) => c.medium === "fiber").map((c) => c.speed))].sort(bySpeed);
+  const copperSpeeds = [
+    ...new Set(combos.filter((c) => c.medium === "copper").map((c) => c.speed)),
+  ].sort(bySpeed);
+  const fiberSpeeds = [
+    ...new Set(combos.filter((c) => c.medium === "fiber").map((c) => c.speed)),
+  ].sort(bySpeed);
   const mgigSpeeds = copperSpeeds.filter((s) => s !== "1g");
   const poeLevels = (getVariable(registry, "poe_type")?.order ?? []).filter((l) => l !== "none");
 
@@ -41,16 +52,25 @@ export function mount(root, ctx) {
   function buildStepDefs() {
     const vars = getVariables(registry)
       .filter((v) => storageOf(v) !== "identity" && acceptedConditions(v).length > 0)
-      .sort((a, b) => (a.presentation?.ask_priority ?? 999) - (b.presentation?.ask_priority ?? 999));
+      .sort(
+        (a, b) => (a.presentation?.ask_priority ?? 999) - (b.presentation?.ask_priority ?? 999),
+      );
     const defs = [];
-    let poeDone = false, portsDone = false;
+    let poeDone = false,
+      portsDone = false;
     for (const v of vars) {
       if (POE_FOLD.has(v.name)) {
-        if (!poeDone) { defs.push({ key: "poe", kind: "poe", title: "PoE" }); poeDone = true; }
+        if (!poeDone) {
+          defs.push({ key: "poe", kind: "poe", title: "PoE" });
+          poeDone = true;
+        }
         continue;
       }
       if (PORT_FOLD.has(v.name) || isCountAtLevel(v)) {
-        if (!portsDone) { defs.push({ key: "ports", kind: "ports", title: "Ports" }); portsDone = true; }
+        if (!portsDone) {
+          defs.push({ key: "ports", kind: "ports", title: "Ports" });
+          portsDone = true;
+        }
         continue;
       }
       defs.push({ key: v.name, kind: "variable", title: v.name, v });
@@ -93,10 +113,13 @@ export function mount(root, ctx) {
 
   // --- tiles ------------------------------------------------------------------
   function tile(label, opts, onClick) {
-    const b = el("button", "tile" +
-      (opts?.selected ? " selected" : "") +
-      (opts?.configured ? " configured" : "") +
-      (opts?.muted ? " muted" : ""));
+    const b = el(
+      "button",
+      "tile" +
+        (opts?.selected ? " selected" : "") +
+        (opts?.configured ? " configured" : "") +
+        (opts?.muted ? " muted" : ""),
+    );
     b.type = "button";
     if (opts?.dead) b.disabled = true;
     b.appendChild(el("span", "tile-label", label));
@@ -109,14 +132,25 @@ export function mount(root, ctx) {
     const wrap = el("div", "count-menu");
     wrap.appendChild(el("p", "step-notes", title));
     const grid = el("div", "tile-grid");
-    for (const n of presets) grid.appendChild(tile(`${n}`, { selected: current === n }, () => onPick(n)));
+    for (const n of presets)
+      grid.appendChild(tile(`${n}`, { selected: current === n }, () => onPick(n)));
     wrap.appendChild(grid);
     const custom = el("div", "count-custom");
     const input = el("input");
-    input.type = "number"; input.min = "1"; input.placeholder = "custom count";
+    input.type = "number";
+    input.min = "1";
+    input.placeholder = "custom count";
     if (current && !presets.includes(current)) input.value = String(current);
-    const pick = () => { const n = Number(input.value); if (n > 0) onPick(n); };
-    input.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); pick(); } });
+    const pick = () => {
+      const n = Number(input.value);
+      if (n > 0) onPick(n);
+    };
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        pick();
+      }
+    });
     const ok = el("button", "primary", "OK");
     ok.type = "button";
     ok.addEventListener("click", pick);
@@ -146,7 +180,8 @@ export function mount(root, ctx) {
       const list = Array.isArray(entry) ? entry : [entry];
       for (const one of list) parts.push(`${name} ${one.condition} ${one.value}`);
     }
-    for (const p of draft.ports) parts.push(`${[p.medium, p.speed].filter(Boolean).join(" ")} × ${p.min}`);
+    for (const p of draft.ports)
+      parts.push(`${[p.medium, p.speed].filter(Boolean).join(" ")} × ${p.min}`);
     for (const d of draft.poeDemand) parts.push(`${d.count}× ${d.level}`);
     return parts;
   }
@@ -159,8 +194,9 @@ export function mount(root, ctx) {
     const panel = el("div", "step-panel");
 
     const head = el("div", "step-head");
-    head.appendChild(el("span", "step-progress",
-      `step ${defs.indexOf(step) + 1} / ${defs.length}`));
+    head.appendChild(
+      el("span", "step-progress", `step ${defs.indexOf(step) + 1} / ${defs.length}`),
+    );
     const h = el("h2", null, step.title);
     if (step.kind === "variable" && mustResolve(step.v)) h.appendChild(badge());
     head.appendChild(h);
@@ -192,10 +228,18 @@ export function mount(root, ctx) {
     nav.appendChild(backBtn);
 
     switch (step.kind) {
-      case "variable": renderVariableStep(step.v, body, nav); break;
-      case "poe": renderPoeStep(body, nav); break;
-      case "ports": renderPortsStep(body, nav); break;
-      case "summary": renderFinale(body); break;
+      case "variable":
+        renderVariableStep(step.v, body, nav);
+        break;
+      case "poe":
+        renderPoeStep(body, nav);
+        break;
+      case "ports":
+        renderPortsStep(body, nav);
+        break;
+      case "summary":
+        renderFinale(body);
+        break;
     }
     panel.appendChild(nav);
     wrap.appendChild(panel);
@@ -211,7 +255,8 @@ export function mount(root, ctx) {
 
   // --- variable step: value tiles, click = pin + advance ---------------------
   function renderVariableStep(v, body, nav) {
-    if (v.notes) body.appendChild(el("p", "step-notes", v.notes.split(". ").slice(0, 2).join(". ") + "."));
+    if (v.notes)
+      body.appendChild(el("p", "step-notes", v.notes.split(". ").slice(0, 2).join(". ") + "."));
     const grid = el("div", "tile-grid");
     const current = pinnedValue(v.name);
 
@@ -221,11 +266,13 @@ export function mount(root, ctx) {
     const domains = facetDomains(toQuery(rest, registry), kb, registry);
     const live = domains.get(v.name);
 
-    let values, labelOf = (x) => String(x);
+    let values,
+      labelOf = (x) => String(x);
     if (v.type === "boolean") {
       values = v.kind === "discriminating" ? [true, false] : [true];
       labelOf = (x) => (x ? "Yes" : "No");
-      if (v.name === "uplink_modular") labelOf = (x) => (x ? "Yes — modular uplinks" : "No — fixed uplinks");
+      if (v.name === "uplink_modular")
+        labelOf = (x) => (x ? "Yes — modular uplinks" : "No — fixed uplinks");
     } else if (legalValues(v).length) {
       values = legalValues(v);
       if (v.type === "integer") labelOf = (x) => `${x} yr`;
@@ -237,17 +284,27 @@ export function mount(root, ctx) {
     const liveVals = values.filter((x) => !live || live.has(x));
     for (const x of values) {
       const dead = live ? !live.has(x) : false;
-      grid.appendChild(tile(labelOf(x), { selected: current === x, dead }, () => {
-        draft.scalars[v.name] = { condition: "==", value: x };
-        advance();
-      }));
+      grid.appendChild(
+        tile(labelOf(x), { selected: current === x, dead }, () => {
+          draft.scalars[v.name] = { condition: "==", value: x };
+          advance();
+        }),
+      );
     }
     grid.appendChild(dontCareTile([v.name]));
     body.appendChild(grid);
     if (liveVals.length === 1)
-      body.appendChild(el("p", "step-notes determined", `only one possibility for the current matches: ${labelOf(liveVals[0])}`));
+      body.appendChild(
+        el(
+          "p",
+          "step-notes determined",
+          `only one possibility for the current matches: ${labelOf(liveVals[0])}`,
+        ),
+      );
     if (values.length === 0)
-      body.appendChild(el("p", "step-notes determined", "no options for the current matches — use don't care"));
+      body.appendChild(
+        el("p", "step-notes determined", "no options for the current matches — use don't care"),
+      );
     void nav;
   }
 
@@ -256,32 +313,56 @@ export function mount(root, ctx) {
     if (subState.poeMenu) {
       const level = subState.poeMenu;
       const existing = draft.poeDemand.find((d) => d.level === level);
-      body.appendChild(countMenu(`How many ${level} ports?`, POE_PRESETS, existing?.count,
-        (n) => {
-          draft.poeDemand = draft.poeDemand.filter((d) => d.level !== level);
-          draft.poeDemand.push({ count: n, level });
-          delete draft.scalars.poe_capable; // configuring PoE overrides an earlier "None"
-          subState = {};
-          renderStep();
-        },
-        () => { subState = {}; renderStep(); }));
+      body.appendChild(
+        countMenu(
+          `How many ${level} ports?`,
+          POE_PRESETS,
+          existing?.count,
+          (n) => {
+            draft.poeDemand = draft.poeDemand.filter((d) => d.level !== level);
+            draft.poeDemand.push({ count: n, level });
+            delete draft.scalars.poe_capable; // configuring PoE overrides an earlier "None"
+            subState = {};
+            renderStep();
+          },
+          () => {
+            subState = {};
+            renderStep();
+          },
+        ),
+      );
       return;
     }
-    body.appendChild(el("p", "step-notes",
-      "Pick a PoE level to state how many ports need it (mixed levels allowed — sizes the PSU). None = explicitly no PoE (cheaper non-PoE switch)."));
+    body.appendChild(
+      el(
+        "p",
+        "step-notes",
+        "Pick a PoE level to state how many ports need it (mixed levels allowed — sizes the PSU). None = explicitly no PoE (cheaper non-PoE switch).",
+      ),
+    );
     const grid = el("div", "tile-grid");
     const noPoe = pinnedValue("poe_capable") === false;
-    grid.appendChild(tile("None", { selected: noPoe, sub: "no PoE needed" }, () => {
-      draft.poeDemand = [];
-      draft.scalars.poe_capable = { condition: "==", value: false };
-      advance();
-    }));
+    grid.appendChild(
+      tile("None", { selected: noPoe, sub: "no PoE needed" }, () => {
+        draft.poeDemand = [];
+        draft.scalars.poe_capable = { condition: "==", value: false };
+        advance();
+      }),
+    );
     for (const level of poeLevels) {
       const d = draft.poeDemand.find((x) => x.level === level);
-      grid.appendChild(tile(level, { configured: !!d, sub: d ? `${d.count} ports` : "click to set ports" },
-        () => { subState = { poeMenu: level }; renderStep(); }));
+      grid.appendChild(
+        tile(level, { configured: !!d, sub: d ? `${d.count} ports` : "click to set ports" }, () => {
+          subState = { poeMenu: level };
+          renderStep();
+        }),
+      );
     }
-    grid.appendChild(dontCareTile(["poe_capable"], () => { draft.poeDemand = []; }));
+    grid.appendChild(
+      dontCareTile(["poe_capable"], () => {
+        draft.poeDemand = [];
+      }),
+    );
     body.appendChild(grid);
     const done = el("button", "primary", "done →");
     done.type = "button";
@@ -294,14 +375,28 @@ export function mount(root, ctx) {
     draft.ports = draft.ports.filter((p) => !(p.medium === medium && p.speed === speed));
     draft.ports.push({ medium, speed, min });
   };
-  const portCount = (medium, speed) => draft.ports.find((p) => p.medium === medium && p.speed === speed)?.min;
+  const portCount = (medium, speed) =>
+    draft.ports.find((p) => p.medium === medium && p.speed === speed)?.min;
 
   function renderPortsStep(body, nav) {
     if (subState.portMenu) {
       const { medium, speed, presets, backTo } = subState.portMenu;
-      body.appendChild(countMenu(`How many ${medium} ports able to run ${speed}?`, presets, portCount(medium, speed),
-        (n) => { upsertPort(medium, speed, n); subState = { portView: backTo }; renderStep(); },
-        () => { subState = { portView: backTo }; renderStep(); }));
+      body.appendChild(
+        countMenu(
+          `How many ${medium} ports able to run ${speed}?`,
+          presets,
+          portCount(medium, speed),
+          (n) => {
+            upsertPort(medium, speed, n);
+            subState = { portView: backTo };
+            renderStep();
+          },
+          () => {
+            subState = { portView: backTo };
+            renderStep();
+          },
+        ),
+      );
       return;
     }
 
@@ -310,43 +405,117 @@ export function mount(root, ctx) {
       const grid = el("div", "tile-grid");
       for (const s of speeds) {
         const n = portCount(medium, s);
-        grid.appendChild(tile(s, { configured: n != null, sub: n != null ? `${n} ports` : "click to set ports" },
-          () => { subState = { portMenu: { medium, speed: s, presets, backTo } }; renderStep(); }));
+        grid.appendChild(
+          tile(
+            s,
+            { configured: n != null, sub: n != null ? `${n} ports` : "click to set ports" },
+            () => {
+              subState = { portMenu: { medium, speed: s, presets, backTo } };
+              renderStep();
+            },
+          ),
+        );
       }
       return grid;
     };
 
     if (view === "mgig" || view === "fiber") {
       const medium = view === "mgig" ? "copper" : "fiber";
-      body.appendChild(el("p", "step-notes", view === "mgig"
-        ? "Multigigabit copper — pick the speed(s) you need, set a port count per speed."
-        : "Fiber — pick the speed(s) you need, set a port count per speed (access or uplink; the solver decides)."));
-      body.appendChild(speedTiles(view === "mgig" ? mgigSpeeds : fiberSpeeds, medium,
-        view === "mgig" ? COPPER_PRESETS : FIBER_PRESETS, view));
+      body.appendChild(
+        el(
+          "p",
+          "step-notes",
+          view === "mgig"
+            ? "Multigigabit copper — pick the speed(s) you need, set a port count per speed."
+            : "Fiber — pick the speed(s) you need, set a port count per speed (access or uplink; the solver decides).",
+        ),
+      );
+      body.appendChild(
+        speedTiles(
+          view === "mgig" ? mgigSpeeds : fiberSpeeds,
+          medium,
+          view === "mgig" ? COPPER_PRESETS : FIBER_PRESETS,
+          view,
+        ),
+      );
       const done = el("button", "primary", "done →");
       done.type = "button";
-      done.addEventListener("click", () => { subState = {}; renderStep(); });
+      done.addEventListener("click", () => {
+        subState = {};
+        renderStep();
+      });
       nav.appendChild(done);
       return;
     }
 
-    body.appendChild(el("p", "step-notes",
-      "What port types do you need? Counts are minimums; access vs uplink falls out of the solve."));
+    body.appendChild(
+      el(
+        "p",
+        "step-notes",
+        "What port types do you need? Counts are minimums; access vs uplink falls out of the solve.",
+      ),
+    );
     const grid = el("div", "tile-grid");
     const g1 = portCount("copper", "1g");
-    grid.appendChild(tile("1G Copper", { configured: g1 != null, sub: g1 != null ? `${g1} ports` : "standard access ports" },
-      () => { subState = { portMenu: { medium: "copper", speed: "1g", presets: COPPER_PRESETS, backTo: "categories" } }; renderStep(); }));
-    const mgigConf = mgigSpeeds.map((s) => [s, portCount("copper", s)]).filter(([, n]) => n != null);
-    grid.appendChild(tile("MGig", {
-      configured: mgigConf.length > 0,
-      sub: mgigConf.length ? mgigConf.map(([s, n]) => `${s}: ${n}`).join(" · ") : `copper ${mgigSpeeds.join("/")}`,
-    }, () => { subState = { portView: "mgig" }; renderStep(); }));
-    const fiberConf = fiberSpeeds.map((s) => [s, portCount("fiber", s)]).filter(([, n]) => n != null);
-    grid.appendChild(tile("Fiber", {
-      configured: fiberConf.length > 0,
-      sub: fiberConf.length ? fiberConf.map(([s, n]) => `${s}: ${n}`).join(" · ") : "access or uplink optics",
-    }, () => { subState = { portView: "fiber" }; renderStep(); }));
-    grid.appendChild(tile("don't care", { muted: true }, () => { draft.ports = []; advance(); }));
+    grid.appendChild(
+      tile(
+        "1G Copper",
+        { configured: g1 != null, sub: g1 != null ? `${g1} ports` : "standard access ports" },
+        () => {
+          subState = {
+            portMenu: {
+              medium: "copper",
+              speed: "1g",
+              presets: COPPER_PRESETS,
+              backTo: "categories",
+            },
+          };
+          renderStep();
+        },
+      ),
+    );
+    const mgigConf = mgigSpeeds
+      .map((s) => [s, portCount("copper", s)])
+      .filter(([, n]) => n != null);
+    grid.appendChild(
+      tile(
+        "MGig",
+        {
+          configured: mgigConf.length > 0,
+          sub: mgigConf.length
+            ? mgigConf.map(([s, n]) => `${s}: ${n}`).join(" · ")
+            : `copper ${mgigSpeeds.join("/")}`,
+        },
+        () => {
+          subState = { portView: "mgig" };
+          renderStep();
+        },
+      ),
+    );
+    const fiberConf = fiberSpeeds
+      .map((s) => [s, portCount("fiber", s)])
+      .filter(([, n]) => n != null);
+    grid.appendChild(
+      tile(
+        "Fiber",
+        {
+          configured: fiberConf.length > 0,
+          sub: fiberConf.length
+            ? fiberConf.map(([s, n]) => `${s}: ${n}`).join(" · ")
+            : "access or uplink optics",
+        },
+        () => {
+          subState = { portView: "fiber" };
+          renderStep();
+        },
+      ),
+    );
+    grid.appendChild(
+      tile("don't care", { muted: true }, () => {
+        draft.ports = [];
+        advance();
+      }),
+    );
     body.appendChild(grid);
     const done = el("button", "primary", "done →");
     done.type = "button";
@@ -359,18 +528,31 @@ export function mount(root, ctx) {
     const query = toQuery(draft, registry);
     const result = solve(query, kb, registry);
     const n = result.candidates.length;
-    body.appendChild(el("p", "step-status", `${n} model${n === 1 ? "" : "s"} match your requirements`));
+    body.appendChild(
+      el("p", "step-status", `${n} model${n === 1 ? "" : "s"} match your requirements`),
+    );
     const open = result.open_variables.filter((o) => o.must_resolve);
     if (open.length)
-      body.appendChild(el("p", "step-notes",
-        "Still to resolve for an orderable BOM: " + open.map((o) => o.name).join(", ") + "."));
+      body.appendChild(
+        el(
+          "p",
+          "step-notes",
+          "Still to resolve for an orderable BOM: " + open.map((o) => o.name).join(", ") + ".",
+        ),
+      );
 
     const shown = result.candidates.slice(0, FINALE_CARDS);
     const cards = el("div", "finale-cards");
     shown.forEach((cand, i) => cards.appendChild(candidateCard(cand, i === 0)));
     body.appendChild(cards);
     if (n > FINALE_CARDS)
-      body.appendChild(el("p", "step-notes", `showing the top ${FINALE_CARDS} of ${n} — the full view has them all.`));
+      body.appendChild(
+        el(
+          "p",
+          "step-notes",
+          `showing the top ${FINALE_CARDS} of ${n} — the full view has them all.`,
+        ),
+      );
 
     const go = el("button", "primary", "open in full options →");
     go.type = "button";

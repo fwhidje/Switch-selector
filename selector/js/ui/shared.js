@@ -12,7 +12,13 @@
 //   - the structured kit card: default parts as line items, alternatives as
 //     compact rows, raw solver JSON only behind a "show raw result" button.
 
-import { legalValues, mustResolve, isConfigurationDimension, binding, storageOf } from "../core/registry.js";
+import {
+  legalValues,
+  mustResolve,
+  isConfigurationDimension,
+  binding,
+  storageOf,
+} from "../core/registry.js";
 import { getModels } from "../core/kb.js";
 import { constraint, portConstraint, translatePoeDemand } from "../core/query.js";
 
@@ -41,7 +47,10 @@ export function toQuery(draft, registry) {
   const q = [];
   for (const [variable, s] of Object.entries(draft.scalars)) {
     if (s == null) continue;
-    if (Array.isArray(s)) { for (const one of s) q.push(constraint(variable, one.condition, one.value)); continue; }
+    if (Array.isArray(s)) {
+      for (const one of s) q.push(constraint(variable, one.condition, one.value));
+      continue;
+    }
     q.push(constraint(variable, s.condition, s.value));
   }
   for (const p of draft.ports) {
@@ -63,9 +72,11 @@ export function knownValues(variable, kb) {
   const src = binding(variable)?.source;
   const out = new Set();
   for (const s of kb._sources ?? []) {
-    if (src === "network_module_group") for (const nm of s.catalog?.network_modules ?? []) out.add(nm.id);
+    if (src === "network_module_group")
+      for (const nm of s.catalog?.network_modules ?? []) out.add(nm.id);
     if (src === "stack_cable_group") for (const c of s.catalog?.stack_cables ?? []) out.add(c.id);
-    if (src === "stackpower_cable_group") for (const c of s.catalog?.stackpower_cables ?? []) out.add(c.id);
+    if (src === "stackpower_cable_group")
+      for (const c of s.catalog?.stackpower_cables ?? []) out.add(c.id);
   }
   return [...out].sort();
 }
@@ -84,16 +95,23 @@ export function row(labelText, title, withBadge, ...controls) {
 
 export function numInput(variable, bound, placeholder) {
   const e = el("input");
-  e.type = "number"; e.min = "0"; e.placeholder = placeholder;
-  e.dataset.variable = variable; e.dataset.kind = "integer"; e.dataset.bound = bound;
+  e.type = "number";
+  e.min = "0";
+  e.placeholder = placeholder;
+  e.dataset.variable = variable;
+  e.dataset.kind = "integer";
+  e.dataset.bound = bound;
   return e;
 }
 
 export function select(variable, kind, optionPairs) {
   const e = el("select");
-  e.dataset.variable = variable; e.dataset.kind = kind;
+  e.dataset.variable = variable;
+  e.dataset.kind = kind;
   for (const [value, label] of optionPairs) {
-    const o = el("option", null, label); o.value = value; e.appendChild(o);
+    const o = el("option", null, label);
+    o.value = value;
+    e.appendChild(o);
   }
   return e;
 }
@@ -109,10 +127,13 @@ export function skuInput(v, kb) {
   const dl = el("datalist");
   dl.id = listId;
   for (const x of knownValues(v, kb)) {
-    const o = el("option"); o.value = x; dl.appendChild(o);
+    const o = el("option");
+    o.value = x;
+    dl.appendChild(o);
   }
   const wrap = el("span");
-  wrap.appendChild(e); wrap.appendChild(dl);
+  wrap.appendChild(e);
+  wrap.appendChild(dl);
   return wrap;
 }
 
@@ -123,28 +144,61 @@ export function controlFor(v, kb) {
     const sel = select(v.name, "ordered", [["", "any"], ...legalValues(v).map((x) => [x, x])]);
     const cond = el("select", "cond");
     cond.dataset.condFor = v.name;
-    for (const [val, t] of [[">=", "at least"], ["==", "exactly"]]) {
-      const o = el("option", null, t); o.value = val; cond.appendChild(o);
+    for (const [val, t] of [
+      [">=", "at least"],
+      ["==", "exactly"],
+    ]) {
+      const o = el("option", null, t);
+      o.value = val;
+      cond.appendChild(o);
     }
     return row(v.name, v.notes, withBadge, sel, cond);
   }
   if (v.type === "integer" && legalValues(v).length === 0) {
-    return row(v.name, v.notes, withBadge, numInput(v.name, "min", "min"), numInput(v.name, "max", "max"));
+    return row(
+      v.name,
+      v.notes,
+      withBadge,
+      numInput(v.name, "min", "min"),
+      numInput(v.name, "max", "max"),
+    );
   }
-  if (v.type === "integer") { // closed integer choice (license_term)
-    return row(v.name, v.notes, withBadge,
-      select(v.name, "int-enum", [["", "any"], ...legalValues(v).map((x) => [String(x), String(x)])]));
+  if (v.type === "integer") {
+    // closed integer choice (license_term)
+    return row(
+      v.name,
+      v.notes,
+      withBadge,
+      select(v.name, "int-enum", [
+        ["", "any"],
+        ...legalValues(v).map((x) => [String(x), String(x)]),
+      ]),
+    );
   }
   if (v.type === "boolean") {
-    const opts = v.kind === "monotonic-capability" || isConfigurationDimension(v)
-      ? [["", "any"], ["true", "required"]]
-      : [["", "any"], ["true", "yes"], ["false", "no"]];
+    const opts =
+      v.kind === "monotonic-capability" || isConfigurationDimension(v)
+        ? [
+            ["", "any"],
+            ["true", "required"],
+          ]
+        : [
+            ["", "any"],
+            ["true", "yes"],
+            ["false", "no"],
+          ];
     return row(v.name, v.notes, withBadge, select(v.name, "boolean", opts));
   }
-  if (legalValues(v).length === 0) { // open enum (uplink_module, cables)
+  if (legalValues(v).length === 0) {
+    // open enum (uplink_module, cables)
     return row(v.name, v.notes, withBadge, skuInput(v, kb));
   }
-  return row(v.name, v.notes, withBadge, select(v.name, "enum", [["", "any"], ...legalValues(v).map((x) => [x, x])]));
+  return row(
+    v.name,
+    v.notes,
+    withBadge,
+    select(v.name, "enum", [["", "any"], ...legalValues(v).map((x) => [x, x])]),
+  );
 }
 
 /** Read one control's draft entry ({condition,value} or null) from its element. */
@@ -152,11 +206,13 @@ export function readControl(elm, scopeRoot) {
   const raw = elm.value;
   if (raw === "" || raw == null) return null;
   const kind = elm.dataset.kind;
-  if (kind === "integer") return { condition: elm.dataset.bound === "max" ? "<=" : ">=", value: Number(raw) };
+  if (kind === "integer")
+    return { condition: elm.dataset.bound === "max" ? "<=" : ">=", value: Number(raw) };
   if (kind === "int-enum") return { condition: "==", value: Number(raw) };
   if (kind === "boolean") return { condition: "==", value: raw === "true" };
   if (kind === "ordered") {
-    const cond = scopeRoot.querySelector(`[data-cond-for="${elm.dataset.variable}"]`)?.value ?? ">=";
+    const cond =
+      scopeRoot.querySelector(`[data-cond-for="${elm.dataset.variable}"]`)?.value ?? ">=";
     return { condition: cond, value: raw };
   }
   return { condition: "==", value: raw }; // enum + sku
@@ -168,7 +224,8 @@ export function writeControl(elm, entry, scopeRoot) {
   const kind = elm.dataset.kind;
   if (kind === "integer") {
     const isMax = elm.dataset.bound === "max";
-    if ((isMax && entry.condition === "<=") || (!isMax && entry.condition === ">=")) elm.value = String(entry.value);
+    if ((isMax && entry.condition === "<=") || (!isMax && entry.condition === ">="))
+      elm.value = String(entry.value);
     return;
   }
   elm.value = String(entry.value);
@@ -199,7 +256,8 @@ function kitLine(part, choice, why, alternatives) {
 }
 
 const psuComboText = (row) =>
-  [row.primary, row.secondary, row.tertiary].filter(Boolean).join(" + ") + ` → ${row.poe_budget_watts}W`;
+  [row.primary, row.secondary, row.tertiary].filter(Boolean).join(" + ") +
+  ` → ${row.poe_budget_watts}W`;
 
 /**
  * The structured kitlist for one candidate's BOM: default parts as line
@@ -235,9 +293,13 @@ export function kitList(bom, model) {
     const alts = bom.uplinks.options
       .filter((o) => o.id !== bom.uplinks.default)
       .map((o) => `${o.mode ?? o.id}: ${summarisePorts(o.ports)}`);
-    kit.appendChild(kitLine("fixed uplinks", label, "combinable uplink bank — one configuration at a time", alts));
+    kit.appendChild(
+      kitLine("fixed uplinks", label, "combinable uplink bank — one configuration at a time", alts),
+    );
   } else {
-    kit.appendChild(kitLine("fixed uplinks", summarisePorts(upOpt?.ports ?? bom.uplinks.options[0]?.ports)));
+    kit.appendChild(
+      kitLine("fixed uplinks", summarisePorts(upOpt?.ports ?? bom.uplinks.options[0]?.ports)),
+    );
   }
 
   // power
@@ -246,8 +308,9 @@ export function kitList(bom, model) {
     if (!dc) {
       kit.appendChild(kitLine("power", "no PSU configuration meets the requested PoE load"));
     } else {
-      const label = [dc.primary, dc.secondary, dc.tertiary].filter(Boolean).join(" + ")
-        + (dc.watts != null ? ` → ${dc.watts}W PoE` : "");
+      const label =
+        [dc.primary, dc.secondary, dc.tertiary].filter(Boolean).join(" + ") +
+        (dc.watts != null ? ` → ${dc.watts}W PoE` : "");
       const matrix = bom.power.poe_budget_matrix ?? [];
       let alts;
       if (matrix.length) {
@@ -264,9 +327,13 @@ export function kitList(bom, model) {
 
   // license
   if (bom.license) {
-    const tierNote = bom.license.tier_selectable ? "tier selectable" : `tier: ${bom.license.tier_locked ?? "?"}`;
+    const tierNote = bom.license.tier_selectable
+      ? "tier selectable"
+      : `tier: ${bom.license.tier_locked ?? "?"}`;
     for (const g of bom.license.groups) {
-      let label, why = null, alts = [];
+      let label,
+        why = null,
+        alts = [];
       if (g.chosen_term) {
         label = g.chosen_term.subscription_sku ?? `(no ${g.chosen_term.term_years}yr SKU)`;
         if (g.chosen_term.not_applicable) why = "term not applicable — single device-tied SKU";
@@ -282,19 +349,27 @@ export function kitList(bom, model) {
 
   // accessories
   const a = bom.accessories ?? {};
-  for (const [part, block] of [["stack cable", a.stack_cables], ["stackpower cable", a.stackpower_cables]]) {
+  for (const [part, block] of [
+    ["stack cable", a.stack_cables],
+    ["stackpower cable", a.stackpower_cables],
+  ]) {
     if (!block) continue;
     const isNone = block.default === block.none_option;
     // Adapter-kit series: the kit is the prerequisite that enables stacking —
     // surface it as its own primary line ahead of the cable.
     if (block.prerequisite && !isNone) {
       const inc = block.prerequisite.included_cable;
-      kit.appendChild(kitLine("stacking kit", block.prerequisite.id,
-        inc ? `prerequisite — includes ${inc}` : "prerequisite"));
+      kit.appendChild(
+        kitLine(
+          "stacking kit",
+          block.prerequisite.id,
+          inc ? `prerequisite — includes ${inc}` : "prerequisite",
+        ),
+      );
     }
     const includedByKit = block.prerequisite && block.default === block.prerequisite.included_cable;
     const label = isNone ? "(none — standalone)" : block.default;
-    const why = isNone ? null : (includedByKit ? "included with kit" : "shortest available");
+    const why = isNone ? null : includedByKit ? "included with kit" : "shortest available";
     const alts = (block.members ?? []).filter((m) => m !== block.default);
     kit.appendChild(kitLine(part, label, why, alts.length ? alts : null));
   }
@@ -307,7 +382,8 @@ export function kitList(bom, model) {
     for (const [k, v] of Object.entries(inc)) {
       if (v === true) parts.push(k.replaceAll("_", " "));
       else if (typeof v === "string") parts.push(`${k.replaceAll("_", " ")}: ${v}`);
-      else if (v && typeof v === "object" && "count" in v) parts.push(`${v.count}× ${k.replaceAll("_", " ")}`);
+      else if (v && typeof v === "object" && "count" in v)
+        parts.push(`${v.count}× ${k.replaceAll("_", " ")}`);
     }
     if (parts.length) kit.appendChild(kitLine("included", parts.join(" · ")));
   }
@@ -358,24 +434,34 @@ export function candidateCard(cand, isDefault) {
   copyBtn.type = "button";
   copyBtn.addEventListener("click", () => {
     const text = buildCopyBOM(cand.bom);
-    navigator.clipboard.writeText(text).then(() => {
-      copyBtn.textContent = "copied!";
-      setTimeout(() => { copyBtn.textContent = "copy BOM"; }, 1500);
-    }).catch(() => {
-      const fb = el("pre", "copy-bom-fallback", text);
-      btns.after(fb);
-      const sel = window.getSelection();
-      const range = document.createRange();
-      range.selectNodeContents(fb);
-      sel.removeAllRanges();
-      sel.addRange(range);
-    });
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        copyBtn.textContent = "copied!";
+        setTimeout(() => {
+          copyBtn.textContent = "copy BOM";
+        }, 1500);
+      })
+      .catch(() => {
+        const fb = el("pre", "copy-bom-fallback", text);
+        btns.after(fb);
+        const sel = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(fb);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      });
   });
   const rawBtn = el("button", "raw-btn", "show raw result");
   rawBtn.type = "button";
   let rawPre = null;
   rawBtn.addEventListener("click", () => {
-    if (rawPre) { rawPre.remove(); rawPre = null; rawBtn.textContent = "show raw result"; return; }
+    if (rawPre) {
+      rawPre.remove();
+      rawPre = null;
+      rawBtn.textContent = "show raw result";
+      return;
+    }
     rawPre = el("pre", "bundle", JSON.stringify(cand.bom, null, 2));
     card.appendChild(rawPre);
     rawBtn.textContent = "hide raw result";
@@ -397,10 +483,17 @@ export function renderOpenVariables(container, result) {
   for (const ov of result.open_variables) {
     const li = el("li");
     const domain = Array.isArray(ov.domain)
-      ? (ov.domain.length > 8 ? `${ov.domain.slice(0, 8).join(", ")}, … (${ov.domain.length})` : ov.domain.join(", "))
-      : ov.domain ? `${ov.domain.min}–${ov.domain.max}` : "—";
-    const dflt = ov.must_resolve ? "" : ov.default
-      ? `  · default: ${ov.default.kind === "fixed" ? ov.default.value : ov.default.policy ?? ov.default.kind}` : "";
+      ? ov.domain.length > 8
+        ? `${ov.domain.slice(0, 8).join(", ")}, … (${ov.domain.length})`
+        : ov.domain.join(", ")
+      : ov.domain
+        ? `${ov.domain.min}–${ov.domain.max}`
+        : "—";
+    const dflt = ov.must_resolve
+      ? ""
+      : ov.default
+        ? `  · default: ${ov.default.kind === "fixed" ? ov.default.value : (ov.default.policy ?? ov.default.kind)}`
+        : "";
     li.textContent = `${ov.name}: {${domain}}${dflt}`;
     if (ov.must_resolve) li.appendChild(badge());
     ul.appendChild(li);
@@ -424,13 +517,19 @@ export function demandRow(poeLevels) {
   r.appendChild(el("span", "axis-name", "ports @"));
   const box = el("span", "control-inputs");
   const cnt = el("input");
-  cnt.type = "number"; cnt.min = "0"; cnt.placeholder = "count"; cnt.dataset.demandCount = "1";
+  cnt.type = "number";
+  cnt.min = "0";
+  cnt.placeholder = "count";
+  cnt.dataset.demandCount = "1";
   const lvl = el("select");
   lvl.dataset.demandLevel = "1";
   for (const [v, t] of [["", "level…"], ...poeLevels.map((x) => [x, x])]) {
-    const o = el("option", null, t); o.value = v; lvl.appendChild(o);
+    const o = el("option", null, t);
+    o.value = v;
+    lvl.appendChild(o);
   }
-  box.appendChild(cnt); box.appendChild(lvl);
+  box.appendChild(cnt);
+  box.appendChild(lvl);
   r.appendChild(box);
   return r;
 }

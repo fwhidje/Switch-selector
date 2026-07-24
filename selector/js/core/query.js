@@ -21,13 +21,22 @@
 import { getVariable, acceptedConditions, legalValues, poeLevelWatts } from "./registry.js";
 
 /** Build a scalar constraint. */
-export const constraint = (variable, condition, value, severity = "hard") =>
-  ({ variable, condition, value, severity });
+export const constraint = (variable, condition, value, severity = "hard") => ({
+  variable,
+  condition,
+  value,
+  severity,
+});
 
 /** Build a parametrised port constraint. Omitted where-facets are wildcards —
  *  the role-agnostic ask ("N ports able to run speed S") is `{speed}` alone. */
-export const portConstraint = (where, condition, value, severity = "hard") =>
-  ({ variable: "port_count", where, condition, value, severity });
+export const portConstraint = (where, condition, value, severity = "hard") => ({
+  variable: "port_count",
+  where,
+  condition,
+  value,
+  severity,
+});
 
 /**
  * PoE demand rows [{count, level}] → derived hard constraints:
@@ -62,13 +71,19 @@ export function validateQuery(query, registry) {
   const bad = (c, problem) => problems.push({ constraint: c, problem });
   for (const c of query ?? []) {
     const v = getVariable(registry, c.variable);
-    if (!v) { bad(c, `unknown variable '${c.variable}'`); continue; }
+    if (!v) {
+      bad(c, `unknown variable '${c.variable}'`);
+      continue;
+    }
     if (c.severity === "soft") continue; // soft objectives (minimize/maximize) are not conditions
     const accepted = acceptedConditions(v);
     if (!accepted.includes(c.condition))
-      bad(c, accepted.length
-        ? `condition '${c.condition}' not accepted (allowed: ${accepted.join(", ")})`
-        : "variable is not directly constrainable (steer it via its driving variables)");
+      bad(
+        c,
+        accepted.length
+          ? `condition '${c.condition}' not accepted (allowed: ${accepted.join(", ")})`
+          : "variable is not directly constrainable (steer it via its driving variables)",
+      );
     const lv = legalValues(v);
     if (lv.length) {
       for (const val of Array.isArray(c.value) ? c.value : [c.value])

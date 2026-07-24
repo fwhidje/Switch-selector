@@ -9,6 +9,9 @@ on:
       - "selector/**"
       - "mcp/**"
       - ".github/workflows/validate-kb.yml"
+      - "*.json"
+      - ".prettierignore"
+      - "index.html"
   pull_request:
 
 jobs:
@@ -26,6 +29,23 @@ jobs:
         working-directory: selector
       - name: Consistency validator (ajv shape + registry/schema/KB + reference integrity)
         run: node selector/tools/validate-kb.mjs
+
+  # Byte-level formatting guard (Prettier). Separate from the semantic validator:
+  # one guards data MEANING, the other guards FORMATTING. Uses the repo-root
+  # tooling package (prettier is dev-only; the selector runtime stays zero-dep).
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install formatter (root tooling deps)
+        run: npm ci
+      - name: Check formatting (prettier --check)
+        run: npm run format:check
 
   # Stage-2 MCP server: a deploy is a KB snapshot, so it only ships from main and
   # only after the validator passed (selector/docs/mcp-solver-contract.md §6).

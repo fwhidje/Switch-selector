@@ -4,13 +4,31 @@
 // its controls from it. model_id is NOT here — exact-model lookup is its own
 // mode. Candidate cards are structured kitlists (no JSON in the default view).
 
-import { variablesByGroup, getVariable, storageOf, isCountAtLevel, acceptedConditions, portModel } from "../../core/registry.js";
+import {
+  variablesByGroup,
+  getVariable,
+  storageOf,
+  isCountAtLevel,
+  acceptedConditions,
+  portModel,
+} from "../../core/registry.js";
 import { getModels } from "../../core/kb.js";
 import { solve, facetDomains } from "../../core/solver.js";
 import {
-  el, controlFor, readControl, writeControl, toQuery, emptyDraft,
-  candidateCard, renderOpenVariables,
-  poeDemandSection, syncDemandRows, readDemandRows, writeDemandRows, row, numInput,
+  el,
+  controlFor,
+  readControl,
+  writeControl,
+  toQuery,
+  emptyDraft,
+  candidateCard,
+  renderOpenVariables,
+  poeDemandSection,
+  syncDemandRows,
+  readDemandRows,
+  writeDemandRows,
+  row,
+  numInput,
 } from "../shared.js";
 
 const RENDER_CAP = 20;
@@ -18,19 +36,25 @@ const RENDER_CAP = 20;
 // The ports grid and PoE demand rows are demand-GATHERING sections that render
 // with their presentation group; the constraints they produce come from
 // core/query.js via the shared draft.
-const GROUP_SECTIONS = { "Interfaces": ["ports"], "PoE": ["poeDemand"] };
+const GROUP_SECTIONS = { Interfaces: ["ports"], PoE: ["poeDemand"] };
 
 /** distinct (role, medium, speed) present across model + module port groups */
 export function enumeratePortCombos(kb, speedOrder) {
   const set = new Map();
-  const add = (g) => (g.speeds ?? []).forEach((sp) => set.set(`${g.role}|${g.medium}|${sp}`, { role: g.role, medium: g.medium, speed: sp }));
+  const add = (g) =>
+    (g.speeds ?? []).forEach((sp) =>
+      set.set(`${g.role}|${g.medium}|${sp}`, { role: g.role, medium: g.medium, speed: sp }),
+    );
   for (const m of getModels(kb)) (m.ports ?? []).forEach(add);
   for (const src of kb._sources ?? [])
     for (const nm of src.catalog?.network_modules ?? []) (nm.ports ?? []).forEach(add);
   const roleRank = { access: 0, uplink: 1 };
-  return [...set.values()].sort((a, b) =>
-    (roleRank[a.role] - roleRank[b.role]) || a.medium.localeCompare(b.medium) ||
-    (speedOrder.indexOf(a.speed) - speedOrder.indexOf(b.speed)));
+  return [...set.values()].sort(
+    (a, b) =>
+      roleRank[a.role] - roleRank[b.role] ||
+      a.medium.localeCompare(b.medium) ||
+      speedOrder.indexOf(a.speed) - speedOrder.indexOf(b.speed),
+  );
 }
 
 /** Role-agnostic per-(medium, speed) rows + an advanced role-pinning grid.
@@ -43,14 +67,30 @@ export function portsSection(mediumSpeeds, portCombos) {
     const input = numInput("port_count", "min", "0");
     input.dataset.portMedium = medium;
     input.dataset.portSpeed = speed;
-    wrap.appendChild(row(`${medium}/${speed}`, "minimum ports of this medium able to run this speed — access or uplink; the solver decides", false, input));
+    wrap.appendChild(
+      row(
+        `${medium}/${speed}`,
+        "minimum ports of this medium able to run this speed — access or uplink; the solver decides",
+        false,
+        input,
+      ),
+    );
   }
   const adv = el("details");
   adv.appendChild(el("summary", "section-head", "advanced: pin role / medium"));
   for (const c of portCombos) {
     const input = numInput("port_count", "min", "0");
-    input.dataset.portRole = c.role; input.dataset.portMedium = c.medium; input.dataset.portSpeed = c.speed;
-    adv.appendChild(row(`${c.role}/${c.medium}/${c.speed}`, "minimum ports of this role/medium able to run this speed", false, input));
+    input.dataset.portRole = c.role;
+    input.dataset.portMedium = c.medium;
+    input.dataset.portSpeed = c.speed;
+    adv.appendChild(
+      row(
+        `${c.role}/${c.medium}/${c.speed}`,
+        "minimum ports of this role/medium able to run this speed",
+        false,
+        input,
+      ),
+    );
   }
   wrap.appendChild(adv);
   return wrap;
@@ -60,8 +100,14 @@ export function mount(root, ctx) {
   const { registry, kb } = ctx;
   const speedOrder = portModel(registry)?.selector_enums?.port_speed?.order ?? [];
   const portCombos = enumeratePortCombos(kb, speedOrder);
-  const mediumSpeeds = [...new Map(portCombos.map((c) => [`${c.medium}|${c.speed}`, { medium: c.medium, speed: c.speed }])).values()]
-    .sort((a, b) => a.medium.localeCompare(b.medium) || (speedOrder.indexOf(a.speed) - speedOrder.indexOf(b.speed)));
+  const mediumSpeeds = [
+    ...new Map(
+      portCombos.map((c) => [`${c.medium}|${c.speed}`, { medium: c.medium, speed: c.speed }]),
+    ).values(),
+  ].sort(
+    (a, b) =>
+      a.medium.localeCompare(b.medium) || speedOrder.indexOf(a.speed) - speedOrder.indexOf(b.speed),
+  );
   const poeLevels = (getVariable(registry, "poe_type")?.order ?? []).filter((l) => l !== "none");
   let showAll = false;
 
@@ -122,10 +168,19 @@ export function mount(root, ctx) {
     form.appendChild(details);
   }
 
-  if (ctx.handoff) { writeForm(ctx.handoff); ctx.handoff = null; }
+  if (ctx.handoff) {
+    writeForm(ctx.handoff);
+    ctx.handoff = null;
+  }
 
-  form.addEventListener("input", () => { showAll = false; run(); });
-  form.addEventListener("change", () => { showAll = false; run(); });
+  form.addEventListener("input", () => {
+    showAll = false;
+    run();
+  });
+  form.addEventListener("change", () => {
+    showAll = false;
+    run();
+  });
   run();
 
   function readDraft() {
@@ -140,7 +195,12 @@ export function mount(root, ctx) {
     for (const elm of form.querySelectorAll("[data-port-speed]")) {
       const v = Number(elm.value);
       if (!elm.value || v <= 0) continue;
-      draft.ports.push({ role: elm.dataset.portRole, medium: elm.dataset.portMedium, speed: elm.dataset.portSpeed, min: v });
+      draft.ports.push({
+        role: elm.dataset.portRole,
+        medium: elm.dataset.portMedium,
+        speed: elm.dataset.portSpeed,
+        min: v,
+      });
     }
     draft.poeDemand = readDemandRows(form.querySelector("#poe-demand"));
     return draft;
@@ -160,7 +220,8 @@ export function mount(root, ctx) {
       const elm = form.querySelector(sel);
       if (elm) elm.value = String(p.min);
     }
-    if (draft.poeDemand.length) writeDemandRows(form.querySelector("#poe-demand"), draft.poeDemand, poeLevels);
+    if (draft.poeDemand.length)
+      writeDemandRows(form.querySelector("#poe-demand"), draft.poeDemand, poeLevels);
   }
 
   function run() {
@@ -175,9 +236,13 @@ export function mount(root, ctx) {
 
   function renderQuery(query) {
     querySpan.textContent = query.length
-      ? query.map((c) => c.variable === "port_count"
-          ? `ports{${[c.where.role, c.where.medium, c.where.speed].filter(Boolean).join("/")}} >= ${c.value}`
-          : `${c.variable} ${c.condition} ${c.value}`).join("  ·  ")
+      ? query
+          .map((c) =>
+            c.variable === "port_count"
+              ? `ports{${[c.where.role, c.where.medium, c.where.speed].filter(Boolean).join("/")}} >= ${c.value}`
+              : `${c.variable} ${c.condition} ${c.value}`,
+          )
+          .join("  ·  ")
       : "(no constraints — all models)";
   }
 
@@ -190,7 +255,10 @@ export function mount(root, ctx) {
     if (!showAll && result.candidates.length > RENDER_CAP) {
       const more = el("button", "show-more-btn", `show all ${result.candidates.length} matches`);
       more.type = "button";
-      more.addEventListener("click", () => { showAll = true; run(); });
+      more.addEventListener("click", () => {
+        showAll = true;
+        run();
+      });
       candidates.appendChild(more);
     }
 
@@ -203,12 +271,17 @@ export function mount(root, ctx) {
 
   function updateFacets(query, result) {
     const domains = facetDomains(query, kb, registry, result);
-    for (const sel of form.querySelectorAll('select[data-kind="enum"], select[data-kind="ordered"]')) {
+    for (const sel of form.querySelectorAll(
+      'select[data-kind="enum"], select[data-kind="ordered"]',
+    )) {
       const live = domains.get(sel.dataset.variable);
       if (!live) continue;
       let liveCount = 0;
       for (const opt of sel.options) {
-        if (opt.value === "") { opt.disabled = false; continue; }
+        if (opt.value === "") {
+          opt.disabled = false;
+          continue;
+        }
         const ok = live.has(opt.value);
         opt.disabled = !ok;
         if (ok) liveCount++;

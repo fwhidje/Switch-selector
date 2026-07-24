@@ -13,7 +13,12 @@ import { registry, kb } from "./data.js";
 import { findConfigurationsShape, lookupModelShape } from "./schema.js";
 import { trimResponse, nearestModels } from "./respond.js";
 import { solve } from "../../selector/js/core/solver.js";
-import { constraint, portConstraint, translatePoeDemand, validateQuery } from "../../selector/js/core/query.js";
+import {
+  constraint,
+  portConstraint,
+  translatePoeDemand,
+  validateQuery,
+} from "../../selector/js/core/query.js";
 
 const json = (obj) => ({ content: [{ type: "text", text: JSON.stringify(obj, null, 1) }] });
 const fail = (obj) => ({ ...json(obj), isError: true });
@@ -40,7 +45,9 @@ function createServer() {
           nearest_known_ids: nearestModels(kb.models, model),
           hint: "retry lookup_model with one of nearest_known_ids, or use find_configurations to search by requirements",
         });
-      return json(trimResponse(res, [{ variable: "model_id", condition: "==", value: model }], registry, 1));
+      return json(
+        trimResponse(res, [{ variable: "model_id", condition: "==", value: model }], registry, 1),
+      );
     },
   );
 
@@ -66,8 +73,7 @@ function createServer() {
         return fail({ error: "empty query: provide requirements, poe_demand, or port_demand" });
 
       const problems = validateQuery(query, registry);
-      if (problems.length)
-        return fail({ error: "invalid query", problems }); // verbatim: the text names the legal values
+      if (problems.length) return fail({ error: "invalid query", problems }); // verbatim: the text names the legal values
 
       return json(trimResponse(solve(query, kb, registry), query, registry, limit ?? 5));
     },
@@ -81,7 +87,9 @@ export default {
     const url = new URL(request.url);
     if (url.pathname === "/" || url.pathname === "")
       return new Response(
-        "switch-selector MCP server (registry v" + registry.registry_version + "). MCP endpoint: POST /mcp (streamable HTTP).\n",
+        "switch-selector MCP server (registry v" +
+          registry.registry_version +
+          "). MCP endpoint: POST /mcp (streamable HTTP).\n",
         { headers: { "content-type": "text/plain" } },
       );
     return createMcpHandler(createServer())(request, env, ctx);
